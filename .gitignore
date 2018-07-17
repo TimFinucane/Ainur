@@ -1,0 +1,7 @@
+# Standard
+.*
+!.gitignore
+
+# Build
+build/
+bin/
