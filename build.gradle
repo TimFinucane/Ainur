@@ -1,7 +1,9 @@
 group 'Gandalfware'
 version '0.0'
 
-apply plugin: 'java'
+// Application plugin lets the jar be run by default
+apply plugin:'application'
+mainClassName = "Ainur"
 
 sourceCompatibility = 1.8
 
@@ -12,3 +14,6 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+// Allows jar to be executed without specifying classpath
+jar.manifest.attributes 'Main-Class': mainClassName
