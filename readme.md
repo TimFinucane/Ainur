@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/TimFinucane/Ainur/blob/master/docs/img/logo.jpg"><br><br>
+  <img src="https://github.com/TimFinucane/Ainur/blob/master/docs/images/logo.jpg"><br><br>
 </div>
 -----------------
 
