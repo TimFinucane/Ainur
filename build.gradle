@@ -1,4 +1,4 @@
-group 'company-placeholder'
+group 'Gandalfware'
 version '0.0'
 
 apply plugin: 'java'
