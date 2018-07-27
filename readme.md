@@ -7,7 +7,7 @@
 
 | **`Build`** |
 |-----------------|
-| [![Build Status](https://tim-finucane.com/jenkins/job/scheduler/lastBuild/badge/icon)](https://tim-finucane.com/jenkins/job/scheduler/lastBuild/) |
+| [![Build Status](https://tim-finucane.com/jenkins/job/ainur/job/Ainur/job/master/badge/icon)](https://tim-finucane.com/jenkins/job/ainur/job/Ainur/job/master/) |
 
 **Ainur** is a solution for parallel task scheduling problem, inspired by the tale of the Lord of the Rings.
 
