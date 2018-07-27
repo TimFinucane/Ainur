@@ -5,36 +5,36 @@ package common.graph;
  */
 public class Edge {
 
-    private final Node _to;
-    private final Node _from;
+    private final Node _dest;
+    private final Node _origin;
     private final int _cost;
 
     /**
      * Default constructor for an Edge
-     * @param _to destination node
-     * @param _from origin node
-     * @param _cost edge computation cost
+     * @param dest destination node
+     * @param origin origin node
+     * @param cost edge computation cost
      */
-    public Edge(Node _to, Node _from, int _cost) {
-        this._to = _to;
-        this._from = _from;
-        this._cost = _cost;
+    public Edge(Node dest, Node origin, int cost) {
+        _dest = dest;
+        _origin = origin;
+        _cost = cost;
     }
 
     /**
      * Method returns Node at the end of the directed edge
      * @return destination Node
      */
-    public Node getNodeTo() {
-        return _to;
+    public Node getDestinationNode() {
+        return _dest;
     }
 
     /**
      * Method returns Node at start of the directed edge
      * @return origin Node
      */
-    public Node getNodeFrom() {
-        return _from;
+    public Node getOriginNode() {
+        return _origin;
     }
 
     /**

@@ -14,14 +14,14 @@ public class Schedule {
      * @param processors processors for tasks to be scheduled on within this schedule.
      */
     public Schedule(List<Processor> processors) {
-        this._processors = processors;
+        _processors = processors;
     }
 
     /**
      * Returns all the processors used in this Schedule.
      * @return processors in this schedule.
      */
-    public List<Processor> get_processors() {
+    public List<Processor> getProcessors() {
         return _processors;
     }
 }

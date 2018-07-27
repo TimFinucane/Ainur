@@ -16,15 +16,15 @@ public class Task {
      * @param node Node associated to task.
      */
     public Task(int startTime, Node node) {
-        this._startTime = startTime;
-        this._node = node;
+        _startTime = startTime;
+        _node = node;
     }
 
     /**
      * Returns the start time of the execution of the Task
      * @return start time of execution
      */
-    public int get_startTime() {
+    public int getStartTime() {
         return _startTime;
     }
 

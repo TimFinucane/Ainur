@@ -26,15 +26,6 @@ public class Graph {
     }
 
     /**
-     * Returns a list of all the nodes that have no incoming edges, ie all the entry points of the graph.
-     * @return entry point nodes.
-     */
-    // TODO Implement method
-    public List<Node> getEntryPoints(){
-        return null;
-    }
-
-    /**
      * Helper method that populates local variable "_nodes" by generating Nodes
      * @param nodes Map of node labels and their associated computation costs.
      */
@@ -51,12 +42,21 @@ public class Graph {
     }
 
     /**
+     * Returns a list of all the nodes that have no incoming edges, ie all the entry points of the graph.
+     * @return entry point nodes.
+     */
+    // TODO Implement method
+    public List<Node> getEntryPoints(){
+        return null;
+    }
+
+    /**
      * Get all outgoing edges associated to a particular node
      * @param nodeLabel label to reference node
      * @return List of associated outgoing edges to input node
      */
     // TODO Implement method
-    private List<Edge> getOutgoingEdges(String nodeLabel) {
+    public List<Edge> getOutgoingEdges(String nodeLabel) {
         return null;
     }
 
@@ -66,7 +66,7 @@ public class Graph {
      * @return List of associated incoming edges to input node
      */
     // TODO Implement method
-    private List<Edge> getIncomingEdges(String nodeLabel) {
+    public List<Edge> getIncomingEdges(String nodeLabel) {
         return null;
     }
 

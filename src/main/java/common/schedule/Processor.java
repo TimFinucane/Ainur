@@ -21,7 +21,7 @@ public class Processor {
      * Returns all the tasks currently assigned to this processor.
      * @return assigned tasks
      */
-    public List<Task> get_tasks() {
+    public List<Task> getTasks() {
         return _tasks;
     }
 
