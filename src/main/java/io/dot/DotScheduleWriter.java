@@ -13,7 +13,7 @@ public class DotScheduleWriter extends ScheduleWriter {
      * Constructor for ScheduleWriter
      * @param os The output stream to write to.
      */
-    protected DotScheduleWriter(OutputStream os) {
+    public DotScheduleWriter(OutputStream os) {
         super(os);
     }
 
