@@ -21,6 +21,15 @@ public abstract class Algorithm {
     }
 
     /**
+     * Constructor for Algorithm class.
+     * Defaults multithreading to false.
+     * @param processors The number of processors
+     */
+    protected Algorithm(int processors) {
+        this(processors, false);
+    }
+
+    /**
      * Starts the scheduling algorithm.
      * @param graph A graph object representing tasks needing to be scheduled.
      */

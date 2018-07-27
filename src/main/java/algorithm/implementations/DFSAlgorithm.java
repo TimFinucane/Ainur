@@ -16,6 +16,15 @@ public class DFSAlgorithm extends Algorithm {
         super(processors, multithreaded);
     }
 
+    /**
+     * Constructor for DFSAlgorithm class.
+     * Defaults multithreading to false.
+     * @param processors The number of processors
+     */
+    public DFSAlgorithm(int processors) {
+        super(processors);
+    }
+
     // TODO Implement method
     @Override
     public void start(Graph graph) {}
