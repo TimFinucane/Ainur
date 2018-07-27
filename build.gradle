@@ -7,35 +7,12 @@ mainClassName = "Ainur"
 
 sourceCompatibility = 1.8
 
-buildscript {
-    dependencies {
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
-    }
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
-apply plugin: 'java'
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
-apply plugin: 'javafx-gradle-plugin'
-
-jfx {
-    // minimal requirement for jfxJar-task
-    mainClass = 'Ainur'
-
-    // minimal requirement for jfxNative-task
-    vendor = 'Gandalfware'
-
 }
 
 // Allows jar to be executed without specifying classpath
