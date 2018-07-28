@@ -56,7 +56,6 @@ public class Graph {
      * @param node label to reference node
      * @return List of associated outgoing edges to input node
      */
-    // TODO Implement method
     public List<Edge> getOutgoingEdges(Node node) {
         return _outgoingEdges.get(node.getLabel());
     }
@@ -66,7 +65,6 @@ public class Graph {
      * @param node label to reference node
      * @return List of associated incoming edges to input node
      */
-    // TODO Implement method
     public List<Edge> getIncomingEdges(Node node) {
         return _incomingEdges.get(node.getLabel());
     }
