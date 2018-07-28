@@ -21,7 +21,7 @@ public class Schedule {
      * Returns all the processors used in this Schedule.
      * @return processors in this schedule.
      */
-    public List<Processor> get_processors() {
+    public List<Processor> getProcessors() {
         return _processors;
     }
 }

@@ -24,7 +24,7 @@ public class Task {
      * Returns the start time of the execution of the Task
      * @return start time of execution
      */
-    public int get_startTime() {
+    public int getStartTime() {
         return _startTime;
     }
 
