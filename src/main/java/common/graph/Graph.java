@@ -34,8 +34,8 @@ public class Graph {
 
         for( Edge edge : edges )
         {
-            _outgoingEdges.get(edge.getOriginNode().getLabel()).add(edge);
             _incomingEdges.get(edge.getDestinationNode().getLabel()).add(edge);
+            _outgoingEdges.get(edge.getOriginNode().getLabel()).add(edge);
         }
 
         // Find the entry points of the graph and cache them
@@ -58,7 +58,7 @@ public class Graph {
      */
     // TODO Implement method
     public List<Edge> getOutgoingEdges(Node node) {
-        return _outgoingEdges.get(node);
+        return _outgoingEdges.get(node.getLabel());
     }
 
     /**
@@ -68,7 +68,7 @@ public class Graph {
      */
     // TODO Implement method
     public List<Edge> getIncomingEdges(Node node) {
-        return _incomingEdges.get(node);
+        return _incomingEdges.get(node.getLabel());
     }
 
 }
