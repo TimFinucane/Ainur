@@ -1,5 +1,6 @@
-package algorithm;
+package algorithm.implementations;
 
+import algorithm.Algorithm;
 import common.Graph;
 
 /**
