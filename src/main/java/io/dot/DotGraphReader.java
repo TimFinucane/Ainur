@@ -13,7 +13,7 @@ public class DotGraphReader extends GraphReader {
      * Constructor for GraphReader.
      * @param is The InputStream to read from.
      */
-    protected DotGraphReader(InputStream is) {
+    public DotGraphReader(InputStream is) {
         super(is);
     }
 
