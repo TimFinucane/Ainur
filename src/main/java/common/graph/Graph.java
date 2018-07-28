@@ -45,12 +45,10 @@ public class Graph {
     }
 
     /**
-     * Returns a list of all the nodes that have no incoming edges, ie all the entry points of the graph.
-     * @return entry point nodes.
+     * Returns a list of all the nodes that have no incoming edges
      */
-    // TODO Implement method
     public List<Node> getEntryPoints(){
-        return null;
+        return _entryPoints;
     }
 
     /**
@@ -60,7 +58,7 @@ public class Graph {
      */
     // TODO Implement method
     public List<Edge> getOutgoingEdges(Node node) {
-        return null;
+        return _outgoingEdges.get(node);
     }
 
     /**
@@ -70,7 +68,7 @@ public class Graph {
      */
     // TODO Implement method
     public List<Edge> getIncomingEdges(Node node) {
-        return null;
+        return _incomingEdges.get(node);
     }
 
 }
