@@ -1,4 +1,4 @@
-package common;
+package common.graph;
 
 /**
  * Stores information pertaining to a directed edge between two Nodes of a Graph object.
@@ -10,15 +10,15 @@ public class Edge {
     private final int _cost;
 
     /**
-     * General constructor for an Edge object
-     * @param to destination node
-     * @param from origin node
-     * @param cost computation cost
+     * Default constructor for an Edge
+     * @param _to destination node
+     * @param _from origin node
+     * @param _cost edge computation cost
      */
-    public Edge(Node to, Node from, int cost) {
-        this._to = to;
-        this._from = from;
-        this._cost = cost;
+    public Edge(Node _to, Node _from, int _cost) {
+        this._to = _to;
+        this._from = _from;
+        this._cost = _cost;
     }
 
     /**

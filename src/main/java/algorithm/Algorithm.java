@@ -1,7 +1,7 @@
 package algorithm;
 
-import common.Graph;
-import common.Schedule;
+import common.graph.Graph;
+import common.schedule.Schedule;
 
 /**
  *  An abstract class which templates the algorithm to be implemented.

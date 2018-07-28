@@ -1,7 +1,7 @@
 package algorithm.implementations;
 
 import algorithm.Algorithm;
-import common.Graph;
+import common.graph.Graph;
 
 /**
  * A DFS implementation of the Algorithm class.

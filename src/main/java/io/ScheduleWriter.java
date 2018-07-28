@@ -1,6 +1,6 @@
 package io;
 
-import common.Schedule;
+import common.schedule.Schedule;
 
 import java.io.OutputStream;
 

@@ -1,6 +1,6 @@
 package io.dot;
 
-import common.Schedule;
+import common.schedule.Schedule;
 import io.ScheduleWriter;
 
 import java.io.OutputStream;

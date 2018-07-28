@@ -1,6 +1,6 @@
 package io;
 
-import common.Graph;
+import common.graph.Graph;
 
 import java.io.InputStream;
 

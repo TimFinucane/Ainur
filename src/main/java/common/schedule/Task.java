@@ -1,4 +1,6 @@
-package common;
+package common.schedule;
+
+import common.graph.Node;
 
 /**
  * Stores the start time of when a Node from a Graph has been scheduled.

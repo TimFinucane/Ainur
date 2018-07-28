@@ -1,6 +1,6 @@
 package io.dot;
 
-import common.Graph;
+import common.graph.Graph;
 import io.GraphReader;
 
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package common;
+package common.schedule;
 
 import java.util.List;
 
