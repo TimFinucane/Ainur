@@ -35,6 +35,7 @@ jfx {
 
     // minimal requirement for jfxNative-task
     vendor = 'Gandalfware'
+
 }
 
 // Allows jar to be executed without specifying classpath
