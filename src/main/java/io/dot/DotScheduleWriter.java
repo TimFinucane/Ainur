@@ -17,10 +17,6 @@ public class DotScheduleWriter extends ScheduleWriter {
         super(os);
     }
 
-    /**
-     * Writes a schedule to a .dot file.
-     * @param schedule The schedule to write.
-     */
     // TODO Implement method
     @Override
     public void write(Schedule schedule) {}

@@ -5,7 +5,7 @@ import common.Schedule;
 import java.io.OutputStream;
 
 /**
- * An interface for writing schedules to a file.
+ * An abstract class for writing schedules to a file.
  * Inheritors should decide how a schedule is written and what file format is used.
  */
 public abstract class ScheduleWriter {

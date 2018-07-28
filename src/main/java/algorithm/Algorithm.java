@@ -15,7 +15,7 @@ public abstract class Algorithm {
      * @param processors The number of processors.
      * @param multithreaded Whether or not to use multithreading.
      */
-    public Algorithm(int processors, boolean multithreaded) {
+    protected Algorithm(int processors, boolean multithreaded) {
         _processors = processors;
         _multithreaded = multithreaded;
     }
