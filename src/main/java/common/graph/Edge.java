@@ -11,13 +11,13 @@ public class Edge {
 
     /**
      * Default constructor for an Edge
-     * @param dest destination node
      * @param origin origin node
+     * @param dest destination node
      * @param cost edge computation cost
      */
-    public Edge(Node dest, Node origin, int cost) {
-        _dest = dest;
+    public Edge(Node origin, Node dest, int cost) {
         _origin = origin;
+        _dest = dest;
         _cost = cost;
     }
 
