@@ -14,8 +14,8 @@ public class Node {
      * @param label node label
      */
     public Node(int computationCost, String label) {
-        this._computationCost = computationCost;
-        this._label = label;
+        _computationCost = computationCost;
+        _label = label;
     }
 
     /**

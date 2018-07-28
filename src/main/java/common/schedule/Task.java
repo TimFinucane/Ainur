@@ -16,8 +16,8 @@ public class Task {
      * @param node Node associated to task.
      */
     public Task(int startTime, Node node) {
-        this._startTime = startTime;
-        this._node = node;
+        _startTime = startTime;
+        _node = node;
     }
 
     /**

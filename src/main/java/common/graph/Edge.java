@@ -16,9 +16,9 @@ public class Edge {
      * @param cost edge computation cost
      */
     public Edge(Node dest, Node origin, int cost) {
-        this._dest = dest;
-        this._origin = origin;
-        this._cost = cost;
+        _dest = dest;
+        _origin = origin;
+        _cost = cost;
     }
 
     /**

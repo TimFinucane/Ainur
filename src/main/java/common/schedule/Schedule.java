@@ -14,7 +14,7 @@ public class Schedule {
      * @param processors processors for tasks to be scheduled on within this schedule.
      */
     public Schedule(List<Processor> processors) {
-        this._processors = processors;
+        _processors = processors;
     }
 
     /**
