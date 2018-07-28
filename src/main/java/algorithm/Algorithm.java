@@ -3,6 +3,9 @@ package algorithm;
 import common.Graph;
 import common.Schedule;
 
+/**
+ *  An abstract class which templates the algorithm to be implemented.
+ */
 public abstract class Algorithm {
     protected int _processors;
     protected boolean _multithreaded;
