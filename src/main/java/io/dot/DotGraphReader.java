@@ -1,15 +1,12 @@
 package io.dot;
 
+import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import io.GraphReader;
-import sun.misc.IOUtils;
 
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,30 +30,49 @@ public class DotGraphReader extends GraphReader {
 
         String streamText = convertStreamToString(_is);
 
-        List<Node> nodes = getNodes(streamText);
+        Map<String, Node> nodes = getNodes(streamText);
+        List<Edge> edges = getEdges(streamText, nodes);
 
-        Pattern edgePattern = Pattern.compile("\\s*([^s]+?(?=[\\s*|\\-]))\\s*\\-\\>\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
-
-        return null;
+        return new Graph(new ArrayList<>(nodes.values()), edges);
 
     }
 
 
-    private List<Node> getNodes(String string) {
+    private Map<String, Node> getNodes(String string) {
 
         Pattern nodePattern = Pattern.compile("\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
         Matcher m = nodePattern.matcher(string);
-        
-        List<Node> nodes = new ArrayList<Node>();
+
+        Map<String, Node> nodes = new HashMap<>();
 
         while (m.find()) {
             int nodeCost = Integer.parseInt(m.group(2));
             String nodeName = m.group(1);
 
-            nodes.add(new Node(nodeCost, nodeName));
+            nodes.put(nodeName, new Node(nodeCost, nodeName));
         }
 
         return nodes;
+    }
+
+
+    private List<Edge> getEdges(String string, Map<String, Node> nodes) {
+
+        Pattern edgePattern = Pattern.compile("\\s*([^s]+?(?=[\\s*|\\-]))\\s*\\-\\>\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Matcher m = edgePattern.matcher(string);
+
+        List<Edge> edges = new ArrayList<>();
+
+        while (m.find()) {
+            int edgeCost = Integer.parseInt(m.group(3));
+            Node nodeFrom = nodes.get(m.group(1));
+            Node nodeTo = nodes.get(m.group(2));
+
+            edges.add(new Edge(nodeFrom, nodeTo, edgeCost));
+        }
+
+        return edges;
+
     }
 
 
