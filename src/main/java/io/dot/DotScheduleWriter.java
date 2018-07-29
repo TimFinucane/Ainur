@@ -17,6 +17,7 @@ public class DotScheduleWriter extends ScheduleWriter {
     private final String COMPUTATION_COST_FORMAT = "%d\t [Weight=%d];";
     private final String OUTPUT_FILE_NAME = "output.dot";
     private final String DOT_GRAPH_OPENING = "digraph %d {";
+    private final String DOT_GRAPH_CLOSING = "}\n";
 
     /**
      * Constructor for ScheduleWriter
@@ -45,12 +46,15 @@ public class DotScheduleWriter extends ScheduleWriter {
         }
 
         int processorCount = 0;
+
         for(Processor processor : schedule.getProcessors()){
             pw.write(String.format(DOT_GRAPH_OPENING, processorCount)); // Starting of a digraph
             ListIterator<Task> listIterator = processor.getTasks().listIterator();
+
             while (listIterator.hasNext()){ // Start to write tasks
                 pw.write(String.format(COMPUTATION_COST_FORMAT, listIterator.next().getNode().getLabel(),
                         listIterator.next().getNode().getComputationCost()));
+
                 if (listIterator.hasPrevious()){ // If there is a node before ie dependency, add communication cost
                     pw.write(String.format(COMMUNICATION_COST_FORMAT, listIterator.next().getNode().getLabel(),
                             listIterator.previous().getNode().getLabel(),
@@ -58,6 +62,7 @@ public class DotScheduleWriter extends ScheduleWriter {
                 }
             }
             processorCount++;
+            pw.write(DOT_GRAPH_CLOSING);
         }
 
 
