@@ -13,8 +13,8 @@ import java.util.ListIterator;
  */
 public class DotScheduleWriter extends ScheduleWriter {
 
-    private final String COMMUNICATION_COST_FORMAT = "%s -> %s\t [Weight=%d];\n";
-    private final String COMPUTATION_COST_FORMAT = "%s\t [Weight=%d];\n";
+    private final String COMMUNICATION_COST_FORMAT = "\t%s -> %s\t [Weight=%d];\n";
+    private final String COMPUTATION_COST_FORMAT = "\t%s\t [Weight=%d];\n";
     private final String OUTPUT_FILE_NAME = "output.dot";
     private final String DOT_GRAPH_OPENING = "digraph %d {\n";
     private final String DOT_GRAPH_CLOSING = "}\n";
@@ -56,8 +56,8 @@ public class DotScheduleWriter extends ScheduleWriter {
                         task.getNode().getComputationCost()));
 
                 if (i>0){ // If there is a node before ie dependency, add communication cost
-                    pw.write(String.format(COMMUNICATION_COST_FORMAT, task.getNode().getLabel(),
-                            processor.getTasks().get(i-1).getNode().getLabel(),
+                    pw.write(String.format(COMMUNICATION_COST_FORMAT, processor.getTasks().get(i-1).getNode().getLabel(),
+                            task.getNode().getLabel(),
                             processor.getTasks().get(i-1).getNode().getComputationCost()));
                 }
             }
