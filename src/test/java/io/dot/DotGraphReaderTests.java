@@ -1,4 +1,4 @@
-package common.io.dot;
+package io.dot;
 
 import common.graph.Edge;
 import common.graph.Graph;
