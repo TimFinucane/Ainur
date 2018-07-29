@@ -30,8 +30,8 @@ public class DotGraphReader extends GraphReader {
 
         String streamText = convertStreamToString(_is);
 
-        
-        Pattern nodePattern = Pattern.compile("(\\s*)([^s]+?(?=[\\s*|\\[]))(\\s*\\[\\s*Weight\\s*=\\s*)(\\d+)(\\s*\\]\\s*;)");
+        Pattern nodePattern = Pattern.compile("\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Pattern edgePattern = Pattern.compile("\\s*([^s]+?(?=[\\s*|\\-]))\\s*\\-\\>\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
 
         return null;
 
