@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
 public class DotGraphReaderTests {
@@ -165,6 +166,26 @@ public class DotGraphReaderTests {
         Assert.assertEquals("2", thirdNode.getLabel());
         Assert.assertEquals(secondNode, secondNodeFirstEdge.getOriginNode());
         Assert.assertEquals(thirdNode, secondNodeFirstEdge.getDestinationNode());
+
+    }
+
+    @Test
+    public void testInvalidGraph() {
+
+        // Arrange
+        String text = "\t0\t[Weight=1];" +
+                "\t1\t[Weight=2];" +
+                "\t2\t[Weight=3];" +
+                "\t0 -> 3\t[Weight=4];" +
+                "\t1 -> 2\t[Weight=5];";
+        InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+
+        //Act / Assert
+        GraphReader reader = new DotGraphReader(stream);
+        try {
+            Graph graph = reader.read();
+            Assert.fail();
+        } catch (UncheckedIOException e) { }
 
     }
 
