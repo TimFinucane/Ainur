@@ -27,12 +27,17 @@ public class DotScheduleWriter extends ScheduleWriter {
     public void write(Schedule schedule) {
 
         File output = new File(OUTPUT_FILE_NAME);
+        PrintWriter pw = null;
         try{
-            PrintWriter pw = new PrintWriter(output);
+            pw = new PrintWriter(output);
         } catch (FileNotFoundException e){
             System.out.println(e.getMessage());
         }
-        
+
+        int processorCount = 0;
+        for(Processor processor : schedule.getProcessors()){
+            pw.write(String.format(DOT_GRAPH_OPENING, processorCount));
+        }
 
 
     }
