@@ -13,8 +13,8 @@ import java.util.ListIterator;
  */
 public class DotScheduleWriter extends ScheduleWriter {
 
-    private final String COMMUNICATION_COST_FORMAT = "%d -> %d\t [Weight=%d];";
-    private final String COMPUTATION_COST_FORMAT = "%d\t [Weight=%d];";
+    private final String COMMUNICATION_COST_FORMAT = "%s -> %s\t [Weight=%d];";
+    private final String COMPUTATION_COST_FORMAT = "%s\t [Weight=%d];";
     private final String OUTPUT_FILE_NAME = "output.dot";
     private final String DOT_GRAPH_OPENING = "digraph %d {";
     private final String DOT_GRAPH_CLOSING = "}\n";
@@ -64,7 +64,6 @@ public class DotScheduleWriter extends ScheduleWriter {
             processorCount++;
             pw.write(DOT_GRAPH_CLOSING);
         }
-
-
+        pw.close();
     }
 }
