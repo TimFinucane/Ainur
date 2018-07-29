@@ -5,7 +5,10 @@ import common.graph.Graph;
 import common.graph.Node;
 import io.GraphReader;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.MalformedInputException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,6 +73,10 @@ public class DotGraphReader extends GraphReader {
             int edgeCost = Integer.parseInt(m.group(3));
             Node nodeFrom = nodes.get(m.group(1));
             Node nodeTo = nodes.get(m.group(2));
+
+            if (nodeFrom == null || nodeTo == null) {
+                throw new UncheckedIOException(new IOException("Invalid input graph semantics"));
+            }
 
             edges.add(new Edge(nodeFrom, nodeTo, edgeCost));
         }
