@@ -189,4 +189,32 @@ public class DotGraphReaderTests {
 
     }
 
+    @Test
+    public void testNodesAsCharacters() {
+
+        // Arrange
+        String text = "\ta\t[Weight=1];\n" +
+                "\tb\t[Weight=2];\n" +
+                "\ta\t->\tb\t[Weight=3];";
+        InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+
+        //Act
+        GraphReader reader = new DotGraphReader(stream);
+        Graph graph = reader.read();
+
+        //Assert
+        Node firstNode = graph.getEntryPoints().get(0);
+        Edge firstNodeFirstEdge = graph.getOutgoingEdges(firstNode).get(0);
+        Node secondNode = firstNodeFirstEdge.getDestinationNode();
+
+        Assert.assertEquals("a", firstNode.getLabel());
+        Assert.assertEquals(1, firstNode.getComputationCost());
+        Assert.assertEquals("b", secondNode.getLabel());
+        Assert.assertEquals(2, secondNode.getComputationCost());
+        Assert.assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
+        Assert.assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
+        Assert.assertEquals(3, firstNodeFirstEdge.getCost());
+
+    }
+
 }
