@@ -24,7 +24,6 @@ public class DotGraphReader extends GraphReader {
 
     }
 
-    // TODO Implement method
     @Override
     public Graph read() {
 
@@ -40,7 +39,8 @@ public class DotGraphReader extends GraphReader {
 
     private Map<String, Node> getNodes(String string) {
 
-        Pattern nodePattern = Pattern.compile("\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        // TODO: Enable node names to be non integer
+        Pattern nodePattern = Pattern.compile("(?<![\\s*|\\>])\\s*([\\d+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
         Matcher m = nodePattern.matcher(string);
 
         Map<String, Node> nodes = new HashMap<>();
@@ -56,9 +56,11 @@ public class DotGraphReader extends GraphReader {
     }
 
 
+    // TODO: Add error checking
     private List<Edge> getEdges(String string, Map<String, Node> nodes) {
 
-        Pattern edgePattern = Pattern.compile("\\s*([^s]+?(?=[\\s*|\\-]))\\s*\\-\\>\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        // TODO: should node names be able to be strings as well
+        Pattern edgePattern = Pattern.compile("\\s*([\\d+])\\s*\\-\\>\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
         Matcher m = edgePattern.matcher(string);
 
         List<Edge> edges = new ArrayList<>();
