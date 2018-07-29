@@ -6,6 +6,7 @@ import common.schedule.Task;
 import io.ScheduleWriter;
 
 import java.io.*;
+import java.util.ListIterator;
 
 /**
  * This class writes a schedule to a .dot file format.
@@ -46,9 +47,17 @@ public class DotScheduleWriter extends ScheduleWriter {
         int processorCount = 0;
         for(Processor processor : schedule.getProcessors()){
             pw.write(String.format(DOT_GRAPH_OPENING, processorCount)); // Starting of a digraph
-            for (Task task : processor.getTasks()){
-                pw.write(String.format(COMPUTATION_COST_FORMAT, task.getNode().getLabel()));
+            ListIterator<Task> listIterator = processor.getTasks().listIterator();
+            while (listIterator.hasNext()){ // Start to write tasks
+                pw.write(String.format(COMPUTATION_COST_FORMAT, listIterator.next().getNode().getLabel(),
+                        listIterator.next().getNode().getComputationCost()));
+                if (listIterator.hasPrevious()){ // If there is a node before ie dependency, add communication cost
+                    pw.write(String.format(COMMUNICATION_COST_FORMAT, listIterator.next().getNode().getLabel(),
+                            listIterator.previous().getNode().getLabel(),
+                            listIterator.previous().getNode().getComputationCost()));
+                }
             }
+            processorCount++;
         }
 
 
