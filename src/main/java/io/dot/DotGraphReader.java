@@ -27,7 +27,7 @@ public class DotGraphReader extends GraphReader {
 
     }
 
-    // TODO: add exception throwing if not in right format
+    // TODO: Make node labels able to be more than one character long?
     @Override
     public Graph read() {
 
@@ -43,8 +43,7 @@ public class DotGraphReader extends GraphReader {
 
     private Map<String, Node> getNodes(String string) {
 
-        // TODO: Enable node names to be non integer
-        Pattern nodePattern = Pattern.compile("(?<![\\s*|\\>])\\s*([\\d+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Pattern nodePattern = Pattern.compile("(?<![\\s*|\\>])\\s*([\\w+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
         Matcher m = nodePattern.matcher(string);
 
         Map<String, Node> nodes = new HashMap<>();
@@ -60,11 +59,9 @@ public class DotGraphReader extends GraphReader {
     }
 
 
-    // TODO: Add error checking
     private List<Edge> getEdges(String string, Map<String, Node> nodes) {
 
-        // TODO: should node names be able to be strings as well
-        Pattern edgePattern = Pattern.compile("\\s*([\\d+])\\s*\\-\\>\\s*([^s]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Pattern edgePattern = Pattern.compile("\\s*([\\w+])\\s*\\-\\>\\s*([^w]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
         Matcher m = edgePattern.matcher(string);
 
         List<Edge> edges = new ArrayList<>();
