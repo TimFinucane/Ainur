@@ -43,14 +43,20 @@ public class DotGraphReader extends GraphReader {
 
     private Map<String, Node> getNodes(String string) {
 
+        // (?<![\s*|\>])                  :     Negative lookbehind to make sure no whitespace or '>' appears before matched string
+        //                                      which ensures is a node not an edge
+        // \s*([\w+])\s*                  :     Any whitespace, any alpha-numeric characters with node label as group 1, any whitespace
+        // \[\s*Weight\s*=\s*(\d+)\s*\]   :     String in form of [Weight=?] with ?=node weight as group 2, any whitespace between
+        //                                      [, Weight, =, ?, ] allowed.
+        // /s*;                           :     Any whitespace followed by semicolon
         Pattern nodePattern = Pattern.compile("(?<![\\s*|\\>])\\s*([\\w+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
-        Matcher m = nodePattern.matcher(string);
+        Matcher m = nodePattern.matcher(string); // Match pattern to input
 
-        Map<String, Node> nodes = new HashMap<>();
+        Map<String, Node> nodes = new HashMap<>(); // Use hash map for edge nodes lookup later
 
         while (m.find()) {
-            int nodeCost = Integer.parseInt(m.group(2));
-            String nodeName = m.group(1);
+            int nodeCost = Integer.parseInt(m.group(2)); // Cost
+            String nodeName = m.group(1);  // Label
 
             nodes.put(nodeName, new Node(nodeCost, nodeName));
         }
@@ -61,17 +67,25 @@ public class DotGraphReader extends GraphReader {
 
     private List<Edge> getEdges(String string, Map<String, Node> nodes) {
 
+        // \s*([\w+])\s*                  :     Any whitespace, any alpha-numeric characters with node label as group 1, any whitespace
+        // \-\>\s*                        :     String in form of -> followed by any whitespace
+        // ([^w]+?(?=[\s*|\[]))           :     Any alpha-numeric characters with node label as group 2 on condition they are followed
+        //                                      by either whitespace or a '[' (prevents misreading of sequential lines)
+        // \s*                            :     Any whitespace
+        // \[\s*Weight\s*=\s*(\d+)\s*\]   :     String in form of [Weight=?] with ?=node weight as group 3, any whitespace between
+        //                                      [, Weight, =, ?, ] allowed.
+        // /s*;                           :     Any whitespace followed by semicolon
         Pattern edgePattern = Pattern.compile("\\s*([\\w+])\\s*\\-\\>\\s*([^w]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
-        Matcher m = edgePattern.matcher(string);
+        Matcher m = edgePattern.matcher(string); // Match pattern to input
 
         List<Edge> edges = new ArrayList<>();
 
         while (m.find()) {
-            int edgeCost = Integer.parseInt(m.group(3));
-            Node nodeFrom = nodes.get(m.group(1));
-            Node nodeTo = nodes.get(m.group(2));
+            int edgeCost = Integer.parseInt(m.group(3)); // Cost
+            Node nodeFrom = nodes.get(m.group(1)); // Origin node label
+            Node nodeTo = nodes.get(m.group(2)); // Destination node label
 
-            if (nodeFrom == null || nodeTo == null) {
+            if (nodeFrom == null || nodeTo == null) { // Some node does not exist for given edge, invalid graph
                 throw new UncheckedIOException(new IOException("Invalid input graph semantics"));
             }
 
