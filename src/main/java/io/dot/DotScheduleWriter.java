@@ -17,7 +17,7 @@ public class DotScheduleWriter extends ScheduleWriter {
     private final String COMPUTATION_COST_FORMAT = "\t%s\t [Weight=%d];\n";
     private final String OUTPUT_FILE_NAME = "output.dot";
     private final String DOT_GRAPH_OPENING = "digraph %d {\n";
-    private final String DOT_GRAPH_CLOSING = "}\n";
+    private final String DOT_GRAPH_CLOSING = "}\n\n";
 
     /**
      * Constructor for ScheduleWriter
@@ -58,7 +58,11 @@ public class DotScheduleWriter extends ScheduleWriter {
                 if (i>0){ // If there is a node before ie dependency, add communication cost
                     pw.write(String.format(COMMUNICATION_COST_FORMAT, processor.getTasks().get(i-1).getNode().getLabel(),
                             task.getNode().getLabel(),
-                            processor.getTasks().get(i-1).getNode().getComputationCost()));
+                            // Get the communication cost by finding the difference of that last tasks end time and
+                            // the current tasks start time
+                            ((task.getStartTime())-
+                                    (processor.getTasks().get(i-1).getStartTime()+processor.getTasks().get(i-1).getNode().getComputationCost()))
+                            ));
                 }
             }
             processorCount++;
