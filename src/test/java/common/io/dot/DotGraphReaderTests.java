@@ -37,7 +37,7 @@ public class DotGraphReaderTests {
         // Arrange
         String text = "\t0\t[Weight=1];\n" +
                 "\t1\t[Weight=2];\n" +
-                "\t0 -> 1\t[Weight=3];";
+                "\t0\t->\t1\t[Weight=3];";
         InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
 
         //Act
@@ -84,8 +84,8 @@ public class DotGraphReaderTests {
         // Arrange
         String text = "0\t [Weight=1];\n" +
                 "\t1\t [Weight=2];" +
-                "\t2\t [Weight=3];" +
                 "\t0 -> 1\t[Weight=4];" +
+                "\t2\t [Weight=3];" +
                 "\t0 -> 2\t[Weight=5];";
         InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
 
@@ -105,6 +105,66 @@ public class DotGraphReaderTests {
         Assert.assertEquals(2, secondNode.getComputationCost());
         Assert.assertEquals("2", thirdNode.getLabel());
         Assert.assertEquals(3, thirdNode.getComputationCost());
+
+    }
+
+    @Test
+    public void testTwoNodesDeepGraph() {
+
+        // Arrange
+        String text = "\t0\t[Weight=1];" +
+                "\t1\t[Weight=2];" +
+                "\t2\t[Weight=3];" +
+                "\t0 -> 1\t[Weight=4];" +
+                "\t1 -> 2\t[Weight=5];";
+        InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+
+        //Act
+        GraphReader reader = new DotGraphReader(stream);
+        Graph graph = reader.read();
+
+        // Assert
+        Node firstNode = graph.getEntryPoints().get(0);
+        Edge firstNodeFirstEdge = graph.getOutgoingEdges(firstNode).get(0);
+        Node secondNode = firstNodeFirstEdge.getDestinationNode();
+        Edge secondNodeFirstEdge = graph.getOutgoingEdges(secondNode).get(0);
+        Node thirdNode = secondNodeFirstEdge.getDestinationNode();
+        Assert.assertEquals("0", firstNode.getLabel());
+        Assert.assertEquals("1", secondNode.getLabel());
+        Assert.assertEquals("2", thirdNode.getLabel());
+        Assert.assertEquals(4, firstNodeFirstEdge.getCost());
+        Assert.assertEquals(5, secondNodeFirstEdge.getCost());
+        Assert.assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
+        Assert.assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
+        Assert.assertEquals(secondNode, secondNodeFirstEdge.getOriginNode());
+        Assert.assertEquals(thirdNode, secondNodeFirstEdge.getDestinationNode());
+
+    }
+
+    @Test
+    public void testGraphWithMultipleEntryPoints() {
+
+        // Arrange
+        String text = "\t0\t[Weight=1];" +
+                "\t1\t[Weight=2];" +
+                "\t2\t[Weight=3];" +
+                "\t1 -> 2\t[Weight=4];";
+        InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+
+        //Act
+        GraphReader reader = new DotGraphReader(stream);
+        Graph graph = reader.read();
+
+        // Assert
+        Node firstNode = graph.getEntryPoints().get(0);
+        Node secondNode = graph.getEntryPoints().get(1);
+        Edge secondNodeFirstEdge = graph.getOutgoingEdges(secondNode).get(0);
+        Node thirdNode = secondNodeFirstEdge.getDestinationNode();
+        Assert.assertEquals("0", firstNode.getLabel());
+        Assert.assertEquals("1", secondNode.getLabel());
+        Assert.assertEquals("2", thirdNode.getLabel());
+        Assert.assertEquals(secondNode, secondNodeFirstEdge.getOriginNode());
+        Assert.assertEquals(thirdNode, secondNodeFirstEdge.getDestinationNode());
 
     }
 

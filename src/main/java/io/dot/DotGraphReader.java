@@ -24,6 +24,7 @@ public class DotGraphReader extends GraphReader {
 
     }
 
+    // TODO: add exception throwing if not in right format
     @Override
     public Graph read() {
 
