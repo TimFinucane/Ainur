@@ -15,6 +15,9 @@ import java.nio.charset.StandardCharsets;
 
 public class DotGraphReaderTests {
 
+    /**
+     * Tests a graph with single node only, ensures minimum size non empty graph can be parsed.
+     */
     @Test
     public void testSingleNodeGraph() {
 
@@ -32,6 +35,9 @@ public class DotGraphReaderTests {
         Assert.assertEquals(entryNode.getComputationCost(), 1);
     }
 
+    /**
+     * Tests that edges work correctly in referencing origin and destination nodes.
+     */
     @Test
     public void testTwoNodeGraphWithEdge() {
 
@@ -60,12 +66,15 @@ public class DotGraphReaderTests {
 
     }
 
+    /**
+     * Tests that file with header content can still be parsed.
+     */
     @Test
-    public void testTextWithNoise() {
+    public void testTextWithHeader() {
 
-        String text = "digraph \"OutTree-Balanced-MaxBf-3_Nodes_11_CCR_0.1_WeightType_Random\" " +
+        String text = "digraph \"OutTree-Balanced-MaxBf-3_Nodes_11_CCR_0.1_WeightType_Random\" { " +
                 "\t0\t [Weight=1];" +
-                "{";
+                "}";
         InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
 
         //Act
@@ -79,6 +88,9 @@ public class DotGraphReaderTests {
 
     }
 
+    /**
+     * Tests that graph containing node with two outgoing edges is correctly parsed.
+     */
     @Test
     public void testNodeWithTwoEdges() {
 
@@ -109,6 +121,9 @@ public class DotGraphReaderTests {
 
     }
 
+    /**
+     * Tests graph containing node with both ingoing and outgoing edges can be parsed.
+     */
     @Test
     public void testTwoNodesDeepGraph() {
 
@@ -142,6 +157,9 @@ public class DotGraphReaderTests {
 
     }
 
+    /**
+     * Test that graph with multiple nodes with no incoming edge can be parsed.
+     */
     @Test
     public void testGraphWithMultipleEntryPoints() {
 
@@ -169,6 +187,9 @@ public class DotGraphReaderTests {
 
     }
 
+    /**
+     * Tests that semantically invalid graph correctly throws UncheckedIOException.
+     */
     @Test
     public void testInvalidGraph() {
 
@@ -189,6 +210,9 @@ public class DotGraphReaderTests {
 
     }
 
+    /**
+     * Tests that single character long non-numeric node labels can be parsed.
+     */
     @Test
     public void testNodesAsCharacters() {
 

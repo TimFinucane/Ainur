@@ -43,13 +43,13 @@ public class DotGraphReader extends GraphReader {
 
     private Map<String, Node> getNodes(String string) {
 
-        // (?<![\s*|\>])                  :     Negative lookbehind to make sure no whitespace or '>' appears before matched string
+        // (?<![\s*|>])                   :     Negative lookbehind to make sure no whitespace or '>' appears before matched string
         //                                      which ensures is a node not an edge
         // \s*([\w+])\s*                  :     Any whitespace, any alpha-numeric characters with node label as group 1, any whitespace
         // \[\s*Weight\s*=\s*(\d+)\s*\]   :     String in form of [Weight=?] with ?=node weight as group 2, any whitespace between
         //                                      [, Weight, =, ?, ] allowed.
         // /s*;                           :     Any whitespace followed by semicolon
-        Pattern nodePattern = Pattern.compile("(?<![\\s*|\\>])\\s*([\\w+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Pattern nodePattern = Pattern.compile("(?<![\\s*|>])\\s*([\\w+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
         Matcher m = nodePattern.matcher(string); // Match pattern to input
 
         Map<String, Node> nodes = new HashMap<>(); // Use hash map for edge nodes lookup later
@@ -82,8 +82,8 @@ public class DotGraphReader extends GraphReader {
 
         while (m.find()) {
             int edgeCost = Integer.parseInt(m.group(3)); // Cost
-            Node nodeFrom = nodes.get(m.group(1)); // Origin node label
-            Node nodeTo = nodes.get(m.group(2)); // Destination node label
+            Node nodeFrom = nodes.get(m.group(1)); // Origin node label, get from nodes map
+            Node nodeTo = nodes.get(m.group(2)); // Destination node label, get from nodes map
 
             if (nodeFrom == null || nodeTo == null) { // Some node does not exist for given edge, invalid graph
                 throw new UncheckedIOException(new IOException("Invalid input graph semantics"));
