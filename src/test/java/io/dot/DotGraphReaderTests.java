@@ -241,6 +241,9 @@ public class DotGraphReaderTests {
 
     }
 
+    /**
+     * This tests for the ability to have node labels as multi-character strings
+     */
     @Test
     public void testNodesAsMultiCharacterStrings() {
 
@@ -269,6 +272,35 @@ public class DotGraphReaderTests {
 
     }
 
-    // Another test for edge starting the file
+    /**
+     * Tests that reading works properly with an edge beginning the file
+     */
+    @Test
+    public void testTextStartingWithEdge() {
+
+        // Arrange
+        String text = "\t0\t->\t1\t[Weight=3];" +
+                "\t0\t[Weight=1];\n" +
+                "\t1\t[Weight=2];\n";
+        InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+
+        //Act
+        GraphReader reader = new DotGraphReader(stream);
+        Graph graph = reader.read();
+
+        //Assert
+        Node firstNode = graph.getEntryPoints().get(0);
+        Edge firstNodeFirstEdge = graph.getOutgoingEdges(firstNode).get(0);
+        Node secondNode = firstNodeFirstEdge.getDestinationNode();
+
+        Assert.assertEquals("0", firstNode.getLabel());
+        Assert.assertEquals(1, firstNode.getComputationCost());
+        Assert.assertEquals("1", secondNode.getLabel());
+        Assert.assertEquals(2, secondNode.getComputationCost());
+        Assert.assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
+        Assert.assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
+        Assert.assertEquals(3, firstNodeFirstEdge.getCost());
+
+    }
 
 }
