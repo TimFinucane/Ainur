@@ -15,7 +15,6 @@ public class DotScheduleWriter extends ScheduleWriter {
 
     private final String COMMUNICATION_COST_FORMAT = "\t%s -> %s\t [Weight=%d];\n";
     private final String COMPUTATION_COST_FORMAT = "\t%s\t [Weight=%d];\n";
-    private final String OUTPUT_FILE_NAME = "output.dot";
     private final String DOT_GRAPH_OPENING = "digraph \"Processor#%d\" {\n";
     private final String DOT_GRAPH_CLOSING = "}\n\n";
 
@@ -36,8 +35,7 @@ public class DotScheduleWriter extends ScheduleWriter {
      */
     public void write(Schedule schedule) {
 
-        PrintWriter pw = null;
-        pw = new PrintWriter(_os);
+        PrintWriter pw = new PrintWriter(_os);
 
 
         int processorCount = 0;
