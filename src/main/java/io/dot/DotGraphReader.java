@@ -46,10 +46,10 @@ public class DotGraphReader extends GraphReader {
         // (?<=;|^|\{)                    :     Positive lookbehind ensuring that preceding the string is either a ';', '{'
         //                                      or '^' (beginning of string)
         // \s*([\w+])\s*                  :     Any whitespace, any alpha-numeric characters with node label as group 1, any whitespace
-        // \[\s*Weight\s*=\s*(\d+)\s*\]   :     String in form of [Weight=?] with ?=node weight as group 2, any whitespace between
+        // \[\s*Weight\s*=\s*(\d+)\s*]   :     String in form of [Weight=?] with ?=node weight as group 2, any whitespace between
         //                                      [, Weight, =, ?, ] allowed.
         // /s*;                           :     Any whitespace followed by semicolon
-        Pattern nodePattern = Pattern.compile("(?<=;|^|\\{)\\s*([\\w+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Pattern nodePattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*]\\s*;");
         Matcher m = nodePattern.matcher(string); // Match pattern to input
 
         Map<String, Node> nodes = new HashMap<>(); // Use hash map for edge nodes lookup later
@@ -70,12 +70,12 @@ public class DotGraphReader extends GraphReader {
         // (?<=;|^|\{)                    :     Positive lookbehind ensuring that preceding the string is either a ';', '{'
         //                                      or '^' (beginning of string)
         // \s*([\w+])\s*                  :     Any whitespace, any alpha-numeric characters with node label as group 1, any whitespace
-        // \-\>\s*                        :     String in form of -> followed by any whitespace
+        // ->\s*                          :     String in form of -> followed by any whitespace
         // ([\w+])\s*                     :     Any alpha-numeric characters with node label as group 2, any whitespace
-        // \[\s*Weight\s*=\s*(\d+)\s*\]   :     String in form of [Weight=?] with ?=node weight as group 3, any whitespace between
+        // \[\s*Weight\s*=\s*(\d+)\s*]    :     String in form of [Weight=?] with ?=node weight as group 3, any whitespace between
         //                                      [, Weight, =, ?, ] allowed.
         // /s*;                           :     Any whitespace followed by semicolon
-        Pattern edgePattern = Pattern.compile("(?<=;|^|\\{)\\s*([\\w+])\\s*\\-\\>\\s*([\\w+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Pattern edgePattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*->\\s*(\\w+)\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*]\\s*;");
         Matcher m = edgePattern.matcher(string); // Match pattern to input
 
         List<Edge> edges = new ArrayList<>();
