@@ -1,10 +1,11 @@
-package io;
+package io.dot;
 
 import common.graph.Edge;
 import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
+import io.ScheduleWriter;
 import io.dot.DotScheduleWriter;
 import org.junit.Assert;
 import org.junit.Before;
