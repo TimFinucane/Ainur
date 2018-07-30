@@ -27,7 +27,17 @@ public class DotGraphReader extends GraphReader {
 
     }
 
-    // TODO: Make node labels able to be more than one character long?
+
+    /**
+     * Reads an input stream  formatted in .dot format. This method parses the text into a common.Graph type,
+     * with all appropriate node labels and costs mapped over, as well as edge origin, destination and weight.
+     * The Method assumes either the test starts immediately with the .dot content OR starts with a header in the
+     * for of:
+     * <header> {
+     *     ...dot content...
+     * }
+     * @return graph : Graph
+     */
     @Override
     public Graph read() {
 
@@ -43,13 +53,13 @@ public class DotGraphReader extends GraphReader {
 
     private Map<String, Node> getNodes(String string) {
 
-        // (?<![\s*|>])                   :     Negative lookbehind to make sure no whitespace or '>' appears before matched string
-        //                                      which ensures is a node not an edge
+        // (?<=;|^|\{)                    :     Positive lookbehind ensuring that preceding the string is either a ';', '{'
+        //                                      or '^' (beginning of string)
         // \s*([\w+])\s*                  :     Any whitespace, any alpha-numeric characters with node label as group 1, any whitespace
-        // \[\s*Weight\s*=\s*(\d+)\s*\]   :     String in form of [Weight=?] with ?=node weight as group 2, any whitespace between
+        // \[\s*Weight\s*=\s*(\d+)\s*]   :     String in form of [Weight=?] with ?=node weight as group 2, any whitespace between
         //                                      [, Weight, =, ?, ] allowed.
         // /s*;                           :     Any whitespace followed by semicolon
-        Pattern nodePattern = Pattern.compile("(?<![\\s*|>])\\s*([\\w+])\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Pattern nodePattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*]\\s*;");
         Matcher m = nodePattern.matcher(string); // Match pattern to input
 
         Map<String, Node> nodes = new HashMap<>(); // Use hash map for edge nodes lookup later
@@ -67,15 +77,15 @@ public class DotGraphReader extends GraphReader {
 
     private List<Edge> getEdges(String string, Map<String, Node> nodes) {
 
+        // (?<=;|^|\{)                    :     Positive lookbehind ensuring that preceding the string is either a ';', '{'
+        //                                      or '^' (beginning of string)
         // \s*([\w+])\s*                  :     Any whitespace, any alpha-numeric characters with node label as group 1, any whitespace
-        // \-\>\s*                        :     String in form of -> followed by any whitespace
-        // ([^w]+?(?=[\s*|\[]))           :     Any alpha-numeric characters with node label as group 2 on condition they are followed
-        //                                      by either whitespace or a '[' (prevents misreading of sequential lines)
-        // \s*                            :     Any whitespace
-        // \[\s*Weight\s*=\s*(\d+)\s*\]   :     String in form of [Weight=?] with ?=node weight as group 3, any whitespace between
+        // ->\s*                          :     String in form of -> followed by any whitespace
+        // ([\w+])\s*                     :     Any alpha-numeric characters with node label as group 2, any whitespace
+        // \[\s*Weight\s*=\s*(\d+)\s*]    :     String in form of [Weight=?] with ?=node weight as group 3, any whitespace between
         //                                      [, Weight, =, ?, ] allowed.
         // /s*;                           :     Any whitespace followed by semicolon
-        Pattern edgePattern = Pattern.compile("\\s*([\\w+])\\s*\\-\\>\\s*([^w]+?(?=[\\s*|\\[]))\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*\\]\\s*;");
+        Pattern edgePattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*->\\s*(\\w+)\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*]\\s*;");
         Matcher m = edgePattern.matcher(string); // Match pattern to input
 
         List<Edge> edges = new ArrayList<>();
