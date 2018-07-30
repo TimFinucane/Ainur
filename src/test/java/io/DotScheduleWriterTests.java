@@ -6,9 +6,11 @@ import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import io.dot.DotScheduleWriter;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -40,12 +42,20 @@ public class DotScheduleWriterTests {
         Schedule schedule = new Schedule(processorList);
 
         // Test
-        ScheduleWriter dsw = new DotScheduleWriter(new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {}
-        });
+        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+        ScheduleWriter dsw = new DotScheduleWriter(bs);
         dsw.write(schedule);
 
+        // Assert
+        String expected =
+                "digraph \"Processor#0\" {\n" +
+                        "\t1\t [Weight=1];\n" +
+                        "\t2\t [Weight=2];\n" +
+                        "\t1 -> 2\t [Weight=1];\n" +
+                        "\t3\t [Weight=1];\n" +
+                        "\t2 -> 3\t [Weight=2];\n" +
+                        "}\n\n";
+        Assert.assertEquals(expected, bs.toString());
     }
 
     @Test
@@ -79,10 +89,27 @@ public class DotScheduleWriterTests {
         Schedule schedule = new Schedule(processorList);
 
         // Test
-        ScheduleWriter dsw = new DotScheduleWriter(new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {   }
-        });
+        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+        ScheduleWriter dsw = new DotScheduleWriter(bs);
         dsw.write(schedule);
+
+        // Assert
+        String expected =
+                "digraph \"Processor#0\" {\n" +
+                        "\t1\t [Weight=2];\n" +
+                        "\t2\t [Weight=3];\n" +
+                        "\t1 -> 2\t [Weight=2];\n" +
+                        "\t3\t [Weight=1];\n" +
+                        "\t2 -> 3\t [Weight=2];\n" +
+                        "}\n" +
+                        "\n" +
+                        "digraph \"Processor#1\" {\n" +
+                        "\t4\t [Weight=2];\n" +
+                        "\t5\t [Weight=2];\n" +
+                        "\t4 -> 5\t [Weight=1];\n" +
+                        "\t6\t [Weight=1];\n" +
+                        "\t5 -> 6\t [Weight=2];\n" +
+                        "}\n\n";
+        Assert.assertEquals(expected, bs.toString());
     }
 }
