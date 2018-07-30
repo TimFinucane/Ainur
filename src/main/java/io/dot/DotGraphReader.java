@@ -27,7 +27,17 @@ public class DotGraphReader extends GraphReader {
 
     }
 
-    // TODO: Make node labels able to be more than one character long?
+
+    /**
+     * Reads an input stream  formatted in .dot format. This method parses the text into a common.Graph type,
+     * with all appropriate node labels and costs mapped over, as well as edge origin, destination and weight.
+     * The Method assumes either the test starts immediately with the .dot content OR starts with a header in the
+     * for of:
+     * <header> {
+     *     ...dot content...
+     * }
+     * @return graph : Graph
+     */
     @Override
     public Graph read() {
 
