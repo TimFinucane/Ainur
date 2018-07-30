@@ -18,9 +18,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class tests DotScheduleWriter by making schedules and getting the writer to write them out to file
+ * or in this case, a string to compare with
+ */
 public class DotScheduleWriterTests {
 
     @Test
+    /**
+     * This test tests is one schedule can be written to file correctly
+     */
     public void testBasicLinearOneProcessorSchedule(){
         // Set up
         Processor processor = new Processor();
@@ -59,7 +66,12 @@ public class DotScheduleWriterTests {
     }
 
     @Test
+    /**
+     * This test tests if more than one schedule ie. more than one processor can be written out to file
+     */
     public void testBasicLinearTwoProcessorSchedule(){
+
+        //Set up
         List<Processor> processorList = new ArrayList<>();
         Processor processor1 = new Processor();
         processor1.addTask(new Task(0,
