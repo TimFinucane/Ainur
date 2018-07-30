@@ -95,7 +95,6 @@ public class DotScheduleWriterTests {
         processor2.addTask(new Task(8,
                 new Node(1, "6")
         ));
-        List<Processor> processorList2 = new ArrayList<>();
         processorList.add(processor2);
 
         Schedule schedule = new Schedule(processorList);
