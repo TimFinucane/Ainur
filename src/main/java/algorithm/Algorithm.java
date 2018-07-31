@@ -12,12 +12,16 @@ import java.util.List;
  *  An abstract class which templates the algorithm to be implemented.
  */
 public abstract class Algorithm {
-    protected Schedule bestSchedule; // Protected as it is settable by subclasses. TODO: thread safety
+
+    protected Schedule _bestSchedule = null; // Is settable by subclasses. TODO: thread safety
+    protected boolean _isComplete = false;
 
     protected int _processors;
     protected boolean _multithreaded;
-    protected Arborist _arborist;
-    protected LowerBound _lowerBound;
+
+    // Private as not modifiable by subclasses, use through prune() and estimate()
+    private Arborist _arborist;
+    private LowerBound _lowerBound;
 
     /**
      * Constructor for Algorithm class.
@@ -52,7 +56,7 @@ public abstract class Algorithm {
      */
     // TODO Implement method
     // This method is up for debate. May not be needed.
-    public boolean isComplete() { return false; }
+    public boolean isComplete() { return _isComplete; }
 
     /**
      * Lets the caller know the current best schedule the algorithm has.
@@ -60,7 +64,7 @@ public abstract class Algorithm {
      * If the implementation has not yet come up with a best schedule, it will be null.
      * @return The current best schedule. May be null.
      */
-    public Schedule getCurrentBest() { return bestSchedule; }
+    public Schedule getCurrentBest() { return _bestSchedule; }
 
     // PROTECTED METHODS
 
