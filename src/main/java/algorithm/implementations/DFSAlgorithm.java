@@ -1,6 +1,8 @@
 package algorithm.implementations;
 
 import algorithm.Algorithm;
+import algorithm.heuristics.Arborist;
+import algorithm.heuristics.LowerBound;
 import common.graph.Graph;
 
 /**
@@ -12,8 +14,8 @@ public class DFSAlgorithm extends Algorithm {
      * @param processors The number of processors.
      * @param multithreaded Whether or not to use multithreading.
      */
-    public DFSAlgorithm(int processors, boolean multithreaded) {
-        super(processors, multithreaded);
+    public DFSAlgorithm(int processors, boolean multithreaded, Arborist arborist, LowerBound lowerBound) {
+        super(processors, multithreaded, arborist, lowerBound);
     }
 
     /**
@@ -21,8 +23,8 @@ public class DFSAlgorithm extends Algorithm {
      * Defaults multithreading to false.
      * @param processors The number of processors
      */
-    public DFSAlgorithm(int processors) {
-        super(processors);
+    public DFSAlgorithm(int processors, Arborist arborist, LowerBound lowerBound) {
+        super(processors, false, arborist, lowerBound);
     }
 
     // TODO Implement method
