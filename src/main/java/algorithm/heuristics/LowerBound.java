@@ -4,6 +4,7 @@ import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,6 +28,8 @@ public interface LowerBound {
      * @param schedule
      * @return estimate : int
      */
-    int estimate(Graph graph, Schedule schedule);
+    default int estimate(Graph graph, Schedule schedule){
+        return this.estimate(graph, schedule, new ArrayList<Node>());
+    }
 
 }
