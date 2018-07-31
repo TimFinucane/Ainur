@@ -10,15 +10,6 @@ import common.graph.Graph;
 public class DFSAlgorithm extends Algorithm {
     /**
      * Constructor for DFSAlgorithm class.
-     * @param processors The number of processors.
-     * @param multithreaded Whether or not to use multithreading.
-     */
-    public DFSAlgorithm(int processors, boolean multithreaded, Arborist arborist, LowerBound lowerBound) {
-        super(processors, multithreaded, arborist, lowerBound);
-    }
-
-    /**
-     * Constructor for DFSAlgorithm class.
      * Defaults multithreading to false.
      * @param processors The number of processors
      */
