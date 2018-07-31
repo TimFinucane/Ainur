@@ -1,6 +1,5 @@
-package algorithm.implementations;
+package algorithm;
 
-import algorithm.Algorithm;
 import algorithm.heuristics.Arborist;
 import algorithm.heuristics.LowerBound;
 import common.graph.Graph;
@@ -27,7 +26,14 @@ public class DFSAlgorithm extends Algorithm {
         super(processors, false, arborist, lowerBound);
     }
 
-    // TODO Implement method
+    /**
+     * Starts running the DFS.
+     * N.B. This implementation is NOT multithreaded and will block upon running.
+     * Solution works by exploring avery possible schedule configuration and returning the best one it has found.
+     * Also uses heuristics for faster runtime.
+     *
+     * Schedule is then stored and can be provided by getCurrentBest()
+     */
     @Override
     public void start(Graph graph) {}
 }

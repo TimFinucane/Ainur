@@ -26,10 +26,19 @@ public class Processor {
     }
 
     /**
-     * Adds a task to the processor
+     * Adds a task to the processor in order
      * @param task task to schedule
      */
     public void addTask(Task task){
+        // TODO: Add contract that the tasks are in order
+        // TODO: Currently will throw to protect methods (such as pruners and lower bound estimators) that require this
+        // TODO: Personally I advise keeping the list and using a binary search WITHIN the existing check as these events,
+        // TODO: with the correct pruning algorithms, will be extremely rare (actually they should never happen).
+        if(_tasks.size() > 0 && task.getStartTime() < _tasks.get(_tasks.size() - 1).getStartTime())
+            throw new RuntimeException("Task being added comes before last task in processor." +
+                    "Implement me so that I place the task in the correct position using a binary search where" +
+                    "this exception is thrown!");
+
         _tasks.add(task);
     }
 
