@@ -3,6 +3,9 @@ import org.apache.commons.cli.*;
 
 import java.util.List;
 
+/**
+ *
+ */
 public class Cli {
     private String[] _args;
     boolean _visualise;
@@ -33,6 +36,13 @@ public class Cli {
             e.printStackTrace();
             this.displayUsage();
         }
+    }
+
+    /**
+     * Responsible for starting the scheduling process.
+     */
+    public void startScheduling() {
+
     }
 
     /**
