@@ -10,18 +10,10 @@ public class Ainur {
         String outputFile = null;
 
         // Apache Commons CLI: Definition Stage
-        Options options = new Options();
-
-        options.addOption("p", true, "use <arg> cores for execution in parallel "
-                + "(default is sequential");
-        options.addOption("v", "visualise", false, "visualise the search");
-        options.addOption("o", true, "name of the outputted file. "
-                + "(default is INPUT-output.dot)");
-        options.addOption("h", "help", false, "show help");
+        Options options = establishOptions();
 
         // Apache Commons CLI: Parsing Stage
         DefaultParser clParse = new DefaultParser();
-
         CommandLine cmdLine = clParse.parse(options, args);
 
         // Apache Commons CLI: Interrogation Stage
@@ -47,5 +39,18 @@ public class Ainur {
         }
 
         System.out.println(cmdLine.getArgList());
+    }
+
+    public static Options establishOptions() {
+        Options options = new Options();
+
+        options.addOption("p", true, "use <arg> cores for execution in parallel "
+                + "(default is sequential");
+        options.addOption("v", "visualise", false, "visualise the search");
+        options.addOption("o", true, "name of the outputted file. "
+                + "(default is INPUT-output.dot)");
+        options.addOption("h", "help", false, "show help");
+
+        return options;
     }
 }
