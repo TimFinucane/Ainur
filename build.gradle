@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
 }
 
 // Allows jar to be executed without specifying classpath
