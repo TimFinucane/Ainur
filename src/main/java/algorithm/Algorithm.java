@@ -5,6 +5,7 @@ import algorithm.heuristics.LowerBound;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
+import common.schedule.Task;
 
 import java.util.List;
 
@@ -72,15 +73,18 @@ public abstract class Algorithm {
     // PROTECTED METHODS
     /**
      * Is called by subclass to apply separate pruning algorithm
+     * @see Arborist#prune
      */
-    protected boolean prune(Graph graph, Schedule schedule){
-        return _arborist.prune(graph, schedule);
+    protected boolean prune(Graph graph, Schedule schedule, Task toBeAdded){
+        return _arborist.prune(graph, schedule, toBeAdded);
     }
 
     /**
      * Is called by subclass to apply separate lower bound estimation.
      * One method provides the optional hint nodesToVisit so that the estimator may know the immediately reachable
-     * nodes that follow from the schedule
+     * nodes that follow from the schedule.
+     *
+     * @see LowerBound#estimate
      */
     protected int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit){
         return _lowerBound.estimate(graph, schedule, nodesToVisit);
