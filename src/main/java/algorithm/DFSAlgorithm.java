@@ -1,4 +1,4 @@
-package algorithm.implementations;
+package algorithm;
 
 import algorithm.Algorithm;
 import algorithm.heuristics.Arborist;
