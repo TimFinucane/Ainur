@@ -12,6 +12,8 @@ import java.util.List;
  *  An abstract class which templates the algorithm to be implemented.
  */
 public abstract class Algorithm {
+    protected Schedule bestSchedule; // Protected as it is settable by subclasses. TODO: thread safety
+
     protected int _processors;
     protected boolean _multithreaded;
     protected Arborist _arborist;
@@ -37,7 +39,9 @@ public abstract class Algorithm {
     protected Algorithm(int processors, Arborist arborist, LowerBound lowerBound) { this(processors, false, arborist, lowerBound); }
 
     /**
-     * Starts the scheduling algorithm.
+     * Starts the scheduling algorithm. When complete, the optimal schedule will be available in
+     * getCurrentBest(). Note that before finishing, getCurrentBest() may store schedules, but they will not
+     * necessarily be the most optimal ones.
      * @param graph A graph object representing tasks needing to be scheduled.
      */
     public abstract void start(Graph graph);
@@ -52,10 +56,13 @@ public abstract class Algorithm {
 
     /**
      * Lets the caller know the current best schedule the algorithm has.
-     * @return The current best schedule.
+     * If isComplete() is true (i.e. the algorithm has finished) then this will return the optimal solution
+     * If the implementation has not yet come up with a best schedule, it will be null.
+     * @return The current best schedule. May be null.
      */
-    // TODO Implement method
-    public Schedule getCurrentBest() { return null; }
+    public Schedule getCurrentBest() { return bestSchedule; }
+
+    // PROTECTED METHODS
 
     protected boolean prune(Graph graph, Schedule schedule){
         return _arborist.prune(graph, schedule);
@@ -64,7 +71,6 @@ public abstract class Algorithm {
     protected int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit){
         return _lowerBound.estimate(graph, schedule, nodesToVisit);
     }
-
     protected int estimate(Graph graph, Schedule schedule){
         return _lowerBound.estimate(graph, schedule);
     }
