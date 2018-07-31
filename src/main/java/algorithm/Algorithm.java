@@ -58,7 +58,6 @@ public abstract class Algorithm {
      * Lets the caller know whether or not the algorithm is complete
      * @return True if the algorithm is complete, false otherwise.
      */
-    // TODO Implement method
     // This method is up for debate. May not be needed.
     public boolean isComplete() { return _isComplete; }
 
