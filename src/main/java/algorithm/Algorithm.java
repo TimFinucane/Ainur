@@ -70,11 +70,18 @@ public abstract class Algorithm {
     public Schedule getCurrentBest() { return _bestSchedule; }
 
     // PROTECTED METHODS
-
+    /**
+     * Is called by subclass to apply separate pruning algorithm
+     */
     protected boolean prune(Graph graph, Schedule schedule){
         return _arborist.prune(graph, schedule);
     }
 
+    /**
+     * Is called by subclass to apply separate lower bound estimation.
+     * One method provides the optional hint nodesToVisit so that the estimator may know the immediately reachable
+     * nodes that follow from the schedule
+     */
     protected int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit){
         return _lowerBound.estimate(graph, schedule, nodesToVisit);
     }

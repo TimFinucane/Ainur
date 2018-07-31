@@ -13,7 +13,6 @@ public class IsNotAPruner implements Arborist {
      * @param schedule : Schedule
      * @return boolean : boolean
      */
-    //TODO - implementation
     public boolean prune(Graph graph, Schedule schedule) {
         return false;
     }
