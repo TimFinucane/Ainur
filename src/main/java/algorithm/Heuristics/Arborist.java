@@ -13,6 +13,6 @@ import common.schedule.Schedule;
  */
 public interface Arborist {
 
-    boolean prune(Graph greaph, Schedule schedule);
+    boolean prune(Graph graph, Schedule schedule);
 
 }
