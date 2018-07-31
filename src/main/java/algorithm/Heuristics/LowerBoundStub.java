@@ -11,12 +11,23 @@ import java.util.List;
  */
 public class LowerBoundStub implements LowerBound {
 
-
+    /**
+     * @param graph
+     * @param schedule
+     * @param nodesToVisit
+     * @return
+     */
+    //TODO - implementation
     public int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit) {
         return 0;
     }
 
-
+    /**
+     * @param graph
+     * @param schedule
+     * @return
+     */
+    //TODO - implementation
     public int estimate(Graph graph, Schedule schedule) {
         return 0;
     }
