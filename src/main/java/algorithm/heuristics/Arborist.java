@@ -13,10 +13,13 @@ import common.schedule.Schedule;
  */
 public interface Arborist {
 
-    /**
-     * @param graph : Schedule
+    /** Method returns a boolean to tell algorithm if it should prune or not
+     * @param graph : Graph
+     *              A graph, with root node the current latest node/task added to the schedule
      * @param schedule : Schedule
+     *              A partial schedule which has been built by algorithm so far
      * @return boolean : boolean
+     *              To tell algorithm whether to prune or not
      */
     boolean prune(Graph graph, Schedule schedule);
 
