@@ -18,19 +18,8 @@ public class LowerBoundThatSucks implements LowerBound {
      * @see LowerBound#estimate(Graph, Schedule, List)
      */
     public int estimate(Graph graph, Schedule schedule, List<Node> nextNodes) {
-        int max = 0;
-
-        // Take maximum of all processors
-        for(Processor processor : schedule.getProcessors()) {
-            // Get end of last task in the processor, which we can assure is the last task in the processor.
-            List<Task> tasks = processor.getTasks();
-            Task lastTask = tasks.get(tasks.size() - 1);
-            int endOfLastTask = lastTask.getStartTime() + lastTask.getNode().getComputationCost();
-
-            max = Math.max(max, endOfLastTask);
-        }
-
-        return max;
+        // TODO: Upgrade sucky lower bound to one that at least gets the length of the schedule?
+        return 0;
     }
 
 }
