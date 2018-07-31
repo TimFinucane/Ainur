@@ -7,9 +7,9 @@ public class Cli {
     private String[] _args;
     boolean _visualise;
     int _cores;
-    String _outputFile;
-    Options _options;
-    String _inputFile;
+    private String _outputFile;
+    private Options _options;
+    private String _inputFile;
     int _processors;
 
     public Cli(String[] args) {
