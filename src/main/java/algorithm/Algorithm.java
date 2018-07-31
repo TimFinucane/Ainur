@@ -27,6 +27,8 @@ public abstract class Algorithm {
      * Constructor for Algorithm class.
      * @param processors The number of processors.
      * @param multithreaded Whether or not to use multithreading.
+     * @param arborist The pruning method to be available to the subclass
+     * @param lowerBound The lower bound estimator method to be available to the subclass
      */
     protected Algorithm(int processors, boolean multithreaded, Arborist arborist, LowerBound lowerBound) {
         _processors = processors;
@@ -39,6 +41,8 @@ public abstract class Algorithm {
      * Constructor for Algorithm class.
      * Defaults multithreading to false.
      * @param processors The number of processors
+     * @param arborist The pruning method to be available to the subclass
+     * @param lowerBound The lower bound estimator method to be available to the subclass
      */
     protected Algorithm(int processors, Arborist arborist, LowerBound lowerBound) { this(processors, false, arborist, lowerBound); }
 
