@@ -62,7 +62,9 @@ public abstract class Algorithm {
      * @return True if the algorithm is complete, false otherwise.
      */
     // This method is up for debate. May not be needed.
-    public boolean isComplete() { return _isComplete; }
+    public boolean isComplete() {
+        return _isComplete;
+    }
 
     /**
      * Lets the caller know the current best schedule the algorithm has.
@@ -70,7 +72,9 @@ public abstract class Algorithm {
      * If the implementation has not yet come up with a best schedule, it will be null.
      * @return The current best schedule. May be null.
      */
-    public Schedule getCurrentBest() { return _bestSchedule; }
+    public Schedule getCurrentBest() {
+        return _bestSchedule;
+    }
 
     // PROTECTED METHODS
     /**
