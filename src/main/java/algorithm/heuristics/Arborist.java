@@ -1,4 +1,4 @@
-package algorithm.Heuristics;
+package algorithm.heuristics;
 
 import common.graph.Graph;
 import common.schedule.Schedule;

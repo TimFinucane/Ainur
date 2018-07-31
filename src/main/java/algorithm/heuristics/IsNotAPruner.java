@@ -1,15 +1,14 @@
-package algorithm.Heuristics;
+package algorithm.heuristics;
 
 import common.graph.Graph;
 import common.schedule.Schedule;
 
 /**
- * This is Busters Pruner class
+ * Stub class that implements Arborist - to be used in place of fully implemented pruning algorithms
  */
-public class BustersPruner implements Arborist {
+public class IsNotAPruner implements Arborist {
 
     /**
-     *
      * @param graph : Schedule
      * @param schedule : Schedule
      * @return boolean : boolean
