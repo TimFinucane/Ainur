@@ -12,7 +12,12 @@ public class Cli {
     private String _inputFile;
     int _processors;
 
+    /**
+     *
+     * @param args
+     */
     public Cli(String[] args) {
+        // Initialise values
         _args = args;
         _visualise = false;
         _cores = 1; // TODO default may change when this is implemented
@@ -20,9 +25,21 @@ public class Cli {
 
         // Apache Commons CLI: Definition Stage
         _options = establishOptions();
+
+        // Try to parse data from args array
+        try {
+            this.parse();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            this.displayUsage();
+        }
     }
 
-    public void parse() throws ParseException {
+    /**
+     *
+     * @throws ParseException
+     */
+    private void parse() throws ParseException {
         // Apache Commons CLI: Parsing Stage
         DefaultParser clParse = new DefaultParser();
         CommandLine cmdLine = clParse.parse(_options, _args);
@@ -55,6 +72,9 @@ public class Cli {
         }
     }
 
+    /**
+     *
+     */
     public void displayUsage() {
         HelpFormatter helpFormatter = new HelpFormatter();
 
@@ -69,6 +89,10 @@ public class Cli {
         System.exit(0);
     }
 
+    /**
+     *
+     * @return
+     */
     private Options establishOptions() {
         Options options = new Options();
 
