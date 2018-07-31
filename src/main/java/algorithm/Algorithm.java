@@ -45,7 +45,9 @@ public abstract class Algorithm {
      * @param arborist The pruning method to be available to the subclass
      * @param lowerBound The lower bound estimator method to be available to the subclass
      */
-    protected Algorithm(int processors, Arborist arborist, LowerBound lowerBound) { this(processors, false, arborist, lowerBound); }
+    protected Algorithm(int processors, Arborist arborist, LowerBound lowerBound) {
+        this(processors, false, arborist, lowerBound);
+    }
 
     /**
      * Starts the scheduling algorithm. When complete, the optimal schedule will be available in
