@@ -65,4 +65,10 @@ public class Graph {
         return _incomingEdges.get(node.getLabel());
     }
 
+    /**
+     * Gets the number of nodes in the graph
+     */
+    public int        size() {
+        return _entryPoints.size();
+    }
 }
