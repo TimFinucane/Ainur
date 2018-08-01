@@ -3,6 +3,8 @@ package common.schedule;
 import common.graph.Node;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,6 +45,22 @@ public class Schedule {
             }
         }
         return null;
+    }
+
+    /**
+     * Finds the latest task end time across all the processors in the schedule.
+     * @return latest task finishing time.
+     */
+    public int getTotalTime(){
+        List<Integer> endTimes = new ArrayList<>();
+        for (Processor processor : _processors) {
+            // Find the most recently scheduled task and it's finishing time
+            Task task = processor.getLatestTask();
+            int endTime = task.getStartTime() + task.getNode().getComputationCost();
+            endTimes.add(endTime);
+        }
+        // Returns the maximum of all the processor end times.
+        return Collections.max(endTimes);
     }
 
 }
