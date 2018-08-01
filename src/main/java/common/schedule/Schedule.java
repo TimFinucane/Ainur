@@ -11,10 +11,12 @@ public class Schedule {
 
     /**
      * Default constructor for a Schedule
-     * @param processors processors for tasks to be scheduled on within this schedule.
+     * @param processors number of processors for tasks to be scheduled on within this schedule.
      */
-    public Schedule(List<Processor> processors) {
-        _processors = processors;
+    public Schedule(int processors) {
+        for (int i = 0; i < processors; i++){
+            _processors.add(new Processor());
+        }
     }
 
     /**
