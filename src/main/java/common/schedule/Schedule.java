@@ -19,6 +19,7 @@ public class Schedule {
      * @param processors number of processors for tasks to be scheduled on within this schedule.
      */
     public Schedule(int processors) {
+        _processors = new ArrayList<>();
         for (int i = 0; i < processors; i++){
             _processors.add(new Processor());
         }

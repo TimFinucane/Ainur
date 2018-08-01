@@ -31,7 +31,10 @@ public class DotScheduleWriterTests {
      */
     public void testBasicLinearOneProcessorSchedule(){
         // Set up
-        Processor processor = new Processor();
+        Schedule schedule = new Schedule(1);
+
+        Processor processor = schedule.getProcessors().get(0);
+
         processor.addTask(new Task(0,
                 new Node(1, "1")
         ));
@@ -43,11 +46,6 @@ public class DotScheduleWriterTests {
         processor.addTask(new Task(6,
                 new Node(1, "3")
         ));
-
-        List<Processor> processorList = new ArrayList<>();
-        processorList.add(processor);
-
-        Schedule schedule = new Schedule(processorList);
 
         // Test
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
@@ -67,14 +65,15 @@ public class DotScheduleWriterTests {
     }
 
     @Test
-    /**
+    /*
      * This test tests if more than one schedule ie. more than one processor can be written out to file
      */
     public void testBasicLinearTwoProcessorSchedule(){
 
+        Schedule schedule = new Schedule(2);
+
+        Processor processor1 = schedule.getProcessors().get(0);
         //Set up
-        List<Processor> processorList = new ArrayList<>();
-        Processor processor1 = new Processor();
         processor1.addTask(new Task(0,
                 new Node(2, "1")
         ));
@@ -84,9 +83,9 @@ public class DotScheduleWriterTests {
         processor1.addTask(new Task(9,
                 new Node(1, "3")
         ));
-        processorList.add(processor1);
 
-        Processor processor2 = new Processor();
+        Processor processor2 = schedule.getProcessors().get(1);
+
         processor2.addTask(new Task(1,
                 new Node(2, "4")
         ));
@@ -96,9 +95,6 @@ public class DotScheduleWriterTests {
         processor2.addTask(new Task(8,
                 new Node(1, "6")
         ));
-        processorList.add(processor2);
-
-        Schedule schedule = new Schedule(processorList);
 
         // Test
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
