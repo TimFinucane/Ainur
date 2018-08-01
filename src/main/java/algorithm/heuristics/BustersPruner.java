@@ -15,16 +15,19 @@ public class BustersPruner implements Arborist {
      * @param schedule : Schedule
      * @return boolean : boolean
      */
-    //TODO - implementation
     public boolean prune(Graph graph, Schedule schedule, Task toBeAdded) {
 
-        // Extract getTotalTime() from schedule for finishing time of last current node, awaiting model changes.
+        // The time that the current latest finishing task in the schedule finishes
+        int latestTaskFinish = schedule.getTotalTime();
 
-        // Awaiting changes for getEnd() on task to be added.
+        // TODO: sort out what this is
+        int finishingTaskTime = 0;
 
-        // Compare!!
-
-        return false;
-
+        // If the current added task finishes BEFORE the current latest finish in the schedule
+        if (latestTaskFinish > finishingTaskTime) {
+            return true; // Prune
+        } else {
+            return false; // Don't prune
+        }
     }
 }
