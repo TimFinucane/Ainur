@@ -10,6 +10,10 @@ import org.junit.Test;
 
 public class StartTimePrunerTests {
 
+    /**
+     * Tests for base case of no current latest finishing time task in any processors. Should return false because
+     * there are no other tasks to compare against.
+     */
     @Test
     public void testEmptyGraph() {
 
@@ -24,6 +28,10 @@ public class StartTimePrunerTests {
 
     }
 
+    /**
+     * Tests for simple case of single processor, one current task and one task wanting to be added directly
+     * after. Should return false.
+     */
     @Test
     public void testSingleProcessorReturnFalse() {
 
@@ -41,6 +49,10 @@ public class StartTimePrunerTests {
 
     }
 
+    /**
+     * Tests for simple case of two processors, one current task and one task wanting to be added directly
+     * after. Should return false.
+     */
     @Test
     public void testMultipleProcessorsReturnFalse() {
 
@@ -58,6 +70,10 @@ public class StartTimePrunerTests {
 
     }
 
+    /**
+     * Tests for the case of two processors with one existing task and an further task being added whose starting time
+     * (4) is before that of the current existing tasks start time (5). Should return true.
+     */
     @Test
     public void testMultipleProcessorsReturnTrue() {
 
@@ -75,6 +91,10 @@ public class StartTimePrunerTests {
 
     }
 
+    /**
+     * Test for the case where multiple existing processors have the same start time (5), and add a further task
+     * with start time less that all of them (4). Should return true.
+     */
     @Test
     public void testMultipleProcessorsSameLastStartTimeReturnTrue() {
 
@@ -95,6 +115,10 @@ public class StartTimePrunerTests {
 
     }
 
+    /**
+     * Tests for the case where there exists a task with the same start time as the task being added (both 5).
+     * Should return false.
+     */
     @Test
     public void testStartTimesEqualReturnFalse() {
 
