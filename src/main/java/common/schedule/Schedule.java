@@ -63,4 +63,10 @@ public class Schedule {
         return Collections.max(endTimes);
     }
 
+    public int size() {
+        int total = 0;
+        for(Processor processor : _processors)
+            total += processor.getTasks().size();
+        return total;
+    }
 }
