@@ -22,14 +22,14 @@ public class BustersPruner implements Arborist {
      */
     public boolean prune(Graph graph, Schedule schedule, Task toBeAdded) {
 
-        // The time that the current latest finishing task in the schedule finishes
-        int latestTaskFinish = schedule.getTotalTime();
+        // The time that the current latest finishing task in the schedule starts
+        int latestTaskStart = schedule.getTotalTime();
 
         // TODO: sort out what this is
-        int finishingTaskTime = 0;
+        int taskStartTime = 0;
 
-        // If the current added task finishes BEFORE the current latest finish in the schedule
-        if (latestTaskFinish > finishingTaskTime) {
+        // If the current added task starts BEFORE the current latest finishing task starts in the schedule
+        if (latestTaskStart > taskStartTime) {
             return true; // Prune
         } else {
             return false; // Don't prune
