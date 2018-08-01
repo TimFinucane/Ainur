@@ -22,7 +22,7 @@ public class StartTimePruner implements Arborist {
      * @param schedule : Schedule
      * @return boolean : boolean
      */
-    public boolean prune(Graph graph, Schedule schedule, Task toBeAdded) {
+    public boolean prune(Graph graph, Schedule schedule, Pair<Processor, Task> processorTaskPair) {
 
         // The time that the current latest finishing task in the schedule starts
         int latestTaskStart = 0;
@@ -37,6 +37,7 @@ public class StartTimePruner implements Arborist {
         }
 
         // Get starting time of task to add
+        Task toBeAdded = processorTaskPair.getValue();
         int taskToAddStartTime = toBeAdded.getStartTime();
 
         // If the current added task starts BEFORE the current latest finishing task starts in the schedule

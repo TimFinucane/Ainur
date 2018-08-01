@@ -22,9 +22,10 @@ public class StartTimePrunerTests {
 
         Schedule schedule = new Schedule(1);
         Task task =  new Task(1, new Node(1, "Stub"));
+        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, task));
+        Assert.assertFalse(pruner.prune(null, schedule, processorTaskPair));
 
     }
 
@@ -43,9 +44,10 @@ public class StartTimePrunerTests {
                 new Task(0, new Node(5, "stub")));
 
         Task task =  new Task(5, new Node(1, "stub"));
+        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, task));
+        Assert.assertFalse(pruner.prune(null, schedule, processorTaskPair));
 
     }
 
@@ -64,9 +66,10 @@ public class StartTimePrunerTests {
                 new Task(0, new Node(5, "stub")));
 
         Task task =  new Task(5, new Node(1, "stub"));
+        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, task));
+        Assert.assertFalse(pruner.prune(null, schedule, processorTaskPair));
 
     }
 
@@ -85,9 +88,10 @@ public class StartTimePrunerTests {
                 new Task(5, new Node(5, "stub")));
 
         Task task =  new Task(4, new Node(1, "stub"));
+        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
-        Assert.assertTrue(pruner.prune(null, schedule, task));
+        Assert.assertTrue(pruner.prune(null, schedule, processorTaskPair));
 
     }
 
@@ -109,9 +113,10 @@ public class StartTimePrunerTests {
 
 
         Task task =  new Task(4, new Node(1, "stub"));
+        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
-        Assert.assertTrue(pruner.prune(null, schedule, task));
+        Assert.assertTrue(pruner.prune(null, schedule, processorTaskPair));
 
     }
 
@@ -131,9 +136,10 @@ public class StartTimePrunerTests {
 
 
         Task task =  new Task(5, new Node(1, "stub"));
+        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, task));
+        Assert.assertFalse(pruner.prune(null, schedule, processorTaskPair));
 
     }
 
