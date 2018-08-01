@@ -1,13 +1,9 @@
-import org.apache.commons.cli.ParseException;
+import cli.Cli;
+import cli.MilestoneTwoCli;
 
 public class Ainur {
     public static void main(String[] args) {
-      Cli cli = new Cli(args);
-        try {
-            cli.parse();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            cli.displayUsage();
-        }
+      Cli cli = new MilestoneTwoCli(args);
+      cli.parse();
     }
 }

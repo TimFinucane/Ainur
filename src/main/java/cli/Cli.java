@@ -1,3 +1,6 @@
+package cli;
+
+import common.Config;
 import org.apache.commons.cli.*;
 
 import java.util.List;
@@ -5,17 +8,17 @@ import java.util.List;
 /**
  *
  */
-public class Cli {
+public abstract class Cli {
     // The array of strings received from the command line invocation
     private String[] _args;
 
     // The parameters extracted from the args array.
-    protected boolean _visualise;
-    protected int _cores;
     protected String _outputFile;
-    protected Options _options;
     protected String _inputFile;
     protected int _processors;
+
+    // Collection of command line options
+    protected Options _options;
 
     /**
      *
@@ -24,8 +27,6 @@ public class Cli {
     public Cli(String[] args) {
         // Initialise values
         _args = args;
-        _visualise = Config.VISUALISE_DEFAULT;
-        _cores = Config.CORES_DEFAULT;
         _processors = Config.PROCESSORS_DEFAULT;
 
         // Apache Commons CLI: Definition Stage
@@ -36,13 +37,21 @@ public class Cli {
      *
      * @throws ParseException
      */
-    public void parse() throws ParseException {
+    public void parse() {
         // Apache Commons CLI: Parsing Stage
         DefaultParser clParse = new DefaultParser();
-        CommandLine cmdLine = clParse.parse(_options, _args);
+        CommandLine cmdLine = null;
+        try {
+            cmdLine = clParse.parse(_options, _args);
+            // Apache Commons CLI: Interrogation Stage
+            this.interrogate(cmdLine);
 
-        // Apache Commons CLI: Interrogation Stage
-        this.interrogate(cmdLine);
+            // Start Scheduling
+            this.startScheduling();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            this.displayUsage();
+        }
     }
 
     /**
@@ -62,6 +71,8 @@ public class Cli {
         System.exit(0);
     }
 
+    protected abstract void startScheduling();
+
     /**
      *
      * @param cmdLine
@@ -78,16 +89,6 @@ public class Cli {
         _inputFile = argList.get(0);
         _processors = Integer.parseInt(argList.get(1));
 
-        if (cmdLine.hasOption("p")) {
-            _cores = Integer.parseInt(cmdLine.getOptionValue("p"));
-            System.out.println("You instructed Ainur to be executed using " + _cores + " cores");
-            System.out.println("Unfortunately this feature is yet to be implemented... stay tuned");
-        }
-        if (cmdLine.hasOption("v")) {
-            _visualise = true;
-            System.out.println("You instructed Ainur to visualise the scheduling process!");
-            System.out.println("Unfortunately this feature is yet to be implemented... stay tuned");
-        }
         if (cmdLine.hasOption("o")) {
             _outputFile = cmdLine.getOptionValue("o");
             System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
@@ -106,14 +107,11 @@ public class Cli {
     private Options establishOptions() {
         Options options = new Options();
 
-        options.addOption("p", true, "use <arg> cores for execution in parallel "
-                + "(default is sequential");
-        options.addOption("v", "visualise", false, "visualise the search");
         options.addOption("o", true, "name of the outputted file. "
                 + "(default is INPUT-output.dot)");
         options.addOption("h", "help", false, "show help");
 
-        options.addOptionGroup(this.appendOptions());
+        options = this.appendOptions(options);
 
         return options;
     }
@@ -121,10 +119,11 @@ public class Cli {
     /**
      * Inheritors can override this method to provide extra options to the cli.
      * If extra options are added they should be handled in the interrogateArgs() method.
+     * If you don't wish to add options just return the options param.
      * @return
      */
-    protected OptionGroup appendOptions() {
-        return new OptionGroup();
+    protected Options appendOptions(Options options) {
+        return options;
     }
 
     /**
@@ -133,7 +132,5 @@ public class Cli {
      * Inheritors may also extend functionality of existing options.
      * @param cmdLine
      */
-    protected void interrogateArgs(CommandLine cmdLine) {
-
-    }
+    protected void interrogateArgs(CommandLine cmdLine) {}
 }

@@ -1,3 +1,5 @@
+package common;
+
 public class Config {
     // App Name
     public static final String APP_NAME = "Ainur";
