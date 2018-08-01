@@ -29,29 +29,15 @@ public class MilestoneOneCli extends Cli {
     }
 
     @Override
-    protected void startScheduling() {
-        try {
-            // Read the graph from the file
-            InputStream is = new FileInputStream(_inputFile);
-            GraphReader graphReader = new DotGraphReader(is);
-            Graph graph = graphReader.read();
+    protected Schedule startScheduling(Graph graph) {
+        // Algorithm
+        Arborist arborist = new IsNotAPruner();
+        LowerBound lowerBound = new NaiveBound();
+        Algorithm algorithm = new DFSAlgorithm(_processors, arborist, lowerBound);
 
-            // Algorithm
-            Arborist arborist = new IsNotAPruner();
-            LowerBound lowerBound = new NaiveBound();
-            Algorithm algorithm = new DFSAlgorithm(_processors, arborist, lowerBound);
+        //Start
+        algorithm.start(graph);
 
-            //Start
-            algorithm.start(graph);
-
-            // Write output
-            Schedule schedule = algorithm.getCurrentBest();
-            OutputStream os = new FileOutputStream(_outputFile);
-            ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
-            scheduleWriter.write(schedule);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        return algorithm.getCurrentBest();
     }
 }

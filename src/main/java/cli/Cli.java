@@ -1,8 +1,15 @@
 package cli;
 
 import common.Config;
+import common.graph.Graph;
+import common.schedule.Schedule;
+import io.GraphReader;
+import io.ScheduleWriter;
+import io.dot.DotGraphReader;
+import io.dot.DotScheduleWriter;
 import org.apache.commons.cli.*;
 
+import java.io.*;
 import java.util.List;
 
 /**
@@ -47,9 +54,11 @@ public abstract class Cli {
             // Apache Commons CLI: Interrogation Stage
             this.interrogate(cmdLine);
 
-            // Start Scheduling
-            this.startScheduling();
-        } catch (ParseException e) {
+            // Start the program
+            Graph graph = this.readGraphFile(); // read the graph
+            Schedule schedule = this.startScheduling(graph); // start scheduling
+            this.writeSchedule(schedule); // write the schedule
+        } catch (ParseException | IOException e) {
             e.printStackTrace();
             this.displayUsage();
         }
@@ -75,8 +84,42 @@ public abstract class Cli {
 
     /**
      * An abstract method which determines what to do with the arguments once they have been processed.
+     * This method should run a scheduling algorithm of the inheritors choice on the inputted graph.
+     * Inheritors will also get the option to use their custom options how they wish.
+     *
+     * @param graph a graph representing the search space the scheduler will be called on.
+     * @return A schedule obtained from the search space.
      */
-    protected abstract void startScheduling();
+    protected abstract Schedule startScheduling(Graph graph);
+
+    /**
+     * Reads a graph from the inputted dot file.
+     *
+     * @return A graph object created from the inputted dot file.
+     * @throws FileNotFoundException if the .dot file could not be found
+     */
+    private Graph readGraphFile() throws FileNotFoundException {
+        InputStream is = new FileInputStream(_inputFile);
+        GraphReader graphReader = new DotGraphReader(is);
+        return graphReader.read();
+    }
+
+    /**
+     * Writes the schedule obtained from the scheduling algorithm to a dot file.
+     *
+     * @param schedule the schedule to write to the .dot file.
+     * @throws FileNotFoundException
+     */
+    private void writeSchedule(Schedule schedule) throws IOException {
+        // Create a new file if file does not already exist
+        File file = new File(_outputFile);
+        file.createNewFile();
+
+        // Write schedule to output file
+        OutputStream os = new FileOutputStream(file);
+        ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
+        scheduleWriter.write(schedule);
+    }
 
     /**
      * Converts the arguments to fields so they can be used as intended.

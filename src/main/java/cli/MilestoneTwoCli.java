@@ -1,6 +1,8 @@
 package cli;
 
 import common.Config;
+import common.graph.Graph;
+import common.schedule.Schedule;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -22,9 +24,10 @@ public class MilestoneTwoCli extends Cli {
         _cores = Config.CORES_DEFAULT;
     }
 
+    // TODO implement method
     @Override
-    protected void startScheduling() {
-        // TODO
+    protected Schedule startScheduling(Graph graph) {
+        return null;
     }
 
     @Override
