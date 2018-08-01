@@ -40,6 +40,9 @@ public class DFSAlgorithm extends Algorithm {
         int upperBound = initialUpperBound(graph);
 
         Schedule schedule = recurse(graph, new Schedule(_processors), new HashSet<>(graph.getEntryPoints()), upperBound);
+
+        _bestSchedule = schedule;
+        _isComplete = true;
     }
 
     /**
