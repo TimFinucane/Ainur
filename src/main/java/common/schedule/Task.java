@@ -35,4 +35,12 @@ public class Task {
     public Node getNode() {
         return _node;
     }
+
+    /**
+     * Returns the scheduled end time of an assigned task.
+     * @return time Task will have finished on its processor.
+     */
+    public int getEndTime(){
+        return _startTime + _node.getComputationCost();
+    }
 }

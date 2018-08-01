@@ -1,5 +1,7 @@
 package common.schedule;
 
+import common.graph.Node;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +69,28 @@ public class Processor {
         return _tasks.contains(task);
     }
 
+    /**
+     * Finds the most recently added task to the processor. This should be stored in the last position in the array
+     * of tasks.
+     * @return
+     */
+    public Task getLatestTask(){
+        return _tasks.get(_tasks.size() - 1);
+    }
+
+    /**
+     * Finds the task associated to the input node. Returns null if the task is not found.
+     * @param node Node to find associated task
+     * @return associated task or null if no task found.
+     */
+    public Task findTask(Node node) {
+         for (Task task : _tasks) {
+             if ((task.getNode()) == node) {
+                 return task;
+             }
+         }
+         return null;
+    }
 
 }
 
