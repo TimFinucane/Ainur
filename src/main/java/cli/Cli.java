@@ -6,7 +6,8 @@ import org.apache.commons.cli.*;
 import java.util.List;
 
 /**
- *
+ * An abstract class used for processing command line arguments.
+ * Inheritors can easily add arguments. And control how to program works.
  */
 public abstract class Cli {
     // The array of strings received from the command line invocation
@@ -21,8 +22,9 @@ public abstract class Cli {
     protected Options _options;
 
     /**
+     * Constructor responsible for assigning the args to a private field and assigning defaults.
      *
-     * @param args
+     * @param args a string array of arguments obtained from the command line.
      */
     public Cli(String[] args) {
         // Initialise values
@@ -34,8 +36,7 @@ public abstract class Cli {
     }
 
     /**
-     *
-     * @throws ParseException
+     * Interprets the command line arguments and uses them accordingly.
      */
     public void parse() {
         // Apache Commons CLI: Parsing Stage
@@ -55,7 +56,8 @@ public abstract class Cli {
     }
 
     /**
-     *
+     * A method for displaying the way the CLI should be used.
+     * This is called whenever the user uses the CLI incorrectly or uses the help flag ("-h" or "--help")
      */
     public void displayUsage() {
         HelpFormatter helpFormatter = new HelpFormatter();
@@ -71,11 +73,15 @@ public abstract class Cli {
         System.exit(0);
     }
 
+    /**
+     * An abstract method which determines what to do with the arguments once they have been processed.
+     */
     protected abstract void startScheduling();
 
     /**
+     * Converts the arguments to fields so they can be used as intended.
      *
-     * @param cmdLine
+     * @param cmdLine the CommandLine object used to gather the args and options.
      */
     private void interrogate(CommandLine cmdLine) {
         // Apache Commons CLI: Interrogation Stage
@@ -101,8 +107,10 @@ public abstract class Cli {
     }
 
     /**
+     * Sets up the optional arguments the CLI takes.
+     * The optional arguments available can be extended by overriding the appendOptions method.
      *
-     * @return
+     * @return the Options object containing the set of options the CLI takes.
      */
     private Options establishOptions() {
         Options options = new Options();
@@ -111,6 +119,7 @@ public abstract class Cli {
                 + "(default is INPUT-output.dot)");
         options.addOption("h", "help", false, "show help");
 
+        // Add any options added by inheritors
         options = this.appendOptions(options);
 
         return options;
@@ -119,8 +128,10 @@ public abstract class Cli {
     /**
      * Inheritors can override this method to provide extra options to the cli.
      * If extra options are added they should be handled in the interrogateArgs() method.
-     * If you don't wish to add options just return the options param.
-     * @return
+     * If you don't wish to add options will just return the options param.
+     *
+     * @param  options the list of options the CLI takes.
+     * @return The list of options the CLI takes with any extra options appended.
      */
     protected Options appendOptions(Options options) {
         return options;
@@ -128,9 +139,10 @@ public abstract class Cli {
 
     /**
      * Inheritors can override this method to handle any extra options added to the cli.
-     * Extra options are added by overriding the appendOptions method.'
+     * Extra options are added by overriding the appendOptions method.
      * Inheritors may also extend functionality of existing options.
-     * @param cmdLine
+     *
+     * @param cmdLine the CommandLine object used to gather the args and options.
      */
     protected void interrogateArgs(CommandLine cmdLine) {}
 }
