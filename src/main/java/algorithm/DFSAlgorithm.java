@@ -86,14 +86,19 @@ public class DFSAlgorithm extends Algorithm {
 
         // Go through every node of our children, recursively
         for(Node node : availableNodes) {
-            // Construct our new available nodes to pass on
+            // Construct our new available nodes to pass on by copying available nodes and removing the one we're about
+            // to add
+            // TODO: Consider same memory storage optimisation as with schedule for this?
             HashSet<Node> nextAvailableNodes = new HashSet<>();
-
-            // TODO: Check that everything we add has all it's parents in the schedule
             nextAvailableNodes.addAll(availableNodes);
             nextAvailableNodes.remove(node);
-            for(Edge edge : graph.getOutgoingEdges(node))
-                nextAvailableNodes.add(edge.getDestinationNode());
+
+            // Now add all the children of the node we are visiting
+            // Check that everything we add has all it's parents in the schedule
+            for(Edge edge : graph.getOutgoingEdges(node)) {
+                if(curSchedule.findTask(edge.getOriginNode()) != null)
+                    nextAvailableNodes.add(edge.getDestinationNode());
+            }
 
             // Now we run all possible ways of adding this node to the schedule.
             // We apply this to the schedule then remove it before using it again,
