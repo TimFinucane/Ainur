@@ -75,4 +75,24 @@ public class StartTimePrunerTests {
 
     }
 
+    @Test
+    public void testMultipleProcessorsSameLastStartTimeReturnTrue() {
+
+        // Arrange
+        Arborist pruner = new StartTimePruner();
+
+        Schedule schedule = new Schedule(10);
+        for (int i = 0; i < 9; i++) {
+            schedule.getProcessors().get(i).addTask(
+                    new Task(5, new Node(5, "stub")));
+        }
+
+
+        Task task =  new Task(4, new Node(1, "stub"));
+
+        //Act / Assert
+        Assert.assertTrue(pruner.prune(null, schedule, task));
+
+    }
+
 }
