@@ -8,6 +8,7 @@ import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
+import javafx.util.Pair;
 
 import java.util.*;
 
@@ -87,6 +88,8 @@ public class DFSAlgorithm extends Algorithm {
         for(Node node : availableNodes) {
             // Construct our new available nodes to pass on
             HashSet<Node> nextAvailableNodes = new HashSet<>();
+
+            // TODO: Check that everything we add has all it's parents in the schedule
             nextAvailableNodes.addAll(availableNodes);
             nextAvailableNodes.remove(node);
             for(Edge edge : graph.getOutgoingEdges(node))
@@ -100,27 +103,23 @@ public class DFSAlgorithm extends Algorithm {
                 int earliest = 0;
                 for(Edge edge : graph.getIncomingEdges(node)) {
                     Node dependencyNode = edge.getOriginNode();
+                    Pair<Processor, Task> item = curSchedule.findTask(dependencyNode);
 
-                    // TODO: Add find task method to processor AND schedule and use it here
-                    // PLEASE DO NOT PUT THIS CODE HERE JAVA WAS NOT MEANT FOR THIS
-                    for(Processor searchProcessor : curSchedule.getProcessors()) {
-                        Optional<Task> potentialTask = searchProcessor.getTasks().stream()
-                            .filter((task) -> task.getNode() == dependencyNode)
-                            .findAny();
-                        if (potentialTask.isPresent() && searchProcessor != processor)
-                            earliest = Math.max(
-                                earliest,
-                                potentialTask.get().getStartTime() + potentialTask.get().getNode().getComputationCost()
-                            );
-                    }
+                    if(item == null)
+                        throw new RuntimeException("Chide Tim for not checking a node's parents are in the schedule");
+
+                    // If it's on the same processor, just has to be after task end. If not, then it also needs
+                    // to be past the communication cost
+                    if(item.getKey() == processor)
+                        earliest = Math.max(earliest, item.getValue().getEndTime());
+                    else
+                        earliest = Math.max(earliest, item.getValue().getEndTime() + edge.getCost());
                 }
 
                 if( processor.getTasks().size() > 0 ) {
                     earliest = Math.max(
                         earliest,
-                        // TODO: RESOLVE THIS PLEASE AAAA
-                        processor.getTasks().get(processor.getTasks().size() - 1).getStartTime() +
-                            processor.getTasks().get(processor.getTasks().size() - 1).getNode().getComputationCost()
+                        processor.getLatestTask().getEndTime()
                     );
                 }
 
@@ -157,14 +156,7 @@ public class DFSAlgorithm extends Algorithm {
 
                 // But at least now we know we have a result that should be better than upper bound
                 // TODO: Schedule.getTotalCost()
-                int resultTotalTime = 0;
-                for(Processor resultProcessor : result.getProcessors()) {
-                    Task endTask = resultProcessor.getTasks().get(resultProcessor.getTasks().size() - 1);
-                    resultTotalTime = Math.max(
-                        resultTotalTime,
-                        endTask.getStartTime() + endTask.getNode().getComputationCost()
-                    );
-                }
+                int resultTotalTime = result.getTotalTime();
 
                 // Just in case the schedule is still pretty bad
                 if(resultTotalTime < curUpperBound) {
