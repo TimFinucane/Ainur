@@ -56,8 +56,7 @@ public class Schedule {
         for (Processor processor : _processors) {
             // Find the most recently scheduled task and it's finishing time
             Task task = processor.getLatestTask();
-            int endTime = task.getEndTime();
-            endTimes.add(endTime);
+            endTimes.add(task.getEndTime());
         }
         // Returns the maximum of all the processor end times.
         return Collections.max(endTimes);
