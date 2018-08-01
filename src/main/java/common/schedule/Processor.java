@@ -67,6 +67,14 @@ public class Processor {
         return _tasks.contains(task);
     }
 
+    /**
+     * Finds the most recently added task to the processor. This should be stored in the last position in the array
+     * of tasks. 
+     * @return
+     */
+    public Task getLatestTask(){
+        return _tasks.get(_tasks.size() - 1);
+    }
 
 }
 
