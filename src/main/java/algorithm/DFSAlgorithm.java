@@ -39,11 +39,7 @@ public class DFSAlgorithm extends Algorithm {
     public void start(Graph graph) {
         int upperBound = initialUpperBound(graph);
 
-        // TODO: Schedule should really accept an int instead rather than us making an arraylist
-        ArrayList<Processor> processors = new ArrayList<>();
-        for(int i = 0; i < _processors; ++i)
-            processors.add(new Processor());
-        Schedule schedule = recurse(graph, new Schedule(processors), new HashSet<>(graph.getEntryPoints()), upperBound);
+        Schedule schedule = recurse(graph, new Schedule(_processors), new HashSet<>(graph.getEntryPoints()), upperBound);
     }
 
     /**
@@ -126,6 +122,21 @@ public class DFSAlgorithm extends Algorithm {
                 }
 
                 Task toBePlaced = new Task(earliest, node);
+
+                // Check the base case (that adding the task will give us a complete schedule that we then return)
+                if(curSchedule.size() + 1 == graph.size()) {
+                    // Clone the schedule manually, or we will be modifying our parents schedule and that is bad
+                    Schedule newSchedule = new Schedule(_processors);
+                    for (int i = 0; i < _processors; ++i)
+                    {
+                        newSchedule.getProcessors().get(i).getTasks().addAll(curSchedule.getProcessors().get(i).getTasks());
+                    }
+
+                    // Add the task to newSchedule instead of curSchedule
+                    newSchedule.getProcessors().get(curSchedule.getProcessors().indexOf(processor)).addTask(toBePlaced);
+                    return newSchedule;
+                }
+
                 // Check whether placing it there is a good idea
                 if( prune(graph, curSchedule, toBePlaced) )
                     continue;
@@ -151,7 +162,8 @@ public class DFSAlgorithm extends Algorithm {
                         endTask.getStartTime() + endTask.getNode().getComputationCost()
                     );
                 }
-                // Just in case we were wrong?
+
+                // Just in case the schedule is still pretty bad
                 if(resultTotalTime < curUpperBound) {
                     curUpperBound = resultTotalTime;
                     curBest = result;
