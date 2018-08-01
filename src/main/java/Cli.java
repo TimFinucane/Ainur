@@ -28,36 +28,49 @@ public class Cli {
 
         // Apache Commons CLI: Definition Stage
         _options = establishOptions();
-
-        // Try to parse data from args array
-        try {
-            this.parse();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            this.displayUsage();
-        }
-    }
-
-    /**
-     * Responsible for starting the scheduling process.
-     */
-    public void startScheduling() {
-
     }
 
     /**
      *
      * @throws ParseException
      */
-    private void parse() throws ParseException {
+    public void parse() throws ParseException {
         // Apache Commons CLI: Parsing Stage
         DefaultParser clParse = new DefaultParser();
         CommandLine cmdLine = clParse.parse(_options, _args);
 
         // Apache Commons CLI: Interrogation Stage
+        this.interrogate(cmdLine);
+    }
+
+    /**
+     *
+     */
+    public void displayUsage() {
+        HelpFormatter helpFormatter = new HelpFormatter();
+
+        String customMessage = new StringBuilder()
+                .append("java -jar " + Config.APP_NAME + ".jar INPUT.dot P [Option]")
+                .append(String.format("\n\nINPUT.dot%9s%s", "", "a task graph with integer weights in dot format"))
+                .append(String.format("\nP%17s%s", "", "number of processors to schedule the INPUT graph on"))
+                .append("\n\nOptional:")
+                .toString();
+
+        helpFormatter.printHelp(customMessage, _options);
+        System.exit(0);
+    }
+
+    /**
+     *
+     * @param cmdLine
+     */
+    private void interrogate(CommandLine cmdLine) {
+        // Apache Commons CLI: Interrogation Stage
         if (cmdLine.hasOption("h") || cmdLine.getArgList().size() < 2) {
             displayUsage();
         }
+
+        Option[] optionRef = cmdLine.getOptions();
 
         List<String> argList = cmdLine.getArgList();
         _inputFile = argList.get(0);
@@ -80,23 +93,8 @@ public class Cli {
             _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf('.')) + "_processed.dot";
             System.out.println("Ainur output schedule file name defaulted to: " + _outputFile);
         }
-    }
 
-    /**
-     *
-     */
-    public void displayUsage() {
-        HelpFormatter helpFormatter = new HelpFormatter();
-
-        String customMessage = new StringBuilder()
-                .append("java -jar " + Config.APP_NAME + ".jar INPUT.dot P [Option]")
-                .append(String.format("\n\nINPUT.dot%9s%s", "", "a task graph with integer weights in dot format"))
-                .append(String.format("\nP%17s%s", "", "number of processors to schedule the INPUT graph on"))
-                .append("\n\nOptional:")
-                .toString();
-
-        helpFormatter.printHelp(customMessage, _options);
-        System.exit(0);
+        this.interrogateArgs(cmdLine);
     }
 
     /**
@@ -113,6 +111,27 @@ public class Cli {
                 + "(default is INPUT-output.dot)");
         options.addOption("h", "help", false, "show help");
 
+        options.addOptionGroup(this.appendOptions());
+
         return options;
+    }
+
+    /**
+     * Inheritors can override this method to provide extra options to the cli.
+     * If extra options are added they should be handled in the interrogateArgs() method.
+     * @return
+     */
+    protected OptionGroup appendOptions() {
+        return new OptionGroup();
+    }
+
+    /**
+     * Inheritors can override this method to handle any extra options added to the cli.
+     * Extra options are added by overriding the appendOptions method.'
+     * Inheritors may also extend functionality of existing options.
+     * @param cmdLine
+     */
+    protected void interrogateArgs(CommandLine cmdLine) {
+
     }
 }
