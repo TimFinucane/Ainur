@@ -7,9 +7,9 @@ import common.schedule.Task;
 import javafx.util.Pair;
 
 /**
- * This is Busters Pruner class
+ * Pruner that compares starting times of taskins in question with latest finishing task in the current schedule.
  */
-public class BustersPruner implements Arborist {
+public class StartTimePruner implements Arborist {
 
     /**
      * This pruning method works by comparing the start times of the "in adding phase" task, and the current latest
