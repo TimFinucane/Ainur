@@ -7,6 +7,11 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+/**
+ * A class implementing the Abstract Cli class.
+ * This class is to be used as the CLI for milestone 2.
+ * It includes extra functionality including multiprocessing and visualisations.
+ */
 public class MilestoneTwoCli extends Cli {
     // Fields required for milestone two.
     protected boolean _visualise;
