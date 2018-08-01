@@ -17,10 +17,10 @@ public class StartTimePrunerTests {
         Arborist pruner = new StartTimePruner();
 
         Schedule schedule = new Schedule(1);
-        Pair<Processor, Task> taskPair = new Pair<>(null, new Task(1, new Node(1, "Stub")));
+        Task task =  new Task(1, new Node(1, "Stub"));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, taskPair));
+        Assert.assertFalse(pruner.prune(null, schedule, task));
 
     }
 
