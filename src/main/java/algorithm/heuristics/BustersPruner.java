@@ -10,6 +10,11 @@ import common.schedule.Task;
 public class BustersPruner implements Arborist {
 
     /**
+     * This pruning method works by comparing the finish time of the "in adding phase" task, and the current latest
+     * finishing task in the schedule. If the current task is determined to have an end time before that of the
+     * current latest task finish, the task being added in question can be disregarded.
+     *
+     * TODO: Add proof?
      *
      * @param graph : Schedule
      * @param schedule : Schedule
