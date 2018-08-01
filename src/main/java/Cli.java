@@ -6,13 +6,16 @@ import java.util.List;
  *
  */
 public class Cli {
+    // The array of strings received from the command line invocation
     private String[] _args;
-    boolean _visualise;
-    int _cores;
-    private String _outputFile;
-    private Options _options;
-    private String _inputFile;
-    int _processors;
+
+    // The parameters extracted from the args array.
+    protected boolean _visualise;
+    protected int _cores;
+    protected String _outputFile;
+    protected Options _options;
+    protected String _inputFile;
+    protected int _processors;
 
     /**
      *
