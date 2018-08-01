@@ -85,7 +85,7 @@ public class Processor {
      */
     public Task findTask(Node node) {
          for (Task task : _tasks) {
-             if ((task.getNode()).equals(node)) {
+             if ((task.getNode()) == node) {
                  return task;
              }
          }
