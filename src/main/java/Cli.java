@@ -1,4 +1,3 @@
-import common.Config;
 import org.apache.commons.cli.*;
 
 import java.util.List;
@@ -22,9 +21,9 @@ public class Cli {
     public Cli(String[] args) {
         // Initialise values
         _args = args;
-        _visualise = false;
-        _cores = 1; // TODO default may change when this is implemented
-        _processors = 1;
+        _visualise = Config.VISUALISE_DEFAULT;
+        _cores = Config.CORES_DEFAULT;
+        _processors = Config.PROCESSORS_DEFAULT;
 
         // Apache Commons CLI: Definition Stage
         _options = establishOptions();
