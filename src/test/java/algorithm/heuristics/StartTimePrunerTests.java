@@ -41,4 +41,21 @@ public class StartTimePrunerTests {
 
     }
 
+    @Test
+    public void testMultipleProcessorsReturnFalse() {
+
+        // Arrange
+        Arborist pruner = new StartTimePruner();
+
+        Schedule schedule = new Schedule(2);
+        schedule.getProcessors().get(0).addTask(
+                new Task(0, new Node(5, "stub")));
+
+        Task task =  new Task(5, new Node(1, "stub"));
+
+        //Act / Assert
+        Assert.assertFalse(pruner.prune(null, schedule, task));
+
+    }
+
 }
