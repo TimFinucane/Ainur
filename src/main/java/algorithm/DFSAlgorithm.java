@@ -40,9 +40,7 @@ public class DFSAlgorithm extends Algorithm {
     public void start(Graph graph) {
         int upperBound = initialUpperBound(graph);
 
-        Schedule schedule = recurse(graph, new Schedule(_processors), new HashSet<>(graph.getEntryPoints()), upperBound);
-
-        _bestSchedule = schedule;
+        _bestSchedule = recurse(graph, new Schedule(_processors), new HashSet<>(graph.getEntryPoints()), upperBound);
         _isComplete = true;
     }
 
@@ -52,6 +50,7 @@ public class DFSAlgorithm extends Algorithm {
      */
     // TODO: When a proper non optimal solution has been implemented, use that instead
     private int initialUpperBound(Graph graph) {
+        Set<Node> visited = new HashSet<>();
         Set<Node> nextNodes = new HashSet<>(graph.getEntryPoints());
 
         int total = 0;
@@ -63,9 +62,11 @@ public class DFSAlgorithm extends Algorithm {
 
             total += node.getComputationCost();
             nextNodes.remove(node);
+            visited.add(node);
 
             for(Edge edge : graph.getOutgoingEdges(node))
-                nextNodes.add(edge.getDestinationNode());
+                if(!visited.contains(edge.getDestinationNode()))
+                    nextNodes.add(edge.getDestinationNode());
         }
 
         return total;
@@ -89,8 +90,7 @@ public class DFSAlgorithm extends Algorithm {
             // Construct our new available nodes to pass on by copying available nodes and removing the one we're about
             // to add
             // TODO: Consider same memory storage optimisation as with schedule for this?
-            HashSet<Node> nextAvailableNodes = new HashSet<>();
-            nextAvailableNodes.addAll(availableNodes);
+            HashSet<Node> nextAvailableNodes = new HashSet<>(availableNodes);
             nextAvailableNodes.remove(node);
 
             // Now add all the children of the node we are visiting
