@@ -11,8 +11,6 @@ import io.dot.DotGraphReader;
 import io.dot.DotScheduleWriter;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class implementing the abstract Cli class.
