@@ -94,10 +94,20 @@ public class DFSAlgorithm extends Algorithm {
             nextAvailableNodes.remove(node);
 
             // Now add all the children of the node we are visiting
-            // Check that everything we add has all it's parents in the schedule
+            // Check that everything we add has all it's parents in the schedule.
+            // There might be better code to do this or via method?
             for(Edge edge : graph.getOutgoingEdges(node)) {
-                if(curSchedule.findTask(edge.getOriginNode()) != null)
-                    nextAvailableNodes.add(edge.getDestinationNode());
+                Node nodeToAdd = edge.getDestinationNode();
+
+                boolean parentsInSchedule = true;
+                for(Edge parentEdge : graph.getIncomingEdges(nodeToAdd)) {
+                    if (parentEdge.getOriginNode() != node && curSchedule.findTask(parentEdge.getOriginNode()) == null) {
+                        parentsInSchedule = false;
+                        break;
+                    }
+                }
+                if(parentsInSchedule)
+                    nextAvailableNodes.add(node);
             }
 
             // Now we run all possible ways of adding this node to the schedule.
@@ -160,7 +170,6 @@ public class DFSAlgorithm extends Algorithm {
                     continue;
 
                 // But at least now we know we have a result that should be better than upper bound
-                // TODO: Schedule.getTotalCost()
                 int resultTotalTime = result.getTotalTime();
 
                 // Just in case the schedule is still pretty bad
