@@ -10,51 +10,6 @@ import java.util.Map;
  */
 public class Graph {
     /**
-     * A simple definition of a node that can be fed into a graph for it to work on
-     */
-    public static class NodeDef {
-        public NodeDef(String name, int computationCost) {
-            _name = name;
-            _computationCost = computationCost;
-        }
-
-        public String   name() {
-            return _name;
-        }
-        public int      computationCost() {
-            return _computationCost;
-        }
-
-        private String  _name;
-        private int     _computationCost;
-    }
-
-    /**
-     * A simple definition of an edge that can be fed into a graph for it to work on
-     */
-    public static class EdgeDef {
-        public EdgeDef(String origin, String destination, int communicationCost) {
-            _origin = origin;
-            _destination = destination;
-            _communicationCost = communicationCost;
-        }
-
-        public String   origin() {
-            return _origin;
-        }
-        public String   destination() {
-            return _destination;
-        }
-        public int      communicationCost() {
-            return _communicationCost;
-        }
-
-        private String  _origin;
-        private String  _destination;
-        private int     _communicationCost;
-    }
-
-    /**
      * Default constructor for a Graph object
      */
     public Graph(List<Node> nodes, List<Edge> edges) {
@@ -77,30 +32,6 @@ public class Graph {
         for( Node node : _nodes )
             if( _incomingEdges.get(node.getId()).isEmpty() )
                 _entryPoints.add(node);
-    }
-
-    /**
-     * Constructor for easier graph creation when creating manually.
-     * We seriously, actually, have to use a static method because if it is a constructor java confuses it for the
-     * constructor we already have because java doesnt undertand that static languages shouldnt have type erasure.
-     */
-    public static Graph createFrom(List<NodeDef> nodes, List<EdgeDef> edges) {
-        Map<String, Node> actualNodes = new HashMap<>();
-
-        for(int i = 0; i < nodes.size(); ++i)
-            actualNodes.put(nodes.get(i).name(), new Node(nodes.get(i).computationCost(), nodes.get(i).name(), i));
-
-        List<Edge> actualEdges = new ArrayList<>();
-        for(EdgeDef edgeDef : edges) {
-            actualEdges.add(
-                new Edge(
-                    actualNodes.get(edgeDef.origin()),
-                    actualNodes.get(edgeDef.destination()),
-                    edgeDef.communicationCost())
-            );
-        }
-
-        return new Graph(new ArrayList<>(actualNodes.values()), actualEdges);
     }
 
     /**

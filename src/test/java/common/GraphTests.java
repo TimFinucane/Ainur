@@ -2,6 +2,7 @@ package common;
 
 import common.graph.Edge;
 import common.graph.Graph;
+import common.graph.GraphBuilder;
 import common.graph.Node;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,18 +17,14 @@ public class GraphTests {
     @Before
     public void    initializeGraph()
     {
-        _graph = Graph.createFrom(
-            Arrays.asList( // Nodes
-                new Graph.NodeDef("a", 1),
-                new Graph.NodeDef("b", 2),
-                new Graph.NodeDef("c", 3)
-            ),
-            Arrays.asList( // Edges
-                new Graph.EdgeDef("a", "b", 1),
-                new Graph.EdgeDef("b", "c", 1),
-                new Graph.EdgeDef("a", "c", 1)
-            )
-        );
+        _graph = new GraphBuilder()
+            .node("a", 1)
+            .node("b", 2)
+            .node("c", 3)
+            .edge("a", "b", 1)
+            .edge("b", "c", 1)
+            .edge("a", "c", 1)
+            .build();
     }
 
     /**
