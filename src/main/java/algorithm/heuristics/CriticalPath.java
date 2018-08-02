@@ -21,10 +21,11 @@ public class CriticalPath implements LowerBound {
     private List<Node> scheduledNodes;
 
     /**
-     * Method provides an estimate of the lower bound based on parameters provided
-     * @param graph : Graph
-     * @param schedule : Schedule
-     * @param nextNodesToVisit : List<Node>
+     * Method provides an estimate of the lower bound based on the critical path of the subgraph consisting of all
+     * the nodes that have not yet been added to a schedule.
+     * @param graph : Graph entire graph
+     * @param schedule : Partial schedule generated up until this point
+     * @param nextNodesToVisit : All the nodes that can be added imminently to the partial schedule
      * @return estimate : int
      */
     //TODO - implementation
@@ -37,15 +38,16 @@ public class CriticalPath implements LowerBound {
         boolean canVisit = true;
 
         while (!unvisitedNodes.isEmpty()) {
+            //inspect the element currently at the head of the queue
             Node currentNode = unvisitedNodes.element();
 
             List<Integer> pathWeights = new ArrayList<>();
 
-            //check to see that all parents have also been visited or are already scheduled
+            //check to see that all parents of this node have been visited or are already scheduled
             for (Edge incomingEdge : graph.getIncomingEdges(currentNode)) {
                 Node parent = incomingEdge.getOriginNode();
 
-                // if the nodes parents haven't already been visited or are in the schedule they cannot be visited.
+                // if parents haven't already been visited and they're not in the schedule, node cannot be visited.
                 if (!scheduledNodes.contains(parent) && !nodePathWeights.containsKey(parent)) {
                     canVisit = false;
                 }
@@ -62,7 +64,7 @@ public class CriticalPath implements LowerBound {
                     nodePathWeights.put(currentNode, Collections.max(pathWeights) + currentNode.getComputationCost());
                 }
 
-                //now add all its children to the unvisited if they have not yet been visited
+                //now add all its children to unvisited if they have not yet been visited
                 for (Edge outgoingEdge : graph.getOutgoingEdges(currentNode)) {
                     Node childNode = outgoingEdge.getDestinationNode();
                     if (!nodePathWeights.containsKey(childNode)) {
