@@ -172,7 +172,6 @@ public class DFSAlgorithm extends Algorithm {
 
                 // But at least now we know we have a result that should be better than upper bound
                 int resultTotalTime = result.getTotalTime();
-                System.out.println(resultTotalTime);
 
                 // Just in case the schedule is still pretty bad
                 if(resultTotalTime <= _upperBound) {
