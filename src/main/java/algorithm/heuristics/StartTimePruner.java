@@ -29,10 +29,8 @@ public class StartTimePruner implements Arborist {
 
         // This is a bit messy, add functionality for Processor to do this?
         for (Processor processor : schedule.getProcessors()) {
-            for (Task task : processor.getTasks()) {
-                if (latestTaskStart < task.getStartTime()) {
-                    latestTaskStart = task.getStartTime();
-                }
+            if (processor.getLatestTask() != null && processor.getLatestTask().getStartTime() > latestTaskStart) {
+                latestTaskStart = processor.getLatestTask().getStartTime();
             }
         }
 
