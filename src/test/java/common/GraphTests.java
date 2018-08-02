@@ -16,19 +16,18 @@ public class GraphTests {
     @Before
     public void    initializeGraph()
     {
-        List<Node> nodes = Arrays.asList(
-            new Node(1, "a"),
-            new Node(2, "b"),
-            new Node(3, "c")
+        _graph = Graph.createFrom(
+            Arrays.asList( // Nodes
+                new Graph.NodeDef("a", 1),
+                new Graph.NodeDef("b", 2),
+                new Graph.NodeDef("c", 3)
+            ),
+            Arrays.asList( // Edges
+                new Graph.EdgeDef("a", "b", 1),
+                new Graph.EdgeDef("b", "c", 1),
+                new Graph.EdgeDef("a", "c", 1)
+            )
         );
-
-        List<Edge> edges = Arrays.asList(
-            new Edge(nodes.get(0), nodes.get(1), 1),
-            new Edge(nodes.get(1), nodes.get(2), 1),
-            new Edge(nodes.get(0), nodes.get(2), 1)
-        );
-
-        _graph = new Graph(nodes, edges);
     }
 
     /**

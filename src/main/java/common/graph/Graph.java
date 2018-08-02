@@ -12,7 +12,7 @@ public class Graph {
     /**
      * A simple definition of a node that can be fed into a graph for it to work on
      */
-    class NodeDef {
+    public static class NodeDef {
         public NodeDef(String name, int computationCost) {
             _name = name;
             _computationCost = computationCost;
@@ -32,7 +32,7 @@ public class Graph {
     /**
      * A simple definition of an edge that can be fed into a graph for it to work on
      */
-    class EdgeDef {
+    public static class EdgeDef {
         public EdgeDef(String origin, String destination, int communicationCost) {
             _origin = origin;
             _destination = destination;
@@ -69,8 +69,8 @@ public class Graph {
         // Add every edge to it's incoming node edge list and outgoing node edge list
         for( Edge edge : edges ) {
             // Use indexOf to get the new Node (with id) that we will be using in the future
-            _incomingEdges.get(_nodes.indexOf(edge.getDestinationNode())).add(edge);
-            _outgoingEdges.get(_nodes.indexOf(edge.getOriginNode())).add(edge);
+            _incomingEdges.get(edge.getDestinationNode().getId()).add(edge);
+            _outgoingEdges.get(edge.getOriginNode().getId()).add(edge);
         }
 
         // Find the entry points of the graph and cache them
@@ -87,8 +87,8 @@ public class Graph {
     public static Graph createFrom(List<NodeDef> nodes, List<EdgeDef> edges) {
         Map<String, Node> actualNodes = new HashMap<>();
 
-        for(NodeDef nodeDef : nodes)
-            actualNodes.put(nodeDef.name(), new Node(nodeDef.computationCost(), nodeDef.name()));
+        for(int i = 0; i < nodes.size(); ++i)
+            actualNodes.put(nodes.get(i).name(), new Node(nodes.get(i).computationCost(), nodes.get(i).name(), i));
 
         List<Edge> actualEdges = new ArrayList<>();
         for(EdgeDef edgeDef : edges) {

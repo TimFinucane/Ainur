@@ -64,11 +64,13 @@ public class DotGraphReader extends GraphReader {
 
         Map<String, Node> nodes = new HashMap<>(); // Use hash map for edge nodes lookup later
 
+        int id = 0;
         while (m.find()) {
             int nodeCost = Integer.parseInt(m.group(2)); // Cost
             String nodeName = m.group(1);  // Label
 
-            nodes.put(nodeName, new Node(nodeCost, nodeName));
+            nodes.put(nodeName, new Node(nodeCost, nodeName, id));
+            id++;
         }
 
         return nodes;
