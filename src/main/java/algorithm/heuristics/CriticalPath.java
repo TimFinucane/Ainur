@@ -33,27 +33,35 @@ public class CriticalPath implements LowerBound {
 
         scheduledNodes = getScheduledNodes(schedule);
 
-        Queue<Node> unvisitedNodes = new PriorityQueue<>(nextNodesToVisit);
+        Queue<Node> unvisitedNodes = new PriorityQueue<>();
 
-        boolean canVisit = true;
+        // Populate the queue with all the nodes that have not yet been added to the schedule
+        for (Node node : graph.getNodes()) {
+            if (!scheduledNodes.contains(node)) {
+                unvisitedNodes.add(node);
+            }
+        }
+
 
         while (!unvisitedNodes.isEmpty()) {
             //inspect the element currently at the head of the queue
             Node currentNode = unvisitedNodes.element();
 
             List<Integer> pathWeights = new ArrayList<>();
+            boolean canVisit = true;
 
             //check to see that all parents of this node have been visited or are already scheduled
             for (Edge incomingEdge : graph.getIncomingEdges(currentNode)) {
                 Node parent = incomingEdge.getOriginNode();
 
-                // if parents haven't already been visited and they're not in the schedule, node cannot be visited.
-                if (!scheduledNodes.contains(parent) && !nodePathWeights.containsKey(parent)) {
-                    canVisit = false;
-                }
                 // finds the weight of the critical path up until that parent.
                 if (nodePathWeights.containsKey(parent)){
                     pathWeights.add(nodePathWeights.get(parent));
+                }
+                // if parents haven't already been visited and they're not in the schedule, node cannot be visited.
+                else if (!scheduledNodes.contains(parent)) {
+                    canVisit = false;
+                    break;
                 }
             }
 
@@ -64,22 +72,13 @@ public class CriticalPath implements LowerBound {
                     nodePathWeights.put(currentNode, Collections.max(pathWeights) + currentNode.getComputationCost());
                 }
 
-                //now add all its children to unvisited if they have not yet been visited
-                for (Edge outgoingEdge : graph.getOutgoingEdges(currentNode)) {
-                    Node childNode = outgoingEdge.getDestinationNode();
-                    if (!nodePathWeights.containsKey(childNode)) {
-                        unvisitedNodes.add(childNode);
-                    }
-                }
-
                 unvisitedNodes.remove();
 
             } else { // if node's parents have not all been visited, node must be revisited later
-                unvisitedNodes.remove();
                 //node is shifted from head to back of the queue
+                unvisitedNodes.remove();
                 unvisitedNodes.add(currentNode);
             }
-            canVisit = true;
         }
 
         // return the maximum of all computed critical paths.
@@ -103,6 +102,7 @@ public class CriticalPath implements LowerBound {
         }
         return scheduledNodes;
     }
+
 
     /**
      * Method provides an estimate of the lower bound based on parameters provided
