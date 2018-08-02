@@ -7,7 +7,7 @@ import common.schedule.Task;
 import javafx.util.Pair;
 
 /**
- * Pruner that compares starting times of taskins in question with latest finishing task in the current schedule.
+ * Pruner that compares starting times of tasks in in question with latest finishing task in the current schedule.
  */
 public class StartTimePruner implements Arborist {
 
@@ -22,7 +22,7 @@ public class StartTimePruner implements Arborist {
      * @param schedule : Schedule
      * @return boolean : boolean
      */
-    public boolean prune(Graph graph, Schedule schedule, Pair<Processor, Task> processorTaskPair) {
+    public boolean prune(Graph graph, Schedule schedule, Pair<Processor, Task> toBeAdded) {
 
         // The time that the current latest finishing task in the schedule starts
         int latestTaskStart = 0;
@@ -37,11 +37,11 @@ public class StartTimePruner implements Arborist {
         }
 
         // Get starting time of task to add
-        Task toBeAdded = processorTaskPair.getValue();
-        int taskToAddStartTime = toBeAdded.getStartTime();
+        Task taskToBeAdded = toBeAdded.getValue();
+        int taskToBeAddedStartTime = taskToBeAdded.getStartTime();
 
         // If the current added task starts BEFORE the current latest finishing task starts in the schedule
-        return latestTaskStart > taskToAddStartTime;
+        return latestTaskStart > taskToBeAddedStartTime;
 
     }
 }
