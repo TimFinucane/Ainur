@@ -13,7 +13,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Basic class to test the functionality of the critical path finding implementation.
+ */
 public class CriticalPathTest {
+
     /**
      * Test checks that the critical path implementation generates a correct answer and runs without error.
      */
@@ -40,8 +44,8 @@ public class CriticalPathTest {
 
         LowerBound lowerBound = new CriticalPath();
 
+        // Calls critical path method with dummy data.
         int criticalPath = lowerBound.estimate(graph, schedule, nodesToVisit);
-
         assertEquals(criticalPath, 7);
     }
 
