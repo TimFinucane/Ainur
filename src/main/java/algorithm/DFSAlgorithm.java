@@ -81,6 +81,7 @@ public class DFSAlgorithm extends Algorithm {
      * @param upperBound The maximum computation amt the schedule can be
      */
     private Schedule recurse(Graph graph, Schedule curSchedule, HashSet<Node> availableNodes, int upperBound) {
+        System.out.println("Called with schedule with " + curSchedule.size() + " tasks");
         // We might discover a better upper bound part way through and want to use it
         int curUpperBound = upperBound;
         Schedule curBest = null;
@@ -165,6 +166,9 @@ public class DFSAlgorithm extends Algorithm {
                 // Ok all that has failed so i guess we have to actually recurse with it
                 processor.addTask(toBePlaced); // Remember this adds it to the current schedule
                 Schedule result = recurse(graph, curSchedule, nextAvailableNodes, curUpperBound);
+                // We added a task to the schedule and we need to remove it to return the curSchedule to its
+                // original state
+                processor.removeTask(toBePlaced);
 
                 if(result == null) // You failed when I needed you most (the result wasn't good enough)
                     continue;
@@ -177,10 +181,6 @@ public class DFSAlgorithm extends Algorithm {
                     curUpperBound = resultTotalTime;
                     curBest = result;
                 }
-
-                // We added a task to the schedule and we need to remove it to return the curSchedule to its
-                // original state
-                processor.removeTask(toBePlaced);
             }
         }
         return curBest;
