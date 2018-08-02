@@ -10,6 +10,7 @@ import common.schedule.Task;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -67,21 +68,9 @@ public class CriticalPathTests {
         Edge edgeCD = new Edge(nodeC, nodeD, 1);
         Edge edgeCE = new Edge(nodeC, nodeE, 1);
 
-        List<Node> nodes = new ArrayList<>();
-        nodes.add(nodeA);
-        nodes.add(nodeB);
-        nodes.add(nodeC);
-        nodes.add(nodeD);
-        nodes.add(nodeE);
-
-        List<Node> nodesToVisit = new ArrayList<>();
-        nodesToVisit.add(nodeA);
-
-        List<Edge> edges = new ArrayList<>();
-        edges.add(edgeAB);
-        edges.add(edgeAC);
-        edges.add(edgeCD);
-        edges.add(edgeCE);
+        List<Node> nodes = new ArrayList<>(Arrays.asList(nodeA, nodeB, nodeC, nodeD, nodeE));
+        List<Node> nodesToVisit = new ArrayList<>(Arrays.asList(nodeA));
+        List<Edge> edges = new ArrayList<>(Arrays.asList(edgeAB, edgeAC, edgeCD, edgeCE));
 
         Graph graph = new Graph(nodes, edges);
 
@@ -106,25 +95,14 @@ public class CriticalPathTests {
         Node nodeC = new Node(5, "C");
         Node nodeD = new Node(1, "D");
         Node nodeE = new Node(10, "E");
+
         Edge edgeAB = new Edge(nodeA, nodeB, 2);
         Edge edgeCD = new Edge(nodeC, nodeD, 1);
         Edge edgeCE = new Edge(nodeC, nodeE, 1);
 
-        List<Node> nodes = new ArrayList<>();
-        nodes.add(nodeA);
-        nodes.add(nodeB);
-        nodes.add(nodeC);
-        nodes.add(nodeD);
-        nodes.add(nodeE);
-
-        List<Node> nodesToVisit = new ArrayList<>();
-        nodesToVisit.add(nodeA);
-        nodesToVisit.add(nodeC);
-
-        List<Edge> edges = new ArrayList<>();
-        edges.add(edgeAB);
-        edges.add(edgeCD);
-        edges.add(edgeCE);
+        List<Node> nodes = new ArrayList<>(Arrays.asList(nodeA, nodeB, nodeC, nodeD, nodeE));
+        List<Node> nodesToVisit = new ArrayList<>(Arrays.asList(nodeA, nodeC));
+        List<Edge> edges = new ArrayList<>(Arrays.asList(edgeAB, edgeCD, edgeCE));
 
         Graph graph = new Graph(nodes, edges);
 
@@ -153,22 +131,9 @@ public class CriticalPathTests {
         Edge edgeCD = new Edge(nodeC, nodeD, 1);
         Edge edgeCE = new Edge(nodeC, nodeE, 1);
 
-        List<Node> nodes = new ArrayList<>();
-        nodes.add(nodeA);
-        nodes.add(nodeB);
-        nodes.add(nodeC);
-        nodes.add(nodeD);
-        nodes.add(nodeE);
-
-        List<Node> nodesToVisit = new ArrayList<>();
-        nodesToVisit.add(nodeB);
-        nodesToVisit.add(nodeC);
-
-        List<Edge> edges = new ArrayList<>();
-        edges.add(edgeAB);
-        edges.add(edgeAC);
-        edges.add(edgeCD);
-        edges.add(edgeCE);
+        List<Node> nodes = new ArrayList<>(Arrays.asList(nodeA, nodeB, nodeC, nodeD, nodeE));
+        List<Node> nodesToVisit = new ArrayList<>(Arrays.asList(nodeB, nodeC));
+        List<Edge> edges = new ArrayList<>(Arrays.asList(edgeAB, edgeAC, edgeCD, edgeCE));
 
         Graph graph = new Graph(nodes, edges);
 
@@ -183,5 +148,4 @@ public class CriticalPathTests {
         int criticalPath = lowerBound.estimate(graph, schedule, nodesToVisit);
         assertEquals(criticalPath, 15);
     }
-
 }
