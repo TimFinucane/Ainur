@@ -1,14 +1,18 @@
 package common.graph;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Holds references to all nodes and edges in a Graph.
  */
 public class Graph {
+    private final List<Node>        _nodes;
+    // Storage of edges is relative to how nodes access them.
+    private final List<List<Edge>>  _incomingEdges = new ArrayList<>();
+    private final List<List<Edge>>  _outgoingEdges = new ArrayList<>();
+    private final List<Node>        _entryPoints = new ArrayList<>(); // Starting nodes of graph
+    
     /**
      * Default constructor for a Graph object
      */
@@ -68,10 +72,4 @@ public class Graph {
     public int        size() {
         return _nodes.size();
     }
-
-    private final List<Node>        _nodes;
-    // Storage of edges is relative to how nodes access them.
-    private final List<List<Edge>>  _incomingEdges = new ArrayList<>();
-    private final List<List<Edge>>  _outgoingEdges = new ArrayList<>();
-    private final List<Node>        _entryPoints = new ArrayList<>(); // Starting nodes of graph
 }
