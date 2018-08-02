@@ -76,6 +76,6 @@ public class Graph {
      * Gets the number of nodes in the graph
      */
     public int        size() {
-        return _entryPoints.size();
+        return _nodes.size();
     }
 }
