@@ -42,6 +42,13 @@ public class Graph {
     }
 
     /**
+     * Returns a list of all the nodes of the graph
+     */
+    public List<Node> getNodes(){
+        return _nodes;
+    }
+
+    /**
      * Get all outgoing edges associated to a particular node
      */
     public List<Edge> getOutgoingEdges(Node node) {
