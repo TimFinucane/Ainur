@@ -75,7 +75,11 @@ public class Processor {
      * @return
      */
     public Task getLatestTask(){
-        return _tasks.get(_tasks.size() - 1);
+        if (!_tasks.isEmpty()) {
+            return _tasks.get(_tasks.size() - 1);
+        } else {
+            return null;
+        }
     }
 
     /**
