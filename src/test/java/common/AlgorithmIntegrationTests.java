@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 
 public class AlgorithmIntegrationTests {
@@ -59,7 +60,7 @@ public class AlgorithmIntegrationTests {
 
         assertEquals(28, resultManual.getTotalTime());
         // Now run graph through CLI
-        String[] args = {"\"data/graphs/Nodes_7_OutTree.dot\"", "2"};
+        String[] args = {"data/graphs/Nodes_7_OutTree.dot", "2"};
         Cli cli = new Cli(args) {
             @Override
             protected Schedule startScheduling(Graph graph) {
@@ -70,10 +71,12 @@ public class AlgorithmIntegrationTests {
                 return result;
             }
         };
+        cli.parse();
 
         // Check that output file is all good
-        File outputFile = new File("somewhere file is");
-        assertEquals(graphFile.getName() + "_processed", outputFile.getName());
+        File outputFile = new File("data/graphs/Nodes_7_OutTree_processed.dot");
+        assertTrue(outputFile.exists());
+        //assertEquals(graphFile.getName() + "_processed", outputFile.getName());
         InputStream outputGraphStream = null;
         try {
             outputGraphStream = new FileInputStream(outputFile);
@@ -81,6 +84,8 @@ public class AlgorithmIntegrationTests {
             e.printStackTrace();
             fail();
         }
+
+        
 
         // Somehow make sure schedule given by dot file matches schedule given by manually making one with methods
     }
