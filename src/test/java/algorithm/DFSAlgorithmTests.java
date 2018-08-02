@@ -48,6 +48,6 @@ public class DFSAlgorithmTests {
                 );
         }
 
-        Assert.assertEquals(8, result.getTotalTime());
+        Assert.assertEquals(9, result.getTotalTime());
     }
 }
