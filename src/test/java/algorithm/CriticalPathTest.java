@@ -94,4 +94,48 @@ public class CriticalPathTest {
     }
 
 
+    /**
+     * Tests to ensure that the algorithm works correctly for a graph with multiple entry points
+     */
+    @Test
+    public void getCriticalPathMultipleEntries(){
+        //Generating dummy data for a simple graph and schedule
+        Node nodeA = new Node(3, "A");
+        Node nodeB = new Node(4, "B");
+        Node nodeC = new Node(5, "C");
+        Node nodeD = new Node(1, "D");
+        Node nodeE = new Node(10, "E");
+        Edge edgeAB = new Edge(nodeA, nodeB, 2);
+        Edge edgeCD = new Edge(nodeC, nodeD, 1);
+        Edge edgeCE = new Edge(nodeC, nodeE, 1);
+
+        List<Node> nodes = new ArrayList<>();
+        nodes.add(nodeA);
+        nodes.add(nodeB);
+        nodes.add(nodeC);
+        nodes.add(nodeD);
+        nodes.add(nodeE);
+
+        List<Node> nodesToVisit = new ArrayList<>();
+        nodesToVisit.add(nodeA);
+        nodesToVisit.add(nodeC);
+
+        List<Edge> edges = new ArrayList<>();
+        edges.add(edgeAB);
+        edges.add(edgeCD);
+        edges.add(edgeCE);
+
+        Graph graph = new Graph(nodes, edges);
+
+        Schedule schedule = new Schedule(1);
+
+        LowerBound lowerBound = new CriticalPath();
+
+        // Calls critical path method with dummy data.
+        int criticalPath = lowerBound.estimate(graph, schedule, nodesToVisit);
+        assertEquals(criticalPath, 15);
+    }
+
+
+
 }
