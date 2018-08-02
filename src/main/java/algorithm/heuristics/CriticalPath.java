@@ -16,10 +16,6 @@ import java.util.*;
  */
 public class CriticalPath implements LowerBound {
 
-    private Map<Node, Integer> nodePathWeights = new HashMap<>();
-
-    private List<Node> scheduledNodes;
-
     /**
      * Method provides an estimate of the lower bound based on the critical path of the subgraph consisting of all
      * the nodes that have not yet been added to a schedule.
@@ -30,9 +26,12 @@ public class CriticalPath implements LowerBound {
      */
     //TODO - implementation
     public int estimate(Graph graph, Schedule schedule, List<Node> nextNodesToVisit) {
+        // Map to store Nodes and the critical path to reach that node.
+        Map<Node, Integer> nodePathWeights = new HashMap<>();
+        // Nodes that have already been scheduled.
+        List<Node> scheduledNodes = getScheduledNodes(schedule);
 
-        scheduledNodes = getScheduledNodes(schedule);
-
+        // To store nodes that have not yet been put on the schedule that algorithm must iterate through.
         Queue<Node> unvisitedNodes = new PriorityQueue<>();
 
         // Populate the queue with all the nodes that have not yet been added to the schedule
@@ -42,9 +41,9 @@ public class CriticalPath implements LowerBound {
             }
         }
 
-
+        // Only iterate through when there are still nodes that have not been analysed.
         while (!unvisitedNodes.isEmpty()) {
-            //inspect the element currently at the head of the queue
+            //inspect the element currently at the head of the queue but do not remove
             Node currentNode = unvisitedNodes.element();
 
             List<Integer> pathWeights = new ArrayList<>();
@@ -89,7 +88,7 @@ public class CriticalPath implements LowerBound {
     /**
      * Helper method to find all the nodes that have already been visited in the given schedule.
      * @param schedule schedule containing nodes
-     * @return nodes in the schedulegit st
+     * @return nodes in the schedule
      */
     private List<Node> getScheduledNodes(Schedule schedule){
         List<Node> scheduledNodes = new ArrayList<>();
