@@ -41,10 +41,7 @@ public class StartTimePruner implements Arborist {
         int taskToAddStartTime = toBeAdded.getStartTime();
 
         // If the current added task starts BEFORE the current latest finishing task starts in the schedule
-        if (latestTaskStart > taskToAddStartTime) {
-            return true; // Prune
-        } else {
-            return false; // Don't prune
-        }
+        return latestTaskStart > taskToAddStartTime;
+
     }
 }
