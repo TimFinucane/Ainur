@@ -38,9 +38,9 @@ public class DFSAlgorithm extends Algorithm {
      */
     @Override
     public void start(Graph graph) {
-        int upperBound = initialUpperBound(graph);
+        _upperBound = initialUpperBound(graph);
 
-        _bestSchedule = recurse(graph, new Schedule(_processors), new HashSet<>(graph.getEntryPoints()), upperBound);
+        _bestSchedule = recurse(graph, new Schedule(_processors), new HashSet<>(graph.getEntryPoints()));
         _isComplete = true;
     }
 
@@ -78,11 +78,9 @@ public class DFSAlgorithm extends Algorithm {
      * @param graph The full graph
      * @param curSchedule The partial schedule with all nodes visited by 'parent' recursors in it
      * @param availableNodes A helpful list of nodes available to visit next
-     * @param upperBound The maximum computation amt the schedule can be
      */
-    private Schedule recurse(Graph graph, Schedule curSchedule, HashSet<Node> availableNodes, int upperBound) {
+    private Schedule recurse(Graph graph, Schedule curSchedule, HashSet<Node> availableNodes) {
         // We might discover a better upper bound part way through and want to use it
-        int curUpperBound = upperBound;
         Schedule curBest = null;
 
         // Go through every node of our children, recursively
@@ -159,12 +157,12 @@ public class DFSAlgorithm extends Algorithm {
                     continue;
 
                 // Check whether its worth trying w.r.t. lower bound estimate
-                if( estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= curUpperBound )
+                if( estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _upperBound )
                     continue;
 
                 // Ok all that has failed so i guess we have to actually recurse with it
                 processor.addTask(toBePlaced); // Remember this adds it to the current schedule
-                Schedule result = recurse(graph, curSchedule, nextAvailableNodes, curUpperBound);
+                Schedule result = recurse(graph, curSchedule, nextAvailableNodes);
                 // We added a task to the schedule and we need to remove it to return the curSchedule to its
                 // original state
                 processor.removeTask(toBePlaced);
@@ -174,14 +172,17 @@ public class DFSAlgorithm extends Algorithm {
 
                 // But at least now we know we have a result that should be better than upper bound
                 int resultTotalTime = result.getTotalTime();
+                System.out.println(resultTotalTime);
 
                 // Just in case the schedule is still pretty bad
-                if(resultTotalTime < curUpperBound) {
-                    curUpperBound = resultTotalTime;
+                if(resultTotalTime <= _upperBound) {
+                    _upperBound = resultTotalTime;
                     curBest = result;
                 }
             }
         }
         return curBest;
     }
+
+    private int _upperBound; // When we have multithreading, this will be shared
 }
