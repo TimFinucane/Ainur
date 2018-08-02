@@ -46,5 +46,6 @@ public class GraphTests {
 
         Assert.assertEquals(2, outgoing.size());
         Assert.assertEquals(entryNode, outgoing.get(0).getOriginNode());
+        Assert.assertEquals(3, _graph.size());
     }
 }
