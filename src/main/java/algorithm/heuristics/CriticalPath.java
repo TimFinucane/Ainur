@@ -31,7 +31,7 @@ public class CriticalPath implements LowerBound {
         List<Node> scheduledNodes = getScheduledNodes(schedule);
 
         // First nodes to be visited should be entry point nodes
-        Queue<Node> unvisitedNodes = new PriorityQueue<>(nextNodesToVisit);
+        List<Node> unvisitedNodes = new ArrayList<>(nextNodesToVisit);
 
         // Populate the queue with all the nodes that have not yet been added to the schedule
         for (Node node : graph.getNodes()) {
@@ -43,7 +43,7 @@ public class CriticalPath implements LowerBound {
         // Only iterate through when there are still nodes that have not been analysed.
         while (!unvisitedNodes.isEmpty()) {
             //inspect the element currently at the head of the queue but do not remove
-            Node currentNode = unvisitedNodes.element();
+            Node currentNode = unvisitedNodes.get(0);
 
             List<Integer> pathWeights = new ArrayList<>();
             boolean canVisit = true;
@@ -70,11 +70,11 @@ public class CriticalPath implements LowerBound {
                     nodePathWeights.put(currentNode, Collections.max(pathWeights) + currentNode.getComputationCost());
                 }
 
-                unvisitedNodes.remove();
+                unvisitedNodes.remove(0);
 
             } else { // if node's parents have not all been visited, node must be revisited later
                 //node is shifted from head to back of the queue
-                unvisitedNodes.remove();
+                unvisitedNodes.remove(0);
                 unvisitedNodes.add(currentNode);
             }
         }
