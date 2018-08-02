@@ -7,6 +7,19 @@ public class Node {
 
     private final int _computationCost;
     private final String _label;
+    private final int _id;
+
+    /**
+     * Constructor for a Node object by the graph, to assign it an index
+     * @param computationCost cost to compute this node
+     * @param label node label
+     * @param id id, usually provided by a graph, for efficient accesses
+     */
+    public Node(int computationCost, String label, int id) {
+        _computationCost = computationCost;
+        _label = label;
+        _id = id;
+    }
 
     /**
      * General constructor for a Node object
@@ -14,8 +27,7 @@ public class Node {
      * @param label node label
      */
     public Node(int computationCost, String label) {
-        _computationCost = computationCost;
-        _label = label;
+        this(computationCost, label, -1);
     }
 
     /**
@@ -34,4 +46,5 @@ public class Node {
         return _label;
     }
 
+    public int getId() { return _id; }
 }
