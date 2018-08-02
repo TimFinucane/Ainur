@@ -2,6 +2,7 @@ package common;
 
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
+import algorithm.heuristics.CriticalPath;
 import algorithm.heuristics.IsNotAPruner;
 import algorithm.heuristics.NaiveBound;
 import cli.Cli;
@@ -40,6 +41,7 @@ public class AlgorithmIntegrationTests {
             e.printStackTrace();
             fail();
         }
+        //Try making graph from file and check that it is correct
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
@@ -54,10 +56,12 @@ public class AlgorithmIntegrationTests {
         Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
 
         algorithm.start(graph);
+        //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
         assertEquals(28, resultManual.getTotalTime());
-        // Now run graph through CLI
+
+        // Now run graph through CLI and assert all answers are the same as before
         String[] args = {"data/graphs/Nodes_7_OutTree.dot", "2"};
         Cli cli = new Cli(args) {
             @Override
@@ -71,7 +75,7 @@ public class AlgorithmIntegrationTests {
         };
         cli.parse();
 
-        // Check that output file is all good
+        // Check that output file is all good from full run through
         File outputFile = new File("data/graphs/Nodes_7_OutTree_processed.dot");
         assertTrue(outputFile.exists());
 
@@ -83,7 +87,8 @@ public class AlgorithmIntegrationTests {
             fail();
         }
 
-        // Somehow make sure schedule given by dot file matches schedule given by manually making one with methods
+        //This part of the code converts the output file from the full run through into a schedule to check that what
+        //is written to the file is the same as what we got when manually running program and has correct answer
         // Convert schedules to graphs to use in comparison
         String schedule1 = "digraph \"Processor#1\" {\n" +
                 "\t0\t [Weight=5];\n" +
@@ -125,6 +130,7 @@ public class AlgorithmIntegrationTests {
                 startTime = startTime + n.getComputationCost();
             }
 
+            //Check written out schedule is all good
         assertEquals(28, outputSchedule.getTotalTime());
 
     }
@@ -152,7 +158,7 @@ public class AlgorithmIntegrationTests {
         assertEquals(8, graph.size());
 
 
-        Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
+        Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new CriticalPath());
 
         algorithm.start(graph);
         Schedule resultManual = algorithm.getCurrentBest();
@@ -163,7 +169,7 @@ public class AlgorithmIntegrationTests {
         Cli cli = new Cli(args) {
             @Override
             protected Schedule startScheduling(Graph graph) {
-                Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
+                Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new CriticalPath());
 
                 algorithm.start(graph);
                 Schedule result = algorithm.getCurrentBest();
@@ -184,7 +190,6 @@ public class AlgorithmIntegrationTests {
             fail();
         }
 
-        // Somehow make sure schedule given by dot file matches schedule given by manually making one with methods
         // Convert schedules to graphs to use in comparison
         String schedule1 = "digraph \"Processor#0\" {\n" +
                 "\t0\t [Weight=35];\n" +
@@ -231,5 +236,6 @@ public class AlgorithmIntegrationTests {
         assertEquals(581, outputSchedule.getTotalTime());
 
     }
+
 
 }
