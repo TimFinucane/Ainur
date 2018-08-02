@@ -18,24 +18,24 @@ public class CriticalPath implements LowerBound {
     /**
      * Method provides an estimate of the lower bound based on the critical path of the subgraph consisting of all
      * the nodes that have not yet been added to a schedule.
-     * @param graph : Graph entire graph
+     * @param graph : Entire graph
      * @param schedule : Partial schedule generated up until this point
      * @param nextNodesToVisit : All the nodes that can be added imminently to the partial schedule
      * @return estimate : int
      */
-    //TODO - implementation
     public int estimate(Graph graph, Schedule schedule, List<Node> nextNodesToVisit) {
+
         // Map to store Nodes and the critical path to reach that node.
         Map<Node, Integer> nodePathWeights = new HashMap<>();
         // Nodes that have already been scheduled.
         List<Node> scheduledNodes = getScheduledNodes(schedule);
 
-        // To store nodes that have not yet been put on the schedule that algorithm must iterate through.
-        Queue<Node> unvisitedNodes = new PriorityQueue<>();
+        // First nodes to be visited should be entry point nodes
+        Queue<Node> unvisitedNodes = new PriorityQueue<>(nextNodesToVisit);
 
         // Populate the queue with all the nodes that have not yet been added to the schedule
         for (Node node : graph.getNodes()) {
-            if (!scheduledNodes.contains(node)) {
+            if (!scheduledNodes.contains(node) && !nextNodesToVisit.contains(node)) {
                 unvisitedNodes.add(node);
             }
         }
