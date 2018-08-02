@@ -29,18 +29,11 @@ import static junit.framework.TestCase.fail;
 
 public class AlgorithmIntegrationTests {
 
-    private final File DATA_DIRECTORY = new File("data/graphs/");
-
-    @Before
-    public void setUpFolderName(){
-
-    }
-
     @Test
     public void testNodes_7_OutTreeGraph() {
 
         // Set up File
-        File graphFile = new File(DATA_DIRECTORY + "Nodes_7_OutTree.dot");
+        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
         InputStream graphStream = null;
         try {
             graphStream = new FileInputStream(graphFile);
