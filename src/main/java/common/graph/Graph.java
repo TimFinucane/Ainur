@@ -12,7 +12,7 @@ public class Graph {
     private final List<List<Edge>>  _incomingEdges = new ArrayList<>();
     private final List<List<Edge>>  _outgoingEdges = new ArrayList<>();
     private final List<Node>        _entryPoints = new ArrayList<>(); // Starting nodes of graph
-    
+
     /**
      * Default constructor for a Graph object
      */

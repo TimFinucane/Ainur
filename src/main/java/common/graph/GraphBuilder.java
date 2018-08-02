@@ -19,14 +19,26 @@ public class GraphBuilder {
         _nodes.put(name, new Node(computationCost, name, _idCounter++)); // The ++ increments the _idCounter after usage
         return this;
     }
+
+    /**
+     * Alternative node creation method
+     */
     public GraphBuilder node(String name, int computationCost) {
         return node(computationCost, name);
     }
 
+    /**
+     * Constructs an edge between two nodes.
+     * Nodes with the given names should already have been added to the GraphBuilder
+     */
     public GraphBuilder edge(String origin, String destination, int communicationCost) {
         _edges.add(new Edge(_nodes.get(origin), _nodes.get(destination), communicationCost));
         return this;
     }
+
+    /**
+     * Alternative edge creation method
+     */
     public GraphBuilder edge(int communicationCost, String origin, String destination) {
         return edge(origin, destination, communicationCost);
     }
