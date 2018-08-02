@@ -6,20 +6,24 @@ import common.graph.Node;
  * Stores the start time of when a Node from a Graph has been scheduled.
  */
 public class Task {
-
-    private final int _startTime;
-    private final Node _node;
+    private final int   _processor;
+    private final int   _startTime;
+    private final Node  _node;
 
     /**
      * Default constructor for a Task object
      * @param startTime start time for scheduled execution of task
      * @param node Node associated to task.
      */
-    public Task(int startTime, Node node) {
+    public Task(int processor, int startTime, Node node) {
+        _processor = processor;
         _startTime = startTime;
         _node = node;
     }
 
+    public int getProcessor() {
+        return _processor;
+    }
     /**
      * Returns the start time of the execution of the Task
      * @return start time of execution
