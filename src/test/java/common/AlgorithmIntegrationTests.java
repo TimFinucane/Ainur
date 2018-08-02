@@ -50,12 +50,23 @@ public class AlgorithmIntegrationTests {
         assertEquals(5, entryNode.getComputationCost());
         assertEquals( 7, graph.size());
 
+
+        Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
+
+        algorithm.start(graph);
+        Schedule result = algorithm.getCurrentBest();
+
+        assertEquals(28, result.getTotalTime());
         // Now run graph through CLI
         String[] args = {"\"data/graphs/Nodes_7_OutTree.dot\"", "2"};
         Cli cli = new Cli(args) {
             @Override
             protected Schedule startScheduling(Graph graph) {
-                return null;
+                Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
+
+                algorithm.start(graph);
+                Schedule result = algorithm.getCurrentBest();
+                return result;
             }
         };
     }
