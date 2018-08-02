@@ -52,6 +52,13 @@ public class Graph {
     }
 
     /**
+     * Returns a list of all the nodes of the graph
+     */
+    public List<Node> getNodes(){
+        return _nodes;
+    }
+
+    /**
      * Get all outgoing edges associated to a particular node
      */
     public List<Edge> getOutgoingEdges(Node node) {
@@ -69,6 +76,6 @@ public class Graph {
      * Gets the number of nodes in the graph
      */
     public int        size() {
-        return _entryPoints.size();
+        return _nodes.size();
     }
 }
