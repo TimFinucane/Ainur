@@ -71,11 +71,15 @@ public class Processor {
 
     /**
      * Finds the most recently added task to the processor. This should be stored in the last position in the array
-     * of tasks.
-     * @return
+     * of tasks. If no tasks exist in the processor, return null.
+     * @return task : Task
      */
     public Task getLatestTask(){
-        return _tasks.size() > 0 ? _tasks.get(_tasks.size() - 1) : null;
+        if (!_tasks.isEmpty()) {
+            return _tasks.get(_tasks.size() - 1);
+        } else {
+            return null;
+        }
     }
 
     /**
