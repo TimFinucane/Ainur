@@ -21,7 +21,7 @@ public class StartTimePrunerTests {
         Arborist pruner = new StartTimePruner();
 
         Schedule schedule = new Schedule(1);
-        Task task =  new Task(1, new Node(1, "Stub"));
+        Task task = new Task(1, new Node(1, "Stub", 0));
         Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
@@ -41,9 +41,9 @@ public class StartTimePrunerTests {
 
         Schedule schedule = new Schedule(1);
         schedule.getProcessors().get(0).addTask(
-                new Task(0, new Node(5, "stub")));
+                new Task(0, new Node(5, "stub", 0)));
 
-        Task task =  new Task(5, new Node(1, "stub"));
+        Task task =  new Task(5, new Node(1, "stub", 0));
         Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
@@ -63,9 +63,9 @@ public class StartTimePrunerTests {
 
         Schedule schedule = new Schedule(2);
         schedule.getProcessors().get(0).addTask(
-                new Task(0, new Node(5, "stub")));
+                new Task(0, new Node(5, "stub", 0)));
 
-        Task task =  new Task(5, new Node(1, "stub"));
+        Task task =  new Task(5, new Node(1, "stub", 0));
         Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
@@ -85,9 +85,9 @@ public class StartTimePrunerTests {
 
         Schedule schedule = new Schedule(2);
         schedule.getProcessors().get(0).addTask(
-                new Task(5, new Node(5, "stub")));
+                new Task(5, new Node(5, "stub", 0)));
 
-        Task task =  new Task(4, new Node(1, "stub"));
+        Task task =  new Task(4, new Node(1, "stub", 0));
         Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
@@ -108,11 +108,11 @@ public class StartTimePrunerTests {
         Schedule schedule = new Schedule(10);
         for (int i = 0; i < 9; i++) {
             schedule.getProcessors().get(i).addTask(
-                    new Task(5, new Node(5, "stub")));
+                    new Task(5, new Node(5, "stub", 0)));
         }
 
 
-        Task task =  new Task(4, new Node(1, "stub"));
+        Task task =  new Task(4, new Node(1, "stub", 0));
         Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
@@ -132,10 +132,10 @@ public class StartTimePrunerTests {
 
         Schedule schedule = new Schedule(2);
         schedule.getProcessors().get(1).addTask(
-                new Task(5, new Node(5, "stub")));
+                new Task(5, new Node(5, "stub", 0)));
 
 
-        Task task =  new Task(5, new Node(1, "stub"));
+        Task task =  new Task(5, new Node(1, "stub", 0));
         Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
 
         //Act / Assert
