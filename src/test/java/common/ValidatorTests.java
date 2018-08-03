@@ -12,16 +12,9 @@ public class ValidatorTests {
 
     private Graph _graph;
 
-    private Node _nodeA;
-    private Node _nodeB;
-    private Node _nodeC;
-
     @Before
     public void initializeGraph()
     {
-        _nodeA = new Node(10, "a", 1);
-        _nodeB = new Node(10, "b", 2);
-        _nodeC = new Node(10, "c", 3);
 
         Graph.Builder builder =  new Graph.Builder();
         _graph = builder.node("a", 10)
