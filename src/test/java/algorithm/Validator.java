@@ -8,7 +8,6 @@ import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.util.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Validator {
@@ -19,10 +18,10 @@ public class Validator {
 
     }
 
+    // Check for dependent nodes of tasks and ensure their tasks finish after their parent task is
+    // finished plus any necessary transmission time.
     private static boolean validOrder(Graph graph, Schedule schedule) {
 
-        // Check for dependent nodes of tasks and ensure their tasks finish after their parent task is
-        // finished plus any necessary transmission time.
         for (Processor processor : schedule.getProcessors()) {
             List<Task> tasks = processor.getTasks();
 
@@ -53,6 +52,7 @@ public class Validator {
         return true;
     }
 
+    // Check that the processors do not feature tasks that overlap.
     private static boolean validPlacement(Schedule schedule) {
 
         //Check that Tasks do not overlap on a processor
