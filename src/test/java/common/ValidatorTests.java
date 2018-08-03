@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,10 +60,13 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(0, new Node(10, "a")));
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
+        List<Node> nodes = new ArrayList<>();
+        nodes.add(_nodeA);
+        Graph graph = new Graph(nodes, new ArrayList<Edge>());
 
         // Act / Assert
-        Assert.assertTrue(Validator.isValid(_graph, schedule));
+        Assert.assertTrue(Validator.isValid(graph, schedule));
 
     }
 
@@ -80,6 +84,20 @@ public class ValidatorTests {
         Assert.assertFalse(Validator.isValid(_graph, schedule));
 
     }
-    
+
+    // This tests that the isValid method catches cases where tasks end and start at exactly the same time.
+    @Test
+    public void testExactOverlapSingleProcessorSchedule() {
+
+        // Arrange
+        Schedule schedule = new Schedule(1);
+        schedule.getProcessors().get(0).addTask(new Task(1, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(1, _nodeB));
+        schedule.getProcessors().get(0).addTask(new Task(25, _nodeC));
+
+        // Act / Assert
+        Assert.assertFalse(Validator.isValid(_graph, schedule));
+
+    }
 
 }
