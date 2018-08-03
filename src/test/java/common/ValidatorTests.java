@@ -35,9 +35,9 @@ public class ValidatorTests {
         );
 
         List<Edge> edges = Arrays.asList(
-                new Edge(nodes.get(0), nodes.get(1), 1),
-                new Edge(nodes.get(1), nodes.get(2), 1),
-                new Edge(nodes.get(0), nodes.get(2), 1)
+                new Edge(nodes.get(0), nodes.get(1), 5),
+                new Edge(nodes.get(1), nodes.get(2), 5),
+                new Edge(nodes.get(0), nodes.get(2), 5)
         );
 
         _graph = new Graph(nodes, edges);
@@ -127,6 +127,48 @@ public class ValidatorTests {
 
         // Act / Assert
         Assert.assertTrue(Validator.isValid(_graph, schedule));
+    }
+
+    // This tests that the communication cost is correctly taken into account when dependencies are shifted across processors.
+    @Test
+    public void testInvalidProcessorDependencyOrderCommunicationCost() {
+
+        // Arrange
+        Schedule schedule = new Schedule(2);
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
+        schedule.getProcessors().get(1).addTask(new Task(21, _nodeC));
+
+        // Act / Assert
+        Assert.assertFalse(Validator.isValid(_graph, schedule));
+    }
+
+    // This tests that the communication cost is correctly taken into account when dependencies are shifted across processors.
+    @Test
+    public void testValidProcessorDependencyOrderCommunicationCost() {
+
+        // Arrange
+        Schedule schedule = new Schedule(2);
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
+        schedule.getProcessors().get(1).addTask(new Task(25, _nodeC));
+
+        // Act / Assert
+        Assert.assertTrue(Validator.isValid(_graph, schedule));
+    }
+
+    // This tests that the isValid method correctly evaluates tasks across processors
+    @Test
+    public void testInvalidProcessorDependency() {
+
+        // Arrange
+        Schedule schedule = new Schedule(2);
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
+        schedule.getProcessors().get(1).addTask(new Task(15, _nodeC));
+
+        // Act / Assert
+        Assert.assertFalse(Validator.isValid(_graph, schedule));
     }
 
 }
