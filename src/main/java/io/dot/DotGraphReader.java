@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
  * Takes an InputStream in .dot format and converts it to a Graph object.
  */
 public class DotGraphReader extends GraphReader {
+
     /**
      * Constructor for GraphReader.
      * @param is The InputStream to read from.
@@ -41,17 +42,19 @@ public class DotGraphReader extends GraphReader {
     @Override
     public Graph read() {
 
+        Graph.Builder graphBuilder = new Graph.Builder();
+
         String streamText = convertStreamToString(_is);
 
-        Map<String, Node> nodes = getNodes(streamText);
-        List<Edge> edges = getEdges(streamText, nodes);
+        getNodes(streamText, graphBuilder);
+        getEdges(streamText, graphBuilder);
 
-        return new Graph(new ArrayList<>(nodes.values()), edges);
+        return graphBuilder.build();
 
     }
 
 
-    private Map<String, Node> getNodes(String string) {
+    private void getNodes(String string, Graph.Builder builder) {
 
         // (?<=;|^|\{)                    :     Positive lookbehind ensuring that preceding the string is either a ';', '{'
         //                                      or '^' (beginning of string)
@@ -62,22 +65,16 @@ public class DotGraphReader extends GraphReader {
         Pattern nodePattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*]\\s*;");
         Matcher m = nodePattern.matcher(string); // Match pattern to input
 
-        Map<String, Node> nodes = new HashMap<>(); // Use hash map for edge nodes lookup later
-
-        int id = 0;
         while (m.find()) {
             int nodeCost = Integer.parseInt(m.group(2)); // Cost
             String nodeName = m.group(1);  // Label
 
-            nodes.put(nodeName, new Node(nodeCost, nodeName, id));
-            id++;
+            builder.node(nodeName, nodeCost);
         }
-
-        return nodes;
     }
 
 
-    private List<Edge> getEdges(String string, Map<String, Node> nodes) {
+    private void getEdges(String string, Graph.Builder builder) {
 
         // (?<=;|^|\{)                    :     Positive lookbehind ensuring that preceding the string is either a ';', '{'
         //                                      or '^' (beginning of string)
@@ -90,21 +87,13 @@ public class DotGraphReader extends GraphReader {
         Pattern edgePattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*->\\s*(\\w+)\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*]\\s*;");
         Matcher m = edgePattern.matcher(string); // Match pattern to input
 
-        List<Edge> edges = new ArrayList<>();
-
         while (m.find()) {
             int edgeCost = Integer.parseInt(m.group(3)); // Cost
-            Node nodeFrom = nodes.get(m.group(1)); // Origin node label, get from nodes map
-            Node nodeTo = nodes.get(m.group(2)); // Destination node label, get from nodes map
+            String originLabel = m.group(1); // Origin node label, get from nodes map
+            String destLabel = m.group(2); // Destination node label, get from nodes map
 
-            if (nodeFrom == null || nodeTo == null) { // Some node does not exist for given edge, invalid graph
-                throw new UncheckedIOException(new IOException("Invalid input graph semantics"));
-            }
-
-            edges.add(new Edge(nodeFrom, nodeTo, edgeCost));
+            builder.edge(originLabel, destLabel, edgeCost);
         }
-
-        return edges;
 
     }
 
