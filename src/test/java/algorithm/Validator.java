@@ -7,6 +7,7 @@ import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +28,13 @@ public class Validator {
             // The outgoing edges of the node in question
             List<Edge> edges = graph.getOutgoingEdges(task.getNode());
 
-            // Get all the nodes that are dependant on given task on a certain processor.
-            List<Node> destinationNodes = new VirtualFlow.ArrayLinkedList<>();
+            // Check all dependent nodes are after task finishes and after any necessary transmission time
             for (Edge edge : edges) {
-                destinationNodes.add(edge.getDestinationNode());
-            }
+                Node node = edge.getDestinationNode();
 
+                Pair<Processor, Task> dependentTask = schedule.findTask(node);
+                
+            }
         }
 
     }
