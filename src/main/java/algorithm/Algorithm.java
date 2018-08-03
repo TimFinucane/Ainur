@@ -4,8 +4,10 @@ import algorithm.heuristics.Arborist;
 import algorithm.heuristics.LowerBound;
 import common.graph.Graph;
 import common.graph.Node;
+import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
+import javafx.util.Pair;
 
 import java.util.List;
 
@@ -81,8 +83,8 @@ public abstract class Algorithm {
      * Is called by subclass to apply separate pruning algorithm
      * @see Arborist#prune
      */
-    protected boolean prune(Graph graph, Schedule schedule, Task toBeAdded){
-        return _arborist.prune(graph, schedule, toBeAdded);
+    protected boolean prune(Graph graph, Schedule schedule, Pair<Processor, Task> processorTaskPair){
+        return _arborist.prune(graph, schedule, processorTaskPair);
     }
 
     /**
