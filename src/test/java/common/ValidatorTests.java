@@ -15,14 +15,21 @@ import java.util.List;
 public class ValidatorTests {
 
     private Graph _graph;
+    private Node _nodeA;
+    private Node _nodeB;
+    private Node _nodeC;
 
     @Before
-    public void    initializeGraph()
+    public void initializeGraph()
     {
+        _nodeA = new Node(10, "a");
+        _nodeB = new Node(10, "b");
+        _nodeC = new Node(10, "c");
+
         List<Node> nodes = Arrays.asList(
-                new Node(1, "a"),
-                new Node(2, "b"),
-                new Node(3, "c")
+                _nodeA,
+                _nodeB,
+                _nodeC
         );
 
         List<Edge> edges = Arrays.asList(
@@ -59,17 +66,20 @@ public class ValidatorTests {
 
     }
 
+    // This tests that the isValid method catches cases where tasks overlap.
     @Test
     public void testOverlapSingleProcessorSchedule() {
 
         // Arrange
         Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(0, new Node(10, "a")));
-        schedule.getProcessors().get(0).addTask(new Task(0, new Node(10, "b")));
+        schedule.getProcessors().get(0).addTask(new Task(1, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(2, _nodeB));
+        schedule.getProcessors().get(0).addTask(new Task(25, _nodeC));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
 
     }
+    
 
 }

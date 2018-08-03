@@ -64,8 +64,8 @@ public class Validator {
 
                     // If either the start time of the other task lies in between the start and end time of the set task
                     // or the end time of the other task lies in between the start and finish of the set task.
-                    if ((otherTask.getStartTime() > task.getEndTime() && otherTask.getStartTime() < task.getEndTime()) ||
-                            (otherTask.getEndTime() > task.getStartTime() && otherTask.getEndTime() < task.getEndTime())) {
+                    if ((otherTask.getStartTime() < task.getEndTime() && otherTask.getStartTime() > task.getStartTime()) ||
+                            (otherTask.getEndTime() < task.getEndTime() && otherTask.getEndTime() > task.getStartTime())) {
 
                         return false;
                     }
