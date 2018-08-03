@@ -9,7 +9,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,9 +23,9 @@ public class ValidatorTests {
     @Before
     public void initializeGraph()
     {
-        _nodeA = new Node(10, "a");
-        _nodeB = new Node(10, "b");
-        _nodeC = new Node(10, "c");
+        _nodeA = new Node(10, "a", 1);
+        _nodeB = new Node(10, "b", 2);
+        _nodeC = new Node(10, "c", 3);
 
         List<Node> nodes = Arrays.asList(
                 _nodeA,
@@ -40,7 +39,14 @@ public class ValidatorTests {
                 new Edge(nodes.get(0), nodes.get(2), 5)
         );
 
-        _graph = new Graph(nodes, edges);
+        Graph.Builder builder =  new Graph.Builder();
+        _graph = builder.node("a", 10)
+                .node("b", 10)
+                .node("c", 10)
+                .edge("a", "b", 5)
+                .edge("b", "c", 5)
+                .edge("a", "c", 5)
+                .build();
     }
 
     // This tests that the isValid() method asserts true on an empty schedule
@@ -55,31 +61,15 @@ public class ValidatorTests {
 
     }
 
-    // This tests that isValid asserts true with a single processor graph containing a single task.
-    @Test
-    public void testSingleTaskSchedule() {
-
-        // Arrange
-        Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
-        List<Node> nodes = new ArrayList<>();
-        nodes.add(_nodeA);
-        Graph graph = new Graph(nodes, new ArrayList<Edge>());
-
-        // Act / Assert
-        Assert.assertTrue(Validator.isValid(graph, schedule));
-
-    }
-
     // This tests that the isValid method catches cases where tasks overlap.
     @Test
     public void testOverlapSingleProcessorSchedule() {
 
         // Arrange
         Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(1, _nodeB));
-        schedule.getProcessors().get(0).addTask(new Task(25, _nodeC));
+        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
+        schedule.getProcessors().get(0).addTask(new Task(1, _graph.findByLabel("b")));
+        schedule.getProcessors().get(0).addTask(new Task(25, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
@@ -92,9 +82,9 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeB));
-        schedule.getProcessors().get(0).addTask(new Task(25, _nodeC));
+        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
+        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("b")));
+        schedule.getProcessors().get(0).addTask(new Task(25, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
@@ -107,9 +97,9 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
-        schedule.getProcessors().get(1).addTask(new Task(0, _nodeC));
+        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
+        schedule.getProcessors().get(0).addTask(new Task(10, _graph.findByLabel("b")));
+        schedule.getProcessors().get(1).addTask(new Task(0, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
@@ -121,9 +111,9 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
-        schedule.getProcessors().get(0).addTask(new Task(20, _nodeC));
+        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
+        schedule.getProcessors().get(0).addTask(new Task(10, _graph.findByLabel("b")));
+        schedule.getProcessors().get(0).addTask(new Task(20, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertTrue(Validator.isValid(_graph, schedule));
@@ -135,9 +125,9 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
-        schedule.getProcessors().get(1).addTask(new Task(21, _nodeC));
+        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
+        schedule.getProcessors().get(0).addTask(new Task(1, _graph.findByLabel("b")));
+        schedule.getProcessors().get(1).addTask(new Task(21, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
@@ -149,9 +139,9 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
-        schedule.getProcessors().get(1).addTask(new Task(25, _nodeC));
+        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
+        schedule.getProcessors().get(0).addTask(new Task(10, _graph.findByLabel("b")));
+        schedule.getProcessors().get(1).addTask(new Task(25, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertTrue(Validator.isValid(_graph, schedule));
@@ -163,9 +153,9 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
-        schedule.getProcessors().get(1).addTask(new Task(15, _nodeC));
+        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
+        schedule.getProcessors().get(0).addTask(new Task(10, _graph.findByLabel("b")));
+        schedule.getProcessors().get(1).addTask(new Task(15, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
