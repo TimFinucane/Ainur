@@ -9,55 +9,55 @@ import java.util.Map;
  * Holds references to all nodes and edges in a Graph.
  */
 public class Graph {
-    /**
-     * A simple definition of a node that can be fed into a graph for it to work on
-     */
-    public static class NodeDef {
-        public NodeDef(String name, int computationCost) {
-            _name = name;
-            _computationCost = computationCost;
+    public static class Builder {
+        private Map<String, Node> _nodes = new HashMap<>();
+        private List<Edge>          _edges = new ArrayList<>();
+        private int                 _idCounter = 0;
+
+        public Builder() {}
+
+        /**
+         * Creates a new node
+         */
+        public Builder node(String name, int computationCost) {
+            _nodes.put(name, new Node(computationCost, name, _idCounter++)); // The ++ increments the _idCounter after usage
+            return this;
         }
 
-        public String   name() {
-            return _name;
-        }
-        public int      computationCost() {
-            return _computationCost;
+        /**
+         * Constructs an edge between two nodes.
+         * Nodes with the given names should already have been added to the GraphBuilder
+         */
+        public Builder edge(String origin, String destination, int communicationCost) {
+            Node originNode = _nodes.get(origin);
+            Node destNode = _nodes.get(destination);
+
+            // Ensures both origin and dest nodes exist in the graph before adding edge.
+            if (originNode == null || destNode == null) {
+                throw new IllegalArgumentException("Trying to add an edge with an invalid node(s): " +
+                        "origin: " + origin +
+                        ", destination: " + destination);
+            }
+
+            _edges.add(new Edge(_nodes.get(origin), _nodes.get(destination), communicationCost));
+            return this;
         }
 
-        private String  _name;
-        private int     _computationCost;
+        public Graph        build() {
+            return new Graph(new ArrayList<>(_nodes.values()), _edges);
+        }
     }
 
-    /**
-     * A simple definition of an edge that can be fed into a graph for it to work on
-     */
-    public static class EdgeDef {
-        public EdgeDef(String origin, String destination, int communicationCost) {
-            _origin = origin;
-            _destination = destination;
-            _communicationCost = communicationCost;
-        }
-
-        public String   origin() {
-            return _origin;
-        }
-        public String   destination() {
-            return _destination;
-        }
-        public int      communicationCost() {
-            return _communicationCost;
-        }
-
-        private String  _origin;
-        private String  _destination;
-        private int     _communicationCost;
-    }
+    private final List<Node>        _nodes;
+    // Storage of edges is relative to how nodes access them.
+    private final List<List<Edge>>  _incomingEdges = new ArrayList<>();
+    private final List<List<Edge>>  _outgoingEdges = new ArrayList<>();
+    private final List<Node>        _entryPoints = new ArrayList<>(); // Starting nodes of graph
 
     /**
      * Default constructor for a Graph object
      */
-    public Graph(List<Node> nodes, List<Edge> edges) {
+    protected Graph(List<Node> nodes, List<Edge> edges) {
         _nodes = nodes;
 
         // Initialize the edge lists
@@ -80,34 +80,17 @@ public class Graph {
     }
 
     /**
-     * Constructor for easier graph creation when creating manually.
-     * We seriously, actually, have to use a static method because if it is a constructor java confuses it for the
-     * constructor we already have because java doesnt undertand that static languages shouldnt have type erasure.
-     */
-    public static Graph createFrom(List<NodeDef> nodes, List<EdgeDef> edges) {
-        Map<String, Node> actualNodes = new HashMap<>();
-
-        for(int i = 0; i < nodes.size(); ++i)
-            actualNodes.put(nodes.get(i).name(), new Node(nodes.get(i).computationCost(), nodes.get(i).name(), i));
-
-        List<Edge> actualEdges = new ArrayList<>();
-        for(EdgeDef edgeDef : edges) {
-            actualEdges.add(
-                new Edge(
-                    actualNodes.get(edgeDef.origin()),
-                    actualNodes.get(edgeDef.destination()),
-                    edgeDef.communicationCost())
-            );
-        }
-
-        return new Graph(new ArrayList<>(actualNodes.values()), actualEdges);
-    }
-
-    /**
      * Returns a list of all the nodes that have no incoming edges
      */
     public List<Node> getEntryPoints(){
         return _entryPoints;
+    }
+
+    /**
+     * Returns a list of all the nodes of the graph
+     */
+    public List<Node> getNodes(){
+        return _nodes;
     }
 
     /**
@@ -131,9 +114,11 @@ public class Graph {
         return _nodes.size();
     }
 
-    private final List<Node>        _nodes;
-    // Storage of edges is relative to how nodes access them.
-    private final List<List<Edge>>  _incomingEdges = new ArrayList<>();
-    private final List<List<Edge>>  _outgoingEdges = new ArrayList<>();
-    private final List<Node>        _entryPoints = new ArrayList<>(); // Starting nodes of graph
+    /**
+     * Finds a node by its associated label.
+     * WARNING: This is inefficient and should not be used in production code.
+     */
+    public Node       findByLabel(String label) {
+        return _nodes.stream().filter((Node node) -> {return node.getLabel().equals(label);}).findFirst().get();
+    }
 }

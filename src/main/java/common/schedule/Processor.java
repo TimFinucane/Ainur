@@ -75,7 +75,7 @@ public class Processor {
      * @return
      */
     public Task getLatestTask(){
-        return _tasks.get(_tasks.size() - 1);
+        return _tasks.size() > 0 ? _tasks.get(_tasks.size() - 1) : null;
     }
 
     /**

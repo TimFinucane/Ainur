@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class GraphTests {
@@ -16,18 +15,14 @@ public class GraphTests {
     @Before
     public void    initializeGraph()
     {
-        _graph = Graph.createFrom(
-            Arrays.asList( // Nodes
-                new Graph.NodeDef("a", 1),
-                new Graph.NodeDef("b", 2),
-                new Graph.NodeDef("c", 3)
-            ),
-            Arrays.asList( // Edges
-                new Graph.EdgeDef("a", "b", 1),
-                new Graph.EdgeDef("b", "c", 1),
-                new Graph.EdgeDef("a", "c", 1)
-            )
-        );
+        _graph = new Graph.Builder()
+            .node("a", 1)
+            .node("b", 2)
+            .node("c", 3)
+            .edge("a", "b", 1)
+            .edge("b", "c", 1)
+            .edge("a", "c", 1)
+            .build();
     }
 
     /**
@@ -36,16 +31,18 @@ public class GraphTests {
     @Test
     public void    testAccessors()
     {
+        // A is the only entry node
         Assert.assertEquals(1, _graph.getEntryPoints().size());
 
         Node entryNode = _graph.getEntryPoints().get(0);
-
-        Assert.assertEquals(entryNode, _graph.getEntryPoints().get(0));
 
         List<Edge> outgoing = _graph.getOutgoingEdges(entryNode);
 
         Assert.assertEquals(2, outgoing.size());
         Assert.assertEquals(entryNode, outgoing.get(0).getOriginNode());
         Assert.assertEquals(3, _graph.size());
+
+        // Check that we can find nodes by label, even though we shouldn't ever have to except for testing
+        Assert.assertEquals(entryNode, _graph.findByLabel("a"));
     }
 }
