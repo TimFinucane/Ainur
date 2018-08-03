@@ -31,16 +31,18 @@ public class GraphTests {
     @Test
     public void    testAccessors()
     {
+        // A is the only entry node
         Assert.assertEquals(1, _graph.getEntryPoints().size());
 
         Node entryNode = _graph.getEntryPoints().get(0);
-
-        Assert.assertEquals(entryNode, _graph.getEntryPoints().get(0));
 
         List<Edge> outgoing = _graph.getOutgoingEdges(entryNode);
 
         Assert.assertEquals(2, outgoing.size());
         Assert.assertEquals(entryNode, outgoing.get(0).getOriginNode());
         Assert.assertEquals(3, _graph.size());
+
+        // Check that we can find nodes by label, even though we shouldn't ever have to except for testing
+        Assert.assertEquals(entryNode, _graph.findByLabel("a"));
     }
 }
