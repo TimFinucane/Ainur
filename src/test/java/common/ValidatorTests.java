@@ -1,6 +1,5 @@
 package common;
 
-import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
@@ -8,9 +7,6 @@ import common.schedule.Task;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class ValidatorTests {
 
@@ -26,18 +22,6 @@ public class ValidatorTests {
         _nodeA = new Node(10, "a", 1);
         _nodeB = new Node(10, "b", 2);
         _nodeC = new Node(10, "c", 3);
-
-        List<Node> nodes = Arrays.asList(
-                _nodeA,
-                _nodeB,
-                _nodeC
-        );
-
-        List<Edge> edges = Arrays.asList(
-                new Edge(nodes.get(0), nodes.get(1), 5),
-                new Edge(nodes.get(1), nodes.get(2), 5),
-                new Edge(nodes.get(0), nodes.get(2), 5)
-        );
 
         Graph.Builder builder =  new Graph.Builder();
         _graph = builder.node("a", 10)
