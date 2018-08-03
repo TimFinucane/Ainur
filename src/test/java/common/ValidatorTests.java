@@ -16,6 +16,7 @@ import java.util.List;
 public class ValidatorTests {
 
     private Graph _graph;
+
     private Node _nodeA;
     private Node _nodeB;
     private Node _nodeC;
@@ -76,8 +77,8 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(1, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(2, _nodeB));
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(1, _nodeB));
         schedule.getProcessors().get(0).addTask(new Task(25, _nodeC));
 
         // Act / Assert
@@ -91,13 +92,41 @@ public class ValidatorTests {
 
         // Arrange
         Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(1, _nodeA));
-        schedule.getProcessors().get(0).addTask(new Task(1, _nodeB));
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeB));
         schedule.getProcessors().get(0).addTask(new Task(25, _nodeC));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
 
+    }
+
+    // This tests that isValid fails on a schedule with incorrect ordering of tasks in relation to their dependencies.
+    @Test
+    public void testInvalidProcessorDependencyOrder() {
+
+        // Arrange
+        Schedule schedule = new Schedule(2);
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
+        schedule.getProcessors().get(1).addTask(new Task(0, _nodeC));
+
+        // Act / Assert
+        Assert.assertFalse(Validator.isValid(_graph, schedule));
+    }
+
+    // This tests that isValid passes on a schedule with correct ordering of tasks in relation to their dependencies.
+    @Test
+    public void testValidProcessorDependencyOrder() {
+
+        // Arrange
+        Schedule schedule = new Schedule(2);
+        schedule.getProcessors().get(0).addTask(new Task(0, _nodeA));
+        schedule.getProcessors().get(0).addTask(new Task(10, _nodeB));
+        schedule.getProcessors().get(0).addTask(new Task(20, _nodeC));
+
+        // Act / Assert
+        Assert.assertTrue(Validator.isValid(_graph, schedule));
     }
 
 }
