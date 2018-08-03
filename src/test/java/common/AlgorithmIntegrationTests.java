@@ -27,10 +27,22 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 
+/**
+ * Class contain test suite for integration tests for algorithm. Each test tests all parts of the algorithm
+ * code manually ie. calling each component in sequence. Each test also tests the CLI with arguements and compares
+ * the two results to make sure they match.
+ * Tests on two processors also read the output file and make sure that it is what is expected and that the
+ * schedule written out matches the same schedule that was obtained by manually running the algorithm.
+ * Any tests higher than 9/10 nodes on more than 2 processors will take a significant amount of time to run, and
+ * hence have not been included in the test suite.
+ */
 public class AlgorithmIntegrationTests {
 
+    /**
+     * Test tests algorithm set up against a graph with 7 nodes and 3 layers, on two processors
+     */
     @Test
-    public void testNodes_7_OutTreeGraph() {
+    public void testNodes_7_OutTreeGraphTwoProcessor() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
@@ -90,7 +102,7 @@ public class AlgorithmIntegrationTests {
         //This part of the code converts the output file from the full run through into a schedule to check that what
         //is written to the file is the same as what we got when manually running program and has correct answer
         // Convert schedules to graphs to use in comparison
-        String schedule1 = "digraph \"Processor#1\" {\n" +
+        String schedule1 = "digraph \"Processor_1\" {\n" +
                 "\t0\t [Weight=5];\n" +
                 "\t3\t [Weight=6];\n" +
                 "\t0 -> 3\t [Weight=0];\n" +
@@ -105,7 +117,7 @@ public class AlgorithmIntegrationTests {
         GraphReader reader1 = new DotGraphReader(stream1);
         Graph graph1 = reader1.read();
 
-        String schedule2 = "digraph \"Processor#0\" {\n" +
+        String schedule2 = "digraph \"Processor_0\" {\n" +
                 "\t2\t [Weight=5];\n" +
                 "\t5\t [Weight=7];\n" +
                 "\t2 -> 5\t [Weight=0];\n" +
@@ -135,8 +147,11 @@ public class AlgorithmIntegrationTests {
 
     }
 
+    /**
+     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors
+     */
     @Test
-    public void testNodes_8_RandomGraph() {
+    public void testNodes_8_RandomGraphTwoProcessor() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_8_Random.dot");
@@ -191,7 +206,7 @@ public class AlgorithmIntegrationTests {
         }
 
         // Convert schedules to graphs to use in comparison
-        String schedule1 = "digraph \"Processor#0\" {\n" +
+        String schedule1 = "digraph \"Processor_0\" {\n" +
                 "\t0\t [Weight=35];\n" +
                 "\t2\t [Weight=176];\n" +
                 "\t0 -> 2\t [Weight=0];\n" +
@@ -206,7 +221,7 @@ public class AlgorithmIntegrationTests {
         GraphReader reader1 = new DotGraphReader(stream1);
         Graph graph1 = reader1.read();
 
-        String schedule2 = "digraph \"Processor#1\" {\n" +
+        String schedule2 = "digraph \"Processor_1\" {\n" +
                 "\t1\t [Weight=88];\n" +
                 "\t3\t [Weight=159];\n" +
                 "\t1 -> 3\t [Weight=0];\n" +
@@ -237,5 +252,59 @@ public class AlgorithmIntegrationTests {
 
     }
 
+    /**
+     * Test tests algorithm against graph with 7 nodes and 3 layers, on 4 processors
+     */
+    @Test
+    public void testNodes_7_OutTreeGraphFourProcessor() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
+        InputStream graphStream = null;
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
+        //Try making graph from file and check that it is correct
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        //Assert that graph is as expected
+        Node entryNode = graph.getEntryPoints().get(0);
+
+        assertEquals(entryNode.getLabel(), "0");
+        assertEquals(5, entryNode.getComputationCost());
+        assertEquals(7, graph.size());
+
+
+        Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
+
+        algorithm.start(graph);
+        //Manually start algorithm on graph and check that final answer is correct
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(22, resultManual.getTotalTime());
+
+        // Now run graph through CLI and assert all answers are the same as before
+        String[] args = {"data/graphs/Nodes_7_OutTree.dot", "2"};
+        Cli cli = new Cli(args) {
+            @Override
+            protected Schedule startScheduling(Graph graph) {
+                Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
+
+                algorithm.start(graph);
+                Schedule result = algorithm.getCurrentBest();
+                return result;
+            }
+        };
+        cli.parse();
+
+        // Check that output file is all good from full run through
+        File outputFile = new File("data/graphs/Nodes_7_OutTree_processed.dot");
+        assertTrue(outputFile.exists());
+
+    }
 
 }
