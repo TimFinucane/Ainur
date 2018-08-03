@@ -1,4 +1,4 @@
-package algorithm;
+package common;
 
 import common.graph.Edge;
 import common.graph.Graph;
