@@ -153,7 +153,7 @@ public class DFSAlgorithm extends Algorithm {
                 }
 
                 // Check whether placing it there is a good idea
-                if( prune(graph, curSchedule, toBePlaced) )
+                if( prune(graph, curSchedule, new Pair<>(processor, toBePlaced)) )
                     continue;
 
                 // Check whether its worth trying w.r.t. lower bound estimate
