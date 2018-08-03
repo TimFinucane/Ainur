@@ -48,7 +48,19 @@ public class Validator {
         for (Processor processor : schedule.getProcessors()) {
             List<Task> tasks = new ArrayList<>();
 
-            
+            for (Task task : tasks) {
+                for (Task otherTask : tasks) {
+
+                    // If either the start time of the other task lies in between the start and end time of the set task
+                    // or the end time of the other task lies in between the start and finish of the set task.
+                    if ((otherTask.getStartTime() > task.getEndTime() && otherTask.getStartTime() < task.getEndTime()) ||
+                            (otherTask.getEndTime() > task.getStartTime() && otherTask.getEndTime() < task.getEndTime())) {
+
+                        return false;
+                    }
+
+                }
+            }
         }
 
         return true;
