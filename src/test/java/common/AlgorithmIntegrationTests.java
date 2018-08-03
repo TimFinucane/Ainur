@@ -5,6 +5,7 @@ import algorithm.DFSAlgorithm;
 import algorithm.heuristics.CriticalPath;
 import algorithm.heuristics.IsNotAPruner;
 import algorithm.heuristics.NaiveBound;
+import algorithm.heuristics.StartTimePruner;
 import cli.Cli;
 import common.graph.Edge;
 import common.graph.Graph;
@@ -39,7 +40,8 @@ import static junit.framework.TestCase.fail;
 public class AlgorithmIntegrationTests {
 
     /**
-     * Test tests algorithm set up against a graph with 7 nodes and 3 layers, on two processors
+     * Test tests algorithm set up against a graph with 7 nodes and 3 layers, on two processors with no
+     * heuristics
      */
     @Test
     public void testNodes_7_OutTreeGraphTwoProcessor() {
@@ -148,7 +150,8 @@ public class AlgorithmIntegrationTests {
     }
 
     /**
-     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors
+     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
+     * heuristics
      */
     @Test
     public void testNodes_8_RandomGraphTwoProcessor() {
@@ -253,7 +256,8 @@ public class AlgorithmIntegrationTests {
     }
 
     /**
-     * Test tests algorithm against graph with 7 nodes and 3 layers, on 4 processors
+     * Test tests algorithm against graph with 7 nodes and 3 layers, on 4 processors with critical path
+     * heuristics
      */
     @Test
     public void testNodes_7_OutTreeGraphFourProcessor() {
@@ -303,6 +307,68 @@ public class AlgorithmIntegrationTests {
 
         // Check that output file is all good from full run through
         File outputFile = new File("data/graphs/Nodes_7_OutTree_processed.dot");
+        assertTrue(outputFile.exists());
+
+    }
+
+    /**
+     * Test tests algorithm against graph with 10 nodes, on 4 processors with critical path and pruner
+     * heuristics
+     * 3min 40s with no heuristics
+     * 28s with 2X heuristics
+     */
+    @Test
+    public void testNodes_10_RandomFourProcessor() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_10_Random.dot");
+        InputStream graphStream = null;
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
+        //Try making graph from file and check that it is correct
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        //Assert that graph is as expected
+        List<Node> entryNodes = graph.getEntryPoints();
+        assertEquals(2, entryNodes.size());
+        assertEquals("0", entryNodes.get(0).getLabel());
+        assertEquals(6, entryNodes.get(0).getComputationCost());
+
+        assertEquals("1", entryNodes.get(1).getLabel());
+        assertEquals(5, entryNodes.get(1).getComputationCost());
+
+        assertEquals(10, graph.size());
+
+
+        Algorithm algorithm = new DFSAlgorithm(4, new StartTimePruner(), new NaiveBound());
+
+        algorithm.start(graph);
+        //Manually start algorithm on graph and check that final answer is correct
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(50, resultManual.getTotalTime());
+
+        // Now run graph through CLI and assert all answers are the same as before
+        String[] args = {"data/graphs/Nodes_10_Random.dot", "2"};
+        Cli cli = new Cli(args) {
+            @Override
+            protected Schedule startScheduling(Graph graph) {
+                Algorithm algorithm = new DFSAlgorithm(4, new StartTimePruner(), new NaiveBound());
+
+                algorithm.start(graph);
+                Schedule result = algorithm.getCurrentBest();
+                return result;
+            }
+        };
+        cli.parse();
+
+        // Check that output file is all good from full run through
+        File outputFile = new File("data/graphs/Nodes_10_Random.dot");
         assertTrue(outputFile.exists());
 
     }
