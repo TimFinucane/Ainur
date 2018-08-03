@@ -1,12 +1,43 @@
 package common.graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Holds references to all nodes and edges in a Graph.
  */
 public class Graph {
+    public static class Builder {
+        private Map<String, Node> _nodes = new HashMap<>();
+        private List<Edge>          _edges = new ArrayList<>();
+        private int                 _idCounter = 0;
+
+        public Builder() {}
+
+        /**
+         * Creates a new node
+         */
+        public Builder node(String name, int computationCost) {
+            _nodes.put(name, new Node(computationCost, name, _idCounter++)); // The ++ increments the _idCounter after usage
+            return this;
+        }
+
+        /**
+         * Constructs an edge between two nodes.
+         * Nodes with the given names should already have been added to the GraphBuilder
+         */
+        public Builder edge(String origin, String destination, int communicationCost) {
+            _edges.add(new Edge(_nodes.get(origin), _nodes.get(destination), communicationCost));
+            return this;
+        }
+
+        public Graph        build() {
+            return new Graph(new ArrayList<>(_nodes.values()), _edges);
+        }
+    }
+
     private final List<Node>        _nodes;
     // Storage of edges is relative to how nodes access them.
     private final List<List<Edge>>  _incomingEdges = new ArrayList<>();
@@ -16,7 +47,7 @@ public class Graph {
     /**
      * Default constructor for a Graph object
      */
-    public Graph(List<Node> nodes, List<Edge> edges) {
+    protected Graph(List<Node> nodes, List<Edge> edges) {
         _nodes = nodes;
 
         // Initialize the edge lists
