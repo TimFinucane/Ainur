@@ -1,5 +1,8 @@
 package algorithm;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+import common.graph.Edge;
+import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;
@@ -10,7 +13,7 @@ import java.util.List;
 
 public class Validator {
 
-    public static boolean isValid(Schedule schedule) {
+    public static boolean isValid(Graph graph, Schedule schedule) {
 
         List<Task> tasks = new ArrayList<>();
 
@@ -20,7 +23,17 @@ public class Validator {
             }
         }
 
+        for (Task task : tasks) {
+            // The outgoing edges of the node in question
+            List<Edge> edges = graph.getOutgoingEdges(task.getNode());
 
+            // Get all the nodes that are dependant on given task on a certain processor.
+            List<Node> destinationNodes = new VirtualFlow.ArrayLinkedList<>();
+            for (Edge edge : edges) {
+                destinationNodes.add(edge.getDestinationNode());
+            }
+
+        }
 
     }
 
