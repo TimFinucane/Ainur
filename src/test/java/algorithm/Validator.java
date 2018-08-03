@@ -46,7 +46,7 @@ public class Validator {
 
         //Check that Tasks do not overlap on a processor
         for (Processor processor : schedule.getProcessors()) {
-            List<Task> tasks = new ArrayList<>();
+            List<Task> tasks = processor.getTasks();
 
             for (Task task : tasks) {
                 for (Task otherTask : tasks) {
