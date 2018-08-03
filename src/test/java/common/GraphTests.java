@@ -2,13 +2,11 @@ package common;
 
 import common.graph.Edge;
 import common.graph.Graph;
-import common.graph.GraphBuilder;
 import common.graph.Node;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class GraphTests {
@@ -17,7 +15,7 @@ public class GraphTests {
     @Before
     public void    initializeGraph()
     {
-        _graph = new GraphBuilder()
+        _graph = new Graph.Builder()
             .node("a", 1)
             .node("b", 2)
             .node("c", 3)

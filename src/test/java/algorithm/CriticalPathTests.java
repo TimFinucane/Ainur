@@ -26,28 +26,18 @@ public class CriticalPathTests {
     @Test
     public void testCriticalPathSinglePath(){
         //Generating dummy data for a simple graph and schedule
-        Node nodeA = new Node(3, "A");
-        Node nodeB = new Node(4, "B");
-        Edge edge = new Edge(nodeA, nodeB, 2);
-
-        List<Node> nodes = new ArrayList<>();
-        nodes.add(nodeA);
-        nodes.add(nodeB);
-
-        List<Node> nodesToVisit = new ArrayList<>();
-        nodesToVisit.add(nodeA);
-
-        List<Edge> edges = new ArrayList<>();
-        edges.add(edge);
-
-        Graph graph = new Graph(nodes, edges);
+        Graph graph = new Graph.Builder()
+            .node("A", 3)
+            .node("B", 4)
+            .edge("A", "B", 2)
+            .build();
 
         Schedule schedule = new Schedule(1);
 
         LowerBound lowerBound = new CriticalPath();
 
         // Calls critical path method with dummy data.
-        int criticalPath = lowerBound.estimate(graph, schedule, nodesToVisit);
+        int criticalPath = lowerBound.estimate(graph, schedule, graph.getEntryPoints());
         assertEquals(criticalPath, 7);
     }
 
@@ -58,28 +48,24 @@ public class CriticalPathTests {
     @Test
     public void getCriticalPathTwoChoices(){
         //Generating dummy data for a simple graph and schedule
-        Node nodeA = new Node(3, "A");
-        Node nodeB = new Node(4, "B");
-        Node nodeC = new Node(5, "C");
-        Node nodeD = new Node(1, "D");
-        Node nodeE = new Node(10, "E");
-        Edge edgeAB = new Edge(nodeA, nodeB, 2);
-        Edge edgeAC = new Edge(nodeA, nodeC, 1);
-        Edge edgeCD = new Edge(nodeC, nodeD, 1);
-        Edge edgeCE = new Edge(nodeC, nodeE, 1);
-
-        List<Node> nodes = new ArrayList<>(Arrays.asList(nodeA, nodeB, nodeC, nodeD, nodeE));
-        List<Node> nodesToVisit = new ArrayList<>(Arrays.asList(nodeA));
-        List<Edge> edges = new ArrayList<>(Arrays.asList(edgeAB, edgeAC, edgeCD, edgeCE));
-
-        Graph graph = new Graph(nodes, edges);
+        Graph graph = new Graph.Builder()
+            .node("A", 3)
+            .node("B", 4)
+            .node("C", 5)
+            .node("D", 1)
+            .node("E", 10)
+            .edge("A", "B", 2)
+            .edge("A", "C", 1)
+            .edge("C", "D", 1)
+            .edge("C", "E", 1)
+            .build();
 
         Schedule schedule = new Schedule(1);
 
         LowerBound lowerBound = new CriticalPath();
 
         // Calls critical path method with dummy data.
-        int criticalPath = lowerBound.estimate(graph, schedule, nodesToVisit);
+        int criticalPath = lowerBound.estimate(graph, schedule, graph.getEntryPoints());
         assertEquals(criticalPath, 18);
     }
 
@@ -104,7 +90,8 @@ public class CriticalPathTests {
         List<Node> nodesToVisit = new ArrayList<>(Arrays.asList(nodeA, nodeC));
         List<Edge> edges = new ArrayList<>(Arrays.asList(edgeAB, edgeCD, edgeCE));
 
-        Graph graph = new Graph(nodes, edges);
+        Graph graph = new GraphBuilder()
+            .node("A");
 
         Schedule schedule = new Schedule(1);
 
