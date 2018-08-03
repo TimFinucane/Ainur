@@ -103,4 +103,12 @@ public class Graph {
     public int        size() {
         return _nodes.size();
     }
+
+    /**
+     * Finds a node by its associated label.
+     * WARNING: This is inefficient and should not be used in production code.
+     */
+    public Node       findByLabel(String label) {
+        return _nodes.stream().filter((Node node) -> {return node.getLabel().equals(label);}).findFirst().get();
+    }
 }
