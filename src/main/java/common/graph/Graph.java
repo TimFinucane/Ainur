@@ -29,6 +29,16 @@ public class Graph {
          * Nodes with the given names should already have been added to the GraphBuilder
          */
         public Builder edge(String origin, String destination, int communicationCost) {
+            Node originNode = _nodes.get(origin);
+            Node destNode = _nodes.get(destination);
+
+            // Ensures both origin and dest nodes exist in the graph before adding edge.
+            if (originNode == null || destNode == null) {
+                throw new IllegalArgumentException("Trying to add an edge with an invalid node(s): " +
+                        "origin: " + origin +
+                        ", destination: " + destination);
+            }
+
             _edges.add(new Edge(_nodes.get(origin), _nodes.get(destination), communicationCost));
             return this;
         }
