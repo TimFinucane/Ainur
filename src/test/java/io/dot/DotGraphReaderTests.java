@@ -206,7 +206,7 @@ public class DotGraphReaderTests {
         try {
             Graph graph = reader.read();
             Assert.fail();
-        } catch (UncheckedIOException e) { }
+        } catch (IllegalArgumentException e) { }
 
     }
 
