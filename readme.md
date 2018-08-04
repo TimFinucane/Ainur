@@ -15,7 +15,7 @@
 The following people contributed to the program, there upis are also given for uni reference.
 
 | Contributor | UPI | GitHub
-| ----------- | --- |
+| ----------- | --- | ----- |
 | Maddie Beagley - Team Leader | mbea966 | https://github.com/maddiebeagley
 | Nathan Cairns | ncai762 | https://github.com/Nathan-Cairns
 | Buster Darragh-Major | bmaj406 | https://github.com/Buster-Darragh-Major
