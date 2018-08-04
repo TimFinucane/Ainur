@@ -1,10 +1,8 @@
 package algorithm.heuristics;
 
 import common.graph.Graph;
-import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
-import javafx.util.Pair;
 
 /**
  * ""An arborist, tree surgeon, or arboriculturist, is a professional in the practice of arboriculture, which is the
@@ -23,11 +21,11 @@ public interface Arborist {
      *              A graph, with root node the current latest node/task added to the schedule
      * @param schedule : Schedule
      *              A partial schedule which has been built by algorithm so far
-     * @param processorTaskPair : Pair<Processor, Task>
+     * @param toBeAdded : Task
      *              The task that is about to be added to the schedule, should pruning not occur.
      * @return boolean : boolean
      *              To tell algorithm whether to prune or not
      */
-    boolean prune(Graph graph, Schedule schedule, Pair<Processor, Task> processorTaskPair);
+    boolean prune(Graph graph, Schedule schedule, Task toBeAdded);
 
 }
