@@ -28,6 +28,9 @@ public abstract class Cli {
     // Collection of command line options
     protected Options _options;
 
+    // MACROS
+    private final String HELPER_HEADER;
+
     /**
      * Constructor responsible for assigning the args to a private field and assigning defaults.
      *
@@ -40,6 +43,13 @@ public abstract class Cli {
 
         // Apache Commons CLI: Definition Stage
         _options = establishOptions();
+
+        HELPER_HEADER = new StringBuilder()
+                .append("java -jar " + Config.APP_NAME + ".jar INPUT.dot P [Option]")
+                .append(String.format("\n\nINPUT.dot%9s%s", "", "a task graph with integer weights in dot format"))
+                .append(String.format("\nP%17s%s", "", "number of processors to schedule the INPUT graph on"))
+                .append("\n\nOptional:")
+                .toString();
     }
 
     /**
@@ -70,15 +80,7 @@ public abstract class Cli {
      */
     public void displayUsage() {
         HelpFormatter helpFormatter = new HelpFormatter();
-
-        String customMessage = new StringBuilder()
-                .append("java -jar " + Config.APP_NAME + ".jar INPUT.dot P [Option]")
-                .append(String.format("\n\nINPUT.dot%9s%s", "", "a task graph with integer weights in dot format"))
-                .append(String.format("\nP%17s%s", "", "number of processors to schedule the INPUT graph on"))
-                .append("\n\nOptional:")
-                .toString();
-
-        helpFormatter.printHelp(customMessage, _options);
+        helpFormatter.printHelp(HELPER_HEADER, _options);
         System.exit(0);
     }
 
