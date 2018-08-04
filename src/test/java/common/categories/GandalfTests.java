@@ -1,4 +1,4 @@
 package common.categories;
 
-public class GandalfTests {
+public interface GandalfTests {
 }
