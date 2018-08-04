@@ -2,9 +2,7 @@ package algorithm.heuristics;
 
 import common.graph.Graph;
 import common.graph.Node;
-import common.schedule.Processor;
 import common.schedule.Schedule;
-import common.schedule.Task;
 
 import java.util.List;
 

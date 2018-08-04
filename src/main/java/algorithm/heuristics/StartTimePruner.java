@@ -1,10 +1,8 @@
 package algorithm.heuristics;
 
 import common.graph.Graph;
-import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
-import javafx.util.Pair;
 
 /**
  * Pruner that compares starting times of tasks in in question with latest finishing task in the current schedule.
@@ -22,24 +20,9 @@ public class StartTimePruner implements Arborist {
      * @param schedule : Schedule
      * @return boolean : boolean
      */
-    public boolean prune(Graph graph, Schedule schedule, Pair<Processor, Task> toBeAdded) {
-
-        // The time that the current latest finishing task in the schedule starts
-        int latestTaskStart = 0;
-
-        // This is a bit messy, add functionality for Processor to do this?
-        for (Processor processor : schedule.getProcessors()) {
-            if (processor.getLatestTask() != null && processor.getLatestTask().getStartTime() > latestTaskStart) {
-                latestTaskStart = processor.getLatestTask().getStartTime();
-            }
-        }
-
-        // Get starting time of task to add
-        Task taskToBeAdded = toBeAdded.getValue();
-        int taskToBeAddedStartTime = taskToBeAdded.getStartTime();
-
+    public boolean prune(Graph graph, Schedule schedule, Task toBeAdded) {
         // If the current added task starts BEFORE the current latest finishing task starts in the schedule
-        return latestTaskStart > taskToBeAddedStartTime;
-
+        Task latest = schedule.getLatest();
+        return latest != null ? toBeAdded.getStartTime() < latest.getStartTime() : false;
     }
 }
