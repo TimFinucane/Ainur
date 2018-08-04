@@ -2,12 +2,14 @@ package algorithm;
 
 import algorithm.heuristics.CriticalPath;
 import algorithm.heuristics.LowerBound;
+import common.Categories.HobbitonTests;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Basic class to test the functionality of the critical path finding implementation.
  */
+@Category(HobbitonTests.class)
 public class CriticalPathTests {
 
     /**

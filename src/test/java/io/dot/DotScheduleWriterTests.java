@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.util.List;
  * Class tests DotScheduleWriter by making schedules and getting the writer to write them out to file
  * or in this case, a string to compare with
  */
-@Categories.IncludeCategory(HobbitonTests.class)
+@Category(HobbitonTests.class)
 public class DotScheduleWriterTests {
 
     @Test
