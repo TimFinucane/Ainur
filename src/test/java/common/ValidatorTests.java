@@ -3,6 +3,7 @@ package common;
 import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class ValidatorTests {
     public void testEmptySchedule() {
 
         // Arrange
-        Schedule schedule = new Schedule(0);
+        Schedule schedule = new SimpleSchedule(0);
 
         // Act / Assert
         Assert.assertTrue(Validator.isValid(_graph, schedule));
@@ -45,10 +46,10 @@ public class ValidatorTests {
     public void testOverlapSingleProcessorSchedule() {
 
         // Arrange
-        Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
-        schedule.getProcessors().get(0).addTask(new Task(1, _graph.findByLabel("b")));
-        schedule.getProcessors().get(0).addTask(new Task(25, _graph.findByLabel("c")));
+        Schedule schedule = new SimpleSchedule(1);
+        schedule.addTask(new Task(0, 0, _graph.findByLabel("a")));
+        schedule.addTask(new Task(0, 1, _graph.findByLabel("b")));
+        schedule.addTask(new Task(0, 25, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
@@ -60,10 +61,10 @@ public class ValidatorTests {
     public void testExactOverlapSingleProcessorSchedule() {
 
         // Arrange
-        Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
-        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("b")));
-        schedule.getProcessors().get(0).addTask(new Task(25, _graph.findByLabel("c")));
+        Schedule schedule = new SimpleSchedule(1);
+        schedule.addTask(new Task(0, 0, _graph.findByLabel("a")));
+        schedule.addTask(new Task(0, 0, _graph.findByLabel("b")));
+        schedule.addTask(new Task(0, 25, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
@@ -75,10 +76,10 @@ public class ValidatorTests {
     public void testInvalidProcessorDependencyOrder() {
 
         // Arrange
-        Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
-        schedule.getProcessors().get(0).addTask(new Task(10, _graph.findByLabel("b")));
-        schedule.getProcessors().get(1).addTask(new Task(0, _graph.findByLabel("c")));
+        Schedule schedule = new SimpleSchedule(2);
+        schedule.addTask(new Task(0, 0, _graph.findByLabel("a")));
+        schedule.addTask(new Task(0, 10, _graph.findByLabel("b")));
+        schedule.addTask(new Task(1, 0, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
@@ -89,10 +90,10 @@ public class ValidatorTests {
     public void testValidProcessorDependencyOrder() {
 
         // Arrange
-        Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
-        schedule.getProcessors().get(0).addTask(new Task(10, _graph.findByLabel("b")));
-        schedule.getProcessors().get(0).addTask(new Task(20, _graph.findByLabel("c")));
+        Schedule schedule = new SimpleSchedule(2);
+        schedule.addTask(new Task(0, 0, _graph.findByLabel("a")));
+        schedule.addTask(new Task(0, 10, _graph.findByLabel("b")));
+        schedule.addTask(new Task(0, 20, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertTrue(Validator.isValid(_graph, schedule));
@@ -103,10 +104,10 @@ public class ValidatorTests {
     public void testInvalidProcessorDependencyOrderCommunicationCost() {
 
         // Arrange
-        Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
-        schedule.getProcessors().get(0).addTask(new Task(1, _graph.findByLabel("b")));
-        schedule.getProcessors().get(1).addTask(new Task(21, _graph.findByLabel("c")));
+        Schedule schedule = new SimpleSchedule(2);
+        schedule.addTask(new Task(0, 0, _graph.findByLabel("a")));
+        schedule.addTask(new Task(0, 1, _graph.findByLabel("b")));
+        schedule.addTask(new Task(1, 21, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
@@ -117,10 +118,10 @@ public class ValidatorTests {
     public void testValidProcessorDependencyOrderCommunicationCost() {
 
         // Arrange
-        Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
-        schedule.getProcessors().get(0).addTask(new Task(10, _graph.findByLabel("b")));
-        schedule.getProcessors().get(1).addTask(new Task(25, _graph.findByLabel("c")));
+        Schedule schedule = new SimpleSchedule(2);
+        schedule.addTask(new Task(0, 0, _graph.findByLabel("a")));
+        schedule.addTask(new Task(0, 10, _graph.findByLabel("b")));
+        schedule.addTask(new Task(1, 25, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertTrue(Validator.isValid(_graph, schedule));
@@ -131,10 +132,10 @@ public class ValidatorTests {
     public void testInvalidProcessorDependency() {
 
         // Arrange
-        Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(new Task(0, _graph.findByLabel("a")));
-        schedule.getProcessors().get(0).addTask(new Task(10, _graph.findByLabel("b")));
-        schedule.getProcessors().get(1).addTask(new Task(15, _graph.findByLabel("c")));
+        Schedule schedule = new SimpleSchedule(2);
+        schedule.addTask(new Task(0, 0, _graph.findByLabel("a")));
+        schedule.addTask(new Task(0, 10, _graph.findByLabel("b")));
+        schedule.addTask(new Task(1, 15, _graph.findByLabel("c")));
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));

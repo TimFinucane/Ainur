@@ -7,6 +7,7 @@ import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -34,7 +35,7 @@ public class CriticalPathTests {
             .edge("A", "B", 2)
             .build();
 
-        Schedule schedule = new Schedule(1);
+        Schedule schedule = new SimpleSchedule(1);
 
         LowerBound lowerBound = new CriticalPath();
 
@@ -62,7 +63,7 @@ public class CriticalPathTests {
             .edge("C", "E", 1)
             .build();
 
-        Schedule schedule = new Schedule(1);
+        Schedule schedule = new SimpleSchedule(1);
 
         LowerBound lowerBound = new CriticalPath();
 
@@ -89,7 +90,7 @@ public class CriticalPathTests {
                 .edge("C", "E", 1)
                 .build();
 
-        Schedule schedule = new Schedule(1);
+        Schedule schedule = new SimpleSchedule(1);
 
         LowerBound lowerBound = new CriticalPath();
 
@@ -118,10 +119,10 @@ public class CriticalPathTests {
 
         // Only the root node, A is added to the schedule.
         Node nodeA = graph.getEntryPoints().get(0);
-        Task taskA = new Task(0, nodeA);
+        Task taskA = new Task(0, 0, nodeA);
 
-        Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(taskA);
+        Schedule schedule = new SimpleSchedule(1);
+        schedule.addTask(taskA);
 
         LowerBound lowerBound = new CriticalPath();
 

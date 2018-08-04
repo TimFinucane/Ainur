@@ -5,12 +5,6 @@ import algorithm.DFSAlgorithm;
 import algorithm.heuristics.*;
 import common.graph.Graph;
 import common.schedule.Schedule;
-import io.GraphReader;
-import io.ScheduleWriter;
-import io.dot.DotGraphReader;
-import io.dot.DotScheduleWriter;
-
-import java.io.*;
 
 /**
  * A class implementing the abstract Cli class.

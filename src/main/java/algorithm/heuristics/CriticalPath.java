@@ -3,7 +3,6 @@ package algorithm.heuristics;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
-import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
 
@@ -93,8 +92,8 @@ public class CriticalPath implements LowerBound {
         List<Node> scheduledNodes = new ArrayList<>();
 
         // Generates a list storing all the nodes that have already been scheduled at some point
-        for (Processor processor : schedule.getProcessors()) {
-            for (Task task : processor.getTasks()) {
+        for (int i = 0; i < schedule.getNumProcessors(); ++i) {
+            for (Task task : schedule.getTasks(i)) {
                 scheduledNodes.add(task.getNode());
             }
         }
@@ -110,6 +109,6 @@ public class CriticalPath implements LowerBound {
      */
     //TODO - implementation
     public int estimate(Graph graph, Schedule schedule) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 }

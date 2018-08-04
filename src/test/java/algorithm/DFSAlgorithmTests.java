@@ -4,7 +4,6 @@ import algorithm.heuristics.IsNotAPruner;
 import algorithm.heuristics.NaiveBound;
 import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Graph;
-import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import org.junit.Assert;
@@ -33,15 +32,15 @@ public class DFSAlgorithmTests {
         algorithm.start(graph);
         Schedule result = algorithm.getCurrentBest();
 
-        for(Processor processor : result.getProcessors()) {
-            System.out.println("Processor");
-            for(Task task : processor.getTasks())
+        for(int i = 0; i < result.getNumProcessors(); ++i) {
+            System.out.println("Processor " + String.valueOf(i));
+            for(Task task : result.getTasks(i))
                 System.out.println(
                     task.getNode().getLabel()
                     + ", " + String.valueOf(task.getStartTime()) + " to " + String.valueOf(task.getEndTime())
                 );
         }
 
-        Assert.assertEquals(9, result.getTotalTime());
+        Assert.assertEquals(9, result.getEndTime());
     }
 }

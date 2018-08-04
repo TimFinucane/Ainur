@@ -1,75 +1,113 @@
 package common.schedule;
 
 import common.graph.Node;
-import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * Contains a list of Processors which in turn contain ordered Tasks.
+ * Represents a placed list of nodes on processors, with defined start and end times.
  */
-public class Schedule {
+public abstract class Schedule {
 
-    private List<Processor> _processors;
+    protected int _numProcessors;
 
-    /**
-     * Default constructor for a Schedule
-     * @param processors number of processors for tasks to be scheduled on within this schedule.
-     */
-    public Schedule(int processors) {
-        _processors = new ArrayList<>();
-        for (int i = 0; i < processors; i++){
-            _processors.add(new Processor());
-        }
+    protected Schedule(int numProcessors) {
+        _numProcessors = numProcessors;
     }
 
     /**
-     * Returns all the processors used in this Schedule.
-     * @return processors in this schedule.
+     * Adds the given task to the schedule.
      */
-    public List<Processor> getProcessors() {
-        return _processors;
+    abstract public void        addTask(Task task);
+    /**
+     * Removes the given task from the schedule
+     */
+    abstract public void        removeTask(Task task);
+
+    /**
+     * Finds the task in the schedule associated with the given node.
+     * @return A task if one with the given node exists in the Schedule, otherwise null.
+     */
+    abstract public Task        findTask(Node node);
+
+    /**
+     * Returns whether the given node is in the schedule as a task
+     */
+    public boolean              contains(Node node) {
+        return findTask(node) != null;
     }
 
     /**
-     * Finds the processor and task associated to a particular node.
-     * @param node node to find on the schedule.
-     * @return Processor running the task associated to input node, associated task
+     * Gets the latest task in the given processor
      */
-    public Pair<Processor, Task> findTask(Node node) {
-        for (Processor processor: _processors) {
-            Task task = processor.findTask(node);
-            if (task != null) {
-                return new Pair<>(processor, task);
+    abstract public Task        getLatest(int processor);
+    /**
+     * Gets the latest task in the entire schedule (where latest is defined as the task whose start is latest)
+     */
+    public Task                 getLatest() {
+        int latestStart = 0;
+        Task latest = null;
+
+        for(int i = 0; i < _numProcessors; ++i) {
+            Task latestOnProcessor = getLatest(i);
+            if(latestOnProcessor != null && latestOnProcessor.getStartTime() >= latestStart) {
+                latest = latestOnProcessor;
+                latestStart = latestOnProcessor.getStartTime();
             }
         }
-        return null;
+
+        return latest;
     }
 
     /**
-     * Finds the latest task end time across all the processors in the schedule.
-     * @return latest task finishing time.
+     * Gets the time at which all processing on the given processor is finished
      */
-    public int getTotalTime(){
-        List<Integer> endTimes = new ArrayList<>();
-        for (Processor processor : _processors) {
-            // Find the most recently scheduled task and it's finishing time
-            Task task = processor.getLatestTask();
-            endTimes.add(task != null ? task.getEndTime() : 0);
-        }
-        // Returns the maximum of all the processor end times.
-        return Collections.max(endTimes);
+    public int                  getEndTime(int processor) {
+        Task latestTask = getLatest(processor);
+        return latestTask != null ? latestTask.getEndTime() : 0;
+    }
+    /**
+     * Gets the time at which all processing is finished
+     */
+    public int                  getEndTime() {
+        // Note here that getLatest() returns the task whose start is latest and so should NOT be used for the purpose
+        //  of getting the end time.
+        // Because life is complicated :)
+        int endTime = 0;
+
+        for(int i = 0; i < _numProcessors; ++i)
+            endTime = Math.max(endTime, getEndTime(i));
+
+        return endTime;
     }
 
     /**
-     * Gets number of tasks currently placed in the schedule
+     * Gets all the tasks, in order, on the given processor.
+     * N.B., this seems to be the least used method, please keep it that way just in case there are further
+     * optimisations RE not maintaining a full list of tasks in order.
      */
-    public int size() {
+    abstract public List<Task>  getTasks(int processor);
+
+    /**
+     * Gets the number of placed tasks in the processor
+     */
+    abstract public int         size(int processor);
+    /**
+     * Gets the number of placed tasks in the schedule
+     */
+    public int                  size() {
         int total = 0;
-        for(Processor processor : _processors)
-            total += processor.getTasks().size();
+        for(int i = 0; i < _numProcessors; ++i)
+            total += size(i);
+
         return total;
     }
+
+    /**
+     * This may or may not get the number of processors, may fail if the computer is not working.
+     */
+    public int                  getNumProcessors() {
+        return _numProcessors;
+    }
+
 }

@@ -4,7 +4,6 @@ import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
-import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.util.Pair;
@@ -25,26 +24,23 @@ public class Validator {
     // finished plus any necessary transmission time.
     private static boolean validOrder(Graph graph, Schedule schedule) {
 
-        for (Processor processor : schedule.getProcessors()) {
-            List<Task> tasks = processor.getTasks();
-
-            for (Task task : tasks) {
-
+        for (int processor = 0; processor < schedule.getNumProcessors(); ++processor) {
+            for (Task task : schedule.getTasks(processor)) {
                 // Loop through all outgoing edges of the graph
                 for (Edge edge : graph.getOutgoingEdges(task.getNode())) {
 
                     Node node = edge.getDestinationNode();
-                    Pair<Processor, Task> dependentTask = schedule.findTask(node);
+                    Task dependentTask = schedule.findTask(node);
 
                     // Check if tasks are on the same processor
-                    if (dependentTask.getKey() == processor) {
+                    if (dependentTask.getProcessor() == processor) {
                         // Check if dependentTask's start time comes before the task's end time
-                        if (dependentTask.getValue().getStartTime() < task.getEndTime()) {
+                        if (dependentTask.getStartTime() < task.getEndTime()) {
                             return false; // Invalid
                         }
                     } else {
                         /// Check if dependentTask's stert time comes before the task's end time plus transmission cost
-                        if (dependentTask.getValue().getStartTime() < task.getEndTime() + edge.getCost()) {
+                        if (dependentTask.getStartTime() < task.getEndTime() + edge.getCost()) {
                             return false; // Invalid
                         }
                     }
@@ -59,8 +55,8 @@ public class Validator {
     private static boolean validPlacement(Schedule schedule) {
 
         //Check that Tasks do not overlap on a processor
-        for (Processor processor : schedule.getProcessors()) {
-            List<Task> tasks = processor.getTasks();
+        for (int processor = 0; processor < schedule.getNumProcessors(); ++processor) {
+            List<Task> tasks = schedule.getTasks(processor);
 
             for (Task task : tasks) {
                 for (Task otherTask : tasks) {

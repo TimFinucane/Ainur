@@ -2,8 +2,7 @@ package io.dot;
 
 import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Node;
-import common.schedule.Processor;
-import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
 import org.junit.Assert;
@@ -25,21 +24,11 @@ public class DotScheduleWriterTests {
      */
     public void testBasicLinearOneProcessorSchedule(){
         // Set up
-        Schedule schedule = new Schedule(1);
+        SimpleSchedule schedule = new SimpleSchedule(1);
 
-        Processor processor = schedule.getProcessors().get(0);
-
-        processor.addTask(new Task(0,
-                new Node(1, "1", 1)
-        ));
-
-        processor.addTask(new Task(2,
-                new Node(2, "2", 2)
-        ));
-
-        processor.addTask(new Task(6,
-                new Node(1, "3", 3)
-        ));
+        schedule.addTask( new Task(0, 0, new Node(1, "1", 1)) );
+        schedule.addTask( new Task(0, 2, new Node(2, "2", 2)) );
+        schedule.addTask( new Task(0, 6, new Node(1, "3", 3)) );
 
         // Test
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
@@ -64,31 +53,15 @@ public class DotScheduleWriterTests {
      */
     public void testBasicLinearTwoProcessorSchedule(){
 
-        Schedule schedule = new Schedule(2);
-
-        Processor processor1 = schedule.getProcessors().get(0);
+        SimpleSchedule schedule = new SimpleSchedule(2);
         //Set up
-        processor1.addTask(new Task(0,
-                new Node(2, "1", 1)
-        ));
-        processor1.addTask(new Task(4,
-                new Node(3, "2", 2)
-        ));
-        processor1.addTask(new Task(9,
-                new Node(1, "3", 3)
-        ));
+        schedule.addTask( new Task(0, 0, new Node(2, "1", 1)) );
+        schedule.addTask( new Task(0, 4, new Node(3, "2", 2)) );
+        schedule.addTask( new Task(0, 9, new Node(1, "3", 3)) );
 
-        Processor processor2 = schedule.getProcessors().get(1);
-
-        processor2.addTask(new Task(1,
-                new Node(2, "4", 4)
-        ));
-        processor2.addTask(new Task(4,
-                new Node(2, "5", 5)
-        ));
-        processor2.addTask(new Task(8,
-                new Node(1, "6", 6)
-        ));
+        schedule.addTask( new Task(1, 1, new Node(2, "4", 4)) );
+        schedule.addTask( new Task(1, 4, new Node(2, "5", 5)) );
+        schedule.addTask( new Task(1, 8, new Node(1, "6", 6)) );
 
         // Test
         ByteArrayOutputStream bs = new ByteArrayOutputStream();

@@ -10,8 +10,8 @@ import cli.Cli;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.graph.Node;
-import common.schedule.Processor;
 import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import io.GraphReader;
 import io.dot.DotGraphReader;
@@ -72,7 +72,7 @@ public class AlgorithmIntegrationTests {
         //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(28, resultManual.getTotalTime());
+        assertEquals(28, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
         String[] args = {"data/graphs/Nodes_7_OutTree.dot", "2"};
@@ -128,23 +128,24 @@ public class AlgorithmIntegrationTests {
         Graph graph2 = reader2.read();
 
         //Make Schedules
-        Schedule outputSchedule = new Schedule(2);
-        int startTime = 0;
-        Processor p = outputSchedule.getProcessors().get(0);
-            for(Node n : graph1.getNodes()){
-                p.addTask(new Task(startTime, n));
-                startTime = startTime + n.getComputationCost();
-            }
+        Schedule outputSchedule = new SimpleSchedule(2);
 
+        // Add all of graph 1 to processor 0
+        int startTime = 0;
+        for(Node n : graph1.getNodes()){
+            outputSchedule.addTask(new Task(0, startTime, n));
+            startTime = startTime + n.getComputationCost();
+        }
+
+        // Add all of graph 2 to processor 1
         startTime = 0;
-        Processor p1 = outputSchedule.getProcessors().get(1);
-            for(Node n : graph2.getNodes()){
-                p1.addTask(new Task(startTime, n));
-                startTime = startTime + n.getComputationCost();
-            }
+        for(Node n : graph2.getNodes()){
+            outputSchedule.addTask(new Task(1, startTime, n));
+            startTime = startTime + n.getComputationCost();
+        }
 
             //Check written out schedule is all good
-        assertEquals(28, outputSchedule.getTotalTime());
+        assertEquals(28, outputSchedule.getEndTime());
 
     }
 
@@ -180,7 +181,7 @@ public class AlgorithmIntegrationTests {
         algorithm.start(graph);
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(581, resultManual.getTotalTime());
+        assertEquals(581, resultManual.getEndTime());
         // Now run graph through CLI
         String[] args = {"data/graphs/Nodes_8_Random.dot", "2"};
         Cli cli = new Cli(args) {
@@ -235,22 +236,23 @@ public class AlgorithmIntegrationTests {
         Graph graph2 = reader2.read();
 
         //Make Schedules
-        Schedule outputSchedule = new Schedule(2);
+        Schedule outputSchedule = new SimpleSchedule(2);
+
+        // Add entirety of graph 1 to processor 0
         int startTime = 0;
-        Processor p = outputSchedule.getProcessors().get(0);
         for(Node n : graph1.getNodes()){
-            p.addTask(new Task(startTime, n));
+            outputSchedule.addTask(new Task(0, startTime, n));
             startTime = startTime + n.getComputationCost();
         }
 
+        // Add entirety of graph 2 to processor 1
         startTime = 0;
-        Processor p1 = outputSchedule.getProcessors().get(1);
         for(Node n : graph2.getNodes()){
-            p1.addTask(new Task(startTime, n));
+            outputSchedule.addTask(new Task(1, startTime, n));
             startTime = startTime + n.getComputationCost();
         }
 
-        assertEquals(581, outputSchedule.getTotalTime());
+        assertEquals(581, outputSchedule.getEndTime());
 
     }
 
@@ -288,7 +290,7 @@ public class AlgorithmIntegrationTests {
         //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(22, resultManual.getTotalTime());
+        assertEquals(22, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
         String[] args = {"data/graphs/Nodes_7_OutTree.dot", "2"};
@@ -350,7 +352,7 @@ public class AlgorithmIntegrationTests {
         //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(50, resultManual.getTotalTime());
+        assertEquals(50, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
         String[] args = {"data/graphs/Nodes_10_Random.dot", "2"};
@@ -410,7 +412,7 @@ public class AlgorithmIntegrationTests {
         //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(227, resultManual.getTotalTime());
+        assertEquals(227, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
         String[] args = {"data/graphs/Nodes_11_OutTree.dot", "2"};
