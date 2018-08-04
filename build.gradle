@@ -18,5 +18,14 @@ dependencies {
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 }
 
-// Allows jar to be executed without specifying classpath
-jar.manifest.attributes 'Main-Class': mainClassName
+// Complile jar
+jar {
+    manifest {
+        // Set main class
+        attributes 'Main-Class': mainClassName
+    }
+    from {
+        // Compile with dependencies
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
