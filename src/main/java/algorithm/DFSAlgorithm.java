@@ -5,10 +5,8 @@ import algorithm.heuristics.LowerBound;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
-import common.schedule.Processor;
-import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import javafx.util.Pair;
 
 import java.util.*;
 
@@ -16,6 +14,10 @@ import java.util.*;
  * A DFS implementation of the Algorithm class.
  */
 public class DFSAlgorithm extends Algorithm {
+    // When we have multithreading, these will be shared
+    private SimpleSchedule _best;
+    private int _upperBound;
+
     // TODO: Multithreaded. When done add as argument to the algorithm
 
     /**
@@ -40,7 +42,7 @@ public class DFSAlgorithm extends Algorithm {
     public void start(Graph graph) {
         _upperBound = initialUpperBound(graph);
 
-        _bestSchedule = recurse(graph, new Schedule(_processors), new HashSet<>(graph.getEntryPoints()));
+        _bestSchedule = recurse(graph, new SimpleSchedule(_processors, graph.size()), new HashSet<>(graph.getEntryPoints()));
         _isComplete = true;
     }
 
@@ -79,9 +81,9 @@ public class DFSAlgorithm extends Algorithm {
      * @param curSchedule The partial schedule with all nodes visited by 'parent' recursors in it
      * @param availableNodes A helpful list of nodes available to visit next
      */
-    private Schedule recurse(Graph graph, Schedule curSchedule, HashSet<Node> availableNodes) {
+    private SimpleSchedule recurse(Graph graph, SimpleSchedule curSchedule, HashSet<Node> availableNodes) {
         // We might discover a better upper bound part way through and want to use it
-        Schedule curBest = null;
+        SimpleSchedule curBest = null;
 
         // Go through every node of our children, recursively
         for(Node node : availableNodes) {
@@ -111,67 +113,57 @@ public class DFSAlgorithm extends Algorithm {
             // Now we run all possible ways of adding this node to the schedule.
             // We apply this to the schedule then remove it before using it again,
             // to prevent constant cloning of the schedule
-            for(Processor processor : curSchedule.getProcessors()) {
+            for(int processor = 0; processor < curSchedule.getNumProcessors(); ++processor) {
                 // Calculate earliest it can be placed
                 int earliest = 0;
                 for(Edge edge : graph.getIncomingEdges(node)) {
                     Node dependencyNode = edge.getOriginNode();
-                    Pair<Processor, Task> item = curSchedule.findTask(dependencyNode);
+                    Task item = curSchedule.findTask(dependencyNode);
 
                     if(item == null)
                         throw new RuntimeException("Chide Tim for not checking a node's parents are in the schedule");
 
                     // If it's on the same processor, just has to be after task end. If not, then it also needs
                     // to be past the communication cost
-                    if(item.getKey() == processor)
-                        earliest = Math.max(earliest, item.getValue().getEndTime());
+                    if(item.getProcessor() == processor)
+                        earliest = Math.max(earliest, item.getEndTime());
                     else
-                        earliest = Math.max(earliest, item.getValue().getEndTime() + edge.getCost());
+                        earliest = Math.max(earliest, item.getEndTime() + edge.getCost());
                 }
 
-                if( processor.getTasks().size() > 0 ) {
+                if( curSchedule.size(processor) > 0 ) {
                     earliest = Math.max(
                         earliest,
-                        processor.getLatestTask().getEndTime()
+                        curSchedule.getLatest(processor).getEndTime()
                     );
                 }
 
-                Task toBePlaced = new Task(earliest, node);
+                Task toBePlaced = new Task(processor, earliest, node);
 
                 // Check the base case (that adding the task will give us a complete schedule that we then return)
                 if(curSchedule.size() + 1 == graph.size()) {
-                    // Clone the schedule manually, or we will be modifying our parents schedule and that is bad
-                    Schedule newSchedule = new Schedule(_processors);
-                    for (int i = 0; i < _processors; ++i)
-                    {
-                        newSchedule.getProcessors().get(i).getTasks().addAll(curSchedule.getProcessors().get(i).getTasks());
-                    }
+                    SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
+                    newSchedule.addTask(toBePlaced);
 
-                    // Add the task to newSchedule instead of curSchedule
-                    newSchedule.getProcessors().get(curSchedule.getProcessors().indexOf(processor)).addTask(toBePlaced);
                     return newSchedule;
                 }
 
-                // Check whether placing it there is a good idea
-                if( prune(graph, curSchedule, new Pair<>(processor, toBePlaced)) )
-                    continue;
-
-                // Check whether its worth trying w.r.t. lower bound estimate
-                if( estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _upperBound )
+                // Check whether our heuristics advise continuing down this noble eightfold path
+                if( prune(graph, curSchedule, toBePlaced)
+                    || estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _upperBound )
                     continue;
 
                 // Ok all that has failed so i guess we have to actually recurse with it
-                processor.addTask(toBePlaced); // Remember this adds it to the current schedule
-                Schedule result = recurse(graph, curSchedule, nextAvailableNodes);
-                // We added a task to the schedule and we need to remove it to return the curSchedule to its
-                // original state
-                processor.removeTask(toBePlaced);
+                curSchedule.addTask(toBePlaced);
+                SimpleSchedule result = recurse(graph, curSchedule, nextAvailableNodes);
+                curSchedule.removeTask(toBePlaced);
+
 
                 if(result == null) // You failed when I needed you most (the result wasn't good enough)
                     continue;
 
                 // But at least now we know we have a result that should be better than upper bound
-                int resultTotalTime = result.getTotalTime();
+                int resultTotalTime = result.getEndTime();
 
                 // Just in case the schedule is still pretty bad
                 if(resultTotalTime <= _upperBound) {
@@ -182,6 +174,4 @@ public class DFSAlgorithm extends Algorithm {
         }
         return curBest;
     }
-
-    private int _upperBound; // When we have multithreading, this will be shared
 }
