@@ -43,7 +43,7 @@ public class AlgorithmIntegrationTests {
      * Test tests algorithm set up against a graph with 7 nodes and 3 layers, on two processors with no
      * heuristics
      */
-    @Test
+    //@Test
     public void testNodes_7_OutTreeGraphTwoProcessor() {
 
         // Set up File
@@ -153,7 +153,7 @@ public class AlgorithmIntegrationTests {
      * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
      * heuristics
      */
-    @Test
+    //@Test
     public void testNodes_8_RandomGraphTwoProcessor() {
 
         // Set up File
@@ -259,7 +259,7 @@ public class AlgorithmIntegrationTests {
      * Test tests algorithm against graph with 7 nodes and 3 layers, on 4 processors with critical path
      * heuristics
      */
-    @Test
+    //@Test
     public void testNodes_7_OutTreeGraphFourProcessor() {
 
         // Set up File
@@ -317,7 +317,7 @@ public class AlgorithmIntegrationTests {
      * 3min 40s with no heuristics
      * 28s with 2X heuristics
      */
-    @Test
+    //@Test
     public void testNodes_10_RandomFourProcessor() {
 
         // Set up File
@@ -379,7 +379,7 @@ public class AlgorithmIntegrationTests {
      * ******Fair warning, this one takes a while ***********
      * **************** Roughly 30 min **********************
      */
-    @Test
+    //@Test
     public void testNode_11_OutTreeFourProcessor() {
 
         // Set up File
