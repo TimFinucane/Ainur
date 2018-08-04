@@ -7,8 +7,7 @@ import algorithm.heuristics.IsNotAPruner;
 import algorithm.heuristics.NaiveBound;
 import algorithm.heuristics.StartTimePruner;
 import cli.Cli;
-import common.Categories.GandalfTests;
-import common.graph.Edge;
+import common.categories.GandalfTests;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Processor;
@@ -16,15 +15,11 @@ import common.schedule.Schedule;
 import common.schedule.Task;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Category;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;

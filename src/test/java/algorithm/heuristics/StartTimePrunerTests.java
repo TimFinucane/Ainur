@@ -1,6 +1,6 @@
 package algorithm.heuristics;
 
-import common.Categories.HobbitonTests;
+import common.categories.HobbitonTests;
 import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;

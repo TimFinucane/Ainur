@@ -2,7 +2,7 @@ package algorithm;
 
 import algorithm.heuristics.CriticalPath;
 import algorithm.heuristics.LowerBound;
-import common.Categories.HobbitonTests;
+import common.categories.HobbitonTests;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

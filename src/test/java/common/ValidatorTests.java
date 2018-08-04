@@ -1,14 +1,12 @@
 package common;
 
-import common.Categories.HobbitonTests;
+import common.categories.HobbitonTests;
 import common.graph.Graph;
-import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Category;
 
 @Category(HobbitonTests.class)

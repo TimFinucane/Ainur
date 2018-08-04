@@ -1,4 +1,4 @@
-package common.Categories;
+package common.categories;
 
 public class GandalfTests {
 }
