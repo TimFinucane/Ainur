@@ -50,7 +50,7 @@ public abstract class Schedule {
 
         for(int i = 0; i < _numProcessors; ++i) {
             Task latestOnProcessor = getLatest(i);
-            if(latestOnProcessor != null && latestOnProcessor.getStartTime() > latestStart) {
+            if(latestOnProcessor != null && latestOnProcessor.getStartTime() >= latestStart) {
                 latest = latestOnProcessor;
                 latestStart = latestOnProcessor.getStartTime();
             }
