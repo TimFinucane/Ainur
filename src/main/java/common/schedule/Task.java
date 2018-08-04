@@ -12,6 +12,7 @@ public class Task {
 
     /**
      * Default constructor for a Task object
+     * @param processor the processor on which the task is placed
      * @param startTime start time for scheduled execution of task
      * @param node Node associated to task.
      */
@@ -21,6 +22,9 @@ public class Task {
         _node = node;
     }
 
+    /**
+     * The processor which the task is on in the schedule
+     */
     public int getProcessor() {
         return _processor;
     }
