@@ -373,4 +373,63 @@ public class AlgorithmIntegrationTests {
 
     }
 
+    /**
+     * Test tests algorithm against graph with 11 nodes on 4 processors with critical path and start time
+     * pruner heuristics.
+     * ******Fair warning, this one takes a while ***********
+     * **************** Roughly 30 min **********************
+     */
+    @Test
+    public void testNode_11_OutTreeFourProcessor() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_11_OutTree.dot");
+        InputStream graphStream = null;
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
+        //Try making graph from file and check that it is correct
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        //Assert that graph is as expected
+        List<Node> entryNodes = graph.getEntryPoints();
+        assertEquals(1, entryNodes.size());
+        assertEquals("0", entryNodes.get(0).getLabel());
+        assertEquals(50, entryNodes.get(0).getComputationCost());
+
+
+        assertEquals(11, graph.size());
+
+
+        Algorithm algorithm = new DFSAlgorithm(4, new StartTimePruner(), new NaiveBound());
+
+        algorithm.start(graph);
+        //Manually start algorithm on graph and check that final answer is correct
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(227, resultManual.getTotalTime());
+
+        // Now run graph through CLI and assert all answers are the same as before
+        String[] args = {"data/graphs/Nodes_11_OutTree.dot", "2"};
+        Cli cli = new Cli(args) {
+            @Override
+            protected Schedule startScheduling(Graph graph) {
+                Algorithm algorithm = new DFSAlgorithm(4, new StartTimePruner(), new NaiveBound());
+
+                algorithm.start(graph);
+                Schedule result = algorithm.getCurrentBest();
+                return result;
+            }
+        };
+        cli.parse();
+
+        // Check that output file is all good from full run through
+        File outputFile = new File("data/graphs/Nodes_11_OutTree.dot");
+        assertTrue(outputFile.exists());
+
+    }
 }
