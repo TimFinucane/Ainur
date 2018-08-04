@@ -1,18 +1,19 @@
 package io.dot;
 
+import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import io.GraphReader;
-import io.dot.DotGraphReader;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
+@Category(HobbitonUnitTestsCategory.class)
 public class DotGraphReaderTests {
 
     /**

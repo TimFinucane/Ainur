@@ -1,28 +1,22 @@
 package io.dot;
 
-import common.graph.Edge;
+import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
-import io.dot.DotScheduleWriter;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Class tests DotScheduleWriter by making schedules and getting the writer to write them out to file
  * or in this case, a string to compare with
  */
+@Category(HobbitonUnitTestsCategory.class)
 public class DotScheduleWriterTests {
 
     @Test
@@ -54,7 +48,7 @@ public class DotScheduleWriterTests {
 
         // Assert
         String expected =
-                "digraph \"Processor#0\" {\n" +
+                "digraph \"Processor_0\" {\n" +
                         "\t1\t [Weight=1];\n" +
                         "\t2\t [Weight=2];\n" +
                         "\t1 -> 2\t [Weight=1];\n" +
@@ -103,7 +97,7 @@ public class DotScheduleWriterTests {
 
         // Assert
         String expected =
-                "digraph \"Processor#0\" {\n" +
+                "digraph \"Processor_0\" {\n" +
                         "\t1\t [Weight=2];\n" +
                         "\t2\t [Weight=3];\n" +
                         "\t1 -> 2\t [Weight=2];\n" +
@@ -111,7 +105,7 @@ public class DotScheduleWriterTests {
                         "\t2 -> 3\t [Weight=2];\n" +
                         "}\n" +
                         "\n" +
-                        "digraph \"Processor#1\" {\n" +
+                        "digraph \"Processor_1\" {\n" +
                         "\t4\t [Weight=2];\n" +
                         "\t5\t [Weight=2];\n" +
                         "\t4 -> 5\t [Weight=1];\n" +

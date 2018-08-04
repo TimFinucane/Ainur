@@ -1,5 +1,6 @@
 package common;
 
+import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
@@ -7,9 +8,11 @@ import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.util.Pair;
+import org.junit.experimental.categories.Category;
 
 import java.util.List;
 
+@Category(HobbitonUnitTestsCategory.class)
 public class Validator {
 
     public static boolean isValid(Graph graph, Schedule schedule) {

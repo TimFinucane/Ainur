@@ -2,18 +2,16 @@ package algorithm;
 
 import algorithm.heuristics.IsNotAPruner;
 import algorithm.heuristics.NaiveBound;
-import common.graph.Edge;
+import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Graph;
-import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-import java.util.Arrays;
-import java.util.List;
-
+@Category(HobbitonUnitTestsCategory.class)
 public class DFSAlgorithmTests {
     @Test
     public void simpleTest() {
