@@ -1,6 +1,6 @@
 package algorithm.heuristics;
 
-import common.categories.HobbitonTests;
+import common.categories.HobbitonUnitTests;
 import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;
@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(HobbitonTests.class)
+@Category(HobbitonUnitTests.class)
 public class StartTimePrunerTests {
 
     /**

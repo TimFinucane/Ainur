@@ -2,7 +2,7 @@ package algorithm;
 
 import algorithm.heuristics.IsNotAPruner;
 import algorithm.heuristics.NaiveBound;
-import common.categories.HobbitonTests;
+import common.categories.HobbitonUnitTests;
 import common.graph.Graph;
 import common.schedule.Processor;
 import common.schedule.Schedule;
@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(HobbitonTests.class)
+@Category(HobbitonUnitTests.class)
 public class DFSAlgorithmTests {
     @Test
     public void simpleTest() {

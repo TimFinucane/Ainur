@@ -2,7 +2,7 @@ package algorithm;
 
 import algorithm.heuristics.CriticalPath;
 import algorithm.heuristics.LowerBound;
-import common.categories.HobbitonTests;
+import common.categories.HobbitonUnitTests;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Basic class to test the functionality of the critical path finding implementation.
  */
-@Category(HobbitonTests.class)
+@Category(HobbitonUnitTests.class)
 public class CriticalPathTests {
 
     /**

@@ -1,6 +1,6 @@
 package common;
 
-import common.categories.HobbitonTests;
+import common.categories.HobbitonUnitTests;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.Task;
@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(HobbitonTests.class)
+@Category(HobbitonUnitTests.class)
 public class ValidatorTests {
 
     private Graph _graph;

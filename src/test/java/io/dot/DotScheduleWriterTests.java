@@ -1,6 +1,6 @@
 package io.dot;
 
-import common.categories.HobbitonTests;
+import common.categories.HobbitonUnitTests;
 import common.graph.Node;
 import common.schedule.Processor;
 import common.schedule.Schedule;
@@ -16,7 +16,7 @@ import java.io.ByteArrayOutputStream;
  * Class tests DotScheduleWriter by making schedules and getting the writer to write them out to file
  * or in this case, a string to compare with
  */
-@Category(HobbitonTests.class)
+@Category(HobbitonUnitTests.class)
 public class DotScheduleWriterTests {
 
     @Test
