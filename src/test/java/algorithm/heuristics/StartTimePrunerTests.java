@@ -1,8 +1,8 @@
 package algorithm.heuristics;
 
 import common.graph.Node;
-import common.schedule.Processor;
 import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import javafx.util.Pair;
 import org.junit.Assert;
@@ -16,17 +16,14 @@ public class StartTimePrunerTests {
      */
     @Test
     public void testEmptyGraph() {
-
         // Arrange
         Arborist pruner = new StartTimePruner();
 
-        Schedule schedule = new Schedule(1);
-        Task task = new Task(1, new Node(1, "Stub", 0));
-        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
+        Schedule schedule = new SimpleSchedule(1);
+        Task task = new Task(0, 1, new Node(1, "Stub", 0));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, processorTaskPair));
-
+        Assert.assertFalse(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -35,20 +32,17 @@ public class StartTimePrunerTests {
      */
     @Test
     public void testSingleProcessorReturnFalse() {
-
         // Arrange
         Arborist pruner = new StartTimePruner();
 
-        Schedule schedule = new Schedule(1);
-        schedule.getProcessors().get(0).addTask(
-                new Task(0, new Node(5, "stub", 0)));
+        Schedule schedule = new SimpleSchedule(1);
+        schedule.addTask(
+                new Task(0, 0, new Node(5, "stub", 0)));
 
-        Task task =  new Task(5, new Node(1, "stub", 0));
-        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
+        Task task =  new Task(0, 5, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, processorTaskPair));
-
+        Assert.assertFalse(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -57,20 +51,16 @@ public class StartTimePrunerTests {
      */
     @Test
     public void testMultipleProcessorsReturnFalse() {
-
         // Arrange
         Arborist pruner = new StartTimePruner();
 
-        Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(
-                new Task(0, new Node(5, "stub", 0)));
+        Schedule schedule = new SimpleSchedule(2);
+        schedule.addTask(new Task(0, 0, new Node(5, "stub", 0)));
 
-        Task task =  new Task(5, new Node(1, "stub", 0));
-        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
+        Task task =  new Task(0, 5, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, processorTaskPair));
-
+        Assert.assertFalse(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -79,20 +69,16 @@ public class StartTimePrunerTests {
      */
     @Test
     public void testMultipleProcessorsReturnTrue() {
-
         // Arrange
         Arborist pruner = new StartTimePruner();
 
-        Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(0).addTask(
-                new Task(5, new Node(5, "stub", 0)));
+        Schedule schedule = new SimpleSchedule(2);
+        schedule.addTask(new Task(0, 5, new Node(5, "stub", 0)));
 
-        Task task =  new Task(4, new Node(1, "stub", 0));
-        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
+        Task task =  new Task(0, 4, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertTrue(pruner.prune(null, schedule, processorTaskPair));
-
+        Assert.assertTrue(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -101,23 +87,19 @@ public class StartTimePrunerTests {
      */
     @Test
     public void testMultipleProcessorsSameLastStartTimeReturnTrue() {
-
         // Arrange
         Arborist pruner = new StartTimePruner();
 
-        Schedule schedule = new Schedule(10);
+        Schedule schedule = new SimpleSchedule(10);
         for (int i = 0; i < 9; i++) {
-            schedule.getProcessors().get(i).addTask(
-                    new Task(5, new Node(5, "stub", 0)));
+            schedule.addTask(new Task(i, 5, new Node(5, "stub", 0)));
         }
 
 
-        Task task =  new Task(4, new Node(1, "stub", 0));
-        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
+        Task task = new Task(0, 4, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertTrue(pruner.prune(null, schedule, processorTaskPair));
-
+        Assert.assertTrue(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -126,20 +108,16 @@ public class StartTimePrunerTests {
      */
     @Test
     public void testStartTimesEqualReturnFalse() {
-
         // Arrange
         Arborist pruner = new StartTimePruner();
 
-        Schedule schedule = new Schedule(2);
-        schedule.getProcessors().get(1).addTask(
-                new Task(5, new Node(5, "stub", 0)));
+        Schedule schedule = new SimpleSchedule(2);
+        schedule.addTask(new Task(1, 5, new Node(5, "stub", 0)));
 
-
-        Task task =  new Task(5, new Node(1, "stub", 0));
-        Pair<Processor, Task> processorTaskPair = new Pair<>(new Processor(), task);
+        Task task =  new Task(0, 5, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, processorTaskPair));
+        Assert.assertFalse(pruner.prune(null, schedule, task));
 
     }
 
