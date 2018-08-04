@@ -7,6 +7,7 @@ import algorithm.heuristics.IsNotAPruner;
 import algorithm.heuristics.NaiveBound;
 import algorithm.heuristics.StartTimePruner;
 import cli.Cli;
+import common.Categories.GandalfTests;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
@@ -18,6 +19,8 @@ import io.dot.DotGraphReader;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Categories;
+import org.junit.experimental.categories.Category;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -37,13 +40,15 @@ import static junit.framework.TestCase.fail;
  * Any tests higher than 9/10 nodes on more than 2 processors will take a significant amount of time to run, and
  * hence have not been included in the test suite.
  */
+@Category(GandalfTests.class)
 public class AlgorithmIntegrationTests {
 
     /**
      * Test tests algorithm set up against a graph with 7 nodes and 3 layers, on two processors with no
      * heuristics
      */
-    //@Test
+    @Category(GandalfTests.class)
+    @Test
     public void testNodes_7_OutTreeGraphTwoProcessor() {
 
         // Set up File
@@ -153,7 +158,8 @@ public class AlgorithmIntegrationTests {
      * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
      * heuristics
      */
-    //@Test
+    @Category(GandalfTests.class)
+    @Test
     public void testNodes_8_RandomGraphTwoProcessor() {
 
         // Set up File
@@ -259,7 +265,8 @@ public class AlgorithmIntegrationTests {
      * Test tests algorithm against graph with 7 nodes and 3 layers, on 4 processors with critical path
      * heuristics
      */
-    //@Test
+    @Category(GandalfTests.class)
+    @Test
     public void testNodes_7_OutTreeGraphFourProcessor() {
 
         // Set up File
@@ -317,7 +324,8 @@ public class AlgorithmIntegrationTests {
      * 3min 40s with no heuristics
      * 28s with 2X heuristics
      */
-    //@Test
+    @Category(GandalfTests.class)
+    @Test
     public void testNodes_10_RandomFourProcessor() {
 
         // Set up File
@@ -379,7 +387,8 @@ public class AlgorithmIntegrationTests {
      * ******Fair warning, this one takes a while ***********
      * **************** Roughly 30 min **********************
      */
-    //@Test
+    @Category(GandalfTests.class)
+    @Test
     public void testNode_11_OutTreeFourProcessor() {
 
         // Set up File

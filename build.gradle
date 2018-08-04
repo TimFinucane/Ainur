@@ -29,3 +29,10 @@ jar {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
+
+test {
+    useJUnit {
+        includeCategories 'org.gradle.junit.HobbitonTests'
+        excludeCategories 'org.gradle.junit.GandalfTests'
+    }
+}
