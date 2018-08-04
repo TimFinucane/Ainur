@@ -86,9 +86,7 @@ atlassian-ide-plugin.xml
 
 #Files
 #------------
-Nodes_8_Random_processed.dot
-Nodes_7_OutTree_processed.dot
-Nodes_10_Random_processed.dot
+/data
 
 # oh-my-zsh gradle plugin
 .gradletasknamecache

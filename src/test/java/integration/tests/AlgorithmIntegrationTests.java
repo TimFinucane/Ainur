@@ -7,7 +7,7 @@ import algorithm.heuristics.IsNotAPruner;
 import algorithm.heuristics.NaiveBound;
 import algorithm.heuristics.StartTimePruner;
 import cli.Cli;
-import common.categories.GandalfIntegrationTests;
+import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Processor;
@@ -35,14 +35,13 @@ import static junit.framework.TestCase.fail;
  * Any tests higher than 9/10 nodes on more than 2 processors will take a significant amount of time to run, and
  * hence have not been included in the test suite.
  */
-@Category(GandalfIntegrationTests.class)
+@Category(GandalfIntegrationTestsCategory.class)
 public class AlgorithmIntegrationTests {
 
     /**
      * Test tests algorithm set up against a graph with 7 nodes and 3 layers, on two processors with no
      * heuristics
      */
-    @Category(GandalfIntegrationTests.class)
     @Test
     public void testNodes_7_OutTreeGraphTwoProcessor() {
 
@@ -153,7 +152,6 @@ public class AlgorithmIntegrationTests {
      * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
      * heuristics
      */
-    @Category(GandalfIntegrationTests.class)
     @Test
     public void testNodes_8_RandomGraphTwoProcessor() {
 
@@ -260,7 +258,6 @@ public class AlgorithmIntegrationTests {
      * Test tests algorithm against graph with 7 nodes and 3 layers, on 4 processors with critical path
      * heuristics
      */
-    @Category(GandalfIntegrationTests.class)
     @Test
     public void testNodes_7_OutTreeGraphFourProcessor() {
 
@@ -319,7 +316,6 @@ public class AlgorithmIntegrationTests {
      * 3min 40s with no heuristics
      * 28s with 2X heuristics
      */
-    @Category(GandalfIntegrationTests.class)
     @Test
     public void testNodes_10_RandomFourProcessor() {
 
@@ -382,7 +378,6 @@ public class AlgorithmIntegrationTests {
      * ******Fair warning, this one takes a while ***********
      * **************** Roughly 30 min **********************
      */
-    @Category(GandalfIntegrationTests.class)
     @Test
     public void testNode_11_OutTreeFourProcessor() {
 

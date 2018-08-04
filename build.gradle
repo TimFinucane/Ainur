@@ -32,7 +32,7 @@ jar {
 
 test {
     useJUnit {
-        includeCategories 'common.categories.HobbitonTests'
-        excludeCategories 'common.categories.GandalfTests'
+        includeCategories 'common.categories.HobbitonUnitTestsCategory'
+        excludeCategories 'common.categories.GandalfIntegrationTestsCategory'
     }
 }
