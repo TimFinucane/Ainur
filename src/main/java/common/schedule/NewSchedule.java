@@ -87,7 +87,15 @@ abstract class NewSchedule {
     /**
      * Gets the number of placed tasks in the schedule
      */
-    abstract public int         size();
+    abstract public int         size(int processor);
+    public int                  size() {
+        int total = 0;
+        for(int i = 0; i < _numProcessors; ++i)
+            total += size(i);
+
+        return total;
+    }
+
     /**
      * This may or may not get the number of processors, may fail if the computer is not working.
      */
