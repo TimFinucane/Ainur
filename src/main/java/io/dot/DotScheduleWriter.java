@@ -1,12 +1,10 @@
 package io.dot;
 
-import common.schedule.Processor;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
 
 import java.io.*;
-import java.util.ListIterator;
 
 /**
  * This class writes a schedule to a .dot file format.
@@ -37,28 +35,31 @@ public class DotScheduleWriter extends ScheduleWriter {
 
         PrintWriter pw = new PrintWriter(_os);
 
+        for(int processor = 0; processor < schedule.getNumProcessors(); ++processor){
+            pw.write(String.format(DOT_GRAPH_OPENING, processor)); // Starting of a digraph
 
-        int processorCount = 0;
+            Task prevTask = null;
+            for(Task curTask : schedule.getTasks(processor)) { // Start to write tasks
+                pw.write(String.format(
+                    COMPUTATION_COST_FORMAT,
+                    curTask.getNode().getLabel(),
+                    curTask.getNode().getComputationCost())
+                );
 
-        for(Processor processor : schedule.getProcessors()){
-            pw.write(String.format(DOT_GRAPH_OPENING, processorCount)); // Starting of a digraph
-
-            for (int i=0; i<processor.getTasks().size(); i++){ // Start to write tasks
-                Task task = processor.getTasks().get(i);
-                pw.write(String.format(COMPUTATION_COST_FORMAT, task.getNode().getLabel(),
-                        task.getNode().getComputationCost()));
-
-                if (i>0){ // If there is a node before ie dependency, add communication cost
-                    pw.write(String.format(COMMUNICATION_COST_FORMAT, processor.getTasks().get(i-1).getNode().getLabel(),
-                            task.getNode().getLabel(),
-                            // Get the communication cost by finding the difference of that last tasks end time and
-                            // the current tasks start time
-                            ((task.getStartTime())-
-                                    (processor.getTasks().get(i-1).getStartTime()+processor.getTasks().get(i-1).getNode().getComputationCost()))
-                            ));
+                if(prevTask != null) { // If there is a node before ie dependency, add communication cost
+                    pw.write(String.format(
+                        COMMUNICATION_COST_FORMAT,
+                        prevTask.getNode().getLabel(),
+                        curTask.getNode().getLabel(),
+                        // Get the communication cost by finding the difference of that last tasks end time and
+                        // the current tasks start time
+                        (curTask.getStartTime() - prevTask.getEndTime())
+                        )
+                    );
                 }
+
+                prevTask = curTask;
             }
-            processorCount++;
             pw.write(DOT_GRAPH_CLOSING);
         }
         pw.close();
