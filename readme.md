@@ -14,10 +14,10 @@
 ## Contributors
 The following people contributed to the program, there upis are also given for uni reference.
 
-| Contributor | UPI |
+| Contributor | UPI | GitHub
 | ----------- | --- |
-| Maddie Beagley - Team Leader | mbea966 |
-| Nathan Cairns | ncai762 |
-| Buster Darragh-Major | bmaj406 |
-| Tim Finucane | tfin440 |
-| Emilie Pearce | epea390 |
+| Maddie Beagley - Team Leader | mbea966 | https://github.com/maddiebeagley
+| Nathan Cairns | ncai762 | https://github.com/Nathan-Cairns
+| Buster Darragh-Major | bmaj406 | https://github.com/Buster-Darragh-Major
+| Tim Finucane | tfin440 | https://github.com/TimFinucane
+| Emilie Pearce | epea390 | https://github.com/emipeanz
