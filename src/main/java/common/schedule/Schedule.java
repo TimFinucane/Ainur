@@ -89,9 +89,12 @@ public abstract class Schedule {
     abstract public List<Task>  getTasks(int processor);
 
     /**
-     * Gets the number of placed tasks in the schedule
+     * Gets the number of placed tasks in the processor
      */
     abstract public int         size(int processor);
+    /**
+     * Gets the number of placed tasks in the schedule
+     */
     public int                  size() {
         int total = 0;
         for(int i = 0; i < _numProcessors; ++i)
