@@ -12,7 +12,7 @@ import java.io.*;
 public class DotScheduleWriter extends ScheduleWriter {
 
     private final String COMMUNICATION_COST_FORMAT = "\t%s -> %s\t [Weight=%d];\n";
-    private final String COMPUTATION_COST_FORMAT = "\t%s\t [Weight=%d];\n";
+    private final String COMPUTATION_COST_FORMAT = "\t%s\t [Weight=%d, Start=%d, Processor=%d];\n";
     private final String DOT_GRAPH_OPENING = "digraph \"Processor_%d\" {\n";
     private final String DOT_GRAPH_CLOSING = "}\n\n";
 
@@ -43,7 +43,9 @@ public class DotScheduleWriter extends ScheduleWriter {
                 pw.write(String.format(
                     COMPUTATION_COST_FORMAT,
                     curTask.getNode().getLabel(),
-                    curTask.getNode().getComputationCost())
+                    curTask.getNode().getComputationCost(),
+                    curTask.getStartTime(),
+                    curTask.getProcessor())
                 );
 
                 if(prevTask != null) { // If there is a node before ie dependency, add communication cost
