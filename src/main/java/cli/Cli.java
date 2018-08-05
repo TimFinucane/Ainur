@@ -164,6 +164,9 @@ public abstract class Cli {
 
         if (cmdLine.hasOption("o")) {
             _outputFile = cmdLine.getOptionValue("o");
+            if (!_outputFile.endsWith(".dot")){
+                _outputFile += ".dot";
+            }
             System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
         } else {
             _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf('.')) + "-output.dot";
