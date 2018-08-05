@@ -144,7 +144,7 @@ public abstract class Cli {
             _outputFile = cmdLine.getOptionValue("o");
             System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
         } else {
-            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf('.')) + "_processed.dot";
+            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf('.')) + "-output.dot";
             System.out.println("Ainur output schedule file name defaulted to: " + _outputFile);
         }
 
@@ -160,7 +160,7 @@ public abstract class Cli {
     private Options establishOptions() {
         Options options = new Options();
 
-        options.addOption("o", true, "name of the outputted file. "
+        options.addOption("o", true, "output file is named OUTPUT "
                 + "(default is INPUT-output.dot)");
         options.addOption("h", "help", false, "show help");
 

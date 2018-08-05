@@ -89,7 +89,7 @@ public class AlgorithmIntegrationTests {
         cli.parse();
 
         // Check that output file is all good from full run through
-        File outputFile = new File("data/graphs/Nodes_7_OutTree_processed.dot");
+        File outputFile = new File("data/graphs/Nodes_7_OutTree-output.dot");
         assertTrue(outputFile.exists());
 
         InputStream outputGraphStream = null;
@@ -293,7 +293,7 @@ public class AlgorithmIntegrationTests {
         assertEquals(22, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
-        String[] args = {"data/graphs/Nodes_7_OutTree.dot", "2"};
+        String[] args = {"data/graphs/Nodes_7_OutTree.dot", "4"};
         Cli cli = new Cli(args) {
             @Override
             protected Schedule startScheduling(Graph graph) {
@@ -307,7 +307,7 @@ public class AlgorithmIntegrationTests {
         cli.parse();
 
         // Check that output file is all good from full run through
-        File outputFile = new File("data/graphs/Nodes_7_OutTree_processed.dot");
+        File outputFile = new File("data/graphs/Nodes_7_OutTree-output.dot");
         assertTrue(outputFile.exists());
 
     }
@@ -355,7 +355,7 @@ public class AlgorithmIntegrationTests {
         assertEquals(50, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
-        String[] args = {"data/graphs/Nodes_10_Random.dot", "2"};
+        String[] args = {"data/graphs/Nodes_10_Random.dot", "4"};
         Cli cli = new Cli(args) {
             @Override
             protected Schedule startScheduling(Graph graph) {
@@ -415,7 +415,7 @@ public class AlgorithmIntegrationTests {
         assertEquals(227, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
-        String[] args = {"data/graphs/Nodes_11_OutTree.dot", "2"};
+        String[] args = {"data/graphs/Nodes_11_OutTree.dot", "4"};
         Cli cli = new Cli(args) {
             @Override
             protected Schedule startScheduling(Graph graph) {
