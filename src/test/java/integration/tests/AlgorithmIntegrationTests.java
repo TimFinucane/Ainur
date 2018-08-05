@@ -2,10 +2,7 @@ package integration.tests;
 
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
-import algorithm.heuristics.CriticalPath;
-import algorithm.heuristics.IsNotAPruner;
-import algorithm.heuristics.NaiveBound;
-import algorithm.heuristics.StartTimePruner;
+import algorithm.heuristics.*;
 import cli.Cli;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
@@ -344,8 +341,13 @@ public class AlgorithmIntegrationTests {
 
         assertEquals(10, graph.size());
 
-
-        Algorithm algorithm = new DFSAlgorithm(4, new StartTimePruner(), new NaiveBound());
+        Algorithm algorithm = new DFSAlgorithm(
+            4,
+            (pruningGraph, pruningSchedule, pruningTask) ->
+                new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                    || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+            new CriticalPath()
+        );
 
         algorithm.start(graph);
         //Manually start algorithm on graph and check that final answer is correct
@@ -358,7 +360,13 @@ public class AlgorithmIntegrationTests {
         Cli cli = new Cli(args) {
             @Override
             protected Schedule startScheduling(Graph graph) {
-                Algorithm algorithm = new DFSAlgorithm(4, new StartTimePruner(), new NaiveBound());
+                Algorithm algorithm = new DFSAlgorithm(
+                    4,
+                    (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                            || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                    new CriticalPath()
+                );
 
                 algorithm.start(graph);
                 Schedule result = algorithm.getCurrentBest();
@@ -404,13 +412,16 @@ public class AlgorithmIntegrationTests {
 
         assertEquals(11, graph.size());
 
-
-        Algorithm algorithm = new DFSAlgorithm(4, new StartTimePruner(), new NaiveBound());
-
+        Algorithm algorithm = new DFSAlgorithm(
+            4,
+            (pruningGraph, pruningSchedule, pruningTask) ->
+                new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                    || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+            new CriticalPath()
+        );
         algorithm.start(graph);
         //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
-
         assertEquals(227, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
@@ -418,7 +429,13 @@ public class AlgorithmIntegrationTests {
         Cli cli = new Cli(args) {
             @Override
             protected Schedule startScheduling(Graph graph) {
-                Algorithm algorithm = new DFSAlgorithm(4, new StartTimePruner(), new NaiveBound());
+                Algorithm algorithm = new DFSAlgorithm(
+                    4,
+                    (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                            || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                    new CriticalPath()
+                );
 
                 algorithm.start(graph);
                 Schedule result = algorithm.getCurrentBest();
