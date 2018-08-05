@@ -68,9 +68,13 @@ public abstract class Cli {
             Graph graph = this.readGraphFile(); // read the graph
             Schedule schedule = this.startScheduling(graph); // start scheduling
             this.writeSchedule(schedule); // write the schedule
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
+        } catch (IOException i) {
+            System.out.println("Sorry, we can't find the file you've supplied. Process terminated.");
             this.displayUsage();
+        } catch (UnrecognizedOptionException u) {
+            System.out.println("Please make sure your input arguments are in the appropriate format. Process terminated.");
+        } catch (ParseException p) {
+            p.printStackTrace();
         }
     }
 
@@ -112,15 +116,21 @@ public abstract class Cli {
      * @param schedule the schedule to write to the .dot file.
      * @throws FileNotFoundException
      */
-    private void writeSchedule(Schedule schedule) throws IOException {
+    private void writeSchedule(Schedule schedule) {
         // Create a new file if file does not already exist
-        File file = new File(_outputFile);
-        file.createNewFile();
+        try {
+            File file = new File(_outputFile);
+            file.createNewFile();
+            OutputStream os = new FileOutputStream(file);
 
-        // Write schedule to output file
-        OutputStream os = new FileOutputStream(file);
-        ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
-        scheduleWriter.write(schedule);
+            // Write schedule to output file
+            ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
+            scheduleWriter.write(schedule);
+
+        } catch (IOException io) {
+            System.out.println("Invalid filename entered, try run it again with a valid filename."
+             + " Process terminated prematurely.");
+        }
     }
 
     /**
@@ -138,13 +148,25 @@ public abstract class Cli {
 
         List<String> argList = cmdLine.getArgList();
         _inputFile = argList.get(0);
-        _processors = Integer.parseInt(argList.get(1));
+
+        try {
+            _processors = Integer.parseInt(argList.get(1));
+        } catch (NumberFormatException e) {
+            System.out.println("Please make sure the number of processors is a positive, whole number.");
+        }
+
+        if (_processors == 0) {
+            System.out.println("Sorry, we cannot allocate to zero processors. " +
+                    "Please enter a positive integer value of processors");
+            //TODO consider adding a custom exception to handle this type of error.
+            System.exit(0);
+        }
 
         if (cmdLine.hasOption("o")) {
             _outputFile = cmdLine.getOptionValue("o");
             System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
         } else {
-            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf('.')) + "_processed.dot";
+            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf('.')) + "-output.dot";
             System.out.println("Ainur output schedule file name defaulted to: " + _outputFile);
         }
 
@@ -160,7 +182,7 @@ public abstract class Cli {
     private Options establishOptions() {
         Options options = new Options();
 
-        options.addOption("o", true, "name of the outputted file. "
+        options.addOption("o", true, "output file is named OUTPUT "
                 + "(default is INPUT-output.dot)");
         options.addOption("h", "help", false, "show help");
 
