@@ -10,11 +10,20 @@ import java.util.Map;
  */
 public class Graph {
     public static class Builder {
-        private Map<String, Node> _nodes = new HashMap<>();
+        private Map<String, Node>   _nodes = new HashMap<>();
         private List<Edge>          _edges = new ArrayList<>();
         private int                 _idCounter = 0;
+        private String              _name = "";
 
         public Builder() {}
+
+        /**
+         * Sets the name of the graph
+         */
+        public Builder name(String graphName) {
+            _name = graphName;
+            return this;
+        }
 
         /**
          * Creates a new node
@@ -44,10 +53,11 @@ public class Graph {
         }
 
         public Graph        build() {
-            return new Graph(new ArrayList<>(_nodes.values()), _edges);
+            return new Graph(_name, new ArrayList<>(_nodes.values()), _edges);
         }
     }
 
+    private final String            _name;
     private final List<Node>        _nodes;
     // Storage of edges is relative to how nodes access them.
     private final List<List<Edge>>  _incomingEdges = new ArrayList<>();
@@ -57,7 +67,8 @@ public class Graph {
     /**
      * Default constructor for a Graph object
      */
-    protected Graph(List<Node> nodes, List<Edge> edges) {
+    protected Graph(String name, List<Node> nodes, List<Edge> edges) {
+        _name = name;
         _nodes = nodes;
 
         // Initialize the edge lists
@@ -112,6 +123,10 @@ public class Graph {
      */
     public int        size() {
         return _nodes.size();
+    }
+
+    public String     getName() {
+        return _name;
     }
 
     /**
