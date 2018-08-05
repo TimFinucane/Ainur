@@ -67,7 +67,7 @@ public abstract class Cli {
             // Start the program
             Graph graph = this.readGraphFile(); // read the graph
             Schedule schedule = this.startScheduling(graph); // start scheduling
-            this.writeSchedule(schedule); // write the schedule
+            this.writeSchedule(graph, schedule); // write the schedule
         } catch (IOException i) {
             System.out.println("Sorry, we can't find the file you've supplied. Process terminated.");
             this.displayUsage();
@@ -116,7 +116,7 @@ public abstract class Cli {
      * @param schedule the schedule to write to the .dot file.
      * @throws FileNotFoundException
      */
-    private void writeSchedule(Schedule schedule) {
+    private void writeSchedule(Graph graph, Schedule schedule) {
         // Create a new file if file does not already exist
         try {
             File file = new File(_outputFile);
@@ -125,7 +125,7 @@ public abstract class Cli {
 
             // Write schedule to output file
             ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
-            scheduleWriter.write(schedule);
+            scheduleWriter.write(schedule, graph, new FileInputStream(_inputFile));
 
         } catch (IOException io) {
             System.out.println("Invalid filename entered, try run it again with a valid filename."
@@ -164,9 +164,13 @@ public abstract class Cli {
 
         if (cmdLine.hasOption("o")) {
             _outputFile = cmdLine.getOptionValue("o");
+            if (!_outputFile.endsWith(".dot")){
+                _outputFile += ".dot";
+            }
             System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
         } else {
-            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf('.')) + "-output.dot";
+            int fileNameIndex = _inputFile.lastIndexOf("\\");
+            _outputFile = _inputFile.substring(fileNameIndex+1, _inputFile.lastIndexOf('.')) + "-output.dot";
             System.out.println("Ainur output schedule file name defaulted to: " + _outputFile);
         }
 

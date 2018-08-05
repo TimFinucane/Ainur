@@ -250,7 +250,6 @@ public class AlgorithmIntegrationTests {
         }
 
         assertEquals(581, outputSchedule.getEndTime());
-
     }
 
     /**
