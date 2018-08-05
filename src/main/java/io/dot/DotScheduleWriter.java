@@ -35,7 +35,9 @@ public class DotScheduleWriter extends ScheduleWriter {
     public void write(Schedule schedule, Graph graph) {
 
         PrintWriter pw = new PrintWriter(_os);
-        pw.write(String.format(String.format(DOT_GRAPH_OPENING,graph.getName()))); // Starting of a digraph
+        pw.write(String.format(String.format(DOT_GRAPH_OPENING, graph.getName().substring(0, 1).toUpperCase() + graph.getName().substring(1)))); // Starting of a digraph
+
+
 
 
         for(int processor = 0; processor < schedule.getNumProcessors(); ++processor){
