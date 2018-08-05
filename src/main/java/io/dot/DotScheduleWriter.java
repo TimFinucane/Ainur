@@ -1,11 +1,16 @@
 package io.dot;
 
 import common.graph.Graph;
+import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
 
+import javax.sql.rowset.serial.SerialStruct;
 import java.io.*;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class writes a schedule to a .dot file format.
@@ -32,41 +37,49 @@ public class DotScheduleWriter extends ScheduleWriter {
      * processors as each processors tasks goes in a separate digraph
      * @params schedule the schedule to be written out to file
      */
-    public void write(Schedule schedule, Graph graph) {
+    public void write(Schedule schedule, Graph graph, InputStream is) {
+
+        String streamText = convertStreamToString(is);
+        StringBuilder outputText = new StringBuilder(streamText);
 
         PrintWriter pw = new PrintWriter(_os);
-        pw.write(String.format(String.format(DOT_GRAPH_OPENING, graph.getName().substring(0, 1).toUpperCase() + graph.getName().substring(1)))); // Starting of a digraph
 
+        Pattern nodePattern = Pattern.compile("(?<=;|\\{)\\s*(\\w+)\\s*\\[[^;]*()\\][^;]*;");
+        Matcher m = nodePattern.matcher(streamText);
 
+        int characterIndexDifference = 0;
 
+        while (m.find()) {
+            String nodeName = m.group(1);
+            Node node = graph.findByLabel(nodeName);
 
-        for(int processor = 0; processor < schedule.getNumProcessors(); ++processor){
-            Task prevTask = null;
-            for(Task curTask : schedule.getTasks(processor)) { // Start to write tasks
-                pw.write(String.format(
-                    COMPUTATION_COST_FORMAT,
-                    curTask.getNode().getLabel(),
-                    curTask.getNode().getComputationCost(),
-                    curTask.getStartTime(),
-                    curTask.getProcessor() + 1) // Example has processor no. beginning at 1
-                );
+            Task task = schedule.findTask(node);
+            String injectionString = String.format(", Start=%s, Processor=%s", task.getStartTime(), task.getProcessor());
 
-                if(prevTask != null) { // If there is a node before ie dependency, add communication cost
-                    pw.write(String.format(
-                        COMMUNICATION_COST_FORMAT,
-                        prevTask.getNode().getLabel(),
-                        curTask.getNode().getLabel(),
-                        // Get the communication cost by finding the difference of that last tasks end time and
-                        // the current tasks start time
-                        (curTask.getStartTime() - prevTask.getEndTime())
-                        )
-                    );
-                }
+            outputText.insert(m.start(2) + characterIndexDifference, injectionString);
 
-                prevTask = curTask;
-            }
+            characterIndexDifference += injectionString.length();
         }
-        pw.write(DOT_GRAPH_CLOSING);
+
+        Pattern headerPattern = Pattern.compile("digraph\\s*\\\"()[^\\\"]*\\\"");
+        m = headerPattern.matcher(outputText);
+
+        m.find();
+        int charIndex = m.start(1);
+
+        outputText.setCharAt(charIndex, Character.toUpperCase(outputText.charAt(charIndex)));
+        outputText.insert(charIndex, "output");
+
+        pw.write(outputText.toString());
         pw.close();
+    }
+
+
+    private String convertStreamToString(InputStream inputStream) {
+
+        Scanner s = new Scanner(inputStream).useDelimiter("\\A");
+
+        return s.hasNext() ? s.next() : "";
+
     }
 }

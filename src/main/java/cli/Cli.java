@@ -125,7 +125,7 @@ public abstract class Cli {
 
             // Write schedule to output file
             ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
-            scheduleWriter.write(schedule, graph);
+            scheduleWriter.write(schedule, graph, new FileInputStream(_inputFile));
 
         } catch (IOException io) {
             System.out.println("Invalid filename entered, try run it again with a valid filename."

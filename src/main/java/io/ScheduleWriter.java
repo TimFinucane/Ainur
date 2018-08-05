@@ -3,6 +3,7 @@ package io;
 import common.graph.Graph;
 import common.schedule.Schedule;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -25,5 +26,5 @@ public abstract class ScheduleWriter {
      * by inheritors.
      * @param schedule The schedule to write.
      */
-    public abstract void write(Schedule schedule, Graph graph);
+    public abstract void write(Schedule schedule, Graph graph, InputStream is);
 }
