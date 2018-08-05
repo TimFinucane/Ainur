@@ -25,9 +25,13 @@ public class MilestoneOneCli extends Cli {
     @Override
     protected Schedule startScheduling(Graph graph) {
         // Algorithm
-        Arborist arborist = new StartTimePruner();
-        LowerBound lowerBound = new CriticalPath();
-        Algorithm algorithm = new DFSAlgorithm(_processors, arborist, lowerBound);
+        Algorithm algorithm = new DFSAlgorithm(
+            _processors,
+            (pruningGraph, pruningSchedule, pruningTask) ->
+                new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+            new CriticalPath()
+        );
 
         //Start
         algorithm.start(graph);
