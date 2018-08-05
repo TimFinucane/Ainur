@@ -17,11 +17,6 @@ import java.util.regex.Pattern;
  */
 public class DotScheduleWriter extends ScheduleWriter {
 
-    private final String COMMUNICATION_COST_FORMAT = "\t%s -> %s\t [Weight=%d];\n";
-    private final String COMPUTATION_COST_FORMAT = "\t%s\t [Weight=%d, Start=%d, Processor=%d];\n";
-    private final String DOT_GRAPH_OPENING = "digraph \"output%s\" {\n";
-    private final String DOT_GRAPH_CLOSING = "}\n\n";
-
     /**
      * Constructor for ScheduleWriter
      * @param os The output stream to write to.
