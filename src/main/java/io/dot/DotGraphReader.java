@@ -46,6 +46,7 @@ public class DotGraphReader extends GraphReader {
 
         String streamText = convertStreamToString(_is);
 
+        getName(streamText, graphBuilder);
         getNodes(streamText, graphBuilder);
         getEdges(streamText, graphBuilder);
 
@@ -53,6 +54,18 @@ public class DotGraphReader extends GraphReader {
 
     }
 
+    private void getName(String string, Graph.Builder builder) {
+        Pattern namePattern = Pattern.compile("digraph \"([^\\\"]+)\"");
+        Matcher m = namePattern.matcher(string);
+
+        if(!m.find())
+            throw new RuntimeException("digraph not found in file!");
+
+        builder.name(m.group(1));
+
+        if(m.find())
+            throw new RuntimeException("more than one digraph in the file!");
+    }
 
     private void getNodes(String string, Graph.Builder builder) {
 
