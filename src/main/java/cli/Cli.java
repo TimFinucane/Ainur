@@ -155,6 +155,12 @@ public abstract class Cli {
             System.out.println("Please make sure the number of processors is a positive, whole number.");
         }
 
+        if (_processors == 0) {
+            System.out.println("Sorry, we cannot allocate to zero processors. " +
+                    "Please enter a positive integer value of processors");
+            //TODO consider adding a custom exception to handle this type of error.
+            System.exit(0);
+        }
 
         if (cmdLine.hasOption("o")) {
             _outputFile = cmdLine.getOptionValue("o");
