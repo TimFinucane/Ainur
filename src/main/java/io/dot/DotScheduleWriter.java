@@ -49,7 +49,7 @@ public class DotScheduleWriter extends ScheduleWriter {
             Node node = graph.findByLabel(nodeName);
 
             Task task = schedule.findTask(node);
-            String injectionString = String.format(", Start=%s, Processor=%s", task.getStartTime(), task.getProcessor());
+            String injectionString = String.format(", Start=%s, Processor=%s", task.getStartTime(), task.getProcessor() +1);
 
             outputText.insert(m.start(2) + characterIndexDifference, injectionString);
 
