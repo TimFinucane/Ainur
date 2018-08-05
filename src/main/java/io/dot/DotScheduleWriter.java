@@ -6,7 +6,6 @@ import common.schedule.Schedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
 
-import javax.sql.rowset.serial.SerialStruct;
 import java.io.*;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -39,7 +38,7 @@ public class DotScheduleWriter extends ScheduleWriter {
 
         PrintWriter pw = new PrintWriter(_os);
 
-        Pattern nodePattern = Pattern.compile("(?<=;|\\{)\\s*(\\w+)\\s*\\[[^;]*()\\][^;]*;");
+        Pattern nodePattern = Pattern.compile("(?<=;|\\{)\\s*(\\w+)\\s*\\[Weight[^;]*()\\][^;]*;");
         Matcher m = nodePattern.matcher(streamText);
 
         int characterIndexDifference = 0;
