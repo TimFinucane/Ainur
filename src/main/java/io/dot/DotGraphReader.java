@@ -59,7 +59,8 @@ public class DotGraphReader extends GraphReader {
         Matcher m = namePattern.matcher(string);
 
         if(!m.find())
-            throw new RuntimeException("digraph not found in file!");
+            //throw new RuntimeException("digraph not found in file!");
+            return;
 
         builder.name(m.group(1));
 
