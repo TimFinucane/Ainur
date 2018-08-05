@@ -112,15 +112,21 @@ public abstract class Cli {
      * @param schedule the schedule to write to the .dot file.
      * @throws FileNotFoundException
      */
-    private void writeSchedule(Schedule schedule) throws IOException {
+    private void writeSchedule(Schedule schedule) {
         // Create a new file if file does not already exist
-        File file = new File(_outputFile);
-        file.createNewFile();
+        try {
+            File file = new File(_outputFile);
+            file.createNewFile();
+            OutputStream os = new FileOutputStream(file);
 
-        // Write schedule to output file
-        OutputStream os = new FileOutputStream(file);
-        ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
-        scheduleWriter.write(schedule);
+            // Write schedule to output file
+            ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
+            scheduleWriter.write(schedule);
+
+        } catch (IOException io) {
+            System.out.println("Invalid filename entered, try run it again with a valid filename."
+             + " Process terminated prematurely.");
+        }
     }
 
     /**
