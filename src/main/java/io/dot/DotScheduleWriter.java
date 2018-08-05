@@ -1,5 +1,6 @@
 package io.dot;
 
+import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
@@ -13,7 +14,7 @@ public class DotScheduleWriter extends ScheduleWriter {
 
     private final String COMMUNICATION_COST_FORMAT = "\t%s -> %s\t [Weight=%d];\n";
     private final String COMPUTATION_COST_FORMAT = "\t%s\t [Weight=%d, Start=%d, Processor=%d];\n";
-    private final String DOT_GRAPH_OPENING = "digraph \"Processor_%d\" {\n";
+    private final String DOT_GRAPH_OPENING = "digraph \"output%s\" {\n";
     private final String DOT_GRAPH_CLOSING = "}\n\n";
 
     /**
@@ -31,10 +32,10 @@ public class DotScheduleWriter extends ScheduleWriter {
      * processors as each processors tasks goes in a separate digraph
      * @params schedule the schedule to be written out to file
      */
-    public void write(Schedule schedule) {
+    public void write(Schedule schedule, Graph graph) {
 
         PrintWriter pw = new PrintWriter(_os);
-        pw.write(String.format("Output { \n"/*Change this to input name + "-output"*/)); // Starting of a digraph
+        pw.write(String.format(String.format(DOT_GRAPH_OPENING,graph.getName()))); // Starting of a digraph
 
 
         for(int processor = 0; processor < schedule.getNumProcessors(); ++processor){
