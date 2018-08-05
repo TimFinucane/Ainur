@@ -34,10 +34,10 @@ public class DotScheduleWriter extends ScheduleWriter {
     public void write(Schedule schedule) {
 
         PrintWriter pw = new PrintWriter(_os);
+        pw.write(String.format("Output { \n"/*Change this to input name + "-output"*/)); // Starting of a digraph
+
 
         for(int processor = 0; processor < schedule.getNumProcessors(); ++processor){
-            pw.write(String.format(DOT_GRAPH_OPENING, processor)); // Starting of a digraph
-
             Task prevTask = null;
             for(Task curTask : schedule.getTasks(processor)) { // Start to write tasks
                 pw.write(String.format(
@@ -45,7 +45,7 @@ public class DotScheduleWriter extends ScheduleWriter {
                     curTask.getNode().getLabel(),
                     curTask.getNode().getComputationCost(),
                     curTask.getStartTime(),
-                    curTask.getProcessor()) + 1 // Example has processor no. beginning at 1
+                    curTask.getProcessor() + 1) // Example has processor no. beginning at 1
                 );
 
                 if(prevTask != null) { // If there is a node before ie dependency, add communication cost
@@ -62,8 +62,8 @@ public class DotScheduleWriter extends ScheduleWriter {
 
                 prevTask = curTask;
             }
-            pw.write(DOT_GRAPH_CLOSING);
         }
+        pw.write(DOT_GRAPH_CLOSING);
         pw.close();
     }
 }
