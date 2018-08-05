@@ -169,7 +169,8 @@ public abstract class Cli {
             }
             System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
         } else {
-            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf('.')) + "-output.dot";
+            int fileNameIndex = _inputFile.lastIndexOf("\\");
+            _outputFile = _inputFile.substring(fileNameIndex+1, _inputFile.lastIndexOf('.')) + "-output.dot";
             System.out.println("Ainur output schedule file name defaulted to: " + _outputFile);
         }
 
