@@ -89,7 +89,7 @@ public class AlgorithmIntegrationTests {
         cli.parse();
 
         // Check that output file is all good from full run through
-        File outputFile = new File("data/graphs/Nodes_7_OutTree_processed.dot");
+        File outputFile = new File("data/graphs/Nodes_7_OutTree-output.dot");
         assertTrue(outputFile.exists());
 
         InputStream outputGraphStream = null;
@@ -307,7 +307,7 @@ public class AlgorithmIntegrationTests {
         cli.parse();
 
         // Check that output file is all good from full run through
-        File outputFile = new File("data/graphs/Nodes_7_OutTree_processed.dot");
+        File outputFile = new File("data/graphs/Nodes_7_OutTree-output.dot");
         assertTrue(outputFile.exists());
 
     }
