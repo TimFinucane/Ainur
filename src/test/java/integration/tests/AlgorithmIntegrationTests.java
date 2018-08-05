@@ -423,13 +423,6 @@ public class AlgorithmIntegrationTests {
         algorithm.start(graph);
         //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
-
-        for(int i = 0; i < resultManual.getNumProcessors(); ++i) {
-            System.out.println("Processor " + String.valueOf(i));
-            for(Task task : resultManual.getTasks(i))
-                System.out.println( String.valueOf(task.getStartTime()) + "(" + String.valueOf(task.getNode().getComputationCost()) + "), " + task.getNode().getLabel());
-        }
-
         assertEquals(227, resultManual.getEndTime());
 
         // Now run graph through CLI and assert all answers are the same as before
