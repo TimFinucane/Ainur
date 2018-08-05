@@ -68,9 +68,13 @@ public abstract class Cli {
             Graph graph = this.readGraphFile(); // read the graph
             Schedule schedule = this.startScheduling(graph); // start scheduling
             this.writeSchedule(schedule); // write the schedule
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
+        } catch (IOException i) {
+            System.out.println("Sorry, we can't find the file you've supplied. Process terminated.");
             this.displayUsage();
+        } catch (UnrecognizedOptionException u) {
+            System.out.println("Please make sure your input arguments are in the appropriate format. Process terminated.");
+        } catch (ParseException p) {
+            p.printStackTrace();
         }
     }
 
@@ -144,7 +148,13 @@ public abstract class Cli {
 
         List<String> argList = cmdLine.getArgList();
         _inputFile = argList.get(0);
-        _processors = Integer.parseInt(argList.get(1));
+
+        try {
+            _processors = Integer.parseInt(argList.get(1));
+        } catch (NumberFormatException e) {
+            System.out.println("Please make sure the number of processors is a positive, whole number.");
+        }
+
 
         if (cmdLine.hasOption("o")) {
             _outputFile = cmdLine.getOptionValue("o");
