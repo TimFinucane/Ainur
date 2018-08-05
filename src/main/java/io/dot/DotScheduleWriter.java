@@ -45,7 +45,7 @@ public class DotScheduleWriter extends ScheduleWriter {
                     curTask.getNode().getLabel(),
                     curTask.getNode().getComputationCost(),
                     curTask.getStartTime(),
-                    curTask.getProcessor())
+                    curTask.getProcessor()) + 1 // Example has processor no. beginning at 1
                 );
 
                 if(prevTask != null) { // If there is a node before ie dependency, add communication cost
