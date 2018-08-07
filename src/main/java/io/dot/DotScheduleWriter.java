@@ -75,13 +75,13 @@ public class DotScheduleWriter extends ScheduleWriter {
         m = headerPattern.matcher(outputText);
 
         m.find();
-        int charIndex = m.start(1); // Find index of group 1.
+        int charIndex = m.start(1);.
 
         // Set first character of graph name to upper case. 'digraph title {' -> 'digraph Title {'
         outputText.setCharAt(charIndex, Character.toUpperCase(outputText.charAt(charIndex)));
         outputText.insert(charIndex, HEADER_PREFIX); // Inject 'output' into space just before graph title. 'Title' -> 'outputTitle'
 
-        pw.write(outputText.toString()); // Write to OutputStream
+        pw.write(outputText.toString());
         pw.close();
     }
 
