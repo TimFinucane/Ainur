@@ -2,7 +2,6 @@ package io.dot;
 
 import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Graph;
-import common.graph.Node;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
@@ -10,7 +9,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Class tests DotScheduleWriter by making schedules and getting the writer to write them out to file
@@ -19,77 +21,101 @@ import java.io.ByteArrayOutputStream;
 @Category(HobbitonUnitTestsCategory.class)
 public class DotScheduleWriterTests {
 
-    /*@Test
+    @Test
     /**
      * This test tests is one schedule can be written to file correctly
      */
-    /*public void testBasicLinearOneProcessorSchedule(){
+    public void testBasicLinearOneProcessorSchedule(){
+
         // Set up
+        Graph graph = new Graph.Builder()
+                .node("1", 1)
+                .node("2", 2)
+                .node("3", 1)
+                .build();
+
         SimpleSchedule schedule = new SimpleSchedule(1);
+        schedule.addTask( new Task(0, 0, graph.getNodes().get(0)) );
+        schedule.addTask( new Task(0, 2, graph.getNodes().get(1)) );
+        schedule.addTask( new Task(0, 6, graph.getNodes().get(2)) );
 
-        schedule.addTask( new Task(0, 0, new Node(1, "1", 1)) );
-        schedule.addTask( new Task(0, 2, new Node(2, "2", 2)) );
-        schedule.addTask( new Task(0, 6, new Node(1, "3", 3)) );
-
-        Graph graph = new Graph.Builder().name("test").build();
+        String str = "digraph \"graph\" {\n" +
+                "\t1\t [Weight=1];\n" +
+                "\t2\t [Weight=2];\n" +
+                "\t1 -> 2\t [Weight=1];\n" +
+                "\t3\t [Weight=1];\n" +
+                "\t2 -> 3\t [Weight=2];\n" +
+                "}\n\n";
+        InputStream is = null;
+        try {
+            is = new ByteArrayInputStream(str.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         // Test
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
         ScheduleWriter dsw = new DotScheduleWriter(bs);
-        dsw.write(schedule, graph);
+        dsw.write(schedule, graph, is);
 
         // Assert
-        String expected =
-                "digraph \"Processor_0\" {\n" +
-                        "\t1\t [Weight=1];\n" +
-                        "\t2\t [Weight=2];\n" +
-                        "\t1 -> 2\t [Weight=1];\n" +
-                        "\t3\t [Weight=1];\n" +
-                        "\t2 -> 3\t [Weight=2];\n" +
-                        "}\n\n";
-        Assert.assertEquals(expected, bs.toString());
-    }*/
+        String expected = "digraph \"outputGraph\" {\n" +
+                "\t1\t [Weight=1, Start=0, Processor=1];\n" + // We expect processors to start at 1
+                "\t2\t [Weight=2, Start=2, Processor=1];\n" +
+                "\t1 -> 2\t [Weight=1];\n" +
+                "\t3\t [Weight=1, Start=6, Processor=1];\n" +
+                "\t2 -> 3\t [Weight=2];\n" +
+                "}\n\n";
 
-    //@Test
-    /*
-     * This test tests if more than one schedule ie. more than one processor can be written out to file
+        Assert.assertEquals(expected, bs.toString());
+    }
+
+    @Test
+    /**
+     * This test tests is one schedule can be written to file correctly with node labels as multi character strings
      */
-    /*public void testBasicLinearTwoProcessorSchedule(){
+    public void testOneProcessotScheduleCharacterLabels(){
 
-        SimpleSchedule schedule = new SimpleSchedule(2);
-        //Set up
-        schedule.addTask( new Task(0, 0, new Node(2, "1", 1)) );
-        schedule.addTask( new Task(0, 4, new Node(3, "2", 2)) );
-        schedule.addTask( new Task(0, 9, new Node(1, "3", 3)) );
+        // Set up
+        Graph graph = new Graph.Builder()
+                .node("heythenamespauline", 1)
+                .node("giddaypaulineimsteph", 2)
+                .node("guysguysjustchillout", 1)
+                .build();
 
-        schedule.addTask( new Task(1, 1, new Node(2, "4", 4)) );
-        schedule.addTask( new Task(1, 4, new Node(2, "5", 5)) );
-        schedule.addTask( new Task(1, 8, new Node(1, "6", 6)) );
+        SimpleSchedule schedule = new SimpleSchedule(1);
+        schedule.addTask( new Task(0, 0, graph.getNodes().get(0)) );
+        schedule.addTask( new Task(0, 2, graph.getNodes().get(1)) );
+        schedule.addTask( new Task(0, 6, graph.getNodes().get(2)) );
 
-        Graph graph = new Graph.Builder().name("test").build();
+        String str = "digraph \"graph\" {\n" +
+                "\theythenamespauline\t [Weight=1];\n" +
+                "\tgiddaypaulineimsteph\t [Weight=2];\n" +
+                "\theythenamespauline -> giddaypaulineimsteph\t [Weight=1];\n" +
+                "\tguysguysjustchillout\t [Weight=1];\n" +
+                "\tgiddaypaulineimsteph -> guysguysjustchillout\t [Weight=2];\n" +
+                "}\n\n";
+        InputStream is = null;
+        try {
+            is = new ByteArrayInputStream(str.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         // Test
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
         ScheduleWriter dsw = new DotScheduleWriter(bs);
-        dsw.write(schedule, graph);
+        dsw.write(schedule, graph, is);
 
         // Assert
-        String expected =
-                "digraph \"Processor_0\" {\n" +
-                        "\t1\t [Weight=2];\n" +
-                        "\t2\t [Weight=3];\n" +
-                        "\t1 -> 2\t [Weight=2];\n" +
-                        "\t3\t [Weight=1];\n" +
-                        "\t2 -> 3\t [Weight=2];\n" +
-                        "}\n" +
-                        "\n" +
-                        "digraph \"Processor_1\" {\n" +
-                        "\t4\t [Weight=2];\n" +
-                        "\t5\t [Weight=2];\n" +
-                        "\t4 -> 5\t [Weight=1];\n" +
-                        "\t6\t [Weight=1];\n" +
-                        "\t5 -> 6\t [Weight=2];\n" +
-                        "}\n\n";
+        String expected = "digraph \"outputGraph\" {\n" +
+                "\theythenamespauline\t [Weight=1, Start=0, Processor=1];\n" + // We expect processors to start at 1
+                "\tgiddaypaulineimsteph\t [Weight=2, Start=2, Processor=1];\n" +
+                "\theythenamespauline -> giddaypaulineimsteph\t [Weight=1];\n" +
+                "\tguysguysjustchillout\t [Weight=1, Start=6, Processor=1];\n" +
+                "\tgiddaypaulineimsteph -> guysguysjustchillout\t [Weight=2];\n" +
+                "}\n\n";
+
         Assert.assertEquals(expected, bs.toString());
-    }*/
+    }
 }
