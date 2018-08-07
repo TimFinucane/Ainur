@@ -1,7 +1,6 @@
 package io.dot;
 
 import common.graph.Graph;
-import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
@@ -75,7 +74,7 @@ public class DotScheduleWriter extends ScheduleWriter {
         m = headerPattern.matcher(outputText);
 
         m.find();
-        int charIndex = m.start(1);.
+        int charIndex = m.start(1);
 
         // Set first character of graph name to upper case. 'digraph title {' -> 'digraph Title {'
         outputText.setCharAt(charIndex, Character.toUpperCase(outputText.charAt(charIndex)));
