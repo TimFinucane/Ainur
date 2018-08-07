@@ -8,6 +8,7 @@ import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import cli.Cli;
+import common.Validator;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.graph.Node;
@@ -16,6 +17,7 @@ import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import io.GraphReader;
 import io.dot.DotGraphReader;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -40,11 +42,11 @@ import static junit.framework.TestCase.fail;
 public class AlgorithmIntegrationTests {
 
     /**
-     * Test tests algorithm set up against a graph with 7 nodes and 3 layers, on two processors with no
-     * heuristics
+     * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with no
+     * lower bound or pruning.
      */
     @Test
-    public void testNodes_7_OutTreeGraphTwoProcessor() {
+    public void testAlgorithm7NodeNoHeuristics() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
@@ -53,102 +55,24 @@ public class AlgorithmIntegrationTests {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            fail();
+            fail("File not found");
         }
         //Try making graph from file and check that it is correct
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        //Assert that graph is as expected
-        Node entryNode = graph.getEntryPoints().get(0);
-
-        assertEquals(entryNode.getLabel(), "0");
-        assertEquals(5, entryNode.getComputationCost());
-        assertEquals(7, graph.size());
-
-
         Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
-
         algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
+
+        //Manually start algorithm on graph
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(28, resultManual.getEndTime());
-
-        // Now run graph through CLI and assert all answers are the same as before
-        String[] args = {"data/graphs/Nodes_7_OutTree.dot", "2"};
-        Cli cli = new Cli(args) {
-            @Override
-            protected Schedule startScheduling(Graph graph) {
-                Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
-
-                algorithm.start(graph);
-                Schedule result = algorithm.getCurrentBest();
-                return result;
-            }
-        };
-        cli.parse();
-
-        // Check that output file is all good from full run through
-        File outputFile = new File("data/graphs/Nodes_7_OutTree-output.dot");
-        assertTrue(outputFile.exists());
-
-        InputStream outputGraphStream = null;
-        try {
-            outputGraphStream = new FileInputStream(outputFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail();
-        }
-
-        //This part of the code converts the output file from the full run through into a schedule to check that what
-        //is written to the file is the same as what we got when manually running program and has correct answer
-        // Convert schedules to graphs to use in comparison
-        String schedule1 = "digraph \"Processor_1\" {\n" +
-                "\t0\t [Weight=5];\n" +
-                "\t3\t [Weight=6];\n" +
-                "\t0 -> 3\t [Weight=0];\n" +
-                "\t1\t [Weight=6];\n" +
-                "\t3 -> 1\t [Weight=0];\n" +
-                "\t6\t [Weight=7];\n" +
-                "\t1 -> 6\t [Weight=0];\n" +
-                "\t4\t [Weight=4];\n" +
-                "\t6 -> 4\t [Weight=0];\n" +
-                "}\n";
-        InputStream stream1 = new ByteArrayInputStream(schedule1.getBytes(StandardCharsets.UTF_8));
-        GraphReader reader1 = new DotGraphReader(stream1);
-        Graph graph1 = reader1.read();
-
-        String schedule2 = "digraph \"Processor_0\" {\n" +
-                "\t2\t [Weight=5];\n" +
-                "\t5\t [Weight=7];\n" +
-                "\t2 -> 5\t [Weight=0];\n" +
-                "}\n";
-        InputStream stream2 = new ByteArrayInputStream(schedule2.getBytes(StandardCharsets.UTF_8));
-        GraphReader reader2 = new DotGraphReader(stream2);
-        Graph graph2 = reader2.read();
-
-        //Make Schedules
-        Schedule outputSchedule = new SimpleSchedule(2);
-
-        // Add all of graph 1 to processor 0
-        int startTime = 0;
-        for(Node n : graph1.getNodes()){
-            outputSchedule.addTask(new Task(0, startTime, n));
-            startTime = startTime + n.getComputationCost();
-        }
-
-        // Add all of graph 2 to processor 1
-        startTime = 0;
-        for(Node n : graph2.getNodes()){
-            outputSchedule.addTask(new Task(1, startTime, n));
-            startTime = startTime + n.getComputationCost();
-        }
-
-            //Check written out schedule is all good
-        assertEquals(28, outputSchedule.getEndTime());
-
+        assertEquals(28, resultManual.getEndTime()); // Check answer is optimal
+        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
+
+    // Tests for cli interacting with reader
+    // Tests for
 
     /**
      * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
@@ -164,7 +88,7 @@ public class AlgorithmIntegrationTests {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            fail();
+            fail("File not found");
         }
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
@@ -270,7 +194,7 @@ public class AlgorithmIntegrationTests {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            fail();
+            fail("File not found");
         }
         //Try making graph from file and check that it is correct
         GraphReader reader = new DotGraphReader(graphStream);
@@ -328,7 +252,7 @@ public class AlgorithmIntegrationTests {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            fail();
+            fail("File not found");
         }
         //Try making graph from file and check that it is correct
         GraphReader reader = new DotGraphReader(graphStream);
@@ -401,7 +325,7 @@ public class AlgorithmIntegrationTests {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            fail();
+            fail("File not found");
         }
         //Try making graph from file and check that it is correct
         GraphReader reader = new DotGraphReader(graphStream);
