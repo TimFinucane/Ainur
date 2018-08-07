@@ -2,7 +2,11 @@ package integration.tests;
 
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
-import algorithm.heuristics.*;
+import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.NaiveBound;
+import algorithm.heuristics.pruner.IsNotAPruner;
+import algorithm.heuristics.pruner.ProcessorOrderPruner;
+import algorithm.heuristics.pruner.StartTimePruner;
 import cli.Cli;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;

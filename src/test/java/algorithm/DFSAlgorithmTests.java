@@ -1,7 +1,7 @@
 package algorithm;
 
-import algorithm.heuristics.IsNotAPruner;
-import algorithm.heuristics.NaiveBound;
+import algorithm.heuristics.pruner.IsNotAPruner;
+import algorithm.heuristics.lowerbound.NaiveBound;
 import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;

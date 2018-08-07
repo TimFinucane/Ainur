@@ -2,7 +2,9 @@ package cli;
 
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
-import algorithm.heuristics.*;
+import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.pruner.ProcessorOrderPruner;
+import algorithm.heuristics.pruner.StartTimePruner;
 import common.graph.Graph;
 import common.schedule.Schedule;
 

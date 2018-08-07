@@ -1,5 +1,6 @@
-package algorithm.heuristics;
+package algorithm.heuristics.lowerbound;
 
+import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
