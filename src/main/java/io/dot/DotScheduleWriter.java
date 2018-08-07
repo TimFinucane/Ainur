@@ -36,39 +36,52 @@ public class DotScheduleWriter extends ScheduleWriter {
      * @params schedule the schedule to be written out to file
      */
     public void write(Schedule schedule, Graph graph, InputStream is) {
-        
+
+        // Create StringBuilder from InputStream for injection
         String streamText = convertStreamToString(is);
         StringBuilder outputText = new StringBuilder(streamText);
 
-        PrintWriter pw = new PrintWriter(_os);
+        PrintWriter pw = new PrintWriter(_os); // Output writer
 
+        // (?<=;|\{)            :       Positive lookbehind to check that either ';' or '{' appear before match
+        // \s*(\w+)\s*          :       Check for any whitespace, a string of alpha numeric characters as group 1 the any whitespace
+        // *\[Weight[^;]*()\]   :       Find '[Weight' followed by a non-semi-colon then followed by (empty) group 2 (for insertion)
+        //                              followed by a '['. Check for no semi-colon ensures regex does not match multiple lines.
+        // [^;]*;"              :       Check for any amount of non-semi-colons followed by a ';'. This is required to ensure match
+        //                              does not occur across multiple lines.
         Pattern nodePattern = Pattern.compile("(?<=;|\\{)\\s*(\\w+)\\s*\\[Weight[^;]*()\\][^;]*;");
         Matcher m = nodePattern.matcher(streamText);
 
-        int characterIndexDifference = 0;
+        int characterIndexDifference = 0; // Records total number of characters inserted into StringBuilder in line following while loop.
 
         while (m.find()) {
-            String nodeName = m.group(1);
-            Node node = graph.findByLabel(nodeName);
+            String nodeName = m.group(1); // Node label
+            Task task = schedule.findTask(graph.findByLabel(nodeName)); // Corresponding task to node label
 
-            Task task = schedule.findTask(node);
-            String injectionString = String.format(INJECT_INTO_NODE_ATTRIBUTES, task.getStartTime(), task.getProcessor() +1);
+            // Create injection string from start time of task and associated processor index
+            String injectionString = String.format(INJECT_INTO_NODE_ATTRIBUTES, task.getStartTime(), task.getProcessor() + 1);
 
+            // Inject string into group 2. m.start(2) finds the beginning of group 2 and characterIndexDifference is added because of
+            // increasing string length. As a result, spot we want to inject into gets continually 'bumped along' with each loop iteration.
             outputText.insert(m.start(2) + characterIndexDifference, injectionString);
 
-            characterIndexDifference += injectionString.length();
+            characterIndexDifference += injectionString.length(); // Increment variable by length of string we just injected.
         }
 
+        // digraph\s*           :       Match 'digraph' followed by any amount of whitespace.
+        // \"()[^\"]*\"         :       '"' followed by empty open group (for insertion) followed by any amount of not '"', followed
+        //                              by a '"'. This is required to ensure a match does not occur across multiple lines.
         Pattern headerPattern = Pattern.compile("digraph\\s*\\\"()[^\\\"]*\\\"");
         m = headerPattern.matcher(outputText);
 
         m.find();
-        int charIndex = m.start(1);
+        int charIndex = m.start(1); // Find index of group 1.
 
+        // Set first character of graph name to upper case. 'digraph title {' -> 'digraph Title {'
         outputText.setCharAt(charIndex, Character.toUpperCase(outputText.charAt(charIndex)));
-        outputText.insert(charIndex, HEADER_PREFIX);
+        outputText.insert(charIndex, HEADER_PREFIX); // Inject 'output' into space just before graph title. 'Title' -> 'outputTitle'
 
-        pw.write(outputText.toString());
+        pw.write(outputText.toString()); // Write to OutputStream
         pw.close();
     }
 
