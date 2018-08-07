@@ -16,6 +16,10 @@ import java.util.regex.Pattern;
  */
 public class DotScheduleWriter extends ScheduleWriter {
 
+    // Constants
+    private static final String HEADER_PREFIX = "output";
+    private static final String INJECT_INTO_NODE_ATTRIBUTES = ", Start=%s, Processor=%s";
+
     /**
      * Constructor for ScheduleWriter
      * @param os The output stream to write to.
@@ -32,7 +36,7 @@ public class DotScheduleWriter extends ScheduleWriter {
      * @params schedule the schedule to be written out to file
      */
     public void write(Schedule schedule, Graph graph, InputStream is) {
-
+        
         String streamText = convertStreamToString(is);
         StringBuilder outputText = new StringBuilder(streamText);
 
@@ -48,7 +52,7 @@ public class DotScheduleWriter extends ScheduleWriter {
             Node node = graph.findByLabel(nodeName);
 
             Task task = schedule.findTask(node);
-            String injectionString = String.format(", Start=%s, Processor=%s", task.getStartTime(), task.getProcessor() +1);
+            String injectionString = String.format(INJECT_INTO_NODE_ATTRIBUTES, task.getStartTime(), task.getProcessor() +1);
 
             outputText.insert(m.start(2) + characterIndexDifference, injectionString);
 
@@ -62,7 +66,7 @@ public class DotScheduleWriter extends ScheduleWriter {
         int charIndex = m.start(1);
 
         outputText.setCharAt(charIndex, Character.toUpperCase(outputText.charAt(charIndex)));
-        outputText.insert(charIndex, "output");
+        outputText.insert(charIndex, HEADER_PREFIX);
 
         pw.write(outputText.toString());
         pw.close();
