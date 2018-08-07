@@ -71,6 +71,39 @@ public class AlgorithmIntegrationTests {
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
+    /**
+     * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with
+     * lower bounds and pruning.
+     */
+    @Test
+    public void testAlgorithm7NodeAllHeuristics() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
+        InputStream graphStream = null;
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("File not found");
+        }
+        //Try making graph from file and check that it is correct
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        Algorithm algorithm = new DFSAlgorithm(2, (pruningGraph, pruningSchedule, pruningTask) ->
+                new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                        || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath());
+        algorithm.start(graph);
+
+        //Manually start algorithm on graph
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(28, resultManual.getEndTime()); // Check answer is optimal
+        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
+
     // Tests for cli interacting with reader
     // Tests for
 
