@@ -68,6 +68,7 @@ public abstract class Cli {
             Graph graph = this.readGraphFile(); // read the graph
             Schedule schedule = this.startScheduling(graph); // start scheduling
             this.writeSchedule(graph, schedule); // write the schedule
+
         } catch (IOException i) {
             System.out.println("Sorry, we can't find the file you've supplied. Process terminated.");
             this.displayUsage();

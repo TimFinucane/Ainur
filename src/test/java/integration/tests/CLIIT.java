@@ -2,13 +2,24 @@ package integration.tests;
 
 import cli.Cli;
 import cli.MilestoneTwoCli;
+import common.Validator;
 import common.categories.GandalfIntegrationTestsCategory;
+import common.graph.Graph;
+import io.GraphReader;
+import io.dot.DotGraphReader;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Aside from the banging name, this class aims to test the CLI functionality by passing in arguments to the CLI from
@@ -43,10 +54,33 @@ public class CLIIT {
     }
 
     @Test
-    public void test() {
+    public void test7NodeWithDotFileArgument() {
 
-        Cli cli = new MilestoneTwoCli(new String[]{"", ""});
+        // Parse Nodes_7_OutTree.dot through program
+        Cli cli = new MilestoneTwoCli(new String[]{ NODES_7_FILENAME, "4" });
+        cli.parse();
 
+        // Will be compared for validity
+        String outputText = null;
+        Graph inputGraph = null;
+
+        // Read in necessary graph and output schedule
+        try {
+            // Get output file in the form of a string
+            Scanner scanner = new Scanner(NODES_7_OUTPUT_FILE);
+            outputText = scanner.useDelimiter("\\A").next();
+            scanner.close();
+
+            // Get input graph in the form of a graph
+            GraphReader graphReader = new DotGraphReader(new FileInputStream(NODES_7_FILENAME));
+            inputGraph = graphReader.read();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("Could not find output file: " + NODES_7_OUTPUT_FILE.getName());
+        }
+
+        assertTrue(Validator.isValid(inputGraph, outputText)); // Ensure is valid
     }
 
 }
