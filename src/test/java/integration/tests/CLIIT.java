@@ -7,8 +7,6 @@ import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -35,26 +33,7 @@ public class CLIIT {
     private static final String CUSTOM_OUTPUT_NAME_SUFFIX = "my_special_file.dot";
 
     private static final String NODES_7_FILENAME = "data/graphs/Nodes_7_OutTree.dot";
-
-    private static final File NODES_7_OUTPUT_FILE = new File("data/graphs/Nodes_7_OutTree-output.dot");
-    private static final File NODES_8_OUTPUT_FILE = new File("data/graphs/Nodes_8_Random-output.dot");
-    private static final File NODES_9_OUTPUT_FILE = new File("data/graphs/Nodes_9_SeriesParallel-output.dot");
-    private static final File NODES_10_OUTPUT_FILE = new File("data/graphs/Nodes_10_Random-output.dot");
-    private static final File NODES_11_OUTPUT_FILE = new File("data/graphs/Nodes_11_OutTree-output.dot");
-
-    @Before
-    public void setup() {
-        cleanUp();
-    }
-
-    @AfterClass
-    public static void cleanUp() {
-        NODES_7_OUTPUT_FILE.delete();
-        NODES_8_OUTPUT_FILE.delete();
-        NODES_9_OUTPUT_FILE.delete();
-        NODES_10_OUTPUT_FILE.delete();
-        NODES_11_OUTPUT_FILE.delete();
-    }
+    private static final String NODES_7_OUTPUT_FILENAME = "data/graphs/Nodes_7_OutTree-output.dot";
 
     /**
      * This tests that the Nodes_7_OutTree-output.dot file is correctly handled by the CLI and is passed through the
@@ -74,7 +53,7 @@ public class CLIIT {
         // Read in necessary graph and output schedule
         try {
             // Get output file in the form of a string
-            Scanner scanner = new Scanner(NODES_7_OUTPUT_FILE);
+            Scanner scanner = new Scanner(NODES_7_OUTPUT_FILENAME);
             outputText = scanner.useDelimiter("\\A").next();
             scanner.close();
 
@@ -84,10 +63,11 @@ public class CLIIT {
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            fail("Could not find output file: " + NODES_7_OUTPUT_FILE.getName());
+            fail("Could not find output file: " + NODES_7_FILENAME);
         }
 
         assertTrue(Validator.isValid(inputGraph, outputText)); // Ensure is valid
+        new File(NODES_7_OUTPUT_FILENAME).delete();
     }
 
 
@@ -97,7 +77,7 @@ public class CLIIT {
      * back in to ensure writing occurred correctly.
      */
     @Test
-    public void test7NodeWithOutputArgumentNoSuffix() throws InterruptedException {
+    public void test7NodeWithOutputArgumentSuffix() {
 
         // Parse Nodes_7_OutTree.dot through program
         Cli cli = new MilestoneTwoCli(new String[]{ NODES_7_FILENAME, "4", "-o", CUSTOM_OUTPUT_NAME_SUFFIX });
@@ -110,7 +90,9 @@ public class CLIIT {
         // Read in necessary graph and output schedule
         try {
             // Get output file in the form of a string
-            Scanner scanner = new Scanner(new File(DATA_PATH_NAME + CUSTOM_OUTPUT_NAME_SUFFIX));
+            File file = new File(DATA_PATH_NAME + CUSTOM_OUTPUT_NAME_SUFFIX);
+
+            Scanner scanner = new Scanner(file);
             outputText = scanner.useDelimiter("\\A").next();
             scanner.close();
 
@@ -118,6 +100,48 @@ public class CLIIT {
             GraphReader graphReader = new DotGraphReader(new FileInputStream(NODES_7_FILENAME));
             inputGraph = graphReader.read();
 
+            file.delete();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("Could not find output file: " + CUSTOM_OUTPUT_NAME_SUFFIX);
+        }
+
+        assertTrue(Validator.isValid(inputGraph, outputText)); // Ensure is valid
+    }
+
+
+
+
+    /**
+     * This tests that the Nodes_7_OutTree-output.dot file is correctly handled by the CLI and is passed through the
+     * program to make an output schedule, with extra parameters -o <filename> minus a .dot suffix. This output
+     * schedule is then read back in to ensure writing occurred correctly.
+     */
+    @Test
+    public void test7NodeWithOutputArgumentNoSuffix() {
+
+        // Parse Nodes_7_OutTree.dot through program
+        Cli cli = new MilestoneTwoCli(new String[]{ NODES_7_FILENAME, "4", "-o", CUSTOM_OUTPUT_NAME_NO_SUFFIX });
+        cli.parse();
+
+        // Will be compared for validity
+        String outputText = null;
+        Graph inputGraph = null;
+
+        // Read in necessary graph and output schedule
+        try {
+            File file = new File(DATA_PATH_NAME + CUSTOM_OUTPUT_NAME_SUFFIX);
+
+            // Get output file in the form of a string
+            Scanner scanner = new Scanner(file);
+            outputText = scanner.useDelimiter("\\A").next();
+            scanner.close();
+
+            // Get input graph in the form of a graph
+            GraphReader graphReader = new DotGraphReader(new FileInputStream(NODES_7_FILENAME));
+            inputGraph = graphReader.read();
+
+            file.delete();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("Could not find output file: " + CUSTOM_OUTPUT_NAME_SUFFIX);
