@@ -14,6 +14,7 @@ import org.junit.experimental.categories.Category;
 public class ValidatorTests {
 
     private Graph _graph;
+    private Graph _complexGraph;
 
     @Before
     public void initializeGraph()
@@ -27,6 +28,22 @@ public class ValidatorTests {
                 .edge("b", "c", 5)
                 .edge("a", "c", 5)
                 .build();
+
+        _complexGraph = new Graph.Builder()
+            .node("0", 5)
+            .node("1", 6)
+            .node("2", 5)
+            .node("3", 6)
+            .node("4", 4)
+            .node("5", 7)
+            .node("6", 7)
+            .edge("0", "1", 15)
+            .edge("0", "2", 11)
+            .edge("0", "3", 11)
+            .edge("1", "4", 19)
+            .edge("1", "5", 4)
+            .edge("1", "6", 21)
+            .build();
     }
 
     // This tests that the isValid() method asserts true on an empty schedule
@@ -161,24 +178,8 @@ public class ValidatorTests {
                 "\t1 -> 6\t [Weight=21];\n" +
                 "}\n";
 
-        Graph graph = new Graph.Builder()
-                .node("0", 5)
-                .node("1", 6)
-                .node("2", 5)
-                .node("3", 6)
-                .node("4", 4)
-                .node("5", 7)
-                .node("6", 7)
-                .edge("0", "1", 15)
-                .edge("0", "2", 11)
-                .edge("0", "3", 11)
-                .edge("1", "4", 19)
-                .edge("1", "5", 4)
-                .edge("1", "6", 21)
-                .build();
-
         // Act / Assert
-        Assert.assertTrue(Validator.isValid(graph, inputString));
+        Assert.assertTrue(Validator.isValid(_complexGraph, inputString));
 
     }
 
@@ -202,24 +203,8 @@ public class ValidatorTests {
                 "\t1 -> 6\t [Weight=21];\n" +
                 "}\n";
 
-        Graph graph = new Graph.Builder()
-                .node("0", 5)
-                .node("1", 6)
-                .node("2", 5)
-                .node("3", 6)
-                .node("4", 4)
-                .node("5", 7)
-                .node("6", 7)
-                .edge("0", "1", 15)
-                .edge("0", "2", 11)
-                .edge("0", "3", 11)
-                .edge("1", "4", 19)
-                .edge("1", "5", 4)
-                .edge("1", "6", 21)
-                .build();
-
         // Act / Assert
-        Assert.assertFalse(Validator.isValid(graph, inputString));
+        Assert.assertFalse(Validator.isValid(_complexGraph, inputString));
 
     }
 
