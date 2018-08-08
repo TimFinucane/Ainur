@@ -14,6 +14,7 @@ import common.schedule.Schedule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -32,6 +33,27 @@ import static junit.framework.TestCase.*;
 @Category(GandalfIntegrationTestsCategory.class)
 public class DFSAlgorithmIT {
 
+
+    private Algorithm _algorithmWith2Processors;
+    private Algorithm _algorithmWith4Processors;
+
+
+    @Before
+    public void setup() {
+
+        _algorithmWith2Processors = new DFSAlgorithm(2,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath());
+
+        _algorithmWith4Processors = new DFSAlgorithm(4,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath());
+
+    }
 
 
 
@@ -94,13 +116,8 @@ public class DFSAlgorithmIT {
         Graph graph = reader.read();
 
         // Execute algorithm w/ all heuristics
-        Algorithm algorithm = new DFSAlgorithm(2,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath());
-        algorithm.start(graph);
-        Schedule resultManual = algorithm.getCurrentBest();
+        _algorithmWith2Processors.start(graph);
+        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
 
         assertEquals(28, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -132,13 +149,8 @@ public class DFSAlgorithmIT {
         Graph graph = reader.read();
 
         // Execute algorithm w/ all heuristics
-        Algorithm algorithm = new DFSAlgorithm(4,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                        new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath());
-        algorithm.start(graph);
-        Schedule resultManual = algorithm.getCurrentBest();
+        _algorithmWith4Processors.start(graph);
+        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
 
         assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -171,14 +183,9 @@ public class DFSAlgorithmIT {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new DFSAlgorithm(2,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath());
-        algorithm.start(graph);
-        Schedule resultManual = algorithm.getCurrentBest();
+        // Execute algorithm w/ all heuristics
+        _algorithmWith2Processors.start(graph);
+        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
 
         assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -208,14 +215,9 @@ public class DFSAlgorithmIT {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new DFSAlgorithm(4,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath());
-        algorithm.start(graph);
-        Schedule resultManual = algorithm.getCurrentBest();
+        // Execute algorithm w/ all heuristics
+        _algorithmWith4Processors.start(graph);
+        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
 
         assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -244,14 +246,9 @@ public class DFSAlgorithmIT {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new DFSAlgorithm(2,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath());
-        algorithm.start(graph);
-        Schedule resultManual = algorithm.getCurrentBest();
+        // Execute algorithm w/ all heuristics
+        _algorithmWith2Processors.start(graph);
+        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
 
         assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -280,14 +277,9 @@ public class DFSAlgorithmIT {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new DFSAlgorithm(4,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath());
-        algorithm.start(graph);
-        Schedule resultManual = algorithm.getCurrentBest();
+        // Execute algorithm w/ all heuristics
+        _algorithmWith4Processors.start(graph);
+        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
 
         assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -316,16 +308,9 @@ public class DFSAlgorithmIT {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        Algorithm algorithm = new DFSAlgorithm(2,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                                || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath()
-        );
-
-        algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
-        Schedule resultManual = algorithm.getCurrentBest();
+        // Execute algorithm w/ all heuristics
+        _algorithmWith2Processors.start(graph);
+        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
 
         assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -355,16 +340,9 @@ public class DFSAlgorithmIT {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        Algorithm algorithm = new DFSAlgorithm(4,
-            (pruningGraph, pruningSchedule, pruningTask) ->
-                new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                    || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-            new CriticalPath()
-        );
-
-        algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
-        Schedule resultManual = algorithm.getCurrentBest();
+        // Execute algorithm w/ all heuristics
+        _algorithmWith4Processors.start(graph);
+        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
 
         assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -392,15 +370,9 @@ public class DFSAlgorithmIT {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        Algorithm algorithm = new DFSAlgorithm(2,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                                || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath()
-        );
-        algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
-        Schedule resultManual = algorithm.getCurrentBest();
+        // Execute algorithm w/ all heuristics
+        _algorithmWith2Processors.start(graph);
+        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
 
         assertEquals(350, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
@@ -428,15 +400,9 @@ public class DFSAlgorithmIT {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        Algorithm algorithm = new DFSAlgorithm(4,
-            (pruningGraph, pruningSchedule, pruningTask) ->
-                new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                    || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-            new CriticalPath()
-        );
-        algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
-        Schedule resultManual = algorithm.getCurrentBest();
+        // Execute algorithm w/ all heuristics
+        _algorithmWith4Processors.start(graph);
+        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
 
         assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
