@@ -1,5 +1,10 @@
 package cli;
 
+import algorithm.Algorithm;
+import algorithm.DFSAlgorithm;
+import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.pruner.ProcessorOrderPruner;
+import algorithm.heuristics.pruner.StartTimePruner;
 import common.Config;
 import common.graph.Graph;
 import common.schedule.Schedule;
@@ -29,10 +34,21 @@ public class MilestoneTwoCli extends Cli {
         _cores = Config.CORES_DEFAULT;
     }
 
-    // TODO implement method
     @Override
     protected Schedule startScheduling(Graph graph) {
-        return null;
+        // Algorithm
+        Algorithm algorithm = new DFSAlgorithm(
+                _processors,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                                || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath()
+        );
+
+        //Start
+        algorithm.start(graph);
+
+        return algorithm.getCurrentBest();
     }
 
     @Override
