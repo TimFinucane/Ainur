@@ -41,6 +41,9 @@ import static junit.framework.TestCase.fail;
 @Category(GandalfIntegrationTestsCategory.class)
 public class AlgorithmIntegrationTests {
 
+
+
+
     /**
      * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with no
      * lower bound or pruning.
@@ -51,16 +54,19 @@ public class AlgorithmIntegrationTests {
         // Set up File
         File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
         InputStream graphStream = null;
+
         try {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("File not found");
         }
+
         //Try making graph from file and check that it is correct
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
+        // Execute algorithm w/ no heuristics
         Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
         algorithm.start(graph);
 
@@ -70,6 +76,9 @@ public class AlgorithmIntegrationTests {
         assertEquals(28, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
+
+
+
 
     /**
      * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with
@@ -81,193 +90,144 @@ public class AlgorithmIntegrationTests {
         // Set up File
         File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
         InputStream graphStream = null;
+
         try {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("File not found");
         }
+
         //Try making graph from file and check that it is correct
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        Algorithm algorithm = new DFSAlgorithm(2, (pruningGraph, pruningSchedule, pruningTask) ->
-                new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                        || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+        // Execute algorithm w/ all heuristics
+        Algorithm algorithm = new DFSAlgorithm(2,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                        new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
                 new CriticalPath());
         algorithm.start(graph);
-
-        //Manually start algorithm on graph
         Schedule resultManual = algorithm.getCurrentBest();
 
         assertEquals(28, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
+
+
+
     // Tests for cli interacting with reader
-    // Tests for
+    // Tests for writing out
 
     /**
      * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
      * heuristics
      */
     @Test
-    public void testNodes_8_RandomGraphTwoProcessor() {
+    public void testAlgorithm8Node2ProcessorNoHeuristics() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_8_Random.dot");
         InputStream graphStream = null;
+
         try {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("File not found");
         }
+
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        //Assert that graph is as expected
-        Node entryNode = graph.getEntryPoints().get(0);
-
-        assertEquals(entryNode.getLabel(), "0");
-        assertEquals(35, entryNode.getComputationCost());
-        assertEquals(8, graph.size());
-
-
+        // Execute algorithm w/ no heuristics
         Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new CriticalPath());
-
         algorithm.start(graph);
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(581, resultManual.getEndTime());
-        // Now run graph through CLI
-        String[] args = {"data/graphs/Nodes_8_Random.dot", "2"};
-        Cli cli = new Cli(args) {
-            @Override
-            protected Schedule startScheduling(Graph graph) {
-                Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new CriticalPath());
-
-                algorithm.start(graph);
-                Schedule result = algorithm.getCurrentBest();
-                return result;
-            }
-        };
-        cli.parse();
-
-        // Check that output file is all good
-        File outputFile = new File("data/graphs/Nodes_8_Random.dot");
-        assertTrue(outputFile.exists());
-
-        InputStream outputGraphStream = null;
-        try {
-            outputGraphStream = new FileInputStream(outputFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail();
-        }
-
-        // Convert schedules to graphs to use in comparison
-        String schedule1 = "digraph \"Processor_0\" {\n" +
-                "\t0\t [Weight=35];\n" +
-                "\t2\t [Weight=176];\n" +
-                "\t0 -> 2\t [Weight=0];\n" +
-                "\t4\t [Weight=176];\n" +
-                "\t2 -> 4\t [Weight=0];\n" +
-                "\t6\t [Weight=141];\n" +
-                "\t4 -> 6\t [Weight=0];\n" +
-                "\t7\t [Weight=53];\n" +
-                "\t6 -> 7\t [Weight=0];\n" +
-                "}\n";
-        InputStream stream1 = new ByteArrayInputStream(schedule1.getBytes(StandardCharsets.UTF_8));
-        GraphReader reader1 = new DotGraphReader(stream1);
-        Graph graph1 = reader1.read();
-
-        String schedule2 = "digraph \"Processor_1\" {\n" +
-                "\t1\t [Weight=88];\n" +
-                "\t3\t [Weight=159];\n" +
-                "\t1 -> 3\t [Weight=0];\n" +
-                "\t5\t [Weight=141];\n" +
-                "\t3 -> 5\t [Weight=0];\n" +
-                "}\n";
-        InputStream stream2 = new ByteArrayInputStream(schedule2.getBytes(StandardCharsets.UTF_8));
-        GraphReader reader2 = new DotGraphReader(stream2);
-        Graph graph2 = reader2.read();
-
-        //Make Schedules
-        Schedule outputSchedule = new SimpleSchedule(2);
-
-        // Add entirety of graph 1 to processor 0
-        int startTime = 0;
-        for(Node n : graph1.getNodes()){
-            outputSchedule.addTask(new Task(0, startTime, n));
-            startTime = startTime + n.getComputationCost();
-        }
-
-        // Add entirety of graph 2 to processor 1
-        startTime = 0;
-        for(Node n : graph2.getNodes()){
-            outputSchedule.addTask(new Task(1, startTime, n));
-            startTime = startTime + n.getComputationCost();
-        }
-
-        assertEquals(581, outputSchedule.getEndTime());
+        assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
+        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
+
+
+
     /**
-     * Test tests algorithm against graph with 7 nodes and 3 layers, on 4 processors with critical path
+     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
      * heuristics
      */
     @Test
-    public void testNodes_7_OutTreeGraphFourProcessor() {
+    public void testAlgorithm8Node2ProcessorAllHeuristics() {
 
         // Set up File
-        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
+        File graphFile = new File("data/graphs/Nodes_8_Random.dot");
         InputStream graphStream = null;
+
         try {
             graphStream = new FileInputStream(graphFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("File not found");
         }
-        //Try making graph from file and check that it is correct
+
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        //Assert that graph is as expected
-        Node entryNode = graph.getEntryPoints().get(0);
-
-        assertEquals(entryNode.getLabel(), "0");
-        assertEquals(5, entryNode.getComputationCost());
-        assertEquals(7, graph.size());
-
-
-        Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
-
+        // Execute algorithm w/ no heuristics
+        Algorithm algorithm = new DFSAlgorithm(2,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath());
         algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(22, resultManual.getEndTime());
-
-        // Now run graph through CLI and assert all answers are the same as before
-        String[] args = {"data/graphs/Nodes_7_OutTree.dot", "4"};
-        Cli cli = new Cli(args) {
-            @Override
-            protected Schedule startScheduling(Graph graph) {
-                Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
-
-                algorithm.start(graph);
-                Schedule result = algorithm.getCurrentBest();
-                return result;
-            }
-        };
-        cli.parse();
-
-        // Check that output file is all good from full run through
-        File outputFile = new File("data/graphs/Nodes_7_OutTree-output.dot");
-        assertTrue(outputFile.exists());
-
+        assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
+        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
+
+
+
+
+
+    /**
+     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with all heuristics
+     */
+    @Test
+    public void testAlgorithm9Node4ProcessorAllHeuristics() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_9_SeriesParallel.dot");
+        InputStream graphStream = null;
+
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("File not found");
+        }
+
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        // Execute algorithm w/ no heuristics
+        Algorithm algorithm = new DFSAlgorithm(2,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath());
+        algorithm.start(graph);
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
+        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
+
+
+
+
 
     /**
      * Test tests algorithm against graph with 10 nodes, on 4 processors with critical path and pruner
@@ -291,17 +251,6 @@ public class AlgorithmIntegrationTests {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        //Assert that graph is as expected
-        List<Node> entryNodes = graph.getEntryPoints();
-        assertEquals(2, entryNodes.size());
-        assertEquals("0", entryNodes.get(0).getLabel());
-        assertEquals(6, entryNodes.get(0).getComputationCost());
-
-        assertEquals("1", entryNodes.get(1).getLabel());
-        assertEquals(5, entryNodes.get(1).getComputationCost());
-
-        assertEquals(10, graph.size());
-
         Algorithm algorithm = new DFSAlgorithm(
             4,
             (pruningGraph, pruningSchedule, pruningTask) ->
@@ -314,39 +263,16 @@ public class AlgorithmIntegrationTests {
         //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(50, resultManual.getEndTime());
-
-        // Now run graph through CLI and assert all answers are the same as before
-        String[] args = {"data/graphs/Nodes_10_Random.dot", "4"};
-        Cli cli = new Cli(args) {
-            @Override
-            protected Schedule startScheduling(Graph graph) {
-                Algorithm algorithm = new DFSAlgorithm(
-                    4,
-                    (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                            || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                    new CriticalPath()
-                );
-
-                algorithm.start(graph);
-                Schedule result = algorithm.getCurrentBest();
-                return result;
-            }
-        };
-        cli.parse();
-
-        // Check that output file is all good from full run through
-        File outputFile = new File("data/graphs/Nodes_10_Random.dot");
-        assertTrue(outputFile.exists());
+        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
 
     }
 
+
+
+
     /**
-     * Test tests algorithm against graph with 11 nodes on 4 processors with critical path and start time
-     * pruner heuristics.
-     * ******Fair warning, this one takes a while ***********
-     * **************** Roughly 30 min **********************
+     * Test tests algorithm against graph with 11 nodes on 4 processors with all heuristics
      */
     @Test
     public void testNode_11_OutTreeFourProcessor() {
@@ -364,15 +290,6 @@ public class AlgorithmIntegrationTests {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        //Assert that graph is as expected
-        List<Node> entryNodes = graph.getEntryPoints();
-        assertEquals(1, entryNodes.size());
-        assertEquals("0", entryNodes.get(0).getLabel());
-        assertEquals(50, entryNodes.get(0).getComputationCost());
-
-
-        assertEquals(11, graph.size());
-
         Algorithm algorithm = new DFSAlgorithm(
             4,
             (pruningGraph, pruningSchedule, pruningTask) ->
@@ -383,31 +300,9 @@ public class AlgorithmIntegrationTests {
         algorithm.start(graph);
         //Manually start algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
-        assertEquals(227, resultManual.getEndTime());
 
-        // Now run graph through CLI and assert all answers are the same as before
-        String[] args = {"data/graphs/Nodes_11_OutTree.dot", "4"};
-        Cli cli = new Cli(args) {
-            @Override
-            protected Schedule startScheduling(Graph graph) {
-                Algorithm algorithm = new DFSAlgorithm(
-                    4,
-                    (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                            || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                    new CriticalPath()
-                );
-
-                algorithm.start(graph);
-                Schedule result = algorithm.getCurrentBest();
-                return result;
-            }
-        };
-        cli.parse();
-
-        // Check that output file is all good from full run through
-        File outputFile = new File("data/graphs/Nodes_11_OutTree.dot");
-        assertTrue(outputFile.exists());
+        assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
 
     }
 }
