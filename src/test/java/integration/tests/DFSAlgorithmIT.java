@@ -37,10 +37,17 @@ public class DFSAlgorithmIT {
     private Algorithm _algorithmWith2Processors;
     private Algorithm _algorithmWith4Processors;
 
+    private static final String NODES_7_FILENAME = "data/graphs/Nodes_7_OutTree.dot";
+    private static final String NODES_8_FILENAME = "data/graphs/Nodes_8_Random.dot";
+    private static final String NODES_9_FILENAME = "data/graphs/Nodes_9_SeriesParallel.dot";
+    private static final String NODES_10_FILENAME = "data/graphs/Nodes_10_Random.dot";
+    private static final String NODES_11_FILENAME = "data/graphs/Nodes_11_OutTree.dot";
+
 
     @Before
     public void setup() {
 
+        // Set up algorithm classes
         _algorithmWith2Processors = new DFSAlgorithm(2,
                 (pruningGraph, pruningSchedule, pruningTask) ->
                         new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
@@ -64,20 +71,7 @@ public class DFSAlgorithmIT {
     @Test
     public void testAlgorithm7Node4ProcessorNoHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
-        InputStream graphStream = null;
-
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-
-        //Try making graph from file and check that it is correct
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ no heuristics
         Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
@@ -100,20 +94,7 @@ public class DFSAlgorithmIT {
     @Test
     public void testAlgorithm7Node2ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
-        InputStream graphStream = null;
-
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-
-        //Try making graph from file and check that it is correct
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith2Processors.start(graph);
@@ -133,20 +114,7 @@ public class DFSAlgorithmIT {
     @Test
     public void testAlgorithm7Node4ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
-        InputStream graphStream = null;
-
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-
-        //Try making graph from file and check that it is correct
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith4Processors.start(graph);
@@ -163,25 +131,13 @@ public class DFSAlgorithmIT {
     // Tests for writing out
 
     /**
-     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
+     * Test tests algorithm against graph with 8 nodes and 2 layers, one two processors with critical path
      * heuristics
      */
     @Test
     public void testAlgorithm8Node2ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_8_Random.dot");
-        InputStream graphStream = null;
-
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_8_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith2Processors.start(graph);
@@ -195,25 +151,13 @@ public class DFSAlgorithmIT {
 
 
     /**
-     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
+     * Test tests algorithm against graph with 8 nodes and 4 layers, one two processors with critical path
      * heuristics
      */
     @Test
     public void testAlgorithm8Node4ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_8_Random.dot");
-        InputStream graphStream = null;
-
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_8_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith4Processors.start(graph);
@@ -227,24 +171,12 @@ public class DFSAlgorithmIT {
 
 
     /**
-     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with all heuristics
+     * Test tests algorithm against graph with 9 nodes and 2 layers, one two processors with all heuristics
      */
     @Test
     public void testAlgorithm9Node2ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_9_SeriesParallel.dot");
-        InputStream graphStream = null;
-
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_9_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith2Processors.start(graph);
@@ -258,24 +190,12 @@ public class DFSAlgorithmIT {
 
 
     /**
-     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with all heuristics
+     * Test tests algorithm against graph with 9 nodes and 4 layers, one two processors with all heuristics
      */
     @Test
     public void testAlgorithm9Node4ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_9_SeriesParallel.dot");
-        InputStream graphStream = null;
-
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_9_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith4Processors.start(graph);
@@ -289,24 +209,13 @@ public class DFSAlgorithmIT {
 
 
     /**
-     * Test tests algorithm against graph with 10 nodes, on 4 processors with critical path and pruner
+     * Test tests algorithm against graph with 10 nodes, on 2 processors with critical path and pruner
      * heuristics
      */
     @Test
     public void testAlgorithm10Node2ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_10_Random.dot");
-        InputStream graphStream = null;
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-        //Try making graph from file and check that it is correct
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_10_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith2Processors.start(graph);
@@ -327,18 +236,7 @@ public class DFSAlgorithmIT {
     @Test
     public void testAlgorithm10Node4ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_10_Random.dot");
-        InputStream graphStream = null;
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-        //Try making graph from file and check that it is correct
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_10_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith4Processors.start(graph);
@@ -352,23 +250,12 @@ public class DFSAlgorithmIT {
 
 
     /**
-     * Test tests algorithm against graph with 11 nodes on 4 processors with all heuristics
+     * Test tests algorithm against graph with 11 nodes on 2 processors with all heuristics
      */
     @Test
     public void testAlgorithm11Node2ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_11_OutTree.dot");
-        InputStream graphStream = null;
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-        //Try making graph from file and check that it is correct
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_11_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith2Processors.start(graph);
@@ -387,18 +274,7 @@ public class DFSAlgorithmIT {
     @Test
     public void testAlgorithm11Node4ProcessorAllHeuristics() {
 
-        // Set up File
-        File graphFile = new File("data/graphs/Nodes_11_OutTree.dot");
-        InputStream graphStream = null;
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found");
-        }
-        //Try making graph from file and check that it is correct
-        GraphReader reader = new DotGraphReader(graphStream);
-        Graph graph = reader.read();
+        Graph graph = getGraph(NODES_11_FILENAME);
 
         // Execute algorithm w/ all heuristics
         _algorithmWith4Processors.start(graph);
@@ -406,5 +282,25 @@ public class DFSAlgorithmIT {
 
         assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
+    }
+
+
+
+
+    private Graph getGraph(String filePath) {
+        // Set up File
+        File graphFile = new File(filePath);
+        InputStream graphStream = null;
+
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("File not found: " + filePath);
+        }
+
+        //Try making graph from file and check that it is correct
+        GraphReader reader = new DotGraphReader(graphStream);
+        return reader.read();
     }
 }
