@@ -7,39 +7,30 @@ import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
-import cli.Cli;
 import common.Validator;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
-import common.graph.Node;
 import common.schedule.Schedule;
-import common.schedule.SimpleSchedule;
-import common.schedule.Task;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
+import static junit.framework.TestCase.*;
 
 /**
- * Class contain test suite for integration tests for algorithm. Each test tests all parts of the algorithm
- * code manually ie. calling each component in sequence. Each test also tests the CLI with arguements and compares
- * the two results to make sure they match.
- * Tests on two processors also read the output file and make sure that it is what is expected and that the
- * schedule written out matches the same schedule that was obtained by manually running the algorithm.
- * Any tests higher than 9/10 nodes on more than 2 processors will take a significant amount of time to run, and
- * hence have not been included in the test suite.
+ * This class's purpose is to provide a suite for testing DFSAlgorithm's functionality with regards to reading in a graph
+ * object and outputting a schedule that is both optimal and valid. Graphs are sourced from data/graphs/, reading in of
+ * of these also occurs before every test.
  */
 @Category(GandalfIntegrationTestsCategory.class)
-public class AlgorithmIntegrationTests {
+public class DFSAlgorithmIT {
 
 
 
@@ -49,7 +40,7 @@ public class AlgorithmIntegrationTests {
      * lower bound or pruning.
      */
     @Test
-    public void testAlgorithm7NodeNoHeuristics() {
+    public void testAlgorithm7Node4ProcessorNoHeuristics() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
@@ -67,13 +58,13 @@ public class AlgorithmIntegrationTests {
         Graph graph = reader.read();
 
         // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
+        Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
         algorithm.start(graph);
 
         //Manually start algorithm on graph
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(28, resultManual.getEndTime()); // Check answer is optimal
+        assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
@@ -85,7 +76,7 @@ public class AlgorithmIntegrationTests {
      * lower bounds and pruning.
      */
     @Test
-    public void testAlgorithm7NodeAllHeuristics() {
+    public void testAlgorithm7Node2ProcessorAllHeuristics() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
@@ -106,7 +97,7 @@ public class AlgorithmIntegrationTests {
         Algorithm algorithm = new DFSAlgorithm(2,
                 (pruningGraph, pruningSchedule, pruningTask) ->
                         new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                        new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
                 new CriticalPath());
         algorithm.start(graph);
         Schedule resultManual = algorithm.getCurrentBest();
@@ -118,18 +109,15 @@ public class AlgorithmIntegrationTests {
 
 
 
-    // Tests for cli interacting with reader
-    // Tests for writing out
-
     /**
-     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
-     * heuristics
+     * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with
+     * lower bounds and pruning.
      */
     @Test
-    public void testAlgorithm8Node2ProcessorNoHeuristics() {
+    public void testAlgorithm7Node4ProcessorAllHeuristics() {
 
         // Set up File
-        File graphFile = new File("data/graphs/Nodes_8_Random.dot");
+        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
         InputStream graphStream = null;
 
         try {
@@ -139,20 +127,28 @@ public class AlgorithmIntegrationTests {
             fail("File not found");
         }
 
+        //Try making graph from file and check that it is correct
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new CriticalPath());
+        // Execute algorithm w/ all heuristics
+        Algorithm algorithm = new DFSAlgorithm(4,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                        new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath());
         algorithm.start(graph);
         Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
+        assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
         Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
 
+
+    // Tests for cli interacting with reader
+    // Tests for writing out
 
     /**
      * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
@@ -191,12 +187,48 @@ public class AlgorithmIntegrationTests {
 
 
 
+    /**
+     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with critical path
+     * heuristics
+     */
+    @Test
+    public void testAlgorithm8Node4ProcessorAllHeuristics() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_8_Random.dot");
+        InputStream graphStream = null;
+
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("File not found");
+        }
+
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        // Execute algorithm w/ no heuristics
+        Algorithm algorithm = new DFSAlgorithm(4,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath());
+        algorithm.start(graph);
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
+        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
+
+
+
 
     /**
      * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with all heuristics
      */
     @Test
-    public void testAlgorithm9Node4ProcessorAllHeuristics() {
+    public void testAlgorithm9Node2ProcessorAllHeuristics() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_9_SeriesParallel.dot");
@@ -228,15 +260,48 @@ public class AlgorithmIntegrationTests {
 
 
 
+    /**
+     * Test tests algorithm against graph with 8 nodes and 3 layers, one two processors with all heuristics
+     */
+    @Test
+    public void testAlgorithm9Node4ProcessorAllHeuristics() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_9_SeriesParallel.dot");
+        InputStream graphStream = null;
+
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("File not found");
+        }
+
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        // Execute algorithm w/ no heuristics
+        Algorithm algorithm = new DFSAlgorithm(4,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath());
+        algorithm.start(graph);
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
+        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
+
+
+
 
     /**
      * Test tests algorithm against graph with 10 nodes, on 4 processors with critical path and pruner
      * heuristics
-     * 3min 40s with no heuristics
-     * 28s with 2X heuristics
      */
     @Test
-    public void testNodes_10_RandomFourProcessor() {
+    public void testAlgorithm10Node2ProcessorAllHeuristics() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_10_Random.dot");
@@ -251,8 +316,46 @@ public class AlgorithmIntegrationTests {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        Algorithm algorithm = new DFSAlgorithm(
-            4,
+        Algorithm algorithm = new DFSAlgorithm(2,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                                || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath()
+        );
+
+        algorithm.start(graph);
+        //Manually start algorithm on graph and check that final answer is correct
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
+
+
+
+
+
+    /**
+     * Test tests algorithm against graph with 10 nodes, on 4 processors with critical path and pruner
+     * heuristics
+     */
+    @Test
+    public void testAlgorithm10Node4ProcessorAllHeuristics() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_10_Random.dot");
+        InputStream graphStream = null;
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("File not found");
+        }
+        //Try making graph from file and check that it is correct
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        Algorithm algorithm = new DFSAlgorithm(4,
             (pruningGraph, pruningSchedule, pruningTask) ->
                 new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
                     || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
@@ -265,7 +368,6 @@ public class AlgorithmIntegrationTests {
 
         assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
-
     }
 
 
@@ -275,7 +377,7 @@ public class AlgorithmIntegrationTests {
      * Test tests algorithm against graph with 11 nodes on 4 processors with all heuristics
      */
     @Test
-    public void testNode_11_OutTreeFourProcessor() {
+    public void testAlgorithm11Node2ProcessorAllHeuristics() {
 
         // Set up File
         File graphFile = new File("data/graphs/Nodes_11_OutTree.dot");
@@ -290,8 +392,43 @@ public class AlgorithmIntegrationTests {
         GraphReader reader = new DotGraphReader(graphStream);
         Graph graph = reader.read();
 
-        Algorithm algorithm = new DFSAlgorithm(
-            4,
+        Algorithm algorithm = new DFSAlgorithm(2,
+                (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                                || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                new CriticalPath()
+        );
+        algorithm.start(graph);
+        //Manually start algorithm on graph and check that final answer is correct
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(350, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
+    }
+
+
+
+
+    /**
+     * Test tests algorithm against graph with 11 nodes on 4 processors with all heuristics
+     */
+    @Test
+    public void testAlgorithm11Node4ProcessorAllHeuristics() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_11_OutTree.dot");
+        InputStream graphStream = null;
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("File not found");
+        }
+        //Try making graph from file and check that it is correct
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        Algorithm algorithm = new DFSAlgorithm(4,
             (pruningGraph, pruningSchedule, pruningTask) ->
                 new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
                     || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
@@ -303,6 +440,5 @@ public class AlgorithmIntegrationTests {
 
         assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
-
     }
 }
