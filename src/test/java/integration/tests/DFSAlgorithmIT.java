@@ -81,7 +81,7 @@ public class DFSAlgorithmIT {
         Schedule resultManual = algorithm.getCurrentBest();
 
         assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
-        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
@@ -101,7 +101,7 @@ public class DFSAlgorithmIT {
         Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
 
         assertEquals(28, resultManual.getEndTime()); // Check answer is optimal
-        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
@@ -121,7 +121,7 @@ public class DFSAlgorithmIT {
         Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
 
         assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
-        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
@@ -144,7 +144,7 @@ public class DFSAlgorithmIT {
         Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
 
         assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
-        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
@@ -164,7 +164,7 @@ public class DFSAlgorithmIT {
         Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
 
         assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
-        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
@@ -183,7 +183,7 @@ public class DFSAlgorithmIT {
         Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
 
         assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
-        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
@@ -202,7 +202,7 @@ public class DFSAlgorithmIT {
         Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
 
         assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
-        Assert.assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
