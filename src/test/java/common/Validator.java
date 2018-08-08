@@ -101,13 +101,13 @@ public class Validator {
 
         List<Task> tasks = new ArrayList<>();
 
-        Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*,Start\\s*=\\s*(\\d+)\\s*,Processors\\s*=\\s*(\\d+)\\s*]\\s*;");
+        Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Weight\\s*=\\s*(\\d+)\\s*,\\s*Start\\s*=\\s*(\\d+)\\s*,\\s*Processor\\s*=\\s*(\\d+)\\s*]\\s*;");
         Matcher m = taskPattern.matcher(scheduleAsText);
 
         int maxProcessorNo = 0;
 
         while (m.find()) {
-            Task task = new Task(Integer.parseInt(m.group(4)), // Processor no.
+            Task task = new Task(Integer.parseInt(m.group(4)) - 1, // Processor index start at 1 in text
                     Integer.parseInt(m.group(3)), //Start time
                     graph.findByLabel(m.group(1))); // Corresponding node object
 
