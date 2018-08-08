@@ -164,7 +164,7 @@ public abstract class Cli {
         }
 
         if (cmdLine.hasOption("o")) {
-            _outputFile = cmdLine.getOptionValue("o");
+            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf("/")) + "/" + cmdLine.getOptionValue("o");
             if (!_outputFile.endsWith(".dot")){
                 _outputFile += ".dot";
             }
