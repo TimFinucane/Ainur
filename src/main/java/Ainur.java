@@ -1,5 +1,3 @@
-package cli;
-
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;

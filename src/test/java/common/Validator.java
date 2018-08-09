@@ -12,9 +12,7 @@ import jdk.internal.util.xml.impl.Input;
 import org.junit.experimental.categories.Category;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -118,6 +116,8 @@ public class Validator {
         }
 
         Schedule schedule = new SimpleSchedule(maxProcessorNo); // Create schedule with the max. number of found processors
+
+        Collections.sort(tasks, Comparator.comparingInt(Task::getStartTime)); // This line is pretty sick: Order tasks by start time so that scheduler doesn't complain
 
         for (Task task : tasks) {
             schedule.addTask(task); // Populate schedule with tasks from the string

@@ -1,11 +1,9 @@
-package integration.tests;
-
-import Ainur;
 import common.Validator;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import io.GraphReader;
 import io.dot.DotGraphReader;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -22,6 +20,8 @@ import static org.junit.Assert.fail;
  * this test class and waiting for output. There are not any strenuous tests here computation wise, as there are done
  * elsewhere. The goal is to ensure that implemented options do their job correctly, and that correct output files
  * are written out.
+ *
+ * This file needs to be in the default package so it can access the Ainur main class.
  */
 @Category(GandalfIntegrationTestsCategory.class)
 public class CliIT {
@@ -52,8 +52,10 @@ public class CliIT {
 
         // Read in necessary graph and output schedule
         try {
+            File file = new File(NODES_7_OUTPUT_FILENAME);
+
             // Get output file in the form of a string
-            Scanner scanner = new Scanner(NODES_7_OUTPUT_FILENAME);
+            Scanner scanner = new Scanner(file);
             outputText = scanner.useDelimiter("\\A").next();
             scanner.close();
 
@@ -61,6 +63,7 @@ public class CliIT {
             GraphReader graphReader = new DotGraphReader(new FileInputStream(NODES_7_FILENAME));
             inputGraph = graphReader.read();
 
+            file.delete();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("Could not find output file: " + NODES_7_FILENAME);
@@ -106,6 +109,7 @@ public class CliIT {
         }
 
         assertTrue(Validator.isValid(inputGraph, outputText)); // Ensure is valid
+        new File(CUSTOM_OUTPUT_NAME_SUFFIX).delete();
     }
 
 
@@ -146,6 +150,7 @@ public class CliIT {
         }
 
         assertTrue(Validator.isValid(inputGraph, outputText)); // Ensure is valid
+        new File(CUSTOM_OUTPUT_NAME_SUFFIX).delete();
     }
 
 }
