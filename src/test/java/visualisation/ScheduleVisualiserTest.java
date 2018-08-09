@@ -17,7 +17,6 @@ public class ScheduleVisualiserTest extends Application{
 
     /**
      * Displays a visualisation of a dummy schedule
-     * @param stage
      */
     public void start(Stage stage) {
         ScheduleVisualiser sv = new ScheduleVisualiser();
@@ -33,6 +32,7 @@ public class ScheduleVisualiserTest extends Application{
      */
     public Schedule generateSchedule(){
         Schedule schedule = new SimpleSchedule(5);
+
         Task task = new Task(0, 0, new Node(4, "a", 1));
         Task task1 = new Task(1, 4, new Node(5, "b", 2));
         Task task2 = new Task(2, 5, new Node(4, "c", 3));

@@ -3,6 +3,7 @@ package visualisation;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.scene.Group;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
@@ -36,6 +37,9 @@ public class ScheduleVisualiser extends Group {
         // Generates a grid structure to display all the tasks with
         GridPane grid = setDimensions(endTime, numProc);
 
+        NumberAxis axis = new NumberAxis("time",0, endTime, 1);
+        axis.setMinWidth(WINDOW_WIDTH);
+
         // Adds tasks to visualisation for each processor
         for (int proc = 0; proc < numProc; proc++) {
             for (Task task : schedule.getTasks(proc)) {
@@ -43,6 +47,7 @@ public class ScheduleVisualiser extends Group {
             }
         }
 
+        this.getChildren().add(axis);
         this.getChildren().add(grid);
     }
 
