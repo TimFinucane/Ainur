@@ -29,11 +29,13 @@ public class ScheduleVisualiserTest extends Application{
 
     public Schedule generateSchedule(){
         Schedule schedule = new SimpleSchedule(5);
-        Task task = new Task(2, 2, new Node(14, "a", 10));
-        Task task1 = new Task(2, 2, new Node(14, "a", 10));
-        Task task2 = new Task(2, 2, new Node(14, "a", 10));
+        Task task = new Task(0, 3, new Node(4, "a", 1));
+        Task task1 = new Task(1, 4, new Node(5, "b", 2));
+        Task task2 = new Task(2, 5, new Node(6, "c", 3));
 
         schedule.addTask(task);
+        schedule.addTask(task1);
+        schedule.addTask(task2);
         return schedule;
     }
 }
