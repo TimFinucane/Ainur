@@ -1,6 +1,7 @@
 package visualisation;
 
 import common.schedule.Schedule;
+import common.schedule.Task;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
@@ -24,16 +25,17 @@ public class ScheduleVisualiser extends Group {
         colWidth = WINDOW_WIDTH/endTime;
 
         GridPane grid = setDimensions(endTime, numProc);
-
-        Rectangle rectangle = new Rectangle();
-        rectangle.setHeight(rowHeight);
-        rectangle.setWidth(colWidth * 3);
-
-        rectangle.setFill(COLOR);
-
-        grid.add(rectangle, 0, 0);
-
         grid.setGridLinesVisible(true);
+
+        for (int i = 0; i < numProc; i++) {
+            for (Task task : schedule.getTasks(i)) {
+                Rectangle rect = new Rectangle();
+                rect.setHeight(rowHeight);
+                rect.setWidth(colWidth*task.getNode().getComputationCost());
+                rect.setFill(COLOR);
+                grid.add(rect, task.getStartTime(), i);
+            }
+        }
 
         this.getChildren().add(grid);
 

@@ -28,9 +28,9 @@ public class ScheduleVisualiserTest extends Application{
     }
 
     public Schedule generateSchedule(){
-        Schedule schedule = new SimpleSchedule(3);
-        Node node = new Node(4, "a", 10);
-        Task task = new Task(1, 2,node);
+        Schedule schedule = new SimpleSchedule(5);
+        Task task = new Task(2, 2, new Node(14, "a", 10));
+
         schedule.addTask(task);
         return schedule;
     }
