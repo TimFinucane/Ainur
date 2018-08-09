@@ -3,7 +3,6 @@ package visualisation;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -13,7 +12,7 @@ import javafx.scene.text.Text;
 /**
  * Class to deal with the visual rendering of a schedule.
  */
-public class ScheduleVisualiser extends Group {
+public class ScheduleVisualiser extends Region {
 
     private static final double WINDOW_WIDTH = 1000;
     private static final double WINDOW_HEIGHT = 200;
