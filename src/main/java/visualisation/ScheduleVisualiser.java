@@ -20,9 +20,6 @@ public class ScheduleVisualiser extends Group {
     public ScheduleVisualiser(Schedule schedule){
         int endTime = schedule.getEndTime();
         int numProc = schedule.getNumProcessors();
-    }
-
-    public ScheduleVisualiser(int endTime, int numProc){
         rowHeight = WINDOW_HEIGHT/numProc;
         colWidth = WINDOW_WIDTH/endTime;
         update(endTime, numProc);
