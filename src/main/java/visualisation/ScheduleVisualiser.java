@@ -26,17 +26,9 @@ public class ScheduleVisualiser extends Group {
 
         GridPane grid = setDimensions(endTime, numProc);
 
-        for (int i = 0; i < numProc; i++) {
-            for (Task task : schedule.getTasks(i)) {
-                Rectangle rect = new Rectangle();
-                rect.setHeight(rowHeight);
-                rect.setWidth(colWidth*task.getNode().getComputationCost());
-                rect.setFill(FILL_COLOR);
-                rect.setStroke(BORDER_COLOR);
-                Text text = new Text(task.getNode().getLabel());
-                StackPane stackPane = new StackPane();
-                stackPane.getChildren().addAll(rect, text);
-                grid.add(stackPane, task.getStartTime(), i);
+        for (int proc = 0; proc < numProc; proc++) {
+            for (Task task : schedule.getTasks(proc)) {
+                grid.add(generateRect(task), task.getStartTime(), proc);
             }
         }
 
@@ -60,6 +52,20 @@ public class ScheduleVisualiser extends Group {
         }
 
         return grid;
+    }
+
+    private StackPane generateRect(Task task) {
+        Rectangle rect = new Rectangle();
+        rect.setHeight(rowHeight);
+        rect.setWidth(colWidth*task.getNode().getComputationCost());
+        rect.setFill(FILL_COLOR);
+        rect.setStroke(BORDER_COLOR);
+
+        Text text = new Text(task.getNode().getLabel());
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(rect, text);
+
+        return stackPane;
     }
 
 }
