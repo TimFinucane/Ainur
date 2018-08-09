@@ -2,6 +2,7 @@ package visualisation;
 
 import common.schedule.Schedule;
 import common.schedule.Task;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.*;
@@ -14,7 +15,7 @@ import javafx.scene.text.Text;
  */
 public class ScheduleVisualiser extends Group {
 
-    private static final int WINDOW_WIDTH = 750;
+    private static final int WINDOW_WIDTH = 1000;
     private static final int WINDOW_HEIGHT = 200;
     private static final Color FILL_COLOR = Color.LAVENDER;
     private static final Color BORDER_COLOR = Color.BLACK;
@@ -37,7 +38,8 @@ public class ScheduleVisualiser extends Group {
         // Generates a grid structure to display all the tasks with
         GridPane grid = setDimensions(endTime, numProc);
 
-        NumberAxis axis = new NumberAxis("time",0, endTime, 1);
+        // Generates an axis to display the schedule timing
+        NumberAxis axis = new NumberAxis("Schedule Time",0, endTime, 1);
         axis.setMinWidth(WINDOW_WIDTH);
 
         // Adds tasks to visualisation for each processor
@@ -47,8 +49,11 @@ public class ScheduleVisualiser extends Group {
             }
         }
 
-        this.getChildren().add(axis);
-        this.getChildren().add(grid);
+        // Uses a VBox to get desired vertical alignment
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(15));
+        vBox.getChildren().addAll(grid, axis);
+        this.getChildren().add(vBox);
     }
 
 
