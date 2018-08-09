@@ -15,8 +15,8 @@ import javafx.scene.text.Text;
  */
 public class ScheduleVisualiser extends Group {
 
-    private static final int WINDOW_WIDTH = 1000;
-    private static final int WINDOW_HEIGHT = 200;
+    private static final double WINDOW_WIDTH = 1000;
+    private static final double WINDOW_HEIGHT = 200;
     private static final Color FILL_COLOR = Color.LAVENDER;
     private static final Color BORDER_COLOR = Color.BLACK;
     private double rowHeight;
@@ -30,8 +30,8 @@ public class ScheduleVisualiser extends Group {
         // Makes sure previous visualisation is cleared from the display
         this.getChildren().clear();
 
-        int endTime = schedule.getEndTime();
-        int numProc = schedule.getNumProcessors();
+        double endTime = schedule.getEndTime();
+        double numProc = schedule.getNumProcessors();
         rowHeight = (WINDOW_HEIGHT/numProc)*0.85;
         colWidth = WINDOW_WIDTH/endTime;
 
@@ -64,18 +64,18 @@ public class ScheduleVisualiser extends Group {
      * @param numProc : number of processors in this schedule
      * @return : a GridPane to display the schedule.
      */
-    private GridPane setDimensions(int endTime, int numProc) {
+    private GridPane setDimensions(double endTime, double numProc) {
         GridPane grid = new GridPane();
 
         // Generates endTime cols and sizes them to fit window size
-        int colWidth = WINDOW_WIDTH/endTime;
+        double colWidth = WINDOW_WIDTH/endTime;
         for (int i = 0; i < endTime; i++) {
             ColumnConstraints cc = new ColumnConstraints(colWidth);
             grid.getColumnConstraints().add(cc);
         }
 
         // Generates numProc rows and sizes them to fit window size
-        int rowHeight = WINDOW_HEIGHT/numProc;
+        double rowHeight = WINDOW_HEIGHT/numProc;
         for (int i = 0; i < numProc; i++) {
             RowConstraints rc = new RowConstraints(rowHeight);
             grid.getRowConstraints().add(rc);
