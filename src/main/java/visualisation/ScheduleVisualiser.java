@@ -13,19 +13,15 @@ public class ScheduleVisualiser extends Group {
 
     private static final int WINDOW_WIDTH = 750;
     private static final int WINDOW_HEIGHT = 200;
+    private static final Color COLOR = Color.LAVENDER;
     private double rowHeight;
     private double colWidth;
 
-
-    public ScheduleVisualiser(Schedule schedule){
+    public void update(Schedule schedule) {
         int endTime = schedule.getEndTime();
         int numProc = schedule.getNumProcessors();
         rowHeight = WINDOW_HEIGHT/numProc;
         colWidth = WINDOW_WIDTH/endTime;
-        update(endTime, numProc);
-    }
-
-    public void update(int endTime, int numProc) {
 
         GridPane grid = setDimensions(endTime, numProc);
 
@@ -33,12 +29,11 @@ public class ScheduleVisualiser extends Group {
         rectangle.setHeight(rowHeight);
         rectangle.setWidth(colWidth * 3);
 
-        rectangle.setFill(Color.BLACK);
+        rectangle.setFill(COLOR);
 
         grid.add(rectangle, 0, 0);
 
         grid.setGridLinesVisible(true);
-
 
         this.getChildren().add(grid);
 

@@ -20,10 +20,9 @@ public class ScheduleVisualiserTest extends Application{
 
     @Override
     public void start(Stage stage) {
-        Group schedule = new ScheduleVisualiser(generateSchedule());
-//        schedule.getChildren().add(new Button());
-
-        Scene scene = new Scene(schedule);
+        ScheduleVisualiser sv = new ScheduleVisualiser();
+        sv.update(generateSchedule());
+        Scene scene = new Scene(sv);
         stage.setScene(scene);
         stage.show();
     }
@@ -31,7 +30,6 @@ public class ScheduleVisualiserTest extends Application{
     public Schedule generateSchedule(){
         Schedule schedule = new SimpleSchedule(3);
         Node node = new Node(4, "a", 10);
-
         Task task = new Task(1, 2,node);
         schedule.addTask(task);
         return schedule;
