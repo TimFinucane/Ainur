@@ -25,7 +25,7 @@ import static org.junit.Assert.fail;
  * are written out.
  */
 @Category(GandalfIntegrationTestsCategory.class)
-public class CLIIT {
+public class CliIT {
 
     private static final String DATA_PATH_NAME = "data/graphs/";
 

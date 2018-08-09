@@ -17,6 +17,8 @@ import java.util.List;
  * Inheritors can easily add arguments. And control how to program works.
  */
 public abstract class Cli {
+
+
     // The array of strings received from the command line invocation
     private String[] _args;
 
@@ -30,6 +32,7 @@ public abstract class Cli {
 
     // MACROS
     private final String HELPER_HEADER;
+
 
     /**
      * Constructor responsible for assigning the args to a private field and assigning defaults.
@@ -52,42 +55,97 @@ public abstract class Cli {
                 .toString();
     }
 
+
     /**
      * Interprets the command line arguments and uses them accordingly.
      */
     public void parse() {
+
         // Apache Commons CLI: Parsing Stage
         DefaultParser clParse = new DefaultParser();
         CommandLine cmdLine = null;
+
         try {
             cmdLine = clParse.parse(_options, _args);
-            // Apache Commons CLI: Interrogation Stage
-            this.interrogate(cmdLine);
+            interrogate(cmdLine); // Apache Commons CLI: Interrogation Stage
 
             // Start the program
-            Graph graph = this.readGraphFile(); // read the graph
-            Schedule schedule = this.startScheduling(graph); // start scheduling
-            this.writeSchedule(graph, schedule); // write the schedule
+            Graph graph = readGraphFile(); // read the graph
+            Schedule schedule = startScheduling(graph); // start scheduling
+
+            // write the output
+            writeSchedule(graph, schedule);
 
         } catch (IOException i) {
+
             System.out.println("Sorry, we can't find the file you've supplied. Process terminated.");
-            this.displayUsage();
+            displayUsage(); // Display proper usage to user
+
         } catch (UnrecognizedOptionException u) {
+
             System.out.println("Please make sure your input arguments are in the appropriate format. Process terminated.");
+
         } catch (ParseException p) {
+
             p.printStackTrace();
         }
     }
 
+
     /**
-     * A method for displaying the way the CLI should be used.
-     * This is called whenever the user uses the CLI incorrectly or uses the help flag ("-h" or "--help")
+     * Converts the arguments to fields so they can be used as intended.
+     *
+     * @param cmdLine the CommandLine object used to gather the args and options.
      */
-    public void displayUsage() {
-        HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.printHelp(HELPER_HEADER, _options);
-        System.exit(0);
+    private void interrogate(CommandLine cmdLine) {
+        // Apache Commons CLI: Interrogation Stage
+        if (cmdLine.hasOption("h") || cmdLine.getArgList().size() < 2) {
+            displayUsage();
+        }
+
+        List<String> argList = cmdLine.getArgList();
+        _inputFile = argList.get(0);
+
+        try {
+            _processors = Integer.parseInt(argList.get(1));
+        } catch (NumberFormatException e) { // Can't parse the number of processors
+            System.out.println("Please make sure the number of processors is a positive, whole number.");
+        }
+
+        if (_processors == 0) {
+            System.out.println("Sorry, we cannot allocate to zero processors. Please enter a positive integer value of processors");
+            //TODO consider adding a custom exception to handle this type of error.
+            System.exit(0);
+        }
+
+        if (cmdLine.hasOption("o")) {
+            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf("/")) + "/" + cmdLine.getOptionValue("o");
+            if (!_outputFile.endsWith(".dot")){
+                _outputFile += ".dot";
+            }
+            System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
+        } else {
+            int fileNameIndex = _inputFile.lastIndexOf("/");
+            _outputFile = _inputFile.substring(fileNameIndex+1, _inputFile.lastIndexOf('.')) + "-output.dot";
+            System.out.println("Ainur output schedule file name defaulted to: " + _outputFile);
+        }
+
+        interrogateArgs(cmdLine);
     }
+
+
+    /**
+     * Reads a graph from the input dot file.
+     *
+     * @return A graph object created from the inputted dot file.
+     * @throws FileNotFoundException if the .dot file could not be found
+     */
+    private Graph readGraphFile() throws FileNotFoundException {
+        InputStream is = new FileInputStream(_inputFile);
+        GraphReader graphReader = new DotGraphReader(is);
+        return graphReader.read();
+    }
+
 
     /**
      * An abstract method which determines what to do with the arguments once they have been processed.
@@ -99,17 +157,6 @@ public abstract class Cli {
      */
     protected abstract Schedule startScheduling(Graph graph);
 
-    /**
-     * Reads a graph from the inputted dot file.
-     *
-     * @return A graph object created from the inputted dot file.
-     * @throws FileNotFoundException if the .dot file could not be found
-     */
-    private Graph readGraphFile() throws FileNotFoundException {
-        InputStream is = new FileInputStream(_inputFile);
-        GraphReader graphReader = new DotGraphReader(is);
-        return graphReader.read();
-    }
 
     /**
      * Writes the schedule obtained from the scheduling algorithm to a dot file.
@@ -134,49 +181,17 @@ public abstract class Cli {
         }
     }
 
+
     /**
-     * Converts the arguments to fields so they can be used as intended.
-     *
-     * @param cmdLine the CommandLine object used to gather the args and options.
+     * A method for displaying the way the CLI should be used.
+     * This is called whenever the user uses the CLI incorrectly or uses the help flag ("-h" or "--help")
      */
-    private void interrogate(CommandLine cmdLine) {
-        // Apache Commons CLI: Interrogation Stage
-        if (cmdLine.hasOption("h") || cmdLine.getArgList().size() < 2) {
-            displayUsage();
-        }
-
-        Option[] optionRef = cmdLine.getOptions();
-
-        List<String> argList = cmdLine.getArgList();
-        _inputFile = argList.get(0);
-
-        try {
-            _processors = Integer.parseInt(argList.get(1));
-        } catch (NumberFormatException e) {
-            System.out.println("Please make sure the number of processors is a positive, whole number.");
-        }
-
-        if (_processors == 0) {
-            System.out.println("Sorry, we cannot allocate to zero processors. " +
-                    "Please enter a positive integer value of processors");
-            //TODO consider adding a custom exception to handle this type of error.
-            System.exit(0);
-        }
-
-        if (cmdLine.hasOption("o")) {
-            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf("/")) + "/" + cmdLine.getOptionValue("o");
-            if (!_outputFile.endsWith(".dot")){
-                _outputFile += ".dot";
-            }
-            System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
-        } else {
-            int fileNameIndex = _inputFile.lastIndexOf("\\");
-            _outputFile = _inputFile.substring(fileNameIndex+1, _inputFile.lastIndexOf('.')) + "-output.dot";
-            System.out.println("Ainur output schedule file name defaulted to: " + _outputFile);
-        }
-
-        this.interrogateArgs(cmdLine);
+    public void displayUsage() {
+        HelpFormatter helpFormatter = new HelpFormatter();
+        helpFormatter.printHelp(HELPER_HEADER, _options);
+        System.exit(0);
     }
+
 
     /**
      * Sets up the optional arguments the CLI takes.
