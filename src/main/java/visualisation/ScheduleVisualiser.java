@@ -2,15 +2,20 @@ package visualisation;
 
 import common.schedule.Schedule;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-
-import java.awt.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 
 public class ScheduleVisualiser extends Group {
+
+    private static final int WINDOW_WIDTH = 750;
+    private static final int WINDOW_HEIGHT = 200;
+    private double rowHeight;
+    private double colWidth;
+
 
     public ScheduleVisualiser(Schedule schedule){
         int endTime = schedule.getEndTime();
@@ -18,6 +23,8 @@ public class ScheduleVisualiser extends Group {
     }
 
     public ScheduleVisualiser(int endTime, int numProc){
+        rowHeight = WINDOW_HEIGHT/numProc;
+        colWidth = WINDOW_WIDTH/endTime;
         update(endTime, numProc);
     }
 
@@ -25,12 +32,15 @@ public class ScheduleVisualiser extends Group {
 
         GridPane grid = setDimensions(endTime, numProc);
 
-        System.out.println(grid.toString());
+        Rectangle rectangle = new Rectangle();
+        rectangle.setHeight(rowHeight);
+        rectangle.setWidth(colWidth * 3);
 
-        System.out.println(grid.getColumnConstraints());
-        System.out.println(grid.getRowConstraints());
+        rectangle.setFill(Color.BLACK);
 
-        grid.add(new Button(), 3, 3);
+        grid.add(rectangle, 0, 0);
+
+        grid.add(new Button(), 3, 3, 2, 2);
         grid.setGridLinesVisible(true);
 
 
@@ -41,13 +51,13 @@ public class ScheduleVisualiser extends Group {
     private GridPane setDimensions(int endTime, int numProc) {
         GridPane grid = new GridPane();
 
-        int colWidth = 750/endTime;
+        int colWidth = WINDOW_WIDTH/endTime;
         for (int i = 0; i < endTime; i++) {
             ColumnConstraints cc = new ColumnConstraints(colWidth);
             grid.getColumnConstraints().add(cc);
         }
 
-        int rowHeight = 200/numProc;
+        int rowHeight = WINDOW_HEIGHT/numProc;
         for (int i = 0; i < numProc; i++) {
             RowConstraints rc = new RowConstraints(rowHeight);
             grid.getRowConstraints().add(rc);
