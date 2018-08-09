@@ -1,6 +1,6 @@
 package integration.tests;
 
-import cli.Ainur;
+import Ainur;
 import common.Validator;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
