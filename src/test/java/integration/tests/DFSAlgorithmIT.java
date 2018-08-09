@@ -33,15 +33,16 @@ import static junit.framework.TestCase.*;
 @Category(GandalfIntegrationTestsCategory.class)
 public class DFSAlgorithmIT {
 
+    private static final String SEP = File.separator;
 
     private Algorithm _algorithmWith2Processors;
     private Algorithm _algorithmWith4Processors;
 
-    private static final String NODES_7_FILENAME = "data/graphs/Nodes_7_OutTree.dot";
-    private static final String NODES_8_FILENAME = "data/graphs/Nodes_8_Random.dot";
-    private static final String NODES_9_FILENAME = "data/graphs/Nodes_9_SeriesParallel.dot";
-    private static final String NODES_10_FILENAME = "data/graphs/Nodes_10_Random.dot";
-    private static final String NODES_11_FILENAME = "data/graphs/Nodes_11_OutTree.dot";
+    private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
+    private static final String NODES_8_FILENAME = String.format("data%sgraphs%sNodes_8_Random.dot", SEP, SEP);
+    private static final String NODES_9_FILENAME = String.format("data%sgraphs%sNodes_9_SeriesParallel.dot", SEP, SEP);
+    private static final String NODES_10_FILENAME = String.format("data%sgraphs%sNodes_10_Random.dot", SEP, SEP);
+    private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
 
 
     @Before

@@ -1,12 +1,6 @@
 package cli;
 
 import common.Config;
-import common.graph.Graph;
-import common.schedule.Schedule;
-import io.GraphReader;
-import io.ScheduleWriter;
-import io.dot.DotGraphReader;
-import io.dot.DotScheduleWriter;
 import org.apache.commons.cli.*;
 
 import java.io.*;
@@ -16,7 +10,7 @@ import java.util.List;
  * An abstract class used for processing command line arguments.
  * Inheritors can easily add arguments. And control how to program works.
  */
-public abstract class Cli {
+public class Cli {
 
 
     // The array of strings received from the command line invocation
@@ -30,8 +24,24 @@ public abstract class Cli {
     // Collection of command line options
     protected Options _options;
 
+    // Fields required for milestone two.
+    protected boolean _visualise;
+    protected int _cores;
+
     // MACROS
     private final String HELPER_HEADER;
+
+    public String getOutputFile() {
+        return _outputFile;
+    }
+
+    public String getInputFile() {
+        return _inputFile;
+    }
+
+    public int getProcessors() {
+        return _processors;
+    }
 
 
     /**
@@ -43,6 +53,8 @@ public abstract class Cli {
         // Initialise values
         _args = args;
         _processors = Config.PROCESSORS_DEFAULT;
+        _visualise = Config.VISUALISE_DEFAULT;
+        _cores = Config.CORES_DEFAULT;
 
         // Apache Commons CLI: Definition Stage
         _options = establishOptions();
@@ -66,20 +78,9 @@ public abstract class Cli {
         CommandLine cmdLine = null;
 
         try {
+
             cmdLine = clParse.parse(_options, _args);
             interrogate(cmdLine); // Apache Commons CLI: Interrogation Stage
-
-            // Start the program
-            Graph graph = readGraphFile(); // read the graph
-            Schedule schedule = startScheduling(graph); // start scheduling
-
-            // write the output
-            writeSchedule(graph, schedule);
-
-        } catch (IOException i) {
-
-            System.out.println("Sorry, we can't find the file you've supplied. Process terminated.");
-            displayUsage(); // Display proper usage to user
 
         } catch (UnrecognizedOptionException u) {
 
@@ -119,65 +120,30 @@ public abstract class Cli {
         }
 
         if (cmdLine.hasOption("o")) {
-            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf("/")) + "/" + cmdLine.getOptionValue("o");
+
+            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf(File.separator)) + File.separator + cmdLine.getOptionValue("o");
+
             if (!_outputFile.endsWith(".dot")){
                 _outputFile += ".dot";
             }
-            System.out.println("You instructed Ainur to output the schedule to a file called " + _outputFile);
+            System.out.println("You instructed cli.Ainur to output the schedule to a file called " + _outputFile);
         } else {
-            int fileNameIndex = _inputFile.lastIndexOf("/");
-            _outputFile = _inputFile.substring(fileNameIndex+1, _inputFile.lastIndexOf('.')) + "-output.dot";
-            System.out.println("Ainur output schedule file name defaulted to: " + _outputFile);
+            int fileNameIndex = _inputFile.lastIndexOf(File.separator);
+            _outputFile = _inputFile.substring(0, _inputFile.lastIndexOf(File.separator)) + File.separator +
+                    _inputFile.substring(fileNameIndex+1, _inputFile.lastIndexOf('.')) + "-output.dot";
+            System.out.println("cli.Ainur output schedule file name defaulted to: " + _outputFile);
         }
 
-        interrogateArgs(cmdLine);
-    }
+        if (cmdLine.hasOption("p")) {
+            _cores = Integer.parseInt(cmdLine.getOptionValue("p"));
+            System.out.println("You instructed cli.Ainur to be executed using " + _cores + " cores");
+            System.out.println("Unfortunately this feature is yet to be implemented... stay tuned");
+        }
 
-
-    /**
-     * Reads a graph from the input dot file.
-     *
-     * @return A graph object created from the inputted dot file.
-     * @throws FileNotFoundException if the .dot file could not be found
-     */
-    private Graph readGraphFile() throws FileNotFoundException {
-        InputStream is = new FileInputStream(_inputFile);
-        GraphReader graphReader = new DotGraphReader(is);
-        return graphReader.read();
-    }
-
-
-    /**
-     * An abstract method which determines what to do with the arguments once they have been processed.
-     * This method should run a scheduling algorithm of the inheritors choice on the inputted graph.
-     * Inheritors will also get the option to use their custom options how they wish.
-     *
-     * @param graph a graph representing the search space the scheduler will be called on.
-     * @return A schedule obtained from the search space.
-     */
-    protected abstract Schedule startScheduling(Graph graph);
-
-
-    /**
-     * Writes the schedule obtained from the scheduling algorithm to a dot file.
-     *
-     * @param schedule the schedule to write to the .dot file.
-     * @throws FileNotFoundException
-     */
-    private void writeSchedule(Graph graph, Schedule schedule) {
-        // Create a new file if file does not already exist
-        try {
-            File file = new File(_outputFile);
-            file.createNewFile();
-            OutputStream os = new FileOutputStream(file);
-
-            // Write schedule to output file
-            ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
-            scheduleWriter.write(schedule, graph, new FileInputStream(_inputFile));
-
-        } catch (IOException io) {
-            System.out.println("Invalid filename entered, try run it again with a valid filename."
-             + " Process terminated prematurely.");
+        if (cmdLine.hasOption("v")) {
+            _visualise = true;
+            System.out.println("You instructed cli.Ainur to visualise the scheduling process!");
+            System.out.println("Unfortunately this feature is yet to be implemented... stay tuned");
         }
     }
 
@@ -206,30 +172,11 @@ public abstract class Cli {
                 + "(default is INPUT-output.dot)");
         options.addOption("h", "help", false, "show help");
 
-        // Add any options added by inheritors
-        options = this.appendOptions(options);
+        options.addOption(new Option("p", true, "use <arg> cores for execution in parallel "
+                + "(default is sequential"));
+
+        options.addOption(new Option("v", "visualise", false, "visualise the search"));
 
         return options;
     }
-
-    /**
-     * Inheritors can override this method to provide extra options to the cli.
-     * If extra options are added they should be handled in the interrogateArgs() method.
-     * If you don't wish to add options will just return the options param.
-     *
-     * @param  options the list of options the CLI takes.
-     * @return The list of options the CLI takes with any extra options appended.
-     */
-    protected Options appendOptions(Options options) {
-        return options;
-    }
-
-    /**
-     * Inheritors can override this method to handle any extra options added to the cli.
-     * Extra options are added by overriding the appendOptions method.
-     * Inheritors may also extend functionality of existing options.
-     *
-     * @param cmdLine the CommandLine object used to gather the args and options.
-     */
-    protected void interrogateArgs(CommandLine cmdLine) {}
 }

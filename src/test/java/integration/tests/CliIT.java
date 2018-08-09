@@ -1,7 +1,6 @@
 package integration.tests;
 
-import cli.Cli;
-import cli.MilestoneTwoCli;
+import cli.Ainur;
 import common.Validator;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
@@ -27,13 +26,15 @@ import static org.junit.Assert.fail;
 @Category(GandalfIntegrationTestsCategory.class)
 public class CliIT {
 
+    private static final String SEP = File.separator;
+
     private static final String DATA_PATH_NAME = "data/graphs/";
 
     private static final String CUSTOM_OUTPUT_NAME_NO_SUFFIX = "my_special_file";
     private static final String CUSTOM_OUTPUT_NAME_SUFFIX = "my_special_file.dot";
 
-    private static final String NODES_7_FILENAME = "data/graphs/Nodes_7_OutTree.dot";
-    private static final String NODES_7_OUTPUT_FILENAME = "data/graphs/Nodes_7_OutTree-output.dot";
+    private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
+    private static final String NODES_7_OUTPUT_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree-output.dot", SEP, SEP);
 
     /**
      * This tests that the Nodes_7_OutTree-output.dot file is correctly handled by the CLI and is passed through the
@@ -43,8 +44,7 @@ public class CliIT {
     public void test7Node() {
 
         // Parse Nodes_7_OutTree.dot through program
-        Cli cli = new MilestoneTwoCli(new String[]{ NODES_7_FILENAME, "4" });
-        cli.parse();
+        Ainur.main(new String[]{ NODES_7_FILENAME, "4" });
 
         // Will be compared for validity
         String outputText = null;
@@ -80,8 +80,7 @@ public class CliIT {
     public void test7NodeWithOutputArgumentSuffix() {
 
         // Parse Nodes_7_OutTree.dot through program
-        Cli cli = new MilestoneTwoCli(new String[]{ NODES_7_FILENAME, "4", "-o", CUSTOM_OUTPUT_NAME_SUFFIX });
-        cli.parse();
+        Ainur.main(new String[]{ NODES_7_FILENAME, "4", "-o", CUSTOM_OUTPUT_NAME_SUFFIX });
 
         // Will be compared for validity
         String outputText = null;
@@ -121,8 +120,7 @@ public class CliIT {
     public void test7NodeWithOutputArgumentNoSuffix() {
 
         // Parse Nodes_7_OutTree.dot through program
-        Cli cli = new MilestoneTwoCli(new String[]{ NODES_7_FILENAME, "4", "-o", CUSTOM_OUTPUT_NAME_NO_SUFFIX });
-        cli.parse();
+        Ainur.main(new String[]{ NODES_7_FILENAME, "4", "-o", CUSTOM_OUTPUT_NAME_NO_SUFFIX });
 
         // Will be compared for validity
         String outputText = null;
