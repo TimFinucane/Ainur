@@ -16,7 +16,7 @@ public class ScheduleVisualiserTest extends Application{
 
     @Override
     public void start(Stage stage) {
-        Group schedule = new ScheduleVisualiser();
+        Group schedule = new ScheduleVisualiser(10, 5);
 //        schedule.getChildren().add(new Button());
 
         Scene scene = new Scene(schedule);
