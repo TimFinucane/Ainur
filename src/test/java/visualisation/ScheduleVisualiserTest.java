@@ -30,6 +30,8 @@ public class ScheduleVisualiserTest extends Application{
     public Schedule generateSchedule(){
         Schedule schedule = new SimpleSchedule(5);
         Task task = new Task(2, 2, new Node(14, "a", 10));
+        Task task1 = new Task(2, 2, new Node(14, "a", 10));
+        Task task2 = new Task(2, 2, new Node(14, "a", 10));
 
         schedule.addTask(task);
         return schedule;

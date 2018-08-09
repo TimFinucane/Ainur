@@ -7,8 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class ScheduleVisualiser extends Group {
 
@@ -33,7 +35,11 @@ public class ScheduleVisualiser extends Group {
                 rect.setHeight(rowHeight);
                 rect.setWidth(colWidth*task.getNode().getComputationCost());
                 rect.setFill(COLOR);
-                grid.add(rect, task.getStartTime(), i);
+
+                Text text = new Text(task.getNode().getLabel());
+                StackPane stackPane = new StackPane();
+                stackPane.getChildren().addAll(rect, text);
+                grid.add(stackPane, task.getStartTime(), i);
             }
         }
 
