@@ -25,6 +25,7 @@ public class ScheduleVisualiser extends Group {
      * @param schedule : schedule to visualise
      */
     public void update(Schedule schedule) {
+        // Makes sure previous visualisation is cleared from the display
         this.getChildren().clear();
 
         int endTime = schedule.getEndTime();
@@ -32,8 +33,10 @@ public class ScheduleVisualiser extends Group {
         rowHeight = (WINDOW_HEIGHT/numProc)*0.85;
         colWidth = WINDOW_WIDTH/endTime;
 
+        // Generates a grid structure to display all the tasks with
         GridPane grid = setDimensions(endTime, numProc);
 
+        // Adds tasks to visualisation for each processor
         for (int proc = 0; proc < numProc; proc++) {
             for (Task task : schedule.getTasks(proc)) {
                 grid.add(generateRect(task), task.getStartTime(), proc);
