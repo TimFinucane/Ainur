@@ -37,7 +37,6 @@ public class ScheduleVisualiser extends Group {
 
         grid.add(rectangle, 0, 0);
 
-        grid.add(new Button(), 3, 3, 2, 2);
         grid.setGridLinesVisible(true);
 
 
