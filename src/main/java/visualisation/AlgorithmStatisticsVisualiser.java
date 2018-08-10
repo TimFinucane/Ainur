@@ -11,13 +11,13 @@ public class AlgorithmStatisticsVisualiser extends Region {
     public void update(Statistics statistics) {
 
 
-        GridPane grid = setDimensions(statistics.getMinScheduleLength(), statistics.getMaxScheduleLength());
+        GridPane grid = setEstimatorDimensions(statistics.getMinScheduleLength(), statistics.getMaxScheduleLength());
 
 
 
     }
 
-    private GridPane setDimensions() {
+    private GridPane setEstimatorDimensions(int minScheduuleLength, int maxScheduleLength) {
 
     }
 
