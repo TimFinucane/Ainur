@@ -16,6 +16,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/commons-cli/commons-cli
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
+    // https://mvnrepository.com/artifact/org.graphstream/gs-core
+    compile group: 'org.graphstream', name: 'gs-core', version: '1.1.1'
 }
 
 // Complile jar
