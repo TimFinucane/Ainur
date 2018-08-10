@@ -59,6 +59,7 @@ public class Graph {
 
     private final String _name;
     private final List<Node> _nodes;
+    private final List<Edge> _edges;
     // Storage of edges is relative to how nodes access them.
     private final List<List<Edge>> _incomingEdges = new ArrayList<>();
     private final List<List<Edge>> _outgoingEdges = new ArrayList<>();
@@ -70,6 +71,7 @@ public class Graph {
     protected Graph(String name, List<Node> nodes, List<Edge> edges) {
         _name = name;
         _nodes = nodes;
+        _edges = edges;
 
         // Initialize the edge lists
         for(int i = 0; i < _nodes.size(); ++i) {
@@ -116,6 +118,13 @@ public class Graph {
      */
     public List<Edge> getIncomingEdges(Node node) {
         return _incomingEdges.get(node.getId());
+    }
+
+    /**
+     * Get all the edges in the graph
+     */
+    public List<Edge> getAllEdges() {
+        return _edges;
     }
 
     /**
