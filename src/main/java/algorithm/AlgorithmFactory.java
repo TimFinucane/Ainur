@@ -1,4 +1,4 @@
-package algorithm.heuristics;
+package algorithm;
 
 public interface AlgorithmFactory {
 
