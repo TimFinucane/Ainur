@@ -38,8 +38,6 @@ public abstract class Algorithm {
         _multithreaded = multithreaded;
         _arborist = arborist;
         _lowerBound = lowerBound;
-
-        int cores = Runtime.getRuntime().availableProcessors();
     }
 
     /**
@@ -59,7 +57,7 @@ public abstract class Algorithm {
      * necessarily be the most optimal ones.
      * @param graph A graph object representing tasks needing to be scheduled.
      */
-    public abstract void start(Graph graph, Schedule schedule, int depth, List<Node> nextNodes);
+    public abstract void start(Graph graph);
 
     /**
      * Lets the caller know whether or not the algorithm is complete
