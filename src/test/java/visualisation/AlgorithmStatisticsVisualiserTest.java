@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 import org.junit.Ignore;
 
 @Ignore
-public class AlgorithmStatisticsTest extends Application {
+public class AlgorithmStatisticsVisualiserTest extends Application {
 
     /**
      * Displays a visualisation of a dummy schedule
