@@ -8,6 +8,7 @@ import common.schedule.Schedule;
 public interface MultiAlgorithmNotifier {
     /**
      * Called when the given algorithm has finished running
+     * // TODO: May not need this
      * @param completedAlgorithm The algorithm. When called just
      */
     void onComplete(BoundableAlgorithm completedAlgorithm);
