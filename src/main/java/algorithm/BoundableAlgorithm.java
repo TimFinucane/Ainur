@@ -27,6 +27,8 @@ public abstract class BoundableAlgorithm extends Algorithm{
         this._notifier = notifier;
     }
 
+    public abstract void start(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes);
+
     @Override
     public Schedule getCurrentBest(){
         return _globalBest.get();
