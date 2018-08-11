@@ -15,10 +15,6 @@ import java.util.regex.Pattern;
  */
 public class DotScheduleWriter extends ScheduleWriter {
 
-    // Constants
-    private static final String HEADER_PREFIX = "output";
-    private static final String INJECT_INTO_NODE_ATTRIBUTES = ", Start=%s, Processor=%s";
-
     /**
      * Constructor for ScheduleWriter
      * @param os The output stream to write to.
@@ -58,7 +54,7 @@ public class DotScheduleWriter extends ScheduleWriter {
             Task task = schedule.findTask(graph.findByLabel(nodeName)); // Corresponding task to node label
 
             // Create injection string from start time of task and associated processor index
-            String injectionString = String.format(INJECT_INTO_NODE_ATTRIBUTES, task.getStartTime(), task.getProcessor() + 1);
+            String injectionString = String.format(", Start=%s, Processor=%s", task.getStartTime(), task.getProcessor() + 1);
 
             // Inject string into group 2. m.start(2) finds the beginning of group 2 and characterIndexDifference is added because of
             // increasing string length. As a result, spot we want to inject into gets continually 'bumped along' with each loop iteration.
@@ -78,7 +74,7 @@ public class DotScheduleWriter extends ScheduleWriter {
 
         // Set first character of graph name to upper case. 'digraph title {' -> 'digraph Title {'
         outputText.setCharAt(charIndex, Character.toUpperCase(outputText.charAt(charIndex)));
-        outputText.insert(charIndex, HEADER_PREFIX); // Inject 'output' into space just before graph title. 'Title' -> 'outputTitle'
+        outputText.insert(charIndex, "output"); // Inject 'output' into space just before graph title. 'Title' -> 'outputTitle'
 
         pw.write(outputText.toString());
         pw.close();

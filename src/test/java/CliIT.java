@@ -3,13 +3,15 @@ import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import io.GraphReader;
 import io.dot.DotGraphReader;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 import static org.junit.Assert.assertTrue;
@@ -26,15 +28,21 @@ import static org.junit.Assert.fail;
 @Category(GandalfIntegrationTestsCategory.class)
 public class CliIT {
 
-    private static final String SEP = File.separator;
-
-    private static final String DATA_PATH_NAME = "data/graphs/";
-
     private static final String CUSTOM_OUTPUT_NAME_NO_SUFFIX = "my_special_file";
     private static final String CUSTOM_OUTPUT_NAME_SUFFIX = "my_special_file.dot";
 
-    private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
-    private static final String NODES_7_OUTPUT_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree-output.dot", SEP, SEP);
+    private static final String DATA_PATH_NAME = Paths.get("data", "graphs").toString() + File.separator;
+
+    private static final String NODES_7_FILENAME = Paths.get("data", "graphs", "Nodes_7_OutTree.dot").toString();
+    private static final String NODES_7_OUTPUT_FILENAME = Paths.get("data", "graphs", "Nodes_7_OutTree-output.dot").toString();
+
+    @After
+    public void clear() {
+        new File(NODES_7_OUTPUT_FILENAME).delete();
+        new File(CUSTOM_OUTPUT_NAME_SUFFIX).delete();
+        new File("Nodes_7_OutTree.dot").delete();
+
+    }
 
     /**
      * This tests that the Nodes_7_OutTree-output.dot file is correctly handled by the CLI and is passed through the
@@ -92,7 +100,7 @@ public class CliIT {
         // Read in necessary graph and output schedule
         try {
             // Get output file in the form of a string
-            File file = new File(DATA_PATH_NAME + CUSTOM_OUTPUT_NAME_SUFFIX);
+            File file = new File(CUSTOM_OUTPUT_NAME_SUFFIX);
 
             Scanner scanner = new Scanner(file);
             outputText = scanner.useDelimiter("\\A").next();
@@ -132,7 +140,7 @@ public class CliIT {
 
         // Read in necessary graph and output schedule
         try {
-            File file = new File(DATA_PATH_NAME + CUSTOM_OUTPUT_NAME_SUFFIX);
+            File file = new File(CUSTOM_OUTPUT_NAME_SUFFIX);
 
             // Get output file in the form of a string
             Scanner scanner = new Scanner(file);

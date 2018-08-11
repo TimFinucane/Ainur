@@ -44,6 +44,13 @@ public class Cli {
         return _processors;
     }
 
+    public int getCores() {
+        return _cores;
+    }
+
+    public boolean getVisualise() {
+        return _visualise;
+    }
 
     /**
      * Constructor responsible for assigning the args to a private field and assigning defaults.
@@ -125,12 +132,10 @@ public class Cli {
         String[] outputPathComponents = _inputFile.split(Pattern.quote(File.separator)); // split on file separator, Pattern.quote() because regex grr
         StringBuilder outputPath = new StringBuilder();
 
-        for (int i = 0; i < outputPathComponents.length - 1; i++) { // Take all path components except for last (i.e. the input file name)
-            outputPath.append(outputPathComponents[i]).append(File.separator);
-        }
+        outputPath.append(_inputFile, 0, _inputFile.lastIndexOf(File.separator) + 1);
 
         if (cmdLine.hasOption("o")) {
-            _outputFile = outputPath.toString() + cmdLine.getOptionValue("o");
+            _outputFile = cmdLine.getOptionValue("o"); // Place output file in same location as program
 
             _outputFile = _outputFile.endsWith(".dot") ? _outputFile : (_outputFile += ".dot"); // Append .dot on end if user didn't supply
 
@@ -139,7 +144,7 @@ public class Cli {
             String outputFileName = outputPathComponents[outputPathComponents.length - 1];
             String[] splitOutputFileName = outputFileName.split(Pattern.quote("."));
 
-            _outputFile = outputPath.toString() + splitOutputFileName[0] + "-output.dot";
+            _outputFile = outputPath.toString() + splitOutputFileName[0] + "-output.dot";// Place output file in same location as data
 
             System.out.println("Ainur output schedule file defaulted to: " + _outputFile);
         }
