@@ -8,14 +8,10 @@ import common.schedule.Schedule;
 
 import java.util.List;
 
-public class TieredAlgorithm extends Algorithm {
+public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier {
 
-    public void TieredAlgorithm(AlgorithmFactory generator){
-
-    }
-
-    protected TieredAlgorithm(int processors, boolean multithreaded, Arborist arborist, LowerBound lowerBound) {
-        super(processors, multithreaded, arborist, lowerBound);
+    protected TieredAlgorithm(int processors, AlgorithmFactory generator) {
+        super(processors, false, null, null);
     }
 
     @Override
@@ -23,11 +19,27 @@ public class TieredAlgorithm extends Algorithm {
 
     }
 
-    private void onFound(Schedule partialSchedule){
+    /**
+     * @see MultiAlgorithmNotifier#onComplete(BoundableAlgorithm)
+     */
+    @Override
+    public void onComplete(BoundableAlgorithm completedAlgorithm) {
 
     }
 
-    private void onComplete(Thread thread, Schedule completeSchedule){
+    /**
+     * @see MultiAlgorithmNotifier#onSolutionFound(Schedule)
+     */
+    @Override
+    public void onSolutionFound(Schedule schedule) {
+
+    }
+
+    /**
+     * @see MultiAlgorithmNotifier#notifyPartialSolution(Schedule)
+     */
+    @Override
+    public void notifyPartialSolution(Schedule schedule) {
 
     }
 }
