@@ -1,6 +1,9 @@
 package algorithm;
 
+import common.graph.Node;
 import common.schedule.Schedule;
+
+import java.util.HashSet;
 
 /**
  * An interface for a BoundableAlgorithm to communicate with when it has found something to communicate about :)
@@ -18,5 +21,5 @@ public interface MultiAlgorithmNotifier {
      * TODO: Better name? E.g. explorePartialSolution?
      * @param schedule The partial schedule to explore
      */
-    void notifyPartialSolution(Schedule schedule);
+    void notifyPartialSolution(Schedule schedule, HashSet<Node> nextNodes);
 }
