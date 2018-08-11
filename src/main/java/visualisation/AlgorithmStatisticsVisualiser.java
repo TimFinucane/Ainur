@@ -13,9 +13,14 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private static final double WINDOW_HEIGHT = 200;
     private static final double WINDOW_WIDTH = 500;
 
-    // Stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
-    private double initialScheduleTimeLowerBound;
-    private double initialScheduleTimeUpperBound;
+    // Should stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
+    private final double _initialLowerBound;
+    private final double _initialUpperBound;
+
+    public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound) {
+        _initialLowerBound = initialLowerBound;
+        _initialUpperBound = initialUpperBound;
+    }
 
     /**
      * This method is responsible for updating the state of a schedule time bounding visualisation, as well as updating
@@ -24,8 +29,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
      */
     public void update(Statistics statistics) {
 
-        initialScheduleTimeLowerBound = 0;
-        initialScheduleTimeUpperBound = 100;
+        getChildren().clear();
 
         GridPane grid = setTimeBoundingDimensions(statistics.getMinScheduleBound(), statistics.getMaxScheduleBound());
 
@@ -38,12 +42,12 @@ public class AlgorithmStatisticsVisualiser extends Region {
         GridPane grid = new GridPane();
 
 
-        double initialBoundWidth = initialScheduleTimeUpperBound - initialScheduleTimeLowerBound;
+        double initialBoundWidth = _initialUpperBound - _initialLowerBound;
 
-        double lowerRectangleHeight = ((minScheduleBound - initialScheduleTimeLowerBound) / initialBoundWidth) * SCHEDULE_TIME_BOUNDING_HEIGHT;
-        double upperRectangleHeight = ((initialScheduleTimeUpperBound - maxScheduleBound) / initialBoundWidth) * SCHEDULE_TIME_BOUNDING_HEIGHT;
+        double lowerRectangleHeight = ((minScheduleBound - _initialLowerBound) / initialBoundWidth) * SCHEDULE_TIME_BOUNDING_HEIGHT;
+        double upperRectangleHeight = ((_initialUpperBound - maxScheduleBound) / initialBoundWidth) * SCHEDULE_TIME_BOUNDING_HEIGHT;
         double midRectangleHeight = SCHEDULE_TIME_BOUNDING_HEIGHT - upperRectangleHeight - lowerRectangleHeight;
-        
+
 
         RowConstraints topRC = new RowConstraints(upperRectangleHeight);
         RowConstraints midRC = new RowConstraints(midRectangleHeight);

@@ -12,11 +12,14 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
      * Displays a visualisation of a dummy schedule
      */
     public void start(Stage stage) {
-        AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser();
-        sv.update(generateStatistics());
+
+
+        AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser(0, 100);
+        sv.update(generateStatistics(70, 40));
         Scene scene = new Scene(sv);
         stage.setScene(scene);
         stage.show();
+
     }
 
 
@@ -24,11 +27,11 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
      * Generates a dummy schedule to be visualised
      * @return : dummy schedule
      */
-    private Statistics generateStatistics(){
+    private Statistics generateStatistics(int max, int min){
 
         Statistics stats = new Statistics();
-        stats.setMaxScheduleBound(90);
-        stats.setMinScheduleBound(87);
+        stats.setMaxScheduleBound(max);
+        stats.setMinScheduleBound(min);
 
         return stats;
 
