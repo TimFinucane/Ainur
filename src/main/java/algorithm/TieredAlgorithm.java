@@ -11,11 +11,12 @@ import java.util.List;
 public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier {
 
     protected TieredAlgorithm(int processors, AlgorithmFactory generator) {
-        super(processors, false, null, null);
+
+        super(processors, null, null);
     }
 
     @Override
-    public void start(Graph graph, Schedule schedule, int depth, List<Node> nextNodes) {
+    public void start(Graph graph) {
 
     }
 

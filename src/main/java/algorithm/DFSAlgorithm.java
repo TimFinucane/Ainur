@@ -15,8 +15,9 @@ import java.util.*;
  */
 public class DFSAlgorithm extends Algorithm {
     // When we have multithreading, these will be shared
-    private SimpleSchedule _best;
+    private SimpleSchedule _bestSchedule;
     private int _upperBound;
+
 
     // TODO: Multithreaded. When done add as argument to the algorithm
 
@@ -26,7 +27,7 @@ public class DFSAlgorithm extends Algorithm {
      * @param processors The number of processors
      */
     public DFSAlgorithm(int processors, Arborist arborist, LowerBound lowerBound) {
-        super(processors, false, arborist, lowerBound);
+        super(processors, arborist, lowerBound);
     }
 
     /**
@@ -173,5 +174,9 @@ public class DFSAlgorithm extends Algorithm {
             }
         }
         return curBest;
+    }
+
+    public SimpleSchedule getBestSchedule(){
+        return _bestSchedule;
     }
 }

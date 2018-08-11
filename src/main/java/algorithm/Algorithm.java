@@ -16,11 +16,9 @@ import java.util.concurrent.Executors;
  */
 public abstract class Algorithm {
 
-    protected Schedule _bestSchedule = null; // Is settable by subclasses. TODO: thread safety
     protected boolean _isComplete = false;
 
     protected int _processors;
-    protected boolean _multithreaded;
 
     // Private as not modifiable by subclasses, use through prune() and estimate()
     private Arborist _arborist;
@@ -29,26 +27,13 @@ public abstract class Algorithm {
     /**
      * Constructor for Algorithm class.
      * @param processors The number of processors.
-     * @param multithreaded Whether or not to use multithreading.
-     * @param arborist The pruning method to be available to the subclass
-     * @param lowerBound The lower bound estimator method to be available to the subclass
-     */
-    protected Algorithm(int processors, boolean multithreaded, Arborist arborist, LowerBound lowerBound) {
-        _processors = processors;
-        _multithreaded = multithreaded;
-        _arborist = arborist;
-        _lowerBound = lowerBound;
-    }
-
-    /**
-     * Constructor for Algorithm class.
-     * Defaults multithreading to false.
-     * @param processors The number of processors
      * @param arborist The pruning method to be available to the subclass
      * @param lowerBound The lower bound estimator method to be available to the subclass
      */
     protected Algorithm(int processors, Arborist arborist, LowerBound lowerBound) {
-        this(processors, false, arborist, lowerBound);
+        _processors = processors;
+        _arborist = arborist;
+        _lowerBound = lowerBound;
     }
 
     /**
@@ -66,16 +51,6 @@ public abstract class Algorithm {
     // This method is up for debate. May not be needed.
     public boolean isComplete() {
         return _isComplete;
-    }
-
-    /**
-     * Lets the caller know the current best schedule the algorithm has.
-     * If isComplete() is true (i.e. the algorithm has finished) then this will return the optimal solution
-     * If the implementation has not yet come up with a best schedule, it will be null.
-     * @return The current best schedule. May be null.
-     */
-    public Schedule getCurrentBest() {
-        return _bestSchedule;
     }
 
     // PROTECTED METHODS

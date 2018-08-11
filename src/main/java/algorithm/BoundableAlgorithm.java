@@ -23,7 +23,7 @@ public abstract class BoundableAlgorithm extends Algorithm {
                               LowerBound lowerBound,
                               MultiAlgorithmNotifier notifier,
                               AtomicReference<Schedule> globalBest) {
-        super(globalBest.get().getNumProcessors(), false, arborist, lowerBound);
+        super(globalBest.get().getNumProcessors(), arborist, lowerBound);
         this._notifier = notifier;
         this._globalBest = globalBest;
     }
@@ -37,11 +37,6 @@ public abstract class BoundableAlgorithm extends Algorithm {
     @Override
     public void start(Graph graph) {
         start(graph, new SimpleSchedule(_processors), Integer.MAX_VALUE, new HashSet<>(graph.getEntryPoints()));
-    }
-
-    @Override
-    public Schedule getCurrentBest(){
-        return _globalBest.get();
     }
 
 }
