@@ -16,10 +16,12 @@ public class AlgorithmStatisticsVisualiser extends Region {
     // Should stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
     private final double _initialLowerBound;
     private final double _initialUpperBound;
+    private final double _initialBoundRange;
 
     public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound) {
         _initialLowerBound = initialLowerBound;
         _initialUpperBound = initialUpperBound;
+        _initialBoundRange = _initialUpperBound - _initialLowerBound; // Range of upper and lower bound
     }
 
     /**
@@ -42,17 +44,18 @@ public class AlgorithmStatisticsVisualiser extends Region {
         GridPane grid = new GridPane();
 
 
-        double initialBoundWidth = _initialUpperBound - _initialLowerBound;
-
-        double lowerRectangleHeight = ((minScheduleBound - _initialLowerBound) / initialBoundWidth) * SCHEDULE_TIME_BOUNDING_HEIGHT;
-        double upperRectangleHeight = ((_initialUpperBound - maxScheduleBound) / initialBoundWidth) * SCHEDULE_TIME_BOUNDING_HEIGHT;
+        // Calculate height of upper and lower rectangle in visualisation, mid rectangle is remaining height landing in between them.
+        double lowerRectangleHeight = ((minScheduleBound - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_HEIGHT;
+        double upperRectangleHeight = ((_initialUpperBound - maxScheduleBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_HEIGHT;
         double midRectangleHeight = SCHEDULE_TIME_BOUNDING_HEIGHT - upperRectangleHeight - lowerRectangleHeight;
 
 
+        // Assign appropriate grid row heights to corresponding rectangle heights
         RowConstraints topRC = new RowConstraints(upperRectangleHeight);
         RowConstraints midRC = new RowConstraints(midRectangleHeight);
         RowConstraints bottomRC = new RowConstraints(lowerRectangleHeight);
 
+        // Column width will be constant
         ColumnConstraints cc = new ColumnConstraints(SCHEDULE_TIME_BOUNDING_WIDTH);
 
 
