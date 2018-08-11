@@ -21,14 +21,6 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     }
 
     /**
-     * @see MultiAlgorithmNotifier#onComplete(BoundableAlgorithm)
-     */
-    @Override
-    public void onComplete(BoundableAlgorithm completedAlgorithm) {
-
-    }
-
-    /**
      * @see MultiAlgorithmNotifier#onSolutionFound(Schedule)
      */
     @Override
