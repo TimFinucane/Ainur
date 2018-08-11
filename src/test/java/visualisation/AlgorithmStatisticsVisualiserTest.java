@@ -26,7 +26,11 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
      */
     private Statistics generateStatistics(){
 
-        return new Statistics();
+        Statistics stats = new Statistics();
+        stats.setMaxScheduleBound(90);
+        stats.setMinScheduleBound(87);
+
+        return stats;
 
     }
 
