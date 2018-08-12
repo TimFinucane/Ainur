@@ -57,7 +57,6 @@ public class DFSAlgorithm extends BoundableAlgorithm {
         recurse(graph,
             schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
             nextNodes);
-        _isComplete = true;
     }
 
     /**

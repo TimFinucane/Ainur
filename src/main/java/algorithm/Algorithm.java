@@ -14,8 +14,6 @@ import java.util.List;
  */
 public abstract class Algorithm {
 
-    protected boolean _isComplete = false;
-
     // Private as not modifiable by subclasses, use through prune() and estimate()
     private Arborist _arborist;
     private LowerBound _lowerBound;
@@ -38,15 +36,6 @@ public abstract class Algorithm {
      * @param processors The number of processors in the output schedule
      */
     public abstract void run(Graph graph, int processors);
-
-    /**
-     * Lets the caller know whether or not the algorithm is complete
-     * @return True if the algorithm is complete, false otherwise.
-     */
-    // This method is up for debate. May not be needed.
-    public boolean isComplete() {
-        return _isComplete;
-    }
 
     public abstract Schedule getCurrentBest();
 
