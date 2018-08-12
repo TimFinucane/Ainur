@@ -21,5 +21,5 @@ public interface MultiAlgorithmNotifier {
      * TODO: Better name? E.g. explorePartialSolution?
      * @param schedule The partial schedule to explore
      */
-    void notifyPartialSolution(Schedule schedule, HashSet<Node> nextNodes);
+    void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes);
 }
