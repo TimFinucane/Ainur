@@ -29,7 +29,7 @@ public class DFSAlgorithmTests {
 
         Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
 
-        algorithm.start(graph);
+        algorithm.run(graph);
         Schedule result = algorithm.getCurrentBest();
 
         for(int i = 0; i < result.getNumProcessors(); ++i) {

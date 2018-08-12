@@ -52,7 +52,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     }
 
     @Override
-    public void start(Graph graph) {
+    public void run(Graph graph) {
         for (int i = 0 ; i<_threads.length ; i++){
             _threads[i] = new Thread(this::runThread);
         }

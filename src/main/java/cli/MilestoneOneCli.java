@@ -34,7 +34,7 @@ public class MilestoneOneCli extends Cli {
         );
 
         //Start
-        algorithm.start(graph);
+        algorithm.run(graph);
 
         return algorithm.getCurrentBest();
     }

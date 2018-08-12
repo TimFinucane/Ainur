@@ -42,7 +42,7 @@ public abstract class Algorithm {
      * necessarily be the most optimal ones.
      * @param graph A graph object representing tasks needing to be scheduled.
      */
-    public abstract void start(Graph graph);
+    public abstract void run(Graph graph);
 
     /**
      * Lets the caller know whether or not the algorithm is complete
@@ -52,6 +52,8 @@ public abstract class Algorithm {
     public boolean isComplete() {
         return _isComplete;
     }
+
+    public abstract Schedule getCurrentBest();
 
     // PROTECTED METHODS
     /**

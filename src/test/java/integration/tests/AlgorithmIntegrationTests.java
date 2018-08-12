@@ -65,8 +65,8 @@ public class AlgorithmIntegrationTests {
 
         Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
 
-        algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
+        algorithm.run(graph);
+        //Manually run algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
         assertEquals(28, resultManual.getEndTime());
@@ -78,7 +78,7 @@ public class AlgorithmIntegrationTests {
             protected Schedule startScheduling(Graph graph) {
                 Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
 
-                algorithm.start(graph);
+                algorithm.run(graph);
                 Schedule result = algorithm.getCurrentBest();
                 return result;
             }
@@ -175,7 +175,7 @@ public class AlgorithmIntegrationTests {
 
         Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new CriticalPath());
 
-        algorithm.start(graph);
+        algorithm.run(graph);
         Schedule resultManual = algorithm.getCurrentBest();
 
         assertEquals(581, resultManual.getEndTime());
@@ -186,7 +186,7 @@ public class AlgorithmIntegrationTests {
             protected Schedule startScheduling(Graph graph) {
                 Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new CriticalPath());
 
-                algorithm.start(graph);
+                algorithm.run(graph);
                 Schedule result = algorithm.getCurrentBest();
                 return result;
             }
@@ -282,8 +282,8 @@ public class AlgorithmIntegrationTests {
 
         Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
 
-        algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
+        algorithm.run(graph);
+        //Manually run algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
         assertEquals(22, resultManual.getEndTime());
@@ -295,7 +295,7 @@ public class AlgorithmIntegrationTests {
             protected Schedule startScheduling(Graph graph) {
                 Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
 
-                algorithm.start(graph);
+                algorithm.run(graph);
                 Schedule result = algorithm.getCurrentBest();
                 return result;
             }
@@ -349,8 +349,8 @@ public class AlgorithmIntegrationTests {
             new CriticalPath()
         );
 
-        algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
+        algorithm.run(graph);
+        //Manually run algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
 
         assertEquals(50, resultManual.getEndTime());
@@ -368,7 +368,7 @@ public class AlgorithmIntegrationTests {
                     new CriticalPath()
                 );
 
-                algorithm.start(graph);
+                algorithm.run(graph);
                 Schedule result = algorithm.getCurrentBest();
                 return result;
             }
@@ -419,8 +419,8 @@ public class AlgorithmIntegrationTests {
                     || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
             new CriticalPath()
         );
-        algorithm.start(graph);
-        //Manually start algorithm on graph and check that final answer is correct
+        algorithm.run(graph);
+        //Manually run algorithm on graph and check that final answer is correct
         Schedule resultManual = algorithm.getCurrentBest();
         assertEquals(227, resultManual.getEndTime());
 
@@ -437,7 +437,7 @@ public class AlgorithmIntegrationTests {
                     new CriticalPath()
                 );
 
-                algorithm.start(graph);
+                algorithm.run(graph);
                 Schedule result = algorithm.getCurrentBest();
                 return result;
             }

@@ -35,7 +35,7 @@ public abstract class BoundableAlgorithm extends Algorithm {
      * @param graph A graph object representing tasks needing to be scheduled.
      */
     @Override
-    public void start(Graph graph) {
+    public void run(Graph graph) {
         start(graph, new SimpleSchedule(_processors), Integer.MAX_VALUE, new HashSet<>(graph.getEntryPoints()));
     }
 

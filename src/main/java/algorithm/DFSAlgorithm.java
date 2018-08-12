@@ -38,7 +38,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * Also uses heuristics for faster runtime.
      *
      * Schedule is then stored and can be provided by getCurrentBest()
-     * @see Algorithm#start(Graph)
+     * @see Algorithm#run(Graph)
      * @param graph : Graph object for DFS to be run on
      * @param schedule : A schedule that tasks can be added to
      * @param depth : The max depth to which each threaded algorithm will search to
