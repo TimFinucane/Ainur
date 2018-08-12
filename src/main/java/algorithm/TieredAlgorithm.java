@@ -64,10 +64,10 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     }
 
     /**
-     * @see MultiAlgorithmNotifier#notifyPartialSolution(Schedule, HashSet)
+     * @see MultiAlgorithmNotifier#explorePartialSolution(Schedule, HashSet)
      */
     @Override
-    public void notifyPartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
+    public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
 
     }
 
