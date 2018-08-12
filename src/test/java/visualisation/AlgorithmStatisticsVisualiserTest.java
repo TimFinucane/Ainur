@@ -1,6 +1,7 @@
 package visualisation;
 
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.Ignore;
@@ -11,6 +12,7 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
     /**
      * Displays a visualisation of a dummy schedule
      */
+    @Override
     public void start(Stage stage) {
 
 
@@ -20,6 +22,15 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
         stage.setScene(scene);
         stage.show();
 
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                while (true) {
+                    sv.update(generateStatistics(70, 40));
+                }
+            }
+        };
+        new Thread(task).start();
     }
 
 

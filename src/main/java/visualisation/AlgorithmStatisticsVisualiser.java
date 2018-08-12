@@ -1,9 +1,8 @@
 package visualisation;
 
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.RowConstraints;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
 
 import java.util.Date;
 import java.util.Timer;
@@ -12,8 +11,8 @@ import java.util.TimerTask;
 public class AlgorithmStatisticsVisualiser extends Region {
 
     // Constant element / window element dimensions
-    private static final double SCHEDULE_TIME_BOUNDING_HEIGHT = 300;
-    private static final double SCHEDULE_TIME_BOUNDING_WIDTH = 200;
+    private static final double SCHEDULE_TIME_BOUNDING_HEIGHT = 200;
+    private static final double SCHEDULE_TIME_BOUNDING_WIDTH = 800;
     private static final double WINDOW_HEIGHT = 200;
     private static final double WINDOW_WIDTH = 500;
 
@@ -24,7 +23,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     // Timer
     private final Timer _timer;
-    private int _secondsRunning;
+    private int _millisecondsRunning;
 
     public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound) {
         // Set bounding variables
@@ -33,14 +32,14 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _initialBoundRange = _initialUpperBound - _initialLowerBound; // Range of upper and lower bound
 
         // Start timer
-        _secondsRunning = 0;
+        _millisecondsRunning = 0;
         _timer = new Timer();
         _timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                _secondsRunning++;
+                _millisecondsRunning += 10; // set label time
             }
-        }, new Date(), 1000);
+        }, new Date(), 10);
     }
 
     /**
@@ -53,10 +52,17 @@ public class AlgorithmStatisticsVisualiser extends Region {
         getChildren().clear();
 
         GridPane grid = setTimeBoundingDimensions(statistics.getMinScheduleBound(), statistics.getMaxScheduleBound());
+        Label timerLabel = setTimerLabel();
 
-        getChildren().addAll(grid);
+
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(15));
+        vBox.getChildren().addAll(grid, timerLabel);
+
+        getChildren().addAll(vBox);
 
     }
+
 
     private GridPane setTimeBoundingDimensions(int minScheduleBound, int maxScheduleBound) {
 
@@ -64,22 +70,22 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
 
         // Calculate height of upper and lower rectangle in visualisation, mid rectangle is remaining height landing in between them.
-        double lowerRectangleHeight = ((minScheduleBound - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_HEIGHT;
-        double upperRectangleHeight = ((_initialUpperBound - maxScheduleBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_HEIGHT;
-        double midRectangleHeight = SCHEDULE_TIME_BOUNDING_HEIGHT - upperRectangleHeight - lowerRectangleHeight;
+        double leftRectangleWidth = ((minScheduleBound - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH;
+        double rightRectangleWidth = ((_initialUpperBound - maxScheduleBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH;
+        double midRectangleWidth = SCHEDULE_TIME_BOUNDING_WIDTH - rightRectangleWidth - leftRectangleWidth;
 
 
         // Assign appropriate grid row heights to corresponding rectangle heights
-        RowConstraints topRC = new RowConstraints(upperRectangleHeight);
-        RowConstraints midRC = new RowConstraints(midRectangleHeight);
-        RowConstraints bottomRC = new RowConstraints(lowerRectangleHeight);
+        ColumnConstraints rightCC = new ColumnConstraints(rightRectangleWidth);
+        ColumnConstraints midCC = new ColumnConstraints(midRectangleWidth);
+        ColumnConstraints leftCC = new ColumnConstraints(leftRectangleWidth);
 
         // Column width will be constant
-        ColumnConstraints cc = new ColumnConstraints(SCHEDULE_TIME_BOUNDING_WIDTH);
+        RowConstraints rc = new RowConstraints(SCHEDULE_TIME_BOUNDING_HEIGHT);
 
 
-        grid.getRowConstraints().addAll(topRC, midRC, bottomRC);
-        grid.getColumnConstraints().addAll(cc);
+        grid.getRowConstraints().addAll(rc);
+        grid.getColumnConstraints().addAll(rightCC, midCC, leftCC);
 
         grid.setGridLinesVisible(true);
 
@@ -87,4 +93,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
         return grid;
     }
 
+
+    private Label setTimerLabel() {
+        return new Label(Integer.toString(_millisecondsRunning));
+    }
 }
