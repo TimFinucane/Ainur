@@ -35,14 +35,8 @@ public abstract class BoundableAlgorithm extends Algorithm {
      */
     public BoundableAlgorithm(Arborist arborist, LowerBound lowerBound) {
         super(arborist, lowerBound);
-        this._notifier = new MultiAlgorithmNotifier() {
-            public void onSolutionFound(Schedule schedule) {
-                _globalBest.set(schedule);
-            }
-            public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
-                throw new UnsupportedOperationException("Trying to explore solution separately with no owning algorithm");
-            }
-        };
+        // Note: Assumes that you will never call explore when just running by yourself. Not perfect but good enough.
+        this._notifier = null;
         this._globalBest = new AtomicReference<>(null);
     }
 

@@ -67,14 +67,6 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     }
 
     /**
-     * @see MultiAlgorithmNotifier#onSolutionFound(Schedule)
-     */
-    @Override
-    public void onSolutionFound(Schedule schedule) {
-        _globalBest.set(schedule);
-    }
-
-    /**
      * @see MultiAlgorithmNotifier#explorePartialSolution(Schedule, HashSet)
      */
     @Override

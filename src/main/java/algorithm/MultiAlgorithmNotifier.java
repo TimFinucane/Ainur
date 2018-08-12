@@ -10,12 +10,6 @@ import java.util.HashSet;
  */
 public interface MultiAlgorithmNotifier {
     /**
-     * Called when a solution is found that is better than the global best.
-     * @param schedule The magnificent new schedule
-     */
-    void onSolutionFound(Schedule schedule);
-
-    /**
      * Called when a boundable algorithm has reached its depth and wants the given partial schedule
      * to be explored.
      * @param schedule The partial schedule to explore
