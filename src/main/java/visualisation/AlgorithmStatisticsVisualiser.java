@@ -3,6 +3,8 @@ package visualisation;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import java.util.Date;
 import java.util.Timer;
@@ -11,8 +13,8 @@ import java.util.TimerTask;
 public class AlgorithmStatisticsVisualiser extends Region {
 
     // Constant element / window element dimensions
-    private static final double SCHEDULE_TIME_BOUNDING_HEIGHT = 200;
-    private static final double SCHEDULE_TIME_BOUNDING_WIDTH = 800;
+    private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 200;
+    private static final int SCHEDULE_TIME_BOUNDING_WIDTH = 800;
     private static final double WINDOW_HEIGHT = 200;
     private static final double WINDOW_WIDTH = 500;
 
@@ -21,9 +23,15 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private final double _initialUpperBound;
     private final double _initialBoundRange;
 
+    // Grid
+    private final GridPane _boundGrid;
+
+    // Labels
+    private final Label _timeLabel;
+
     // Timer
     private final Timer _timer;
-    private int _millisecondsRunning;
+    private long _millisecondsRunning;
 
     public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound) {
         // Set bounding variables
@@ -31,15 +39,27 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _initialUpperBound = initialUpperBound;
         _initialBoundRange = _initialUpperBound - _initialLowerBound; // Range of upper and lower bound
 
+
+        _boundGrid = createGrid();
+        _timeLabel = new Label("0");
+
+
         // Start timer
         _millisecondsRunning = 0;
         _timer = new Timer();
         _timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                _millisecondsRunning += 100; // set label time
+                _millisecondsRunning += 10;
             }
-        }, new Date(), 100);
+        }, new Date(), 10);
+
+
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(15));
+        vBox.getChildren().addAll(_boundGrid, _timeLabel);
+
+        getChildren().addAll(vBox);
     }
 
     /**
@@ -49,52 +69,44 @@ public class AlgorithmStatisticsVisualiser extends Region {
      */
     public void update(Statistics statistics) {
 
-        getChildren().clear();
+        // Update bounding visualization
+        int leftRectangleWidth = (int)(((statistics.getMinScheduleBound() - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
+        int rightRectangleWidth = (int)(((_initialUpperBound - statistics.getMaxScheduleBound()) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
 
-        GridPane grid = setTimeBoundingDimensions(statistics.getMinScheduleBound(), statistics.getMaxScheduleBound());
-        Label timerLabel = setTimerLabel();
+        Rectangle leftRectangle = new Rectangle(leftRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
+        Rectangle rightRectangle = new Rectangle(rightRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
+        leftRectangle.setFill(Color.LAVENDER);
+        rightRectangle.setFill(Color.LAVENDER);
+
+        _boundGrid.getColumnConstraints().clear();
+        _boundGrid.getColumnConstraints().addAll(
+                new ColumnConstraints(leftRectangleWidth),
+                new ColumnConstraints(SCHEDULE_TIME_BOUNDING_WIDTH - leftRectangleWidth - rightRectangleWidth),
+                new ColumnConstraints(rightRectangleWidth));
+
+        _boundGrid.add(leftRectangle, 0, 0);
+        _boundGrid.add(rightRectangle, 2, 0);
 
 
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(15));
-        vBox.getChildren().addAll(grid, timerLabel);
-
-        getChildren().addAll(vBox);
+        // Update timer
+        _timeLabel.setText(String.format(String.format("%02d:%02d:%02d.%01d",
+                _millisecondsRunning/(3600*1000),
+                _millisecondsRunning/(60*1000) % 60,
+                _millisecondsRunning/1000 % 60,
+                _millisecondsRunning % 1000 / 100)));
 
     }
 
 
-    private GridPane setTimeBoundingDimensions(int minScheduleBound, int maxScheduleBound) {
+    private GridPane createGrid() {
 
         GridPane grid = new GridPane();
 
-
-        // Calculate height of upper and lower rectangle in visualisation, mid rectangle is remaining height landing in between them.
-        double leftRectangleWidth = ((minScheduleBound - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH;
-        double rightRectangleWidth = ((_initialUpperBound - maxScheduleBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH;
-        double midRectangleWidth = SCHEDULE_TIME_BOUNDING_WIDTH - rightRectangleWidth - leftRectangleWidth;
-
-
-        // Assign appropriate grid row heights to corresponding rectangle heights
-        ColumnConstraints rightCC = new ColumnConstraints(rightRectangleWidth);
-        ColumnConstraints midCC = new ColumnConstraints(midRectangleWidth);
-        ColumnConstraints leftCC = new ColumnConstraints(leftRectangleWidth);
-
-        // Column width will be constant
         RowConstraints rc = new RowConstraints(SCHEDULE_TIME_BOUNDING_HEIGHT);
-
-
         grid.getRowConstraints().addAll(rc);
-        grid.getColumnConstraints().addAll(rightCC, midCC, leftCC);
-
-        grid.setGridLinesVisible(true);
-
+        grid.setGridLinesVisible(true); // TODO remove when done
 
         return grid;
     }
 
-
-    private Label setTimerLabel() {
-        return new Label(Integer.toString(_millisecondsRunning));
-    }
 }
