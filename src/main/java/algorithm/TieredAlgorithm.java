@@ -68,7 +68,11 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
      */
     @Override
     public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
-
+        // Note that we are in the thread that tier algorithm is being run from.
+        // We will try to add the above to the schedule. If theres not enough room (too many schedules to explore),
+        // as it is obvious exploration is getting out of hand we will instead run it here, in this thread, RIGHT NOW!!!
+        if(!_schedulesToExplore.offer(new Pair<>(schedule, nextNodes)))
+            runAlgorithmOn(1, schedule, nextNodes);
     }
 
     /**
@@ -81,14 +85,17 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
             while (true) {
                 // Try and get a schedule
                 Pair<Schedule, HashSet<Node>> pair = _schedulesToExplore.take();
-
-                BoundableAlgorithm algorithm =
-                    _generator.create(1, pair.getKey().getNumProcessors(), this, _globalBest);
-
-                algorithm.start(_graph, pair.getKey(), 9999, pair.getValue());
+                runAlgorithmOn(1, pair.getKey(), pair.getValue());
             }
         } catch(InterruptedException e) {
             return;
         }
+    }
+
+    private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
+        BoundableAlgorithm algorithm =
+            _generator.create(tier, schedule.getNumProcessors(), this, _globalBest);
+
+        algorithm.start(_graph, schedule, 9999, nextNodes);
     }
 }
