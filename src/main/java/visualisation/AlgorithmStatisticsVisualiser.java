@@ -37,9 +37,9 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                _millisecondsRunning += 10; // set label time
+                _millisecondsRunning += 100; // set label time
             }
-        }, new Date(), 10);
+        }, new Date(), 100);
     }
 
     /**
