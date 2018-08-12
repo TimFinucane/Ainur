@@ -56,7 +56,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
         _depth = depth;
         recurse(graph,
             schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
-            new HashSet<>(graph.getEntryPoints()));
+            nextNodes);
         _isComplete = true;
     }
 
@@ -140,9 +140,10 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
                 // Check if we have reached the max depth for searching - if so, the notify our notifier
                 if(curSchedule.size() + 1 >= _depth){
+                    // Copy the schedule and nodes so that they aren't modified when passed on.
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    _notifier.explorePartialSolution(newSchedule, nextAvailableNodes);
+                    _notifier.explorePartialSolution(newSchedule, new HashSet<>(nextAvailableNodes));
                 }
                 // Else continue searching through the graph for another schedule solution
                 else {
