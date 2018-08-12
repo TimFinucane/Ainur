@@ -16,9 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * A DFS implementation of the Algorithm class.
  */
 public class DFSAlgorithm extends BoundableAlgorithm {
-    // When we have multithreading, these will be shared
-    private SimpleSchedule _bestSchedule;
-    private int _upperBound;
+    private int _depth;
 
     /**
      * Constructor for DFSAlgorithm class.
@@ -48,36 +46,9 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      */
     @Override
     public void start(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes) {
-        _upperBound = initialUpperBound(graph);
+        _depth = depth;
         recurse(graph, new SimpleSchedule(_processors, graph.size()), new HashSet<>(graph.getEntryPoints()));
         _isComplete = true;
-    }
-
-    /**
-     * A non-optimal solution to use as an initial upper bound.
-     * Calculates the length of a solution with all nodes on the same processor
-     */
-    private int initialUpperBound(Graph graph) {
-        Set<Node> visited = new HashSet<>();
-        Set<Node> nextNodes = new HashSet<>(graph.getEntryPoints());
-
-        int total = 0;
-
-        // Visit every node as if we were traversing the graph normally (maintain a set of nodes to explore,
-        // add to the set when new nodes are discovered, when the set is empty we have visited every node).
-        while(!nextNodes.isEmpty()) {
-            Node node = nextNodes.iterator().next();
-
-            total += node.getComputationCost();
-            nextNodes.remove(node);
-            visited.add(node);
-
-            for(Edge edge : graph.getOutgoingEdges(node))
-                if(!visited.contains(edge.getDestinationNode()))
-                    nextNodes.add(edge.getDestinationNode());
-        }
-
-        return total;
     }
 
     /**
@@ -147,29 +118,32 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 if(curSchedule.size() + 1 == graph.size()) {
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    int resultTotalTime = curSchedule.getEndTime();
-                    if(resultTotalTime <= _upperBound) {
-                        _upperBound = resultTotalTime;
-                        _bestSchedule = curSchedule;
+                    if(curSchedule.getEndTime() <= _globalBest.get().getEndTime()) {
+                        _notifier.onSolutionFound(curSchedule);
                     }
-                    return;
+                    continue;
                 }
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
                 if( prune(graph, curSchedule, toBePlaced)
-                    || estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _upperBound )
+                    || estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _globalBest.get().getEndTime() )
                     continue;
 
-                // Ok all that has failed so i guess we have to actually recurse with it
-                curSchedule.addTask(toBePlaced);
-                curSchedule.removeTask(toBePlaced);
-                recurse(graph, curSchedule, nextAvailableNodes);
+                // Check if we have reached the max depth for searching - if so, the notify our notifier
+                if(curSchedule.size() + 1 >= _depth){
+                    SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
+                    newSchedule.addTask(toBePlaced);
+                    _notifier.notifyPartialSolution(newSchedule, nextAvailableNodes);
+                }
+                // Else continue searching through the graph for another schedule solution
+                else {
+                    // Ok all that has failed so i guess we have to actually recurse with it
+                    curSchedule.addTask(toBePlaced);
+                    recurse(graph, curSchedule, nextAvailableNodes);
+                    curSchedule.removeTask(toBePlaced);
+                }
 
             }
         }
-    }
-
-    public SimpleSchedule getCurrentSchedule(){
-        return _bestSchedule;
     }
 }
