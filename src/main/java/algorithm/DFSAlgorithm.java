@@ -33,6 +33,13 @@ public class DFSAlgorithm extends BoundableAlgorithm {
     }
 
     /**
+     * @see BoundableAlgorithm#BoundableAlgorithm(Arborist, LowerBound)
+     */
+    public DFSAlgorithm(Arborist arborist, LowerBound lowerBound) {
+        super(arborist, lowerBound);
+    }
+
+    /**
      * Starts running the DFS.
      * Solution works by exploring avery possible schedule configuration and returning the best one it has found.
      * Also uses heuristics for faster runtime.
