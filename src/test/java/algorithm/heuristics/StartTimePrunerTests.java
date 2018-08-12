@@ -1,11 +1,12 @@
 package algorithm.heuristics;
 
+import algorithm.heuristics.pruner.Arborist;
+import algorithm.heuristics.pruner.StartTimePruner;
 import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import javafx.util.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

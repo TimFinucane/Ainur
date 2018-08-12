@@ -1,5 +1,7 @@
 package algorithm.heuristics;
 
+import algorithm.heuristics.pruner.Arborist;
+import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Node;
 import common.schedule.SimpleSchedule;

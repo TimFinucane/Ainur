@@ -1,7 +1,7 @@
 package algorithm;
 
-import algorithm.heuristics.Arborist;
-import algorithm.heuristics.LowerBound;
+import algorithm.heuristics.lowerbound.LowerBound;
+import algorithm.heuristics.pruner.Arborist;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;

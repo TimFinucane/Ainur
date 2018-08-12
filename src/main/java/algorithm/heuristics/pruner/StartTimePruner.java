@@ -1,5 +1,6 @@
-package algorithm.heuristics;
+package algorithm.heuristics.pruner;
 
+import algorithm.heuristics.pruner.Arborist;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.Task;
