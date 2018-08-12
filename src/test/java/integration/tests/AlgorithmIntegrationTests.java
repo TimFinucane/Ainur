@@ -1,7 +1,6 @@
 package integration.tests;
 
-import algorithm.Algorithm;
-import algorithm.DFSAlgorithm;
+import algorithm.*;
 import algorithm.heuristics.*;
 import cli.Cli;
 import common.categories.GandalfIntegrationTestsCategory;
@@ -18,6 +17,7 @@ import org.junit.experimental.categories.Category;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -443,6 +443,42 @@ public class AlgorithmIntegrationTests {
         // Check that output file is all good from full run through
         File outputFile = new File("data/graphs/Nodes_11_OutTree.dot");
         assertTrue(outputFile.exists());
+
+    }
+
+    @Test
+    public void testNodes_7_OutTreeGraphTwoProcessorMultiThreaded() {
+
+        // Set up File
+        File graphFile = new File("data/graphs/Nodes_7_OutTree.dot");
+        InputStream graphStream = null;
+        try {
+            graphStream = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
+        //Try making graph from file and check that it is correct
+        GraphReader reader = new DotGraphReader(graphStream);
+        Graph graph = reader.read();
+
+        //Assert that graph is as expected
+        Node entryNode = graph.getEntryPoints().get(0);
+
+        assertEquals(entryNode.getLabel(), "0");
+        assertEquals(5, entryNode.getComputationCost());
+        assertEquals(7, graph.size());
+
+
+        Algorithm algorithm = new TieredAlgorithm(2, 2,
+                (tier, notifier, globalBest) ->
+                        new DFSAlgorithm(new StartTimePruner(), new CriticalPath(), notifier, globalBest));
+
+        algorithm.run(graph, 2);
+        //Manually run algorithm on graph and check that final answer is correct
+        Schedule resultManual = algorithm.getCurrentBest();
+
+        assertEquals(28, resultManual.getEndTime());
 
     }
 }
