@@ -58,7 +58,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
         }
 
         BoundableAlgorithm algorithm = _generator.create(0, this, _globalBest);
-        algorithm.start(_graph, new SimpleSchedule(processors), 5, new HashSet<>(graph.getEntryPoints()));
+        algorithm.run(_graph, new SimpleSchedule(processors), 5, new HashSet<>(graph.getEntryPoints()));
 
         for(Thread t : _threads){
             t.interrupt();
@@ -113,6 +113,6 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
         BoundableAlgorithm algorithm =
             _generator.create(tier, this, _globalBest);
 
-        algorithm.start(_graph, schedule, 9999, nextNodes);
+        algorithm.run(_graph, schedule, 9999, nextNodes);
     }
 }
