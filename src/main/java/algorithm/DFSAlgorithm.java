@@ -131,8 +131,8 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 if(curSchedule.size() + 1 == graph.size()) {
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    if(curSchedule.getEndTime() <= _globalBest.get().getEndTime()) {
-                        _notifier.onSolutionFound(curSchedule);
+                    if(newSchedule.getEndTime() <= _globalBest.get().getEndTime()) {
+                        _notifier.onSolutionFound(newSchedule);
                     }
                     continue;
                 }
