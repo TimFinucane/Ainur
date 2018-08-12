@@ -60,7 +60,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
      */
     @Override
     public void onSolutionFound(Schedule schedule) {
-
+        _globalBest.set(schedule);
     }
 
     /**
