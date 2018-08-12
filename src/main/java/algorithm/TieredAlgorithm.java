@@ -68,7 +68,6 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
      */
     @Override
     public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
-        // Note that we are in the thread that tier algorithm is being run from.
         // We will try to add the above to the schedule. If theres not enough room (too many schedules to explore),
         // as it is obvious exploration is getting out of hand we will instead run it here, in this thread, RIGHT NOW!!!
         if(!_schedulesToExplore.offer(new Pair<>(schedule, nextNodes)))
