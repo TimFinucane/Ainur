@@ -15,15 +15,18 @@ import java.util.List;
 
 public class GraphVisualiser extends Region {
     /* MACROS */
+
     public static final int WINDOW_HEIGHT = 500;
     public static final int WINDOW_WIDTH = 1000;
 
     /* FIELDS */
+
     private final SwingNode _swingNode;
     private org.graphstream.graph.Graph _gsGraph;
     private Dimension _dimension;
 
     /* Constructors */
+
     /**
      *
      * @param graph
@@ -37,6 +40,7 @@ public class GraphVisualiser extends Region {
     }
 
     /* Functions */
+
     /**
      *
      */
