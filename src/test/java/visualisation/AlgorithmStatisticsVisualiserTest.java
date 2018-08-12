@@ -23,7 +23,7 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
     public void start(Stage stage) {
 
         minTime = 0;
-        maxTime = 100;
+        maxTime = 1000;
 
         AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser(0, 100);
         sv.update(generateStatistics());
@@ -53,12 +53,9 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
         minTime += 1;
         maxTime -= 1;
 
-        System.out.println(maxTime);
-        System.out.println(minTime);
-
         Statistics stats = new Statistics();
-        stats.setMaxScheduleBound(maxTime);
-        stats.setMinScheduleBound(minTime);
+        stats.setMaxScheduleBound(maxTime / 10);
+        stats.setMinScheduleBound(minTime / 10);
 
         return stats;
 
