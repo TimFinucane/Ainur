@@ -52,17 +52,11 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * @param nextNodes : A helpful list of nodes to search through next
      */
     @Override
-    public void start(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes) {
+    public void run(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes) {
         _depth = depth;
         recurse(graph,
             schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
             new HashSet<>(graph.getEntryPoints()));
-        _isComplete = true;
-    }
-
-    public void start(Graph graph, int processors) {
-        _depth = Integer.MAX_VALUE;
-        recurse(graph, new SimpleSchedule(processors, graph.size()), new HashSet<>(graph.getEntryPoints()));
         _isComplete = true;
     }
 
@@ -133,8 +127,8 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 if(curSchedule.size() + 1 == graph.size()) {
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    if(curSchedule.getEndTime() <= _globalBest.get().getEndTime()) {
-                        _notifier.onSolutionFound(curSchedule);
+                    if(newSchedule.getEndTime() <= _globalBest.get().getEndTime()) {
+                        _notifier.onSolutionFound(newSchedule);
                     }
                     continue;
                 }
