@@ -133,7 +133,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 if(curSchedule.size() + 1 >= _depth){
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    _notifier.notifyPartialSolution(newSchedule, nextAvailableNodes);
+                    _notifier.explorePartialSolution(newSchedule, nextAvailableNodes);
                 }
                 // Else continue searching through the graph for another schedule solution
                 else {

@@ -18,7 +18,6 @@ public interface MultiAlgorithmNotifier {
     /**
      * Called when a boundable algorithm has reached its depth and wants the given partial schedule
      * to be explored.
-     * TODO: Better name? E.g. explorePartialSolution?
      * @param schedule The partial schedule to explore
      */
     void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes);

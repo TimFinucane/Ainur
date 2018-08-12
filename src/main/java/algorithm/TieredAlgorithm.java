@@ -3,6 +3,7 @@ package algorithm;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import javafx.util.Pair;
 
@@ -15,7 +16,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     // This is a queue of all the schedules to be explored, as well as the next nodes to visit for each.
     private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
     private AlgorithmFactory            _generator;
-    private int                         _threads;
+    private Thread[]                    _threads;
     private AtomicReference<Schedule>   _globalBest;
 
     private Graph                       _graph;
@@ -24,9 +25,9 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
         super(processors, null, null);
 
         _generator = generator;
-        _threads = threads;
+        _threads = new Thread[threads - 1];
         // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
-        _schedulesToExplore = new LinkedBlockingQueue<>(threads * 2);
+        _schedulesToExplore = new LinkedBlockingQueue<>((threads - 1) * 2);
 
         _globalBest = new AtomicReference<>(startingSchedule);
     }
@@ -52,7 +53,16 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
 
     @Override
     public void start(Graph graph) {
+        for (int i = 0 ; i<_threads.length ; i++){
+            _threads[i] = new Thread(this::runThread);
+        }
 
+        BoundableAlgorithm algorithm = _generator.create(0, _processors, this, _globalBest);
+        algorithm.start(_graph, new SimpleSchedule(_processors), 5, new HashSet<>(graph.getEntryPoints()));
+
+        for(Thread t : _threads){
+            t.interrupt();
+        }
     }
 
     /**
