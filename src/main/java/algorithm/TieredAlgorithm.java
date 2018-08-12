@@ -56,6 +56,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
         _graph = graph;
         for (int i = 0 ; i<_threads.length ; i++){
             _threads[i] = new Thread(this::runThread);
+            _threads[i].start();
         }
 
         BoundableAlgorithm algorithm = _generator.create(0, this, _globalBest);
