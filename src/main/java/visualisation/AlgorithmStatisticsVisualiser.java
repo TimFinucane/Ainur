@@ -5,6 +5,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class AlgorithmStatisticsVisualiser extends Region {
 
     // Constant element / window element dimensions
@@ -18,10 +22,25 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private final double _initialUpperBound;
     private final double _initialBoundRange;
 
+    // Timer
+    private final Timer _timer;
+    private int _secondsRunning;
+
     public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound) {
+        // Set bounding variables
         _initialLowerBound = initialLowerBound;
         _initialUpperBound = initialUpperBound;
         _initialBoundRange = _initialUpperBound - _initialLowerBound; // Range of upper and lower bound
+
+        // Start timer
+        _secondsRunning = 0;
+        _timer = new Timer();
+        _timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                _secondsRunning++;
+            }
+        }, new Date(), 1000);
     }
 
     /**
