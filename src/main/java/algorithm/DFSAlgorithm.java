@@ -54,7 +54,9 @@ public class DFSAlgorithm extends BoundableAlgorithm {
     @Override
     public void start(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes) {
         _depth = depth;
-        recurse(graph, new SimpleSchedule(schedule), new HashSet<>(graph.getEntryPoints()));
+        recurse(graph,
+            schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
+            new HashSet<>(graph.getEntryPoints()));
         _isComplete = true;
     }
 
