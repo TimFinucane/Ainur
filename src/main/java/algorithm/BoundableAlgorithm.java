@@ -46,7 +46,7 @@ public abstract class BoundableAlgorithm extends Algorithm {
         this._globalBest = new AtomicReference<>(null);
     }
 
-    public abstract void start(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes);
+    public abstract void run(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes);
 
     /**
      * Runs the algorithm normally (infinite depth, and starting schedule is empty)
@@ -61,7 +61,7 @@ public abstract class BoundableAlgorithm extends Algorithm {
             schedule.addTask(new Task(0, Integer.MAX_VALUE, new Node(0, "", 0)));
             _globalBest.set(schedule);
         }
-        start(graph, new SimpleSchedule(processors), Integer.MAX_VALUE, new HashSet<>(graph.getEntryPoints()));
+        run(graph, new SimpleSchedule(processors), Integer.MAX_VALUE, new HashSet<>(graph.getEntryPoints()));
     }
 
     /**
