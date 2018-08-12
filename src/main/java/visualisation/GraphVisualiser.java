@@ -19,7 +19,7 @@ public class GraphVisualiser extends Region {
     public static final int WINDOW_HEIGHT = 500;
     public static final int WINDOW_WIDTH = 1000;
 
-    /* FIELDS */
+    /* Fields */
 
     private final SwingNode _swingNode;
     private org.graphstream.graph.Graph _gsGraph;
@@ -36,10 +36,20 @@ public class GraphVisualiser extends Region {
         _swingNode = new SwingNode();
         _dimension = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        setUpWindow();
+        this.setUpWindow();
     }
 
-    /* Functions */
+    /* Public Methods */
+
+    /**
+     *
+     * @param currentNode
+     */
+    public void update(Node currentNode) {
+
+    }
+
+    /* Private Helper Methods */
 
     /**
      *
@@ -98,13 +108,5 @@ public class GraphVisualiser extends Region {
         String edgeLabel = originLabel + destinationLabel;
 
         gsGraph.addEdge(edgeLabel, originLabel, destinationLabel);
-    }
-
-    /**
-     *
-     * @param currentNode
-     */
-    public void update(Node currentNode) {
-
     }
 }
