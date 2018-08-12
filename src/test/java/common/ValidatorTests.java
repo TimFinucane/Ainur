@@ -14,6 +14,7 @@ import org.junit.experimental.categories.Category;
 public class ValidatorTests {
 
     private Graph _graph;
+    private Graph _complexGraph;
 
     @Before
     public void initializeGraph()
@@ -27,6 +28,22 @@ public class ValidatorTests {
                 .edge("b", "c", 5)
                 .edge("a", "c", 5)
                 .build();
+
+        _complexGraph = new Graph.Builder()
+            .node("0", 5)
+            .node("1", 6)
+            .node("2", 5)
+            .node("3", 6)
+            .node("4", 4)
+            .node("5", 7)
+            .node("6", 7)
+            .edge("0", "1", 15)
+            .edge("0", "2", 11)
+            .edge("0", "3", 11)
+            .edge("1", "4", 19)
+            .edge("1", "5", 4)
+            .edge("1", "6", 21)
+            .build();
     }
 
     // This tests that the isValid() method asserts true on an empty schedule
@@ -139,6 +156,56 @@ public class ValidatorTests {
 
         // Act / Assert
         Assert.assertFalse(Validator.isValid(_graph, schedule));
+    }
+
+    @Test
+    public void testValidStringFormat() {
+
+        // Arrange
+        String inputString = "digraph \"outputOutTree-Balanced-MaxBf-3_Nodes_7_CCR_2.0_WeightType_Random\" {\n" +
+                "\t0\t [Weight=5, Start=0, Processor=1];\n" +
+                "\t1\t [Weight=6, Start=5, Processor=1];\n" +
+                "\t0 -> 1\t [Weight=15];\n" +
+                "\t2\t [Weight=5, Start=16, Processor=3];\n" +
+                "\t0 -> 2\t [Weight=11];\n" +
+                "\t3\t [Weight=6, Start=16, Processor=4];\n" +
+                "\t0 -> 3\t [Weight=11];\n" +
+                "\t4\t [Weight=4, Start=11, Processor=1];\n" +
+                "\t1 -> 4\t [Weight=19];\n" +
+                "\t5\t [Weight=7, Start=15, Processor=2];\n" +
+                "\t1 -> 5\t [Weight=4];\n" +
+                "\t6\t [Weight=7, Start=15, Processor=1];\n" +
+                "\t1 -> 6\t [Weight=21];\n" +
+                "}\n";
+
+        // Act / Assert
+        Assert.assertTrue(Validator.isValid(_complexGraph, inputString));
+
+    }
+
+    @Test
+    public void testInvalidStringFormat() {
+
+        // Arrange
+        String inputString = "digraph \"outputOutTree-Balanced-MaxBf-3_Nodes_7_CCR_2.0_WeightType_Random\" {\n" +
+                "\t0\t [Weight=5, Start=0, Processor=1];\n" +
+                "\t1\t [Weight=6, Start=4, Processor=1];\n" +
+                "\t0 -> 1\t [Weight=15];\n" +
+                "\t2\t [Weight=5, Start=16, Processor=3];\n" +
+                "\t0 -> 2\t [Weight=11];\n" +
+                "\t3\t [Weight=6, Start=16, Processor=4];\n" +
+                "\t0 -> 3\t [Weight=11];\n" +
+                "\t4\t [Weight=4, Start=11, Processor=1];\n" +
+                "\t1 -> 4\t [Weight=19];\n" +
+                "\t5\t [Weight=7, Start=15, Processor=2];\n" +
+                "\t1 -> 5\t [Weight=4];\n" +
+                "\t6\t [Weight=7, Start=15, Processor=1];\n" +
+                "\t1 -> 6\t [Weight=21];\n" +
+                "}\n";
+
+        // Act / Assert
+        Assert.assertFalse(Validator.isValid(_complexGraph, inputString));
+
     }
 
 }
