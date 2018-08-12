@@ -7,16 +7,17 @@ import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
+import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
+import integration.tests.repeatable.test.RepeatTest;
+import integration.tests.repeatable.test.RepeatedTestRule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,10 +26,16 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
 
+/**
+ * Class provides test to test algorithms running with threading. Makes use of @RepeatTest rule to run a test
+ * multiple times. This is to try and counter and catch errors in threads that might ocour sipiradiacouly. By
+ * running a test multiple times we are thoroughly testing it being run in threads.
+ */
+@Category(GandalfIntegrationTestsCategory.class)
 public class DFSAlgorithmMultiThreadedIT {
 
     private Algorithm _algorithmhAllHeuristics4Threads4Processors;
@@ -37,8 +44,12 @@ public class DFSAlgorithmMultiThreadedIT {
     private static final String SEP = File.separator;
     private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
     private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
+    private static final String NODES_10_FILENAME = String.format("data%sgraphs%sNodes_10_Random.dot", SEP, SEP);
 
-    @BeforeAll
+    @Rule
+    public RepeatedTestRule repeatRule = new RepeatedTestRule();
+
+    @Before
     public void setup() {
 
         // Set up algorithm classes
@@ -64,6 +75,7 @@ public class DFSAlgorithmMultiThreadedIT {
     }
 
     @Test
+    @RepeatTest(times = 2)
     public void testAlgorithm7Node4ProcessorAllHeuristics4Threads(){
         Graph graph = getGraph(NODES_7_FILENAME);
 
@@ -78,8 +90,8 @@ public class DFSAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatedTest(2)
-    public void testAlgorithm11Node4ProcessorAllHeuristics() {
+    @RepeatTest(times = 3)
+    public void testAlgorithm11Node4ProcessorAllHeuristics4Threads() {
 
         Graph graph = getGraph(NODES_11_FILENAME);
 
@@ -89,6 +101,19 @@ public class DFSAlgorithmMultiThreadedIT {
 
         assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
+    }
+
+    @Test
+    @RepeatTest(times = 3)
+    public void testAlgorithm10Node2ProcessorAllHeuristics2Threads(){
+        Graph graph = getGraph(NODES_10_FILENAME);
+
+        // Execute algorithm w/ all heuristics
+        _algorithmhAllHeuristics2Threads2Processors.run(graph, 2);
+        Schedule resultManual = _algorithmhAllHeuristics2Threads2Processors.getCurrentBest();
+
+        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
 
