@@ -2,17 +2,12 @@ package algorithm;
 
 import algorithm.heuristics.Arborist;
 import algorithm.heuristics.LowerBound;
-import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
-import common.schedule.Task;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class BoundableAlgorithm extends Algorithm {
@@ -23,7 +18,7 @@ public abstract class BoundableAlgorithm extends Algorithm {
                               LowerBound lowerBound,
                               MultiAlgorithmNotifier notifier,
                               AtomicReference<Schedule> globalBest) {
-        super(globalBest.get().getNumProcessors(), arborist, lowerBound);
+        super(arborist, lowerBound);
         this._notifier = notifier;
         this._globalBest = globalBest;
     }
@@ -35,8 +30,15 @@ public abstract class BoundableAlgorithm extends Algorithm {
      * @param graph A graph object representing tasks needing to be scheduled.
      */
     @Override
-    public void run(Graph graph) {
-        start(graph, new SimpleSchedule(_processors), Integer.MAX_VALUE, new HashSet<>(graph.getEntryPoints()));
+    public void run(Graph graph, int processors) {
+        start(graph, new SimpleSchedule(processors), Integer.MAX_VALUE, new HashSet<>(graph.getEntryPoints()));
     }
 
+    /**
+     * @see Algorithm#getCurrentBest()
+     */
+    @Override
+    public Schedule getCurrentBest() {
+        return _globalBest.get();
+    }
 }

@@ -26,7 +26,6 @@ public class MilestoneOneCli extends Cli {
     protected Schedule startScheduling(Graph graph) {
         // Algorithm
         Algorithm algorithm = new DFSAlgorithm(
-            _processors,
             (pruningGraph, pruningSchedule, pruningTask) ->
                 new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
                 || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
@@ -34,7 +33,7 @@ public class MilestoneOneCli extends Cli {
         );
 
         //Start
-        algorithm.run(graph);
+        algorithm.run(graph, _processors);
 
         return algorithm.getCurrentBest();
     }

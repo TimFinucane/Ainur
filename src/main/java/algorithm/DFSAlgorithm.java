@@ -38,7 +38,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * Also uses heuristics for faster runtime.
      *
      * Schedule is then stored and can be provided by getCurrentBest()
-     * @see Algorithm#run(Graph)
+     * @see Algorithm#run(Graph, int)
      * @param graph : Graph object for DFS to be run on
      * @param schedule : A schedule that tasks can be added to
      * @param depth : The max depth to which each threaded algorithm will search to
@@ -47,7 +47,13 @@ public class DFSAlgorithm extends BoundableAlgorithm {
     @Override
     public void start(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes) {
         _depth = depth;
-        recurse(graph, new SimpleSchedule(_processors, graph.size()), new HashSet<>(graph.getEntryPoints()));
+        recurse(graph, new SimpleSchedule(schedule), new HashSet<>(graph.getEntryPoints()));
+        _isComplete = true;
+    }
+
+    public void start(Graph graph, int processors) {
+        _depth = Integer.MAX_VALUE;
+        recurse(graph, new SimpleSchedule(processors, graph.size()), new HashSet<>(graph.getEntryPoints()));
         _isComplete = true;
     }
 

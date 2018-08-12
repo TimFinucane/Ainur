@@ -22,7 +22,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     private Graph                       _graph;
 
     public TieredAlgorithm(int processors, int threads, AlgorithmFactory generator, Schedule startingSchedule) {
-        super(processors, null, null);
+        super(null, null);
 
         _generator = generator;
         _threads = new Thread[threads - 1];
@@ -35,7 +35,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
         // Hacky way of creating an infinitely large fake schedule
         this(processors, threads, generator, new Schedule(0) {
             @Override
-            public int getEndTime() { return 1000000; } // TODO: Too small?
+            public int getEndTime() { return Integer.MAX_VALUE; }
             @Override
             public void addTask(Task task) {}
             @Override
@@ -52,13 +52,13 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     }
 
     @Override
-    public void run(Graph graph) {
+    public void run(Graph graph, int processors) {
         for (int i = 0 ; i<_threads.length ; i++){
             _threads[i] = new Thread(this::runThread);
         }
 
-        BoundableAlgorithm algorithm = _generator.create(0, _processors, this, _globalBest);
-        algorithm.start(_graph, new SimpleSchedule(_processors), 5, new HashSet<>(graph.getEntryPoints()));
+        BoundableAlgorithm algorithm = _generator.create(0, this, _globalBest);
+        algorithm.start(_graph, new SimpleSchedule(processors), 5, new HashSet<>(graph.getEntryPoints()));
 
         for(Thread t : _threads){
             t.interrupt();
@@ -85,6 +85,14 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     }
 
     /**
+     * @see Algorithm#getCurrentBest()
+     */
+    @Override
+    public Schedule getCurrentBest() {
+        return _globalBest.get();
+    }
+
+    /**
      * Runs a single thread, on which algorithms will be created to deal with
      * partial solutions as they come.
      */
@@ -103,7 +111,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
 
     private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
         BoundableAlgorithm algorithm =
-            _generator.create(tier, schedule.getNumProcessors(), this, _globalBest);
+            _generator.create(tier, this, _globalBest);
 
         algorithm.start(_graph, schedule, 9999, nextNodes);
     }

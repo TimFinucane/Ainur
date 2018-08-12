@@ -6,10 +6,8 @@ import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.Task;
-import sun.nio.ch.ThreadPool;
 
 import java.util.List;
-import java.util.concurrent.Executors;
 
 /**
  *  An abstract class which templates the algorithm to be implemented.
@@ -18,20 +16,16 @@ public abstract class Algorithm {
 
     protected boolean _isComplete = false;
 
-    protected int _processors;
-
     // Private as not modifiable by subclasses, use through prune() and estimate()
     private Arborist _arborist;
     private LowerBound _lowerBound;
 
     /**
      * Constructor for Algorithm class.
-     * @param processors The number of processors.
      * @param arborist The pruning method to be available to the subclass
      * @param lowerBound The lower bound estimator method to be available to the subclass
      */
-    protected Algorithm(int processors, Arborist arborist, LowerBound lowerBound) {
-        _processors = processors;
+    protected Algorithm(Arborist arborist, LowerBound lowerBound) {
         _arborist = arborist;
         _lowerBound = lowerBound;
     }
@@ -41,8 +35,9 @@ public abstract class Algorithm {
      * getCurrentBest(). Note that before finishing, getCurrentBest() may store schedules, but they will not
      * necessarily be the most optimal ones.
      * @param graph A graph object representing tasks needing to be scheduled.
+     * @param processors The number of processors in the output schedule
      */
-    public abstract void run(Graph graph);
+    public abstract void run(Graph graph, int processors);
 
     /**
      * Lets the caller know whether or not the algorithm is complete
