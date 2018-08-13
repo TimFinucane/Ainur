@@ -13,14 +13,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.fail;
 
 @Ignore
 public class GraphVisualiserTest extends Application {
     /* MACROS */
-    public static final String GRAPH_FILE = "data/graphs/Nodes_7_OutTree.dot";
+    public static final String GRAPH_FILE = "data/graphs/Nodes_11_OutTree.dot";
 
     @Override
     public void start(Stage primaryStage) {

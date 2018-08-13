@@ -6,6 +6,7 @@ import common.graph.Node;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.Region;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.layout.HierarchicalLayout;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 
@@ -56,7 +57,7 @@ public class GraphVisualiser extends Region {
         _gsGraph = createGSGraph(graph);
         _swingNode = new SwingNode();
         _dimension = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
-
+        
         this.createSwingContent(_swingNode);
         this.getChildren().add(_swingNode);
 
@@ -115,10 +116,14 @@ public class GraphVisualiser extends Region {
             Viewer viewer = new Viewer(_gsGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
             ViewPanel view = viewer.addDefaultView(false);
             view.setPreferredSize(_dimension);
-            viewer.enableAutoLayout();
+
+            HierarchicalLayout hl = new HierarchicalLayout();
+            hl.setRoots("0");
+            viewer.enableAutoLayout(hl);
 
             MouseMotionListener mouseMotionListener = view.getMouseMotionListeners()[0];
             view.removeMouseMotionListener(mouseMotionListener);
+
 
             swingNode.setContent(view);
         });
@@ -134,6 +139,6 @@ public class GraphVisualiser extends Region {
         String destinationLabel = edge.getDestinationNode().getLabel();
         String edgeLabel = originLabel + destinationLabel;
 
-        gsGraph.addEdge(edgeLabel, originLabel, destinationLabel);
+        gsGraph.addEdge(edgeLabel, originLabel, destinationLabel, true);
     }
 }
