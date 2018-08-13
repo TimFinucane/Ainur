@@ -77,12 +77,16 @@ public class GraphVisualiser extends Region {
         List<Edge> edges = graph.getAllEdges();
 
         for (Node node : nodes) {
-            gsGraph.addNode(node.getLabel());
+            String label = node.getLabel();
+            gsGraph.addNode(label);
+            gsGraph.getNode(label).addAttribute("ui.label", label);
         }
 
         for (Edge edge: edges) {
             this.addGSEdge(gsGraph, edge);
         }
+
+        gsGraph.addAttribute("ui.stylesheet", STYLE_SHEET);
 
         return gsGraph;
     }
