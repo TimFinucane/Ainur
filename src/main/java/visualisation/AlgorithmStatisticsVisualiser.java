@@ -6,7 +6,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -17,13 +16,15 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO: so the elements we wanted to show in the visualisation were:
 public class AlgorithmStatisticsVisualiser extends Region {
 
 
-    // Constant element / window element dimensions
+    // Constant dimensions
     private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 100;
     private static final int SCHEDULE_TIME_BOUNDING_WIDTH = 750;
+
+    private static final double LABEL_GRID_COLUMN_WIDTH = 170;
+    private static final double LABEL_GRID_ROW_HEIGHT = 20;
 
     private static final Font DEFAULT_FONT = new Font("Consolas", 12);
     private static final Font DEFAULT_TIME_FONT = new Font("Consolas", 20);
@@ -45,17 +46,15 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private final XYChart.Series _cpuChartData;
 
     // Labels
-    private static final double LABEL_GRID_COLUMN_WIDTH = 170;
-    private static final double LABEL_GRID_ROW_HEIGHT = 20;
     private final Label _timeLabel;
-    private final GridPane _labelGrid;
+    private final GridPane _labelGrid; // Holds the following labels
     private final Label _processorsUsedLabel;
-    private Label _processorsUsedValue;
     private final Label _branchesCoveredLabel;
-    private Label _branchesCoveredValue;
     private final Label _branchesCulledLabel;
-    private Label _branchesCulledValue;
     private final Label _cullingRateLabel;
+    private Label _processorsUsedValue;
+    private Label _branchesCoveredValue;
+    private Label _branchesCulledValue;
     private Label _cullingRateValue;
 
     // Timer
@@ -63,7 +62,12 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private long _millisecondsRunning;
 
 
-
+    /**
+     * Creates all visual elements and arranges on the screen. Many labels will initially be set to zero.
+     * @param initialLowerBound
+     * @param initialUpperBound
+     * @param coresUsed
+     */
     public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound, long coresUsed) {
         // Set bounding variables
         _initialLowerBound = initialLowerBound;
@@ -71,7 +75,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _initialBoundRange = _initialUpperBound - _initialLowerBound; // Range of upper and lower bound
 
         // Initialize elements
-        _boundGrid = createGrid();
+        _boundGrid = createBoundingVisualization();
         _boundingAxis = createBoundingVisualizationAxis();
 
         _timeLabel = new Label("0");
@@ -97,7 +101,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _cullingRateValue = new Label(String.format("%.1f%%", 0.0));
         _cullingRateValue.setFont(DEFAULT_FONT);
 
-        // Add label elements to label grid so are aligned horizontally and vertically
+        // Add label elements to label grid so are aligned
         _labelGrid = createLabelGrid();
         _labelGrid.add(_timeLabel, 0, 0);
         _labelGrid.add(_processorsUsedLabel, 0, 1);
@@ -125,25 +129,23 @@ public class AlgorithmStatisticsVisualiser extends Region {
             }
         }, new Date(), 10);
 
-        HBox hBox = new HBox();
-        hBox.setPadding(new Insets(15));
-        hBox.getChildren().addAll(
-                _labelGrid,
-                _cpuChart
-        );
+        // Create horizontal box with misc. labels to the left of cpu chart
+        HBox labelAndCpuVBox = new HBox();
+        labelAndCpuVBox.setPadding(new Insets(15));
+        labelAndCpuVBox.getChildren().addAll(_labelGrid, _cpuChart);
 
+        // Create vertical box with the bounding visualization and it's axis in vertical alignment
         VBox boundVBox = new VBox();
         boundVBox.setPadding(new Insets(5));
         boundVBox.getChildren().addAll(_boundGrid, _boundingAxis);
 
-        // Add elements to children of group
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(15));
-        vBox.getChildren().addAll(
-                hBox,
-                boundVBox);
+        // Add previously created boxes into VBox; one on top of another
+        VBox outerVBox = new VBox();
+        outerVBox.setPadding(new Insets(15));
+        outerVBox.getChildren().addAll(labelAndCpuVBox, boundVBox);
 
-        getChildren().addAll(vBox);
+        // Add final VBox to this regions children
+        getChildren().addAll(outerVBox);
     }
 
     private GridPane createLabelGrid() {
@@ -163,13 +165,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
         return gridPane;
     }
 
-    private NumberAxis createBoundingVisualizationAxis() {
-
-        NumberAxis numberAxis = new NumberAxis("Schedule Time Units", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
-
-        return numberAxis;
-    }
-
 
     /**
      * This method is responsible for updating the state of a schedule time bounding visualisation, as well as updating
@@ -187,6 +182,20 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         updateLabels(statistics); // Update misc. statistics labels
 
+    }
+
+
+    /**
+     * Sets the time elapsed from the start of the counter of _millisecondsRunning and converts into the form
+     * hh:mm:ss:ms
+     * @return
+     */
+    private void updateTimeLabel() {
+        _timeLabel.setText(String.format(String.format("%02d:%02d:%02d.%01d",
+                _millisecondsRunning/(3600*1000),
+                _millisecondsRunning/(60*1000) % 60,
+                _millisecondsRunning/1000 % 60,
+                _millisecondsRunning % 1000 / 100)));
     }
 
 
@@ -264,7 +273,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
     }
 
 
-
     /**
      * Create a line chart labelled with CPU usage information.
      * @return
@@ -294,7 +302,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
      * Create a grid pane with constant height and no columns
      * @return
      */
-    private GridPane createGrid() {
+    private GridPane createBoundingVisualization() {
 
         GridPane grid = new GridPane();
 
@@ -306,18 +314,16 @@ public class AlgorithmStatisticsVisualiser extends Region {
     }
 
 
-
     /**
-     * Sets the time elapsed from the start of the counter of _millisecondsRunning and converts into the form
-     * hh:mm:ss:ms
+     * Creates an axis intended for bounding visualization
      * @return
      */
-    private void updateTimeLabel() {
-        _timeLabel.setText(String.format(String.format("%02d:%02d:%02d.%01d",
-                _millisecondsRunning/(3600*1000),
-                _millisecondsRunning/(60*1000) % 60,
-                _millisecondsRunning/1000 % 60,
-                _millisecondsRunning % 1000 / 100)));
+    private NumberAxis createBoundingVisualizationAxis() {
+
+        // Set uper and lower bounds to that of initial schedule estimates, set tick marks to be 1/20th of the way across
+        NumberAxis numberAxis = new NumberAxis("Schedule Time Units", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
+
+        return numberAxis;
     }
 
 }
