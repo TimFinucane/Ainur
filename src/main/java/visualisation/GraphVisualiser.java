@@ -32,12 +32,14 @@ public class GraphVisualiser extends Region {
     // Used for styling the graph and its nodes
     public static final String STYLE_SHEET =
             "node {" +
-            "   fill-color: black;" +
+            "   fill-color: grey;" +
             "   text-color: black;" +
             "   text-background-mode: rounded-box;" +
             "   text-alignment: above;" +
             "   text-size: 15px;" +
             "   size: 15px;" +
+            "   stroke-mode: plain;" +
+            "   stroke-color: black;" +
             "}" +
             "node.marked {" +
             "   fill-color:red;"  +
@@ -47,6 +49,7 @@ public class GraphVisualiser extends Region {
             "}" +
             "edge {" +
             "   arrow-shape: arrow;" +
+            "   arrow-size: 15px, 5px;" +
             "   size: 2px;" +
             "}";
     public static final String UI_CLASS = "ui.class";
