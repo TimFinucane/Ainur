@@ -2,9 +2,12 @@ package algorithm;
 
 import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
+import common.graph.Edge;
 import common.graph.Graph;
+import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
+import common.schedule.Task;
 
 import java.util.*;
 
@@ -25,35 +28,44 @@ public class AStarAlgorithm extends Algorithm {
     @Override
     public void start(Graph graph) {
 
-        SimpleSchedule emptySchedule = new SimpleSchedule(+_processors);
+        SimpleSchedule emptySchedule = new SimpleSchedule(_processors);
 
-        List<SimpleSchedule> schedulesToVisit = new ArrayList<>();
-        schedulesToVisit.add(emptySchedule);
-
-        HashMap<SimpleSchedule, Integer> scheduleWeights = new HashMap<>();
-
-        int initialLowerBound = estimate(graph, emptySchedule, graph.getEntryPoints());
-
-        scheduleWeights.put(emptySchedule, initialLowerBound);
+        // TODO: Ensure TreeMaps allow duplicate key values...
+        TreeMap<Integer, SimpleSchedule> schedulesToVisit = new TreeMap<>();
+        schedulesToVisit.put(estimate(graph, emptySchedule, graph.getEntryPoints()), emptySchedule);
 
         while (!schedulesToVisit.isEmpty()) {
+            Map.Entry<Integer, SimpleSchedule> integerScheduleEntry = schedulesToVisit.firstEntry();
 
-            Integer min = null;
-            SimpleSchedule curSchedule = null;
+            Integer min = integerScheduleEntry.getKey();
+            SimpleSchedule curSchedule = integerScheduleEntry.getValue();
 
-            //get the schedule with the smallest weight estimate in the map.
-            for (SimpleSchedule schedule : schedulesToVisit) {
-                int curMin = scheduleWeights.get(schedule);
-                if (min == null || curMin < min) {
-                    min = curMin;
-                    curSchedule = schedule;
-                }
-            }
 
             // if the schedule is complete, it is optimal.
             if (curSchedule.size() == graph.size()) {
                 _bestSchedule = curSchedule;
                 return;
+            }
+
+
+            // finds all the nodes that are able to be added to the schedule, must have all their parents
+            // already in the schedule.
+            List<Node> nodesToAdd = new ArrayList<>();
+
+            for (Node node : graph.getNodes()) {
+                if (!curSchedule.contains(node)) {
+                    boolean canAdd = true;
+                    // a node can only be added to a schedule if all its parents have also been added to that schedule.
+                    for (Edge edge : graph.getIncomingEdges(node)) {
+                        Node parent = edge.getOriginNode();
+                        if (!curSchedule.contains(parent)){
+                            canAdd = false;
+                        }
+                    }
+                    if (canAdd) {
+                        nodesToAdd.add(node);
+                    }
+                }
             }
 
 
