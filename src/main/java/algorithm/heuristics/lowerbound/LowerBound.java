@@ -35,4 +35,27 @@ public interface LowerBound {
         return this.estimate(graph, schedule, new ArrayList<>());
     }
 
+    /**
+     * Combines multiple lower bounds together by taking the minimum of all of them
+     */
+    static LowerBound combine(LowerBound... bounds) {
+        return new LowerBound() {
+            @Override
+            public int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit) {
+                int min = bounds[0].estimate(graph, schedule, nodesToVisit);
+                for(int i = 1; i < bounds.length; ++i)
+                    min = Math.min(min, bounds[i].estimate(graph, schedule, nodesToVisit));
+
+                return min;
+            }
+            @Override
+            public int estimate(Graph graph, Schedule schedule){
+                int min = bounds[0].estimate(graph, schedule);
+                for(int i = 1; i < bounds.length; ++i)
+                    min = Math.min(min, bounds[i].estimate(graph, schedule));
+
+                return min;
+            }
+        };
+    }
 }
