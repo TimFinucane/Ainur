@@ -33,9 +33,11 @@ public class GraphVisualiser extends Region {
     public static final String STYLE_SHEET =
             "node {" +
             "   fill-color: black;" +
+            "   size: 15px;" +
             "}" +
             "node.marked {" +
-            "   fill-color:red;" +
+            "   fill-color:red;"  +
+            "   size: 20px;" +
             "}";
     public static final String UI_CLASS = "ui.class";
     public static final String UI_LABEL = "ui.label";
