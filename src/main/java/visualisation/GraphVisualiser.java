@@ -11,6 +11,7 @@ import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 
 public class GraphVisualiser extends Region {
@@ -115,6 +116,9 @@ public class GraphVisualiser extends Region {
             ViewPanel view = viewer.addDefaultView(false);
             view.setPreferredSize(_dimension);
             viewer.enableAutoLayout();
+
+            MouseMotionListener mouseMotionListener = view.getMouseMotionListeners()[0];
+            view.removeMouseMotionListener(mouseMotionListener);
 
             swingNode.setContent(view);
         });
