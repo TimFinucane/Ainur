@@ -49,7 +49,9 @@ public class GraphVisualiser extends Region {
         _swingNode = new SwingNode();
         _dimension = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        this.setUpWindow();
+        this.createSwingContent(_swingNode);
+        this.getChildren().add(_swingNode);
+
     }
 
     /* Public Methods */
@@ -63,14 +65,6 @@ public class GraphVisualiser extends Region {
     }
 
     /* Private Helper Methods */
-
-    /**
-     *
-     */
-    private void setUpWindow () {
-        this.createSwingContent(_swingNode);
-        this.getChildren().add(_swingNode);
-    }
 
     /**
      *
