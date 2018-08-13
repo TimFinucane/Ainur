@@ -24,14 +24,12 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * Constructor for DFSAlgorithm class.
      * @param arborist : A pruner to use in algorithm
      * @param lowerBound : A lower-bound to use in algorithm
-     * @param notifier : An object used to communicate with tieredAlgorithms
-     * @param globalBest : Reference to the current global best schedule
+     * @param communicator : A communicator used to communicate with tieredAlgorithms
      */
     public DFSAlgorithm(Arborist arborist,
                         LowerBound lowerBound,
-                        MultiAlgorithmCommunicator notifier,
-                        AtomicReference<Schedule> globalBest) {
-        super(notifier, globalBest);
+                        MultiAlgorithmCommunicator communicator) {
+        super(communicator);
         _arborist = arborist;
         _lowerBound = lowerBound;
     }

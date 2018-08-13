@@ -23,26 +23,26 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     private Graph                       _graph;
 
     /**
+     * Does not get given a schedule to start with, it's initial guess is instead infinite.
+     *
+     * @see TieredAlgorithm#TieredAlgorithm(int, AlgorithmFactory, Schedule)
+     */
+    public TieredAlgorithm(int threads, AlgorithmFactory generator) {
+        super();
+        _generator = generator;
+        _threads = new Thread[threads - 1];
+        // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
+        _schedulesToExplore = new LinkedBlockingQueue<>((threads - 1) * 2);
+    }
+    /**
      * Create a tiered algorithm.
      * @param threads Number of threads to run algorithms in. Includes thread algorithm is started in
      * @param generator The factory used to generate the algorithms that will be used
      * @param initialGuess A schedule to start with as an initial guess
      */
     public TieredAlgorithm(int threads, AlgorithmFactory generator, Schedule initialGuess) {
-        super(initialGuess);
-        _generator = generator;
-        _threads = new Thread[threads - 1];
-        // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
-        _schedulesToExplore = new LinkedBlockingQueue<>((threads - 1) * 2);
-    }
-
-    /**
-     * Does not get given a schedule to start with, it's initial guess is instead infinite.
-     *
-     * @see TieredAlgorithm#TieredAlgorithm(int, AlgorithmFactory, Schedule)
-     */
-    public TieredAlgorithm(int threads, AlgorithmFactory generator) {
-        this(threads, generator, null);
+        this(threads, generator);
+        _globalBest.set(initialGuess);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
             _threads[i].start();
         }
 
-        BoundableAlgorithm algorithm = _generator.create(0, this, _globalBest);
+        BoundableAlgorithm algorithm = _generator.create(0, this);
         algorithm.run(_graph, new SimpleSchedule(processors), 5, new HashSet<>(graph.getEntryPoints()));
 
         for(Thread t : _threads){
@@ -95,8 +95,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     }
 
     private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
-        BoundableAlgorithm algorithm =
-            _generator.create(tier, this, _globalBest);
+        BoundableAlgorithm algorithm = _generator.create(tier, this);
 
         algorithm.run(_graph, schedule, 9999, nextNodes);
     }
