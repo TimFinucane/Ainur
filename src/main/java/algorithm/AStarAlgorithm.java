@@ -5,7 +5,6 @@ import algorithm.heuristics.pruner.Arborist;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
-import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 
@@ -68,11 +67,36 @@ public class AStarAlgorithm extends Algorithm {
                 }
             }
 
+            // only add schedules to the list to visit if they pass the heuristic tests
+            // add each possible node to each possible processor
+            for (int proc = 0; proc < _processors; proc++){
+                for (Node node : nodesToAdd) {
+                    // find the earliest possible time the node can be added to a processor taking into account
+                    // edge communication costs.
+                    int earliestPossStart = curSchedule.getEndTime(proc);
 
+                    for (Edge edge : graph.getIncomingEdges(node)) {
+                        Node parent = edge.getOriginNode();
+                        Task parentTask = curSchedule.findTask(parent);
 
+                        // if parent is not on the same processor as the child, find its communication cost.
+                        if (parentTask.getProcessor() != proc) {
+                            int communicationCost = parentTask.getEndTime() + edge.getCost();
+                            if (earliestPossStart < communicationCost) {
+                                earliestPossStart = communicationCost;
+                            }
+                        }
+                    }
+
+                    Task task = new Task(proc, earliestPossStart, node);
+
+                    SimpleSchedule newSchedule = curSchedule;
+                    newSchedule.addTask(task);
+                }
+
+            }
 
         }
-         //f(n) is lower bound estimate rather than g(n) + h(n)
     }
 
 
