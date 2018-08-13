@@ -11,28 +11,21 @@ import common.schedule.Task;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicReference;
 
-public abstract class BoundableAlgorithm extends Algorithm {
+public abstract class BoundableAlgorithm implements Algorithm {
     protected final MultiAlgorithmCommunicator _communicator;
-
     /**
      * Constructor that uses a notifier and global best that are defined elsewhere, so that this and other algorithms
      * may work together on a single graph.
-     * @see Algorithm#Algorithm(Arborist, LowerBound) for arborists and pruners usage
      */
-    public BoundableAlgorithm(Arborist arborist,
-                              LowerBound lowerBound,
-                              MultiAlgorithmCommunicator communicator,
-                              AtomicReference<Schedule> globalBest) {
-        super(arborist, lowerBound);
+
+    public BoundableAlgorithm(MultiAlgorithmCommunicator communicator) {
         this._communicator = communicator;
     }
 
     /**
      * Constructor that uses a dummy notifier so that the algorithm is runnable independently
-     * @see Algorithm#Algorithm(Arborist, LowerBound)
      */
-    public BoundableAlgorithm(Arborist arborist, LowerBound lowerBound) {
-        super(arborist, lowerBound);
+    public BoundableAlgorithm() {
         // Note: Assumes that you will never call explore when just running by yourself. Not perfect but good enough.
         this._communicator = new MultiAlgorithmCommunicator();
     }

@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class DFSAlgorithm extends BoundableAlgorithm {
     private int _depth;
+    protected Arborist _arborist;
+    protected LowerBound _lowerBound;
 
     /**
      * Constructor for DFSAlgorithm class.
@@ -29,14 +31,18 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                         LowerBound lowerBound,
                         MultiAlgorithmCommunicator notifier,
                         AtomicReference<Schedule> globalBest) {
-        super(arborist, lowerBound, notifier, globalBest);
+        super(notifier, globalBest);
+        _arborist = arborist;
+        _lowerBound = lowerBound;
     }
 
     /**
-     * @see BoundableAlgorithm#BoundableAlgorithm(Arborist, LowerBound)
+     * @see BoundableAlgorithm#BoundableAlgorithm()
      */
     public DFSAlgorithm(Arborist arborist, LowerBound lowerBound) {
-        super(arborist, lowerBound);
+        super();
+        _arborist = arborist;
+        _lowerBound = lowerBound;
     }
 
     /**
@@ -154,5 +160,17 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
             }
         }
+    }
+
+    public boolean prune(Graph graph, Schedule schedule, Task processorTaskPair) {
+        return _arborist.prune(graph, schedule, processorTaskPair);
+    }
+
+    public int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit) {
+        return _lowerBound.estimate(graph, schedule, nodesToVisit);
+    }
+
+    public int estimate(Graph graph, Schedule schedule) {
+        return _lowerBound.estimate(graph, schedule);
     }
 }

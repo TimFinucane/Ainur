@@ -1,5 +1,7 @@
 package algorithm;
 
+import algorithm.heuristics.lowerbound.LowerBound;
+import algorithm.heuristics.pruner.Arborist;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class TieredAlgorithm extends Algorithm implements MultiAlgorithmCommunicator {
+public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algorithm {
     // This is a queue of all the schedules to be explored, as well as the next nodes to visit for each.
     private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
     private AlgorithmFactory            _generator;
@@ -22,7 +24,6 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmCommunic
     private Graph                       _graph;
 
     public TieredAlgorithm(int processors, int threads, AlgorithmFactory generator, Schedule startingSchedule) {
-        super(null, null);
 
         _generator = generator;
         _threads = new Thread[threads - 1];
@@ -33,22 +34,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmCommunic
     }
     public TieredAlgorithm(int processors, int threads, AlgorithmFactory generator) {
         // Hacky way of creating an infinitely large fake schedule
-        this(processors, threads, generator, new Schedule(0) {
-            @Override
-            public int getEndTime() { return Integer.MAX_VALUE; }
-            @Override
-            public void addTask(Task task) {}
-            @Override
-            public void removeTask(Task task) {}
-            @Override
-            public Task findTask(Node node) { return null; }
-            @Override
-            public Task getLatest(int processor) { return null; }
-            @Override
-            public List<Task> getTasks(int processor) { return null; }
-            @Override
-            public int size(int processor) { return 0; }
-        });
+        this(processors, threads, generator, null);
     }
 
     @Override
@@ -67,6 +53,11 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmCommunic
         }
     }
 
+    @Override
+    public Schedule getCurrentBest() {
+        return _globalBest.get();
+    }
+
     /**
      * @see MultiAlgorithmCommunicator#explorePartialSolution(Schedule, HashSet)
      */
@@ -76,14 +67,6 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmCommunic
         // as it is obvious exploration is getting out of hand we will instead run it here, in this thread, RIGHT NOW!!!
         if(!_schedulesToExplore.offer(new Pair<>(schedule, nextNodes)))
             runAlgorithmOn(1, schedule, nextNodes);
-    }
-
-    /**
-     * @see Algorithm#getCurrentBest()
-     */
-    @Override
-    public Schedule getCurrentBest() {
-        return _globalBest.get();
     }
 
     /**
