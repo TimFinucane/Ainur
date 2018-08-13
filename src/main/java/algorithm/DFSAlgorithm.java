@@ -69,7 +69,6 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * @param availableNodes A helpful list of nodes available to visit next
      */
     private void recurse(Graph graph, SimpleSchedule curSchedule, HashSet<Node> availableNodes) {
-
         // Go through every node of our children, recursively
         for(Node node : availableNodes) {
             // Construct our new available nodes to pass on by copying available nodes and removing the one we're about
@@ -109,18 +108,11 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
                     // If it's on the same processor, just has to be after task end. If not, then it also needs
                     // to be past the communication cost
-                    if(item.getProcessor() == processor)
-                        earliest = Math.max(earliest, item.getEndTime());
-                    else
-                        earliest = Math.max(earliest, item.getEndTime() + edge.getCost());
+                    earliest = Math.max(earliest,
+                        (item.getProcessor() == processor) ? item.getEndTime() :  item.getEndTime() + edge.getCost());
                 }
-
-                if( curSchedule.size(processor) > 0 ) {
-                    earliest = Math.max(
-                        earliest,
-                        curSchedule.getLatest(processor).getEndTime()
-                    );
-                }
+                if( curSchedule.size(processor) > 0 )
+                    earliest = Math.max(earliest, curSchedule.getLatest(processor).getEndTime());
 
                 Task toBePlaced = new Task(processor, earliest, node);
 

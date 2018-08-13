@@ -1,18 +1,10 @@
 package algorithm;
 
-import algorithm.heuristics.lowerbound.LowerBound;
-import algorithm.heuristics.pruner.Arborist;
-import common.graph.Graph;
-import common.graph.Node;
-import common.schedule.Schedule;
-import common.schedule.SimpleSchedule;
-import common.schedule.Task;
+import common.graph.*;
+import common.schedule.*;
 import javafx.util.Pair;
-
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algorithm {
     // This is a queue of all the schedules to be explored, as well as the next nodes to visit for each.
@@ -95,8 +87,6 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     }
 
     private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
-        BoundableAlgorithm algorithm = _generator.create(tier, this);
-
-        algorithm.run(_graph, schedule, nextNodes);
+        _generator.create(tier, this).run(_graph, schedule, nextNodes);
     }
 }

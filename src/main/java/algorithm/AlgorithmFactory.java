@@ -1,9 +1,5 @@
 package algorithm;
 
-import common.schedule.Schedule;
-
-import java.util.concurrent.atomic.AtomicReference;
-
 /**
  * Used by a TieredAlgorithm to create algorithms to run on certain parts of the application
  */

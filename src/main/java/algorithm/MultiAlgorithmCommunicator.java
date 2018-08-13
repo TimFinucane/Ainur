@@ -1,9 +1,7 @@
 package algorithm;
 
 import common.graph.Node;
-import common.schedule.Schedule;
-import common.schedule.SimpleSchedule;
-
+import common.schedule.*;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -18,7 +16,6 @@ public class MultiAlgorithmCommunicator {
     }
     public MultiAlgorithmCommunicator() {
         // Create a schedule with max end time to simulate an infinitely large schedule.
-        // Should be replaced by first thing it sees. Kinda hacky.
         this(new SimpleSchedule(0){
             public int getEndTime() { return Integer.MAX_VALUE; }
         });
@@ -29,18 +26,14 @@ public class MultiAlgorithmCommunicator {
     }
 
     public void update(Schedule better) {
-        _globalBest.updateAndGet((Schedule old) -> {
-            return better.getEndTime() < old.getEndTime() ? better : old;
-        });
+        _globalBest.updateAndGet((Schedule old) -> better.getEndTime() < old.getEndTime() ? better : old);
     }
     /**
-     * Called when a boundable algorithm has reached its depth and wants the given partial schedule
-     * to be explored.
+     * Called when a boundable algorithm has reached its depth and wants the given partial schedule to be explored.
      * The default implementation throws as it is for solutions which do not require explorePartialSolution
      * @param schedule The partial schedule to explore
      */
     void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
-        throw new UnsupportedOperationException(
-            "Can't explore a partial solution with an undefined MultiAlgorithmCommunicator");
+        throw new UnsupportedOperationException("Can't explore a partial solution with an undefined MultiAlgorithmCommunicator");
     }
 }
