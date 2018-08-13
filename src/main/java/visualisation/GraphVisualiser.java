@@ -33,9 +33,17 @@ public class GraphVisualiser extends Region {
     public static final String STYLE_SHEET =
             "node {" +
             "   fill-color: black;" +
+            "   text-background-mode: rounded-box;" +
+            "   text-alignment: at-left;" +
+            "   text-offset: -1;" +
+            "   text-size: 15px;" +
             "   size: 15px;" +
             "}" +
             "node.marked {" +
+            "   fill-color:red;"  +
+            "   size: 20px;" +
+            "}" +
+            "edge {" +
             "   fill-color:red;"  +
             "   size: 20px;" +
             "}";
@@ -68,6 +76,9 @@ public class GraphVisualiser extends Region {
      * @param graph The Ainur graph to be visualised.
      */
     public GraphVisualiser(Graph graph) {
+        // Use the fully compliant css renderer for graphstream
+        System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+
         // Create the graphstream graph
         _gsGraph = createGSGraph(graph);
 
