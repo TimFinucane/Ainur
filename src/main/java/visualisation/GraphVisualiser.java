@@ -33,19 +33,21 @@ public class GraphVisualiser extends Region {
     public static final String STYLE_SHEET =
             "node {" +
             "   fill-color: black;" +
+            "   text-color: black;" +
             "   text-background-mode: rounded-box;" +
-            "   text-alignment: at-left;" +
-            "   text-offset: -1;" +
+            "   text-alignment: above;" +
             "   text-size: 15px;" +
             "   size: 15px;" +
             "}" +
             "node.marked {" +
             "   fill-color:red;"  +
             "   size: 20px;" +
+            "   text-color: red;" +
+            "   text-style: bold;" +
             "}" +
             "edge {" +
-            "   fill-color:red;"  +
-            "   size: 20px;" +
+            "   arrow-shape: arrow;" +
+            "   size: 2px;" +
             "}";
     public static final String UI_CLASS = "ui.class";
     public static final String UI_LABEL = "ui.label";
