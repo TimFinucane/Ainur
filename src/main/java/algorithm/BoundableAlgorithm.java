@@ -30,7 +30,7 @@ public abstract class BoundableAlgorithm implements Algorithm {
         this._communicator = new MultiAlgorithmCommunicator();
     }
 
-    public abstract void run(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes);
+    public abstract void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes);
 
     /**
      * Runs the algorithm normally (infinite depth, and starting schedule is empty)
@@ -38,7 +38,7 @@ public abstract class BoundableAlgorithm implements Algorithm {
      */
     @Override
     public void run(Graph graph, int processors) {
-        run(graph, new SimpleSchedule(processors), Integer.MAX_VALUE, new HashSet<>(graph.getEntryPoints()));
+        run(graph, new SimpleSchedule(processors), new HashSet<>(graph.getEntryPoints()));
     }
 
     /**

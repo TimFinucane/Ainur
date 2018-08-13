@@ -26,21 +26,21 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * @param lowerBound : A lower-bound to use in algorithm
      * @param communicator : A communicator used to communicate with tieredAlgorithms
      */
-    public DFSAlgorithm(Arborist arborist,
-                        LowerBound lowerBound,
-                        MultiAlgorithmCommunicator communicator) {
+    public DFSAlgorithm(MultiAlgorithmCommunicator communicator, Arborist arborist, LowerBound lowerBound, int depth) {
         super(communicator);
         _arborist = arborist;
         _lowerBound = lowerBound;
+        _depth = depth;
     }
 
     /**
-     * @see BoundableAlgorithm#BoundableAlgorithm()
+     * Constructor for DFSAlgorithm running solo
      */
     public DFSAlgorithm(Arborist arborist, LowerBound lowerBound) {
         super();
         _arborist = arborist;
         _lowerBound = lowerBound;
+        _depth = Integer.MAX_VALUE;
     }
 
     /**
@@ -52,12 +52,10 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * @see Algorithm#run(Graph, int)
      * @param graph : Graph object for DFS to be run on
      * @param schedule : A schedule that tasks can be added to
-     * @param depth : The max depth to which each threaded algorithm will search to
      * @param nextNodes : A helpful list of nodes to search through next
      */
     @Override
-    public void run(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes) {
-        _depth = depth;
+    public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         recurse(graph,
             schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
             nextNodes);

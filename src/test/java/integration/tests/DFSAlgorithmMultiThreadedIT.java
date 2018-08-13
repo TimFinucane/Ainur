@@ -53,11 +53,12 @@ public class DFSAlgorithmMultiThreadedIT {
         // Set up algorithm classes
         _algorithmhAllHeuristics4Threads = new TieredAlgorithm(4,
                 (tier, communicator) -> new DFSAlgorithm(
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                    new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                    new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath(),
-                communicator
+                    communicator,
+                    (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                        new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                    new CriticalPath(),
+                    8
         ));
     }
 

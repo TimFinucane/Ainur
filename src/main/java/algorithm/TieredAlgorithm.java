@@ -54,7 +54,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         }
 
         BoundableAlgorithm algorithm = _generator.create(0, this);
-        algorithm.run(_graph, new SimpleSchedule(processors), 5, new HashSet<>(graph.getEntryPoints()));
+        algorithm.run(_graph, new SimpleSchedule(processors), new HashSet<>(graph.getEntryPoints()));
 
         for(Thread t : _threads){
             t.interrupt();
@@ -97,6 +97,6 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
         BoundableAlgorithm algorithm = _generator.create(tier, this);
 
-        algorithm.run(_graph, schedule, 9999, nextNodes);
+        algorithm.run(_graph, schedule, nextNodes);
     }
 }
