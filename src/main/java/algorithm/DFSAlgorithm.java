@@ -135,8 +135,8 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 }
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
-                if( prune(graph, curSchedule, toBePlaced)
-                    || estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime() )
+                if( _arborist.prune(graph, curSchedule, toBePlaced)
+                    || _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime() )
                     continue;
 
                 // Check if we have reached the max depth for searching - if so, the notify our notifier
@@ -156,17 +156,5 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
             }
         }
-    }
-
-    public boolean prune(Graph graph, Schedule schedule, Task processorTaskPair) {
-        return _arborist.prune(graph, schedule, processorTaskPair);
-    }
-
-    public int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit) {
-        return _lowerBound.estimate(graph, schedule, nodesToVisit);
-    }
-
-    public int estimate(Graph graph, Schedule schedule) {
-        return _lowerBound.estimate(graph, schedule);
     }
 }
