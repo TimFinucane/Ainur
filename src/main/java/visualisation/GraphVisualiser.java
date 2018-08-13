@@ -28,6 +28,10 @@ public class GraphVisualiser extends Region {
             "node.marked {" +
             "   fill-color:red;" +
             "}";
+    public static final String UI_CLASS = "ui.class";
+    public static final String UI_LABEL = "ui.label";
+    public static final String UI_STYLE_SHEET = "ui.stylesheet";
+    public static final String MARKED_CLASS = "marked";
 
     /* Fields */
 
@@ -37,6 +41,9 @@ public class GraphVisualiser extends Region {
 
     // Graph stream object used for display
     private org.graphstream.graph.Graph _gsGraph;
+
+    // Keeps track of the current highlighted node
+    private String _currentNodeId;
 
     /* Constructors */
 
@@ -58,9 +65,15 @@ public class GraphVisualiser extends Region {
 
     /**
      *
-     * @param currentNode
+     * @param node
      */
-    public void update(Node currentNode) {
+    public void update(Node node) {
+        if (_currentNodeId != null) {
+            _gsGraph.getNode(_currentNodeId).removeAttribute(UI_CLASS);
+        }
+
+        _currentNodeId = node.getLabel();
+        _gsGraph.getNode(_currentNodeId).setAttribute(UI_CLASS, MARKED_CLASS);
 
     }
 
@@ -79,14 +92,14 @@ public class GraphVisualiser extends Region {
         for (Node node : nodes) {
             String label = node.getLabel();
             gsGraph.addNode(label);
-            gsGraph.getNode(label).addAttribute("ui.label", label);
+            gsGraph.getNode(label).addAttribute(UI_LABEL, label);
         }
 
         for (Edge edge: edges) {
             this.addGSEdge(gsGraph, edge);
         }
 
-        gsGraph.addAttribute("ui.stylesheet", STYLE_SHEET);
+        gsGraph.addAttribute(UI_STYLE_SHEET, STYLE_SHEET);
 
         return gsGraph;
     }
@@ -94,7 +107,6 @@ public class GraphVisualiser extends Region {
     /**
      *
      * @param swingNode
-     * @param viewPanel
      */
     private void createSwingContent(SwingNode swingNode) {
         SwingUtilities.invokeLater(() -> {
