@@ -1,4 +1,4 @@
-package algorithm.heuristics;
+package algorithm.heuristics.lowerbound;
 
 import common.graph.Graph;
 import common.graph.Node;
