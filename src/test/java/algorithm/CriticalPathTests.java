@@ -1,7 +1,7 @@
 package algorithm;
 
-import algorithm.heuristics.CriticalPath;
-import algorithm.heuristics.LowerBound;
+import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.LowerBound;
 import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Edge;
 import common.graph.Graph;

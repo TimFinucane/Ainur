@@ -38,4 +38,16 @@ public class Node {
     }
 
     public int getId() { return _id; }
+
+
+    /**
+     * Useful for debugging
+     * @return asString : String
+     */
+    @Override
+    public String toString() {
+
+        return "Computation cost=" + _computationCost + "; Label=" + _label + "; ID=" + _id;
+
+    }
 }
