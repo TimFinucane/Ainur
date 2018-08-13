@@ -89,7 +89,7 @@ public class GraphVisualiser extends Region {
 
     /**
      * Updates the current node that is highlighted.
-     * This node will be red.
+     * This node will be red. It will also be bigger.
      * All other nodes will be black.
      *
      * @param node The node which is to be selected
