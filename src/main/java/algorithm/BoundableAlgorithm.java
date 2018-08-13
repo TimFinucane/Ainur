@@ -12,8 +12,7 @@ import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class BoundableAlgorithm extends Algorithm {
-    protected final MultiAlgorithmNotifier      _notifier;
-    protected final AtomicReference<Schedule>   _globalBest;
+    protected final MultiAlgorithmCommunicator _communicator;
 
     /**
      * Constructor that uses a notifier and global best that are defined elsewhere, so that this and other algorithms
@@ -22,11 +21,10 @@ public abstract class BoundableAlgorithm extends Algorithm {
      */
     public BoundableAlgorithm(Arborist arborist,
                               LowerBound lowerBound,
-                              MultiAlgorithmNotifier notifier,
+                              MultiAlgorithmCommunicator communicator,
                               AtomicReference<Schedule> globalBest) {
         super(arborist, lowerBound);
-        this._notifier = notifier;
-        this._globalBest = globalBest;
+        this._communicator = communicator;
     }
 
     /**
@@ -36,8 +34,7 @@ public abstract class BoundableAlgorithm extends Algorithm {
     public BoundableAlgorithm(Arborist arborist, LowerBound lowerBound) {
         super(arborist, lowerBound);
         // Note: Assumes that you will never call explore when just running by yourself. Not perfect but good enough.
-        this._notifier = null;
-        this._globalBest = new AtomicReference<>(null);
+        this._communicator = new MultiAlgorithmCommunicator();
     }
 
     public abstract void run(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes);
@@ -48,13 +45,6 @@ public abstract class BoundableAlgorithm extends Algorithm {
      */
     @Override
     public void run(Graph graph, int processors) {
-        // Set the schedule if it has not already been set.
-        if(_globalBest.get() == null) {
-            Schedule schedule = new SimpleSchedule(processors);
-            // TODO: Find simpler way of doing this?
-            schedule.addTask(new Task(0, Integer.MAX_VALUE, new Node(0, "", 0)));
-            _globalBest.set(schedule);
-        }
         run(graph, new SimpleSchedule(processors), Integer.MAX_VALUE, new HashSet<>(graph.getEntryPoints()));
     }
 
@@ -63,6 +53,6 @@ public abstract class BoundableAlgorithm extends Algorithm {
      */
     @Override
     public Schedule getCurrentBest() {
-        return _globalBest.get();
+        return _communicator.getCurrentBest();
     }
 }

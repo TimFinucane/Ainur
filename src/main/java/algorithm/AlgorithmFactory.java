@@ -15,6 +15,6 @@ public interface AlgorithmFactory {
      * @param globalBest A reference to the schedule which will contain the best solution
      */
     BoundableAlgorithm create(int tier,
-                              MultiAlgorithmNotifier notifier,
+                              MultiAlgorithmCommunicator notifier,
                               AtomicReference<Schedule> globalBest);
 }

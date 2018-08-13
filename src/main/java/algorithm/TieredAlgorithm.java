@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier {
+public class TieredAlgorithm extends Algorithm implements MultiAlgorithmCommunicator {
     // This is a queue of all the schedules to be explored, as well as the next nodes to visit for each.
     private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
     private AlgorithmFactory            _generator;
@@ -68,7 +68,7 @@ public class TieredAlgorithm extends Algorithm implements MultiAlgorithmNotifier
     }
 
     /**
-     * @see MultiAlgorithmNotifier#explorePartialSolution(Schedule, HashSet)
+     * @see MultiAlgorithmCommunicator#explorePartialSolution(Schedule, HashSet)
      */
     @Override
     public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {

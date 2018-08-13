@@ -27,7 +27,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      */
     public DFSAlgorithm(Arborist arborist,
                         LowerBound lowerBound,
-                        MultiAlgorithmNotifier notifier,
+                        MultiAlgorithmCommunicator notifier,
                         AtomicReference<Schedule> globalBest) {
         super(arborist, lowerBound, notifier, globalBest);
     }
@@ -126,15 +126,15 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 if(curSchedule.size() + 1 == graph.size()) {
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    if(newSchedule.getEndTime() < _globalBest.get().getEndTime()) {
-                        _globalBest.set(newSchedule);
+                    if(newSchedule.getEndTime() < _communicator.getCurrentBest().getEndTime()) {
+                        _communicator.update(newSchedule);
                     }
                     continue;
                 }
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
                 if( prune(graph, curSchedule, toBePlaced)
-                    || estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _globalBest.get().getEndTime() )
+                    || estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime() )
                     continue;
 
                 // Check if we have reached the max depth for searching - if so, the notify our notifier
@@ -142,7 +142,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                     // Copy the schedule and nodes so that they aren't modified when passed on.
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    _notifier.explorePartialSolution(newSchedule, new HashSet<>(nextAvailableNodes));
+                    _communicator.explorePartialSolution(newSchedule, new HashSet<>(nextAvailableNodes));
                 }
                 // Else continue searching through the graph for another schedule solution
                 else {
