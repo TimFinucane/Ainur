@@ -16,14 +16,27 @@ import java.util.List;
 public class GraphVisualiser extends Region {
     /* MACROS */
 
+    // Window dimensions
     public static final int WINDOW_HEIGHT = 500;
     public static final int WINDOW_WIDTH = 1000;
 
+    // Used for styling the graph and its nodes
+    public static final String STYLE_SHEET =
+            "node {" +
+            "   fill-color: black;" +
+            "}" +
+            "node.marked {" +
+            "   fill-color:red;" +
+            "}";
+
     /* Fields */
 
+    // Used for rendering swing component in javafx
     private final SwingNode _swingNode;
-    private org.graphstream.graph.Graph _gsGraph;
     private Dimension _dimension;
+
+    // Graph stream object used for display
+    private org.graphstream.graph.Graph _gsGraph;
 
     /* Constructors */
 
