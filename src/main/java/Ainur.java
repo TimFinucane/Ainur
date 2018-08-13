@@ -1,5 +1,6 @@
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
+import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
@@ -22,7 +23,7 @@ public class Ainur {
 
           // Start the program
           Graph graph = readGraphFile(cli.getInputFile()); // read the graph
-          Schedule schedule = startScheduling(graph, cli.getProcessors()); // start scheduling
+          Schedule schedule = startScheduling(graph, cli.getProcessors(), cli.getCores()); // start scheduling
 
           // write the output
           writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
@@ -51,18 +52,29 @@ public class Ainur {
 
 
 
-    private static Schedule startScheduling(Graph graph, int processors) {
-        // Algorithm
-        Algorithm algorithm = new DFSAlgorithm(
-                processors,
+    private static Schedule startScheduling(Graph graph, int processors, int cores) {
+        Algorithm algorithm;
+        if(cores == 1) { // Single-threaded DFS algorithm
+            algorithm = new DFSAlgorithm(
                 (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                                || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                    new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                        || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
                 new CriticalPath()
-        );
+            );
+        } else { // Multithreaded, Tiered DFS algorithm
+            algorithm = new TieredAlgorithm(cores, (tier, communicator) ->
+                new DFSAlgorithm(communicator,
+                    (pruningGraph, pruningSchedule, pruningTask) ->
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
+                            || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                    new CriticalPath(),
+                    tier == 0 ? 8 : Integer.MAX_VALUE // Depth is 8 for first tier, infinite for second tier
+                )
+            );
+        }
 
         //Start
-        algorithm.start(graph);
+        algorithm.run(graph, processors);
 
         return algorithm.getCurrentBest();
     }

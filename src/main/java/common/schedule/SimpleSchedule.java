@@ -53,6 +53,17 @@ public class SimpleSchedule extends Schedule {
     }
 
     /**
+     * Copies a generic schedule to create this one
+     */
+    public SimpleSchedule(Schedule other) {
+        this(other.getNumProcessors(), other.size());
+
+        for(int i = 0; i < _numProcessors; ++i)
+            for(Task task : other.getTasks(i))
+                addTask(task);
+    }
+
+    /**
      * @see Schedule#addTask(Task)
      */
     @Override
