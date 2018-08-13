@@ -19,22 +19,30 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
     private AlgorithmFactory            _generator;
     private Thread[]                    _threads;
-    private AtomicReference<Schedule>   _globalBest;
 
     private Graph                       _graph;
 
-    public TieredAlgorithm(int processors, int threads, AlgorithmFactory generator, Schedule startingSchedule) {
-
+    /**
+     * Create a tiered algorithm.
+     * @param threads Number of threads to run algorithms in. Includes thread algorithm is started in
+     * @param generator The factory used to generate the algorithms that will be used
+     * @param initialGuess A schedule to start with as an initial guess
+     */
+    public TieredAlgorithm(int threads, AlgorithmFactory generator, Schedule initialGuess) {
+        super(initialGuess);
         _generator = generator;
         _threads = new Thread[threads - 1];
         // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
         _schedulesToExplore = new LinkedBlockingQueue<>((threads - 1) * 2);
-
-        _globalBest = new AtomicReference<>(startingSchedule);
     }
-    public TieredAlgorithm(int processors, int threads, AlgorithmFactory generator) {
-        // Hacky way of creating an infinitely large fake schedule
-        this(processors, threads, generator, null);
+
+    /**
+     * Does not get given a schedule to start with, it's initial guess is instead infinite.
+     *
+     * @see TieredAlgorithm#TieredAlgorithm(int, AlgorithmFactory, Schedule)
+     */
+    public TieredAlgorithm(int threads, AlgorithmFactory generator) {
+        this(threads, generator, null);
     }
 
     @Override
