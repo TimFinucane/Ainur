@@ -56,7 +56,6 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
         Statistics stats = new Statistics();
         stats.setMaxScheduleBound(maxTime / 10);
         stats.setMinScheduleBound(minTime / 10);
-        stats.setBrancesLookedAt(1000 * minTime);
         stats.setSearchSpaceLookedAt((long)(minTime * 4.4));
         stats.setSearchSpaceCulled((long)(minTime / 2.8));
 
