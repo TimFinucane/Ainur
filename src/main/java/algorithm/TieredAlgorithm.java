@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Class represents a tier on threads for when using multithreaded algorithms. Each tier looks through
+ * a set number of nodes before moving on to the next partial schedule in the list
+ */
 public class TieredAlgorithm implements MultiAlgorithmNotifier, Algorithm {
     // This is a queue of all the schedules to be explored, as well as the next nodes to visit for each.
     private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
@@ -52,6 +56,13 @@ public class TieredAlgorithm implements MultiAlgorithmNotifier, Algorithm {
         });
     }
 
+    /**
+     * Starts running the tiered algorithm by setting up and starting the threads, then running a boundable
+     * algorithm and pushing the partial schedules to a globally accessible list that each thread can
+     * pick partial schedules off
+     * @param graph A graph object representing tasks needing to be scheduled.
+     * @param processors The number of processors in the output schedule
+     */
     @Override
     public void run(Graph graph, int processors) {
         _graph = graph;
@@ -68,6 +79,9 @@ public class TieredAlgorithm implements MultiAlgorithmNotifier, Algorithm {
         }
     }
 
+    /**
+     * Gets the current best schedule stored in the reference global best
+     */
     @Override
     public Schedule getCurrentBest() {
         return _globalBest.get();
@@ -101,6 +115,13 @@ public class TieredAlgorithm implements MultiAlgorithmNotifier, Algorithm {
         }
     }
 
+    /**
+     * Runs an algorithm on a specified tier with a schedule to add to and a helpful list of nodes
+     * to look at next
+     * @param tier :
+     * @param schedule : Schedule to add to
+     * @param nextNodes : Helpful list of next nodes to look through
+     */
     private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
         BoundableAlgorithm algorithm =
             _generator.create(tier, this, _globalBest);
