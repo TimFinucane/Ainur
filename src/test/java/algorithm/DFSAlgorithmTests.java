@@ -27,9 +27,9 @@ public class DFSAlgorithmTests {
             .edge("b", "e", 2)
             .build();
 
-        Algorithm algorithm = new DFSAlgorithm(2, new IsNotAPruner(), new NaiveBound());
+        Algorithm algorithm = new DFSAlgorithm(new IsNotAPruner(), new NaiveBound());
 
-        algorithm.start(graph);
+        algorithm.run(graph, 2);
         Schedule result = algorithm.getCurrentBest();
 
         for(int i = 0; i < result.getNumProcessors(); ++i) {

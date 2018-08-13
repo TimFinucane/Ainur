@@ -5,73 +5,60 @@ import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
+import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A DFS implementation of the Algorithm class.
  */
-public class DFSAlgorithm extends Algorithm {
-    // When we have multithreading, these will be shared
-    private SimpleSchedule _best;
-    private int _upperBound;
-
-    // TODO: Multithreaded. When done add as argument to the algorithm
+public class DFSAlgorithm extends BoundableAlgorithm {
+    private int _depth;
+    protected Arborist _arborist;
+    protected LowerBound _lowerBound;
 
     /**
      * Constructor for DFSAlgorithm class.
-     * Defaults multithreading to false.
-     * @param processors The number of processors
+     * @param arborist : A pruner to use in algorithm
+     * @param lowerBound : A lower-bound to use in algorithm
+     * @param communicator : A communicator used to communicate with tieredAlgorithms
      */
-    public DFSAlgorithm(int processors, Arborist arborist, LowerBound lowerBound) {
-        super(processors, false, arborist, lowerBound);
+    public DFSAlgorithm(MultiAlgorithmCommunicator communicator, Arborist arborist, LowerBound lowerBound, int depth) {
+        super(communicator);
+        _arborist = arborist;
+        _lowerBound = lowerBound;
+        _depth = depth;
+    }
+
+    /**
+     * Constructor for DFSAlgorithm running solo
+     */
+    public DFSAlgorithm(Arborist arborist, LowerBound lowerBound) {
+        super();
+        _arborist = arborist;
+        _lowerBound = lowerBound;
+        _depth = Integer.MAX_VALUE;
     }
 
     /**
      * Starts running the DFS.
-     * N.B. This implementation is NOT multithreaded and will block upon running.
      * Solution works by exploring avery possible schedule configuration and returning the best one it has found.
      * Also uses heuristics for faster runtime.
      *
      * Schedule is then stored and can be provided by getCurrentBest()
-     * @see Algorithm#start(Graph)
+     * @see Algorithm#run(Graph, int)
+     * @param graph : Graph object for DFS to be run on
+     * @param schedule : A schedule that tasks can be added to
+     * @param nextNodes : A helpful list of nodes to search through next
      */
     @Override
-    public void start(Graph graph) {
-        _upperBound = initialUpperBound(graph);
-
-        _bestSchedule = recurse(graph, new SimpleSchedule(_processors, graph.size()), new HashSet<>(graph.getEntryPoints()));
-        _isComplete = true;
-    }
-
-    /**
-     * A non-optimal solution to use as an initial upper bound.
-     * Calculates the length of a solution with all nodes on the same processor
-     */
-    // TODO: When a proper non optimal solution has been implemented, use that instead
-    private int initialUpperBound(Graph graph) {
-        Set<Node> visited = new HashSet<>();
-        Set<Node> nextNodes = new HashSet<>(graph.getEntryPoints());
-
-        int total = 0;
-
-        // Visit every node as if we were traversing the graph normally (maintain a set of nodes to explore,
-        // add to the set when new nodes are discovered, when the set is empty we have visited every node).
-        while(!nextNodes.isEmpty()) {
-            Node node = nextNodes.iterator().next();
-
-            total += node.getComputationCost();
-            nextNodes.remove(node);
-            visited.add(node);
-
-            for(Edge edge : graph.getOutgoingEdges(node))
-                if(!visited.contains(edge.getDestinationNode()))
-                    nextNodes.add(edge.getDestinationNode());
-        }
-
-        return total;
+    public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
+        recurse(graph,
+            schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
+            nextNodes);
     }
 
     /**
@@ -81,15 +68,11 @@ public class DFSAlgorithm extends Algorithm {
      * @param curSchedule The partial schedule with all nodes visited by 'parent' recursors in it
      * @param availableNodes A helpful list of nodes available to visit next
      */
-    private SimpleSchedule recurse(Graph graph, SimpleSchedule curSchedule, HashSet<Node> availableNodes) {
-        // We might discover a better upper bound part way through and want to use it
-        SimpleSchedule curBest = null;
-
+    private void recurse(Graph graph, SimpleSchedule curSchedule, HashSet<Node> availableNodes) {
         // Go through every node of our children, recursively
         for(Node node : availableNodes) {
             // Construct our new available nodes to pass on by copying available nodes and removing the one we're about
             // to add
-            // TODO: Consider same memory storage optimisation as with schedule for this?
             HashSet<Node> nextAvailableNodes = new HashSet<>(availableNodes);
             nextAvailableNodes.remove(node);
 
@@ -125,18 +108,11 @@ public class DFSAlgorithm extends Algorithm {
 
                     // If it's on the same processor, just has to be after task end. If not, then it also needs
                     // to be past the communication cost
-                    if(item.getProcessor() == processor)
-                        earliest = Math.max(earliest, item.getEndTime());
-                    else
-                        earliest = Math.max(earliest, item.getEndTime() + edge.getCost());
+                    earliest = Math.max(earliest,
+                        (item.getProcessor() == processor) ? item.getEndTime() :  item.getEndTime() + edge.getCost());
                 }
-
-                if( curSchedule.size(processor) > 0 ) {
-                    earliest = Math.max(
-                        earliest,
-                        curSchedule.getLatest(processor).getEndTime()
-                    );
-                }
+                if( curSchedule.size(processor) > 0 )
+                    earliest = Math.max(earliest, curSchedule.getLatest(processor).getEndTime());
 
                 Task toBePlaced = new Task(processor, earliest, node);
 
@@ -144,34 +120,33 @@ public class DFSAlgorithm extends Algorithm {
                 if(curSchedule.size() + 1 == graph.size()) {
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-
-                    return newSchedule;
+                    if(newSchedule.getEndTime() < _communicator.getCurrentBest().getEndTime()) {
+                        _communicator.update(newSchedule);
+                    }
+                    continue;
                 }
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
-                if( prune(graph, curSchedule, toBePlaced)
-                    || estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _upperBound )
+                if( _arborist.prune(graph, curSchedule, toBePlaced)
+                    || _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime() )
                     continue;
 
-                // Ok all that has failed so i guess we have to actually recurse with it
-                curSchedule.addTask(toBePlaced);
-                SimpleSchedule result = recurse(graph, curSchedule, nextAvailableNodes);
-                curSchedule.removeTask(toBePlaced);
-
-
-                if(result == null) // You failed when I needed you most (the result wasn't good enough)
-                    continue;
-
-                // But at least now we know we have a result that should be better than upper bound
-                int resultTotalTime = result.getEndTime();
-
-                // Just in case the schedule is still pretty bad
-                if(resultTotalTime <= _upperBound) {
-                    _upperBound = resultTotalTime;
-                    curBest = result;
+                // Check if we have reached the max depth for searching - if so, the notify our notifier
+                if(curSchedule.size() + 1 >= _depth){
+                    // Copy the schedule and nodes so that they aren't modified when passed on.
+                    SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
+                    newSchedule.addTask(toBePlaced);
+                    _communicator.explorePartialSolution(newSchedule, new HashSet<>(nextAvailableNodes));
                 }
+                // Else continue searching through the graph for another schedule solution
+                else {
+                    // Ok all that has failed so i guess we have to actually recurse with it
+                    curSchedule.addTask(toBePlaced);
+                    recurse(graph, curSchedule, nextAvailableNodes);
+                    curSchedule.removeTask(toBePlaced);
+                }
+
             }
         }
-        return curBest;
     }
 }

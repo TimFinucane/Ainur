@@ -35,8 +35,7 @@ public class DFSAlgorithmIT {
 
     private static final String SEP = File.separator;
 
-    private Algorithm _algorithmWith2Processors;
-    private Algorithm _algorithmWith4Processors;
+    private Algorithm _algorithmWithAllHeuristics;
 
     private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
     private static final String NODES_8_FILENAME = String.format("data%sgraphs%sNodes_8_Random.dot", SEP, SEP);
@@ -49,18 +48,11 @@ public class DFSAlgorithmIT {
     public void setup() {
 
         // Set up algorithm classes
-        _algorithmWith2Processors = new DFSAlgorithm(2,
+        _algorithmWithAllHeuristics = new DFSAlgorithm(
                 (pruningGraph, pruningSchedule, pruningTask) ->
                         new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
                                 new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
                 new CriticalPath());
-
-        _algorithmWith4Processors = new DFSAlgorithm(4,
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath());
-
     }
 
 
@@ -75,8 +67,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new DFSAlgorithm(4, new IsNotAPruner(), new NaiveBound());
-        algorithm.start(graph);
+        Algorithm algorithm = new DFSAlgorithm(new IsNotAPruner(), new NaiveBound());
+        algorithm.run(graph, 4);
 
         //Manually start algorithm on graph
         Schedule resultManual = algorithm.getCurrentBest();
@@ -98,8 +90,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith2Processors.start(graph);
-        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 2);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(28, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -118,8 +110,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith4Processors.start(graph);
-        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 4);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -141,8 +133,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_8_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith2Processors.start(graph);
-        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 2);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -161,8 +153,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_8_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith4Processors.start(graph);
-        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 4);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -180,8 +172,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_9_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith2Processors.start(graph);
-        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 2);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -199,8 +191,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_9_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith4Processors.start(graph);
-        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 2);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -219,8 +211,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_10_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith2Processors.start(graph);
-        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 2);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -240,8 +232,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_10_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith4Processors.start(graph);
-        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 4);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -259,8 +251,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_11_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith2Processors.start(graph);
-        Schedule resultManual = _algorithmWith2Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 2);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(350, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
@@ -278,8 +270,8 @@ public class DFSAlgorithmIT {
         Graph graph = getGraph(NODES_11_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmWith4Processors.start(graph);
-        Schedule resultManual = _algorithmWith4Processors.getCurrentBest();
+        _algorithmWithAllHeuristics.run(graph, 4);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
 
         assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
