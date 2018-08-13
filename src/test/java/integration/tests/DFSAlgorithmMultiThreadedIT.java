@@ -58,7 +58,7 @@ public class DFSAlgorithmMultiThreadedIT {
                         new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
                         new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
                     new CriticalPath(),
-                    8
+                    tier == 0 ? 8 : 10000
         ));
     }
 

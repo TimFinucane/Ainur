@@ -151,11 +151,19 @@ public class Cli {
 
 
         if (cmdLine.hasOption("p")) {
-            _cores = Integer.parseInt(cmdLine.getOptionValue("p"));
-            System.out.println("You instructed Ainur to be executed using " + _cores + " cores");
-            System.out.println("Unfortunately this feature is yet to be implemented... stay tuned");
-        }
+            // Error checking on getting cores
+            try {
+                int cores = Integer.parseInt(cmdLine.getOptionValue("p"));
+                if(cores < 1)
+                    throw new NumberFormatException();
 
+                // Only set _cores/use multithreading if cores is valid
+                _cores = cores;
+                System.out.println("Executing with " + _cores + " cores for algorithm");
+            } catch (NumberFormatException e) {
+                System.out.println("Please make sure the number of cores is a positive, whole number. Defaulting to " + Config.CORES_DEFAULT);
+            }
+        }
 
         if (cmdLine.hasOption("v")) {
             _visualise = true;
