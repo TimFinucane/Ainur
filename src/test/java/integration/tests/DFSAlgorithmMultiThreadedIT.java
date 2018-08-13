@@ -38,8 +38,7 @@ import static junit.framework.TestCase.fail;
 @Category(GandalfIntegrationTestsCategory.class)
 public class DFSAlgorithmMultiThreadedIT {
 
-    private Algorithm _algorithmhAllHeuristics4Threads4Processors;
-    private Algorithm _algorithmhAllHeuristics2Threads2Processors;
+    private Algorithm _algorithmhAllHeuristics4Threads;
 
     private static final String SEP = File.separator;
     private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
@@ -51,27 +50,16 @@ public class DFSAlgorithmMultiThreadedIT {
 
     @Before
     public void setup() {
-
         // Set up algorithm classes
-        _algorithmhAllHeuristics4Threads4Processors = new TieredAlgorithm(4, 4,
-                (tier, notifier, globalBest) -> new DFSAlgorithm(
+        _algorithmhAllHeuristics4Threads = new TieredAlgorithm(4,
+                (tier, communicator) -> new DFSAlgorithm(
+                    communicator,
                     (pruningGraph, pruningSchedule, pruningTask) ->
-                            new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                    new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath(),
-                notifier,
-                globalBest
+                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
+                        new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                    new CriticalPath(),
+                    8
         ));
-
-        _algorithmhAllHeuristics2Threads2Processors = new TieredAlgorithm(2, 2,
-                (tier, notifier, globalBest) -> new DFSAlgorithm(
-                        (pruningGraph, pruningSchedule, pruningTask) ->
-                                new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                        new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                        new CriticalPath(),
-                        notifier,
-                        globalBest
-                ));
     }
 
     @Test
@@ -80,10 +68,10 @@ public class DFSAlgorithmMultiThreadedIT {
         Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ no heuristics
-        _algorithmhAllHeuristics4Threads4Processors.run(graph, 4);
+        _algorithmhAllHeuristics4Threads.run(graph, 4);
 
         //Manually start algorithm on graph
-        Schedule resultManual = _algorithmhAllHeuristics4Threads4Processors.getCurrentBest();
+        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
 
         assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -96,8 +84,8 @@ public class DFSAlgorithmMultiThreadedIT {
         Graph graph = getGraph(NODES_11_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics4Threads4Processors.run(graph, 4);
-        Schedule resultManual = _algorithmhAllHeuristics4Threads4Processors.getCurrentBest();
+        _algorithmhAllHeuristics4Threads.run(graph, 4);
+        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
 
         assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
@@ -109,8 +97,8 @@ public class DFSAlgorithmMultiThreadedIT {
         Graph graph = getGraph(NODES_10_FILENAME);
 
         // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics2Threads2Processors.run(graph, 2);
-        Schedule resultManual = _algorithmhAllHeuristics2Threads2Processors.getCurrentBest();
+        _algorithmhAllHeuristics4Threads.run(graph, 2);
+        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
 
         assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid

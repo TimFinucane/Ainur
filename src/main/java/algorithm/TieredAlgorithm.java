@@ -1,59 +1,46 @@
 package algorithm;
 
-import algorithm.heuristics.lowerbound.LowerBound;
-import algorithm.heuristics.pruner.Arborist;
-import common.graph.Graph;
-import common.graph.Node;
-import common.schedule.Schedule;
-import common.schedule.SimpleSchedule;
-import common.schedule.Task;
+import common.graph.*;
+import common.schedule.*;
 import javafx.util.Pair;
-
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 /**
  * Class represents a tier on threads for when using multithreaded algorithms. Each tier looks through
  * a set number of nodes before moving on to the next partial schedule in the list
  */
-public class TieredAlgorithm implements MultiAlgorithmNotifier, Algorithm {
+
+public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algorithm {
     // This is a queue of all the schedules to be explored, as well as the next nodes to visit for each.
     private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
     private AlgorithmFactory            _generator;
     private Thread[]                    _threads;
-    private AtomicReference<Schedule>   _globalBest;
 
     private Graph                       _graph;
 
-    public TieredAlgorithm(int processors, int threads, AlgorithmFactory generator, Schedule startingSchedule) {
-
+    /**
+     * Does not get given a schedule to start with, it's initial guess is instead infinite.
+     *
+     * @see TieredAlgorithm#TieredAlgorithm(int, AlgorithmFactory, Schedule)
+     */
+    public TieredAlgorithm(int threads, AlgorithmFactory generator) {
+        super();
         _generator = generator;
         _threads = new Thread[threads - 1];
         // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
         _schedulesToExplore = new LinkedBlockingQueue<>((threads - 1) * 2);
-
-        _globalBest = new AtomicReference<>(startingSchedule);
     }
-    public TieredAlgorithm(int processors, int threads, AlgorithmFactory generator) {
-        // Hacky way of creating an infinitely large fake schedule
-        this(processors, threads, generator, new Schedule(0) {
-            @Override
-            public int getEndTime() { return Integer.MAX_VALUE; }
-            @Override
-            public void addTask(Task task) {}
-            @Override
-            public void removeTask(Task task) {}
-            @Override
-            public Task findTask(Node node) { return null; }
-            @Override
-            public Task getLatest(int processor) { return null; }
-            @Override
-            public List<Task> getTasks(int processor) { return null; }
-            @Override
-            public int size(int processor) { return 0; }
-        });
+    /**
+     * Create a tiered algorithm.
+     * @param threads Number of threads to run algorithms in. Includes thread algorithm is started in
+     * @param generator The factory used to generate the algorithms that will be used
+     * @param initialGuess A schedule to start with as an initial guess
+     */
+    public TieredAlgorithm(int threads, AlgorithmFactory generator, Schedule initialGuess) {
+        this(threads, generator);
+        _globalBest.set(initialGuess);
     }
 
     /**
@@ -71,8 +58,8 @@ public class TieredAlgorithm implements MultiAlgorithmNotifier, Algorithm {
             _threads[i].start();
         }
 
-        BoundableAlgorithm algorithm = _generator.create(0, this, _globalBest);
-        algorithm.run(_graph, new SimpleSchedule(processors), 5, new HashSet<>(graph.getEntryPoints()));
+        BoundableAlgorithm algorithm = _generator.create(0, this);
+        algorithm.run(_graph, new SimpleSchedule(processors), new HashSet<>(graph.getEntryPoints()));
 
         for(Thread t : _threads){
             t.interrupt();
@@ -88,7 +75,7 @@ public class TieredAlgorithm implements MultiAlgorithmNotifier, Algorithm {
     }
 
     /**
-     * @see MultiAlgorithmNotifier#explorePartialSolution(Schedule, HashSet)
+     * @see MultiAlgorithmCommunicator#explorePartialSolution(Schedule, HashSet)
      */
     @Override
     public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
@@ -123,9 +110,6 @@ public class TieredAlgorithm implements MultiAlgorithmNotifier, Algorithm {
      * @param nextNodes : Helpful list of next nodes to look through
      */
     private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
-        BoundableAlgorithm algorithm =
-            _generator.create(tier, this, _globalBest);
-
-        algorithm.run(_graph, schedule, 9999, nextNodes);
+        _generator.create(tier, this).run(_graph, schedule, nextNodes);
     }
 }

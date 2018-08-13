@@ -1,19 +1,12 @@
 package algorithm;
 
-import algorithm.heuristics.pruner.Arborist;
-import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.Graph;
-import common.graph.Node;
 import common.schedule.Schedule;
-import common.schedule.Task;
-
-import java.util.List;
 
 /**
  *  An abstract class which templates the algorithm to be implemented.
  */
 public interface Algorithm {
-
     /**
      * Starts the scheduling algorithm. When complete, the optimal schedule will be available in
      * getCurrentBest(). Note that before finishing, getCurrentBest() may store schedules, but they will not
@@ -24,5 +17,4 @@ public interface Algorithm {
     void run(Graph graph, int processors);
 
     Schedule getCurrentBest();
-
 }

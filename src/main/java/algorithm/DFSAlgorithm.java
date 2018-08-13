@@ -24,25 +24,23 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * Constructor for DFSAlgorithm class.
      * @param arborist : A pruner to use in algorithm
      * @param lowerBound : A lower-bound to use in algorithm
-     * @param notifier : An object used to communicate with tieredAlgorithms
-     * @param globalBest : Reference to the current global best schedule
+     * @param communicator : A communicator used to communicate with tieredAlgorithms
      */
-    public DFSAlgorithm(Arborist arborist,
-                        LowerBound lowerBound,
-                        MultiAlgorithmNotifier notifier,
-                        AtomicReference<Schedule> globalBest) {
-        super(notifier, globalBest);
+    public DFSAlgorithm(MultiAlgorithmCommunicator communicator, Arborist arborist, LowerBound lowerBound, int depth) {
+        super(communicator);
         _arborist = arborist;
         _lowerBound = lowerBound;
+        _depth = depth;
     }
 
     /**
-     * @see BoundableAlgorithm#BoundableAlgorithm()
+     * Constructor for DFSAlgorithm running solo
      */
     public DFSAlgorithm(Arborist arborist, LowerBound lowerBound) {
         super();
         _arborist = arborist;
         _lowerBound = lowerBound;
+        _depth = Integer.MAX_VALUE;
     }
 
     /**
@@ -54,12 +52,10 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * @see Algorithm#run(Graph, int)
      * @param graph : Graph object for DFS to be run on
      * @param schedule : A schedule that tasks can be added to
-     * @param depth : The max depth to which each threaded algorithm will search to
      * @param nextNodes : A helpful list of nodes to search through next
      */
     @Override
-    public void run(Graph graph, Schedule schedule, int depth, HashSet<Node> nextNodes) {
-        _depth = depth;
+    public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         recurse(graph,
             schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
             nextNodes);
@@ -73,7 +69,6 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * @param availableNodes A helpful list of nodes available to visit next
      */
     private void recurse(Graph graph, SimpleSchedule curSchedule, HashSet<Node> availableNodes) {
-
         // Go through every node of our children, recursively
         for(Node node : availableNodes) {
             // Construct our new available nodes to pass on by copying available nodes and removing the one we're about
@@ -113,18 +108,11 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
                     // If it's on the same processor, just has to be after task end. If not, then it also needs
                     // to be past the communication cost
-                    if(item.getProcessor() == processor)
-                        earliest = Math.max(earliest, item.getEndTime());
-                    else
-                        earliest = Math.max(earliest, item.getEndTime() + edge.getCost());
+                    earliest = Math.max(earliest,
+                        (item.getProcessor() == processor) ? item.getEndTime() :  item.getEndTime() + edge.getCost());
                 }
-
-                if( curSchedule.size(processor) > 0 ) {
-                    earliest = Math.max(
-                        earliest,
-                        curSchedule.getLatest(processor).getEndTime()
-                    );
-                }
+                if( curSchedule.size(processor) > 0 )
+                    earliest = Math.max(earliest, curSchedule.getLatest(processor).getEndTime());
 
                 Task toBePlaced = new Task(processor, earliest, node);
 
@@ -132,15 +120,15 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 if(curSchedule.size() + 1 == graph.size()) {
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    if(newSchedule.getEndTime() < _globalBest.get().getEndTime()) {
-                        _globalBest.set(newSchedule);
+                    if(newSchedule.getEndTime() < _communicator.getCurrentBest().getEndTime()) {
+                        _communicator.update(newSchedule);
                     }
                     continue;
                 }
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
-                if( prune(graph, curSchedule, toBePlaced)
-                    || estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _globalBest.get().getEndTime() )
+                if( _arborist.prune(graph, curSchedule, toBePlaced)
+                    || _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime() )
                     continue;
 
                 // Check if we have reached the max depth for searching - if so, the notify our notifier
@@ -148,7 +136,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                     // Copy the schedule and nodes so that they aren't modified when passed on.
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    _notifier.explorePartialSolution(newSchedule, new HashSet<>(nextAvailableNodes));
+                    _communicator.explorePartialSolution(newSchedule, new HashSet<>(nextAvailableNodes));
                 }
                 // Else continue searching through the graph for another schedule solution
                 else {
@@ -160,17 +148,5 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
             }
         }
-    }
-
-    public boolean prune(Graph graph, Schedule schedule, Task processorTaskPair) {
-        return _arborist.prune(graph, schedule, processorTaskPair);
-    }
-
-    public int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit) {
-        return _lowerBound.estimate(graph, schedule, nodesToVisit);
-    }
-
-    public int estimate(Graph graph, Schedule schedule) {
-        return _lowerBound.estimate(graph, schedule);
     }
 }
