@@ -36,9 +36,7 @@ public class AStarAlgorithm extends Algorithm {
         while (!schedulesToVisit.isEmpty()) {
             Map.Entry<Integer, SimpleSchedule> integerScheduleEntry = schedulesToVisit.firstEntry();
 
-            Integer min = integerScheduleEntry.getKey();
             SimpleSchedule curSchedule = integerScheduleEntry.getValue();
-
 
             // if the schedule is complete, it is optimal.
             if (curSchedule.size() == graph.size()) {
@@ -46,11 +44,10 @@ public class AStarAlgorithm extends Algorithm {
                 return;
             }
 
-
-            // finds all the nodes that are able to be added to the schedule, must have all their parents
-            // already in the schedule.
+            // nodes that still need to be added to the current schedule
             List<Node> nodesToAdd = new ArrayList<>();
 
+            // finds all the nodes that can be added to the schedule
             for (Node node : graph.getNodes()) {
                 if (!curSchedule.contains(node)) {
                     boolean canAdd = true;
@@ -67,12 +64,11 @@ public class AStarAlgorithm extends Algorithm {
                 }
             }
 
-            // only add schedules to the list to visit if they pass the heuristic tests
-            // add each possible node to each possible processor
-            for (int proc = 0; proc < _processors; proc++){
-                for (Node node : nodesToAdd) {
-                    // find the earliest possible time the node can be added to a processor taking into account
-                    // edge communication costs.
+            // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
+            for (Node node : nodesToAdd) {
+                for (int proc = 0; proc < _processors; proc++){
+
+                    // find the earliest possible time the node can be added to current processor
                     int earliestPossStart = curSchedule.getEndTime(proc);
 
                     for (Edge edge : graph.getIncomingEdges(node)) {
@@ -95,6 +91,14 @@ public class AStarAlgorithm extends Algorithm {
 
                     // TODO: add all new schedules to be visited only if they pass the heuristics.
 
+                    List<Node> nextNodesToVisit = nodesToAdd;
+                    nextNodesToVisit.remove(node);
+
+                    if (prune(graph, newSchedule)){
+
+                        int lowerBoundEstimate = estimate(graph, newSchedule, nextNodesToVisit);
+                        schedulesToVisit.put(lowerBoundEstimate, newSchedule);
+                    }
                 }
 
             }
