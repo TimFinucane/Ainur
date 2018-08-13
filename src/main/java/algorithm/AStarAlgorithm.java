@@ -29,7 +29,7 @@ public class AStarAlgorithm extends Algorithm {
 
         SimpleSchedule emptySchedule = new SimpleSchedule(_processors);
 
-        // TODO: Ensure TreeMaps allow duplicate key values...
+        // TODO: Ensure TreeMaps allow duplicate key values... (Doesn't look like it)
         TreeMap<Integer, SimpleSchedule> schedulesToVisit = new TreeMap<>();
         schedulesToVisit.put(estimate(graph, emptySchedule, graph.getEntryPoints()), emptySchedule);
 
@@ -92,6 +92,9 @@ public class AStarAlgorithm extends Algorithm {
 
                     SimpleSchedule newSchedule = curSchedule;
                     newSchedule.addTask(task);
+
+                    // TODO: add all new schedules to be visited only if they pass the heuristics.
+
                 }
 
             }
