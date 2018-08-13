@@ -36,9 +36,9 @@ public interface Arborist {
         return (graph, schedule, tobeAdded) -> {
             for(Arborist arborist : arborists)
                 if(arborist.prune(graph, schedule, tobeAdded))
-                    return false;
+                    return true;
 
-            return true;
+            return false;
         };
     }
 }
