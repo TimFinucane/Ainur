@@ -154,7 +154,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
             boolean parentsInSchedule = true;
             for(Edge parentEdge : graph.getIncomingEdges(nodeToAdd)) {
-                if (parentEdge.getOriginNode() != added && schedule.contains(parentEdge.getOriginNode())) {
+                if (parentEdge.getOriginNode() != added && !schedule.contains(parentEdge.getOriginNode())) {
                     parentsInSchedule = false;
                     break;
                 }
