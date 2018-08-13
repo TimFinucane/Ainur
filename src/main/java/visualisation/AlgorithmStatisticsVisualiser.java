@@ -16,11 +16,19 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// TODO: so the elements we wanted to show in the visualisation were:
+// Num of branches looked at,                                           *Tick
+// CPU usage,                                                           *Tick
+// Num processors used (for multithreading i think?),                   *Tick
+// Percent coverage (searched vs unsearched),                           *Tick
+// percent culled (of total possible search space size),
+// time elapsed                                                         *Tick
+
 public class AlgorithmStatisticsVisualiser extends Region {
 
 
     // Constant element / window element dimensions
-    private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 200;
+    private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 150;
     private static final int SCHEDULE_TIME_BOUNDING_WIDTH = 800;
 
     private static final Font DEFAULT_FONT = new Font("Courier New", 12);
@@ -35,13 +43,25 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     // Grid
     private final GridPane _boundGrid;
+    private final NumberAxis _boundingAxis;
 
     // Cpu chart
     private final LineChart<Number, Number> _cpuChart;
     private final XYChart.Series _cpuChartData;
 
     // Labels
+    private static final double LABEL_GRID_COLUMN_WIDTH = 200;
+    private static final double LABEL_GRID_ROW_HEIGHT = 20;
     private final Label _timeLabel;
+    private final GridPane _labelGrid;
+    private final Label _branchesLookedAtLabel;
+    private Label _branchesLookedAtValue;
+    private final Label _processorsUsedLabel;
+    private Label _processorsUsedValue;
+    private final Label _percentCoverageLabel;
+    private Label _percentCoverageValue;
+    private final Label _percentCulledLabel;
+    private Label _percentCulledValue;
 
     // Timer
     private final Timer _timer;
@@ -57,9 +77,42 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         // Initialize elements
         _boundGrid = createGrid();
+        _boundingAxis = createBoundingVisualizationAxis();
 
         _timeLabel = new Label("0");
         _timeLabel.setFont(DEFAULT_FONT);
+
+        _branchesLookedAtLabel = new Label("Branches looked at:");
+        _branchesLookedAtLabel.setFont(DEFAULT_FONT);
+        _branchesLookedAtValue = new Label(String.format("%d", 0));
+        _branchesLookedAtValue.setFont(DEFAULT_FONT);
+
+        _processorsUsedLabel = new Label("Cores running:");
+        _processorsUsedLabel.setFont(DEFAULT_FONT);
+        _processorsUsedValue = new Label(String.format("%d", 0));
+        _processorsUsedValue.setFont(DEFAULT_FONT);
+
+        _percentCoverageLabel = new Label("Search space covered:");
+        _percentCoverageLabel.setFont(DEFAULT_FONT);
+        _percentCoverageValue = new Label(String.format("%.1f%%", 0.0));
+        _percentCoverageValue.setFont(DEFAULT_FONT);
+
+        _percentCulledLabel = new Label("Search space culled:");
+        _percentCulledLabel.setFont(DEFAULT_FONT);
+        _percentCulledValue = new Label(String.format("%.1f%%", 0.0));
+        _percentCulledValue.setFont(DEFAULT_FONT);
+
+
+
+        _labelGrid = createLabelGrid();
+        _labelGrid.add(_branchesLookedAtLabel, 0, 0);
+        _labelGrid.add(_branchesLookedAtValue, 1, 0);
+        _labelGrid.add(_processorsUsedLabel, 0, 1);
+        _labelGrid.add(_processorsUsedValue, 1, 1);
+        _labelGrid.add(_percentCoverageLabel, 0, 2);
+        _labelGrid.add(_percentCoverageValue, 1, 2);
+        _labelGrid.add(_percentCulledLabel, 0, 3);
+        _labelGrid.add(_percentCulledValue, 1, 3);
 
         _cpuChart = createCpuChart();
         _cpuChartData = new XYChart.Series();
@@ -80,11 +133,39 @@ public class AlgorithmStatisticsVisualiser extends Region {
         // Add elements to children of group
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(15));
-        vBox.getChildren().addAll(_boundGrid, _timeLabel, _cpuChart);
+        vBox.getChildren().addAll(
+                _timeLabel,
+                _boundGrid,
+                _boundingAxis,
+                _labelGrid,
+                _cpuChart);
 
         getChildren().addAll(vBox);
     }
 
+    private GridPane createLabelGrid() {
+
+        GridPane gridPane = new GridPane();
+        gridPane.getColumnConstraints().addAll(
+                new ColumnConstraints(LABEL_GRID_COLUMN_WIDTH),
+                new ColumnConstraints(LABEL_GRID_COLUMN_WIDTH)
+        );
+        gridPane.getRowConstraints().addAll(
+                new RowConstraints(LABEL_GRID_ROW_HEIGHT),
+                new RowConstraints(LABEL_GRID_ROW_HEIGHT),
+                new RowConstraints(LABEL_GRID_ROW_HEIGHT),
+                new RowConstraints(LABEL_GRID_ROW_HEIGHT)
+        );
+
+        return gridPane;
+    }
+
+    private NumberAxis createBoundingVisualizationAxis() {
+
+        NumberAxis numberAxis = new NumberAxis("Schedule Time (s)", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
+
+        return numberAxis;
+    }
 
 
     /**
@@ -187,6 +268,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         // Create LineChart
         LineChart<Number, Number>  cpuChart = new LineChart<>(xAxis, yAxis);
+        cpuChart.setCreateSymbols(false);
         cpuChart.setTitle("CPU Usage");
 
         return cpuChart;
