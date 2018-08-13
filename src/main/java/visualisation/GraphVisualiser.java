@@ -50,7 +50,7 @@ public class GraphVisualiser extends Region {
             "edge {" +
             "   arrow-shape: arrow;" +
             "   arrow-size: 15px, 5px;" +
-            "   size: 2px;" +
+            "   size: 1.5px;" +
             "}";
     public static final String UI_CLASS = "ui.class";
     public static final String UI_LABEL = "ui.label";
