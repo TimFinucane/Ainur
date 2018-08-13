@@ -25,7 +25,7 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
         minTime = 0;
         maxTime = 1000;
 
-        AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser(0, 100);
+        AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser(0, 100, 4);
         sv.update(generateStatistics());
         Scene scene = new Scene(sv);
         stage.setScene(scene);
@@ -56,6 +56,9 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
         Statistics stats = new Statistics();
         stats.setMaxScheduleBound(maxTime / 10);
         stats.setMinScheduleBound(minTime / 10);
+        stats.setBrancesLookedAt(1000 * minTime);
+        stats.setSearchSpaceLookedAt((long)(minTime * 4.4));
+        stats.setSearchSpaceCulled((long)(minTime / 2.8));
 
         return stats;
 
