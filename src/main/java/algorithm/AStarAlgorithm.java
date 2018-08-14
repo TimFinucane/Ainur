@@ -20,6 +20,10 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     protected Arborist _arborist;
     protected LowerBound _lowerBound;
 
+    private int _numCulled = 0;
+    private int _numExplored = 0;
+    private Node _currentNode;
+
     /**
      * Constructor for DFSAlgorithm class.
      * @param arborist : A pruner to use in algorithm
@@ -48,11 +52,23 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
     @Override
     public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
+        SimpleSchedule simpleSchedule;
+
+        if (schedule instanceof SimpleSchedule) {
+            simpleSchedule = (SimpleSchedule)schedule;
+        } else {
+            simpleSchedule = new SimpleSchedule(schedule);
+        }
+        run(graph, simpleSchedule, nextNodes);
+    }
+
+    private void run(Graph graph, SimpleSchedule schedule, HashSet<Node> nextNodes) {
 
         // TODO: REPLACE TREEMAP DATA STRUCTURE
         TreeMap<Integer, SimpleSchedule> schedulesToVisit = new TreeMap<>();
 
-        schedulesToVisit.put(estimate(graph, emptySchedule, graph.getEntryPoints()), emptySchedule);
+        //initial best estimate is just the first explored partial schedule.
+        schedulesToVisit.put(_lowerBound.estimate(graph, schedule, graph.getEntryPoints()), schedule);
 
         while (!schedulesToVisit.isEmpty()) {
             Map.Entry<Integer, SimpleSchedule> integerScheduleEntry = schedulesToVisit.firstEntry();
@@ -61,71 +77,40 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
             // if the schedule is complete, it is optimal.
             if (curSchedule.size() == graph.size()) {
-                _bestSchedule = curSchedule;
+                _communicator.update(curSchedule);
                 return;
             }
 
-            // nodes that still need to be added to the current schedule
-            List<Node> nodesToAdd = new ArrayList<>();
-
-            // finds all the nodes that can be added to the schedule
-            for (Node node : graph.getNodes()) {
-                if (!curSchedule.contains(node)) {
-                    boolean canAdd = true;
-                    // a node can only be added to a schedule if all its parents have also been added to that schedule.
-                    for (Edge edge : graph.getIncomingEdges(node)) {
-                        Node parent = edge.getOriginNode();
-                        if (!curSchedule.contains(parent)){
-                            canAdd = false;
-                        }
-                    }
-                    // if all parents of the node are in the schedule, this node can be added.
-                    if (canAdd) {
-                        nodesToAdd.add(node);
-                    }
-                }
-            }
-
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
-            for (Node node : nodesToAdd) {
-                for (int proc = 0; proc < _processors; proc++){
+            for (Node node : nextNodes) {
 
-                    // find the earliest possible time the node can be added to current processor
-                    int earliestPossStart = curSchedule.getEndTime(proc);
+                int[] earliestStarts = Helpers.calculateEarliestTimes(graph, schedule, node);
 
-                    for (Edge edge : graph.getIncomingEdges(node)) {
-                        Node parent = edge.getOriginNode();
-                        Task parentTask = curSchedule.findTask(parent);
+                for (int proc = 0; proc < schedule.getNumProcessors(); proc++){
 
-                        // if parent is not on the same processor as the child, find its communication cost.
-                        if (parentTask.getProcessor() != proc) {
-                            int communicationCost = parentTask.getEndTime() + edge.getCost();
-                            if (earliestPossStart < communicationCost) {
-                                earliestPossStart = communicationCost;
-                            }
-                        }
+                    // generate a new task that is placed on the earliest possible time on the given processor
+                    Task taskToPlace = new Task(proc,earliestStarts[proc], node);
+                    // find all the nodes that are now visitable after adding current node to schedule
+                    HashSet<Node> nextNodesToAdd = Helpers.calculateNextNodes(graph, schedule, nextNodes, node);
+
+                    // check to see if heuristics suggest exploring path
+                    if (_arborist.prune(graph, schedule, taskToPlace)
+                            || _lowerBound.estimate(graph, schedule, new ArrayList<>(nextNodesToAdd)) >= _communicator.getCurrentBest().getEndTime()){
+                        _numCulled++;
+                        continue;
+                    } else { // partial schedule should be explored and thus, added to the search space
+                        SimpleSchedule newSchedule = schedule;
+                        schedule.addTask(taskToPlace);
                     }
-
-                    Task task = new Task(proc, earliestPossStart, node);
-
-                    SimpleSchedule newSchedule = curSchedule;
-                    newSchedule.addTask(task);
-
-                    // TODO: add all new schedules to be visited only if they pass the heuristics.
-                    List<Node> nextNodesToVisit = nodesToAdd;
-                    nextNodesToVisit.remove(node);
-
-//                    if (prune(graph, newSchedule)){
-//
-//                        int lowerBoundEstimate = estimate(graph, newSchedule, nextNodesToVisit);
-//                        schedulesToVisit.put(lowerBoundEstimate, newSchedule);
-//                    }
+                    // current schedule has now been explored so does not need to be revisited
+                    schedulesToVisit.remove(schedule);
                 }
 
             }
 
         }
     }
+
 
     @Override
     public int branchesCulled() {
