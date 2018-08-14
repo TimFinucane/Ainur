@@ -1,6 +1,7 @@
 package algorithm;
 
 import common.graph.Graph;
+import common.graph.Node;
 import common.schedule.Schedule;
 
 /**
@@ -16,5 +17,31 @@ public interface Algorithm {
      */
     void run(Graph graph, int processors);
 
+    /**
+     * Gets the current best schedule the algorithm is inspecting.
+     *
+     * @return The current best schedule.
+     */
     Schedule getCurrentBest();
+
+    /**
+     * Gets the number of branches that were culled via pruning and lower bound.
+     *
+     * @return The number of culled branches that occurred
+     */
+    int branchesCulled();
+
+    /**
+     * Gets the number of branches that were explored by the algorithm.
+     *
+     * @return The number of branches explored
+     */
+    int branchesExplored();
+
+    /**
+     * Gets the current node being explored.
+     *
+     * @return The current node being explored.
+     */
+    Node currentNode();
 }
