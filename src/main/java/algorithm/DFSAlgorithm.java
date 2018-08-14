@@ -15,6 +15,10 @@ public class DFSAlgorithm extends BoundableAlgorithm {
     protected Arborist _arborist;
     protected LowerBound _lowerBound;
 
+    private int _numCulled = 0;
+    private int _numExplored = 0;
+    private Node _currentNode;
+
     /**
      * Constructor for DFSAlgorithm class.
      * @param arborist : A pruner to use in algorithm
@@ -72,6 +76,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
         // Go through every node of our children, recursively
         for(Node node : availableNodes) {
+            _currentNode = node;
             // Calculate what nodes can be added next iteration
             HashSet<Node> nextAvailableNodes = calculateNextNodes(graph, curSchedule, availableNodes, node);
             // Get where to place the node for each processor
@@ -85,8 +90,10 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
                 if( _arborist.prune(graph, curSchedule, toBePlaced)
-                    || _lowerBound.estimate(graph, curSchedule, nextAvailableNodes) >= _communicator.getCurrentBest().getEndTime() )
+                    || _lowerBound.estimate(graph, curSchedule, nextAvailableNodes) >= _communicator.getCurrentBest().getEndTime()) {
+                    _numCulled++;
                     continue;
+                }
 
                 // Check if we have reached the max depth for searching - if so, the notify our notifier
                 if(curSchedule.size() + 1 >= _depth){
@@ -97,6 +104,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 }
                 // Else continue searching through the graph for another schedule solution
                 else {
+                    _numExplored++;
                     // Ok all that has failed so i guess we have to actually recurse with it.
                     // Push the task, run recurse, pop the task. Saves on copying.
                     curSchedule.addTask(toBePlaced);
@@ -106,6 +114,30 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
             }
         }
+    }
+
+    /**
+     * @see Algorithm#branchesCulled()
+     */
+    @Override
+    public int branchesCulled() {
+        return _numCulled;
+    }
+
+    /**
+     * @see Algorithm#branchesExplored()
+     */
+    @Override
+    public int branchesExplored() {
+        return _numExplored;
+    }
+
+    /**
+     * @see Algorithm#currentNode() 
+     */
+    @Override
+    public Node currentNode() {
+        return _currentNode;
     }
 
     /**

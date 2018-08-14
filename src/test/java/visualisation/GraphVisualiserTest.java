@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.TestCase.fail;
 
@@ -25,34 +27,105 @@ public class GraphVisualiserTest extends Application {
     // Graph file to load in
     public static final String GRAPH_FILE = "data/graphs/Nodes_11_OutTree.dot";
 
+    private Graph _graph;
+
     /**
-     * Displays a graph visualisation from a static file input.
+     * Displays several graph visualisations from a single static file input.
      */
     @Override
     public void start(Stage primaryStage) {
-        // Create a graph visualizer from file.
-        Graph graph = this.loadGraph(GRAPH_FILE);
-        GraphVisualiser gv = new GraphVisualiser(graph);
+        _graph = this.loadGraph(GRAPH_FILE);
 
-        // Set up javafx scene
-        Scene scene = new Scene(gv);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        // Test single update on primary stage
+        GraphVisualiser gv = new GraphVisualiser(_graph);
+        this.setScene(primaryStage, gv);
+        this.testSingleUpdate(gv);
 
-        // Test updating.
-        // End result should have 1 highlighted and all other nodes should not be highlighted.
-        this.testUpdate(graph.findByLabel("0"), gv);
-        this.testUpdate(graph.findByLabel("1"), gv);
+        // Create a new stage and test multi update on it
+        Stage secondStage = new Stage();
+        GraphVisualiser gv2 = new GraphVisualiser(_graph);
+        this.setScene(secondStage, gv2);
+        this.testMultiUpdate(gv2);
+
+        // Create a new stage and test multi and single update;
+        Stage thirdStage = new Stage();
+        GraphVisualiser gv3 = new GraphVisualiser(_graph);
+        this.setScene(thirdStage, gv3);
+        this.testMultiAndSingleUpdate(gv3);
     }
 
     /**
-     * Tests the update method of GraphVisualiser
+     * Tests the GraphVisualiser's single update method.
      *
-     * @param nodeToUpdate The node to highlight
-     * @param gv The graphvisualiser to use
+     * @param gv graphvisualiser to test on.
      */
-    public void testUpdate(Node nodeToUpdate, GraphVisualiser gv) {
-        gv.update(nodeToUpdate);
+    public void testSingleUpdate(GraphVisualiser gv) {
+        // Test updating.
+        // End result should have 1 highlighted and all other nodes should not be highlighted.
+        gv.update(_graph.findByLabel("0"));
+        gv.update(_graph.findByLabel("1"));
+    }
+
+    /**
+     * Tests the GraphVisualiser's multi update method.
+     *
+     * @param gv graphvisualiser to test on
+     */
+    public void testMultiUpdate(GraphVisualiser gv) {
+        // Test updating
+        // Comment out blocks to check progress at each step
+
+        // 0 and 1 should be highlighted
+        List<Node> update1 = new ArrayList<>();
+        update1.add(_graph.findByLabel("0"));
+        update1.add(_graph.findByLabel("1"));
+        gv.update(update1);
+
+        // 2 and 3 should be highlighted
+        List<Node> update2 = new ArrayList<>();
+        update2.add(_graph.findByLabel("2"));
+        update2.add(_graph.findByLabel("3"));
+        gv.update(update2);
+
+        // Just node 2 should be highlighted
+        List<Node> update3 = new ArrayList<>();
+        update3.add(_graph.findByLabel("2"));
+        gv.update(update3);
+
+        // 0, 2 and 10 should be highlighted
+        update3.add(_graph.findByLabel("0"));
+        update3.add(_graph.findByLabel("10"));
+        gv.update(update3);
+
+        // All nodes should be highlighted
+        List<Node> update4 = new ArrayList<>();
+        update4 = _graph.getNodes();
+        gv.update(update4);
+    }
+
+    /**
+     * Tests the GraphVisualiser's sing and multi update methods together
+     *
+     * @param gv The GraphVisualiser to test on.
+     */
+    public void testMultiAndSingleUpdate(GraphVisualiser gv) {
+        // Should end with just node 9 highlighted
+        this.testMultiUpdate(gv);
+        this.testSingleUpdate(gv);
+        gv.update(_graph.findByLabel("9"));
+    }
+
+    /**
+     * Private helper method for creating new windows
+     *
+     * @param stage The stage to put the graph visualiser in.
+     * @param gv The graph visualiser to put in the stage.
+     */
+    private void setScene(Stage stage, GraphVisualiser gv) {
+        // Set up javafx scene
+        Scene scene = new Scene(gv);
+        stage.setScene(scene);
+        stage.show();
     }
 
     /**

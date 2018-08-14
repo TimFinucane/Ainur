@@ -28,4 +28,17 @@ public interface Arborist {
      */
     boolean prune(Graph graph, Schedule schedule, Task toBeAdded);
 
+    /**
+     * Combines multiple arborists by deciding to prune if ANY arborist says to prune.
+     * Note: Be VERY careful combining arborists together, make sure they are compatible with eachother.
+     */
+    static Arborist combine(Arborist... arborists) {
+        return (graph, schedule, tobeAdded) -> {
+            for(Arborist arborist : arborists)
+                if(arborist.prune(graph, schedule, tobeAdded))
+                    return true;
+
+            return false;
+        };
+    }
 }

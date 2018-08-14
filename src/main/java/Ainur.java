@@ -2,6 +2,7 @@ import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
 import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import cli.Cli;
@@ -56,17 +57,13 @@ public class Ainur {
         Algorithm algorithm;
         if(cores == 1) { // Single-threaded DFS algorithm
             algorithm = new DFSAlgorithm(
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                    new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                        || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
                 new CriticalPath()
             );
         } else { // Multithreaded, Tiered DFS algorithm
             algorithm = new TieredAlgorithm(cores, (tier, communicator) ->
                 new DFSAlgorithm(communicator,
-                    (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask)
-                            || new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                    Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
                     new CriticalPath(),
                     tier == 0 ? 8 : Integer.MAX_VALUE // Depth is 8 for first tier, infinite for second tier
                 )
