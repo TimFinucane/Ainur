@@ -46,11 +46,8 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         _depth = Integer.MAX_VALUE;
     }
 
-
     @Override
     public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
-
-        SimpleSchedule emptySchedule = new SimpleSchedule(_processors);
 
         // TODO: REPLACE TREEMAP DATA STRUCTURE
         TreeMap<Integer, SimpleSchedule> schedulesToVisit = new TreeMap<>();
