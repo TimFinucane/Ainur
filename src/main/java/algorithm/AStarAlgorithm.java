@@ -15,6 +15,7 @@ import java.util.*;
  * Algorithm implementation that will utilise the A* technique to generate an optimal schedule.
  */
 public class AStarAlgorithm extends BoundableAlgorithm {
+
     private int _depth;
     protected Arborist _arborist;
     protected LowerBound _lowerBound;
@@ -32,6 +33,19 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         _depth = depth;
     }
 
+    /**
+     * Constructor for A* running in isolation.
+     * @param arborist
+     * @param lowerBound
+     */
+    public AStarAlgorithm(Arborist arborist, LowerBound lowerBound){
+        super();
+        _arborist = arborist;
+        _lowerBound = lowerBound;
+        //In this case should iterate through all layers of partial schedules.
+        _depth = Integer.MAX_VALUE;
+    }
+
 
     @Override
     public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
@@ -40,6 +54,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
         // TODO: REPLACE TREEMAP DATA STRUCTURE
         TreeMap<Integer, SimpleSchedule> schedulesToVisit = new TreeMap<>();
+
         schedulesToVisit.put(estimate(graph, emptySchedule, graph.getEntryPoints()), emptySchedule);
 
         while (!schedulesToVisit.isEmpty()) {
@@ -115,4 +130,18 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         }
     }
 
+    @Override
+    public int branchesCulled() {
+        return 0;
+    }
+
+    @Override
+    public int branchesExplored() {
+        return 0;
+    }
+
+    @Override
+    public Node currentNode() {
+        return null;
+    }
 }
