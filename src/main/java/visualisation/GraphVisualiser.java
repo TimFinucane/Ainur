@@ -13,6 +13,7 @@ import org.graphstream.ui.view.Viewer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,7 +71,7 @@ public class GraphVisualiser extends Region {
     private org.graphstream.graph.Graph _gsGraph;
 
     // Keeps track of the current highlighted node
-    private String _currentNodeId;
+    private List<Node> _currentNodes;
 
     /* Constructors */
 
@@ -83,6 +84,8 @@ public class GraphVisualiser extends Region {
     public GraphVisualiser(Graph graph) {
         // Use the fully compliant css renderer for graphstream
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+
+        _currentNodes = new ArrayList<>();
 
         // Create the graphstream graph
         _gsGraph = createGSGraph(graph);
@@ -107,19 +110,34 @@ public class GraphVisualiser extends Region {
      * Updates the current node that is highlighted.
      * This node will be red. It will also be bigger.
      * All other nodes will be black.
+     * This method is intended to be called with a solo algorithm.
      *
      * @param node The node which is to be selected
      */
     public void update(Node node) {
-        // If there is already a selected node un highlight it.
-        if (_currentNodeId != null) {
-            _gsGraph.getNode(_currentNodeId).removeAttribute(UI_CLASS);
+        List<Node> nodeList = new ArrayList<>();
+        nodeList.add(node);
+        this.update(nodeList);
+    }
+
+    /**
+     * Updates the current nodes that are highlighted.
+     * These nodes will be red and bigger than unhighlighted nodes.
+     * All other nodes will be black.
+     * This method is intended to be called when multiple algorithms are running concurrently.
+     *
+     * @param nodes The list of nodes to highlight.
+     */
+    public void update(List<Node> nodes) {
+        for (Node node: _currentNodes) {
+            _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
         }
 
-        // Highlight the new node.
-        _currentNodeId = node.getLabel();
-        _gsGraph.getNode(_currentNodeId).setAttribute(UI_CLASS, MARKED_CLASS);
+        for (Node node:  nodes) {
+            _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
+        }
 
+        _currentNodes = nodes;
     }
 
     /* Private Helper Methods */
