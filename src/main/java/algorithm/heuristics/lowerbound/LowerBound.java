@@ -31,18 +31,10 @@ public interface LowerBound {
     static LowerBound combine(LowerBound... bounds) {
         return new LowerBound() {
             @Override
-            public int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit) {
+            public int estimate(Graph graph, Schedule schedule, HashSet<Node> nodesToVisit) {
                 int min = bounds[0].estimate(graph, schedule, nodesToVisit);
                 for(int i = 1; i < bounds.length; ++i)
                     min = Math.min(min, bounds[i].estimate(graph, schedule, nodesToVisit));
-
-                return min;
-            }
-            @Override
-            public int estimate(Graph graph, Schedule schedule){
-                int min = bounds[0].estimate(graph, schedule);
-                for(int i = 1; i < bounds.length; ++i)
-                    min = Math.min(min, bounds[i].estimate(graph, schedule));
 
                 return min;
             }
