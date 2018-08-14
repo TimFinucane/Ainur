@@ -8,6 +8,7 @@ import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.util.*;
 
@@ -17,8 +18,8 @@ import java.util.*;
 public class AStarAlgorithm extends BoundableAlgorithm {
 
     private int _depth;
-    protected Arborist _arborist;
-    protected LowerBound _lowerBound;
+    private Arborist _arborist;
+    private LowerBound _lowerBound;
 
     private int _numCulled = 0;
     private int _numExplored = 0;
@@ -39,8 +40,8 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
     /**
      * Constructor for A* running in isolation.
-     * @param arborist
-     * @param lowerBound
+     * @param arborist : A pruner to use in algorithm
+     * @param lowerBound : A lower-bound to use in algorithm
      */
     public AStarAlgorithm(Arborist arborist, LowerBound lowerBound){
         super();
@@ -84,23 +85,32 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
             for (Node node : nextNodes) {
 
+                // find the earliest possible time the current node could be placed on each processor
                 int[] earliestStarts = Helpers.calculateEarliestTimes(graph, schedule, node);
 
+                // place the node on each possible processor to generate all possible schedules
                 for (int proc = 0; proc < schedule.getNumProcessors(); proc++){
 
-                    // generate a new task that is placed on the earliest possible time on the given processor
-                    Task taskToPlace = new Task(proc,earliestStarts[proc], node);
-                    // find all the nodes that are now visitable after adding current node to schedule
+                    // generate a new task that is placed on the earliest possible time for current processor
+                    Task taskToPlace = new Task(proc, earliestStarts[proc], node);
+
+                    // generates a schedule with new task added.
+                    SimpleSchedule newSchedule = schedule;
+                    schedule.addTask(taskToPlace);
+
+                    // find all the nodes that can now be visited after adding current node to schedule
                     HashSet<Node> nextNodesToAdd = Helpers.calculateNextNodes(graph, schedule, nextNodes, node);
+
+                    // find the lower bound associated to the newly generated schedule.
+                    int newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
 
                     // check to see if heuristics suggest exploring path
                     if (_arborist.prune(graph, schedule, taskToPlace)
-                            || _lowerBound.estimate(graph, schedule, new ArrayList<>(nextNodesToAdd)) >= _communicator.getCurrentBest().getEndTime()){
+                            || newLowerBound >= _communicator.getCurrentBest().getEndTime()){
                         _numCulled++;
                         continue;
                     } else { // partial schedule should be explored and thus, added to the search space
-                        SimpleSchedule newSchedule = schedule;
-                        schedule.addTask(taskToPlace);
+                        schedulesToVisit.put(newLowerBound, newSchedule);
                     }
                     // current schedule has now been explored so does not need to be revisited
                     schedulesToVisit.remove(schedule);
