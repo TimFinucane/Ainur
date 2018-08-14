@@ -5,7 +5,7 @@ import common.schedule.*;
 
 import java.util.HashSet;
 
-public class Helpers {
+public class AlgorithmUtils {
     /**
      * Calculates the set of available nodes to add to the schedule, derived from adding the current node
      * to the schedule and using the old set of available nodes.

@@ -5,7 +5,7 @@ import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.*;
 import common.schedule.*;
 import java.util.*;
-import static algorithm.Helpers.*;
+import static algorithm.AlgorithmUtils.*;
 
 /**
  * A DFS implementation of the Algorithm class.
@@ -78,9 +78,9 @@ public class DFSAlgorithm extends BoundableAlgorithm {
         for(Node node : availableNodes) {
             _currentNode = node;
             // Calculate what nodes can be added next iteration
-            HashSet<Node> nextAvailableNodes = Helpers.calculateNextNodes(graph, curSchedule, availableNodes, node);
+            HashSet<Node> nextAvailableNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule, availableNodes, node);
             // Get where to place the node for each processor
-            int[] earliestStarts = Helpers.calculateEarliestTimes(graph, curSchedule, node);
+            int[] earliestStarts = AlgorithmUtils.calculateEarliestTimes(graph, curSchedule, node);
 
             // Now we run all possible ways of adding this node to the schedule.
             // We apply this to the schedule then remove it before using it again,
@@ -145,7 +145,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      */
     private void placeLastNode(Graph graph, SimpleSchedule schedule, Node last) {
         // Choose where to add it:
-        int[] earliestStarts = calculateEarliestTimes(graph, schedule, last);
+        int[] earliestStarts = AlgorithmUtils.calculateEarliestTimes(graph, schedule, last);
 
         // Find best of them
         int minIndex = 0;
