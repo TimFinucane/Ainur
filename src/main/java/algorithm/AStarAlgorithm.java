@@ -5,6 +5,7 @@ import algorithm.heuristics.pruner.Arborist;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
+import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 
@@ -13,23 +14,31 @@ import java.util.*;
 /**
  * Algorithm implementation that will utilise the A* technique to generate an optimal schedule.
  */
-public class AStarAlgorithm extends Algorithm {
+public class AStarAlgorithm extends BoundableAlgorithm {
+    private int _depth;
+    protected Arborist _arborist;
+    protected LowerBound _lowerBound;
 
     /**
-     * Constructor for AStarAlgorithm class.
-     * Defaults multithreading to false.
-     * @param processors The number of processors
+     * Constructor for DFSAlgorithm class.
+     * @param arborist : A pruner to use in algorithm
+     * @param lowerBound : A lower-bound to use in algorithm
+     * @param communicator : A communicator used to communicate with tieredAlgorithms
      */
-    public AStarAlgorithm(int processors, Arborist arborist, LowerBound lowerBound) {
-        super(processors, false, arborist, lowerBound);
+    public AStarAlgorithm(MultiAlgorithmCommunicator communicator, Arborist arborist, LowerBound lowerBound, int depth) {
+        super(communicator);
+        _arborist = arborist;
+        _lowerBound = lowerBound;
+        _depth = depth;
     }
 
+
     @Override
-    public void start(Graph graph) {
+    public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
 
         SimpleSchedule emptySchedule = new SimpleSchedule(_processors);
 
-        // TODO: Ensure TreeMaps allow duplicate key values... (Doesn't look like it)
+        // TODO: REPLACE TREEMAP DATA STRUCTURE
         TreeMap<Integer, SimpleSchedule> schedulesToVisit = new TreeMap<>();
         schedulesToVisit.put(estimate(graph, emptySchedule, graph.getEntryPoints()), emptySchedule);
 
@@ -58,6 +67,7 @@ public class AStarAlgorithm extends Algorithm {
                             canAdd = false;
                         }
                     }
+                    // if all parents of the node are in the schedule, this node can be added.
                     if (canAdd) {
                         nodesToAdd.add(node);
                     }
@@ -90,21 +100,19 @@ public class AStarAlgorithm extends Algorithm {
                     newSchedule.addTask(task);
 
                     // TODO: add all new schedules to be visited only if they pass the heuristics.
-
                     List<Node> nextNodesToVisit = nodesToAdd;
                     nextNodesToVisit.remove(node);
 
-                    if (prune(graph, newSchedule)){
-
-                        int lowerBoundEstimate = estimate(graph, newSchedule, nextNodesToVisit);
-                        schedulesToVisit.put(lowerBoundEstimate, newSchedule);
-                    }
+//                    if (prune(graph, newSchedule)){
+//
+//                        int lowerBoundEstimate = estimate(graph, newSchedule, nextNodesToVisit);
+//                        schedulesToVisit.put(lowerBoundEstimate, newSchedule);
+//                    }
                 }
 
             }
 
         }
     }
-
 
 }
