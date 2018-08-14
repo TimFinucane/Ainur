@@ -68,7 +68,7 @@ public class GreedyAlgorithm implements Algorithm {
             nodesToVisit = new ArrayList<>(Helpers.calculateNextNodes(graph, schedule, new HashSet<>(nodesToVisit), nodeAdded));
         }
 
-        return schedule;
+        return schedule.getEndTime();
     }
 
     @Override
