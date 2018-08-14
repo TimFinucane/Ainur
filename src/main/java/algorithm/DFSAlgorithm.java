@@ -2,15 +2,10 @@ package algorithm;
 
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.lowerbound.LowerBound;
-import common.graph.Edge;
-import common.graph.Graph;
-import common.graph.Node;
-import common.schedule.Schedule;
-import common.schedule.SimpleSchedule;
-import common.schedule.Task;
-
+import common.graph.*;
+import common.schedule.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import static algorithm.Helpers.*;
 
 /**
  * A DFS implementation of the Algorithm class.
@@ -73,63 +68,25 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      * @param availableNodes A helpful list of nodes available to visit next
      */
     private void recurse(Graph graph, SimpleSchedule curSchedule, HashSet<Node> availableNodes) {
+        // If only one node left, take it and place it in optimal place. Base case.
+        if(curSchedule.size() + 1 == graph.size()) {
+            placeLastNode(graph, curSchedule, availableNodes.iterator().next());
+            return;
+        }
+
         // Go through every node of our children, recursively
         for(Node node : availableNodes) {
-            // Construct our new available nodes to pass on by copying available nodes and removing the one we're about
-            // to add
-            HashSet<Node> nextAvailableNodes = new HashSet<>(availableNodes);
-            nextAvailableNodes.remove(node);
-
-            // Now add all the children of the node we are visiting
-            // Check that everything we add has all it's parents in the schedule.
-            // There might be better code to do this or via method?
-            for(Edge edge : graph.getOutgoingEdges(node)) {
-                Node nodeToAdd = edge.getDestinationNode();
-                _currentNode = nodeToAdd;
-
-                boolean parentsInSchedule = true;
-                for(Edge parentEdge : graph.getIncomingEdges(nodeToAdd)) {
-                    if (parentEdge.getOriginNode() != node && curSchedule.findTask(parentEdge.getOriginNode()) == null) {
-                        parentsInSchedule = false;
-                        break;
-                    }
-                }
-                if(parentsInSchedule)
-                    nextAvailableNodes.add(nodeToAdd);
-            }
+            _currentNode = node;
+            // Calculate what nodes can be added next iteration
+            HashSet<Node> nextAvailableNodes = calculateNextNodes(graph, curSchedule, availableNodes, node);
+            // Get where to place the node for each processor
+            int[] earliestStarts = calculateEarliestTimes(graph, curSchedule, node);
 
             // Now we run all possible ways of adding this node to the schedule.
             // We apply this to the schedule then remove it before using it again,
             // to prevent constant cloning of the schedule
             for(int processor = 0; processor < curSchedule.getNumProcessors(); ++processor) {
-                // Calculate earliest it can be placed
-                int earliest = 0;
-                for(Edge edge : graph.getIncomingEdges(node)) {
-                    Node dependencyNode = edge.getOriginNode();
-                    Task item = curSchedule.findTask(dependencyNode);
-
-                    if(item == null)
-                        throw new RuntimeException("Chide Tim for not checking a node's parents are in the schedule");
-
-                    // If it's on the same processor, just has to be after task end. If not, then it also needs
-                    // to be past the communication cost
-                    earliest = Math.max(earliest,
-                        (item.getProcessor() == processor) ? item.getEndTime() :  item.getEndTime() + edge.getCost());
-                }
-                if( curSchedule.size(processor) > 0 )
-                    earliest = Math.max(earliest, curSchedule.getLatest(processor).getEndTime());
-
-                Task toBePlaced = new Task(processor, earliest, node);
-
-                // Check the base case (that adding the task will give us a complete schedule that we then return)
-                if(curSchedule.size() + 1 == graph.size()) {
-                    SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
-                    newSchedule.addTask(toBePlaced);
-                    if(newSchedule.getEndTime() < _communicator.getCurrentBest().getEndTime()) {
-                        _communicator.update(newSchedule);
-                    }
-                    continue;
-                }
+                Task toBePlaced = new Task(processor, earliestStarts[processor], node);
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
                 if( _arborist.prune(graph, curSchedule, toBePlaced)
@@ -147,8 +104,9 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 }
                 // Else continue searching through the graph for another schedule solution
                 else {
-                    // Ok all that has failed so i guess we have to actually recurse with it
                     _numExplored++;
+                    // Ok all that has failed so i guess we have to actually recurse with it.
+                    // Push the task, run recurse, pop the task. Saves on copying.
                     curSchedule.addTask(toBePlaced);
                     recurse(graph, curSchedule, nextAvailableNodes);
                     curSchedule.removeTask(toBePlaced);
@@ -180,5 +138,27 @@ public class DFSAlgorithm extends BoundableAlgorithm {
     @Override
     public Node currentNode() {
         return _currentNode;
+    }
+
+    /**
+     * Places the last node in a schedule in the most optimal place, and attempts to update current best if it is better
+     */
+    private void placeLastNode(Graph graph, SimpleSchedule schedule, Node last) {
+        // Choose where to add it:
+        int[] earliestStarts = calculateEarliestTimes(graph, schedule, last);
+
+        // Find best of them
+        int minIndex = 0;
+        for(int processor = 1; processor < earliestStarts.length; ++processor)
+            if(earliestStarts[processor] < earliestStarts[minIndex])
+                minIndex = processor;
+
+        // Check if better than current, if so then update.
+        int endTime = Math.min(schedule.getEndTime(), earliestStarts[minIndex] + last.getComputationCost());
+        if(endTime < _communicator.getCurrentBest().getEndTime()) {
+            SimpleSchedule newSchedule = new SimpleSchedule(schedule);
+            newSchedule.addTask(new Task(minIndex, earliestStarts[minIndex], last));
+            _communicator.update(newSchedule);
+        }
     }
 }
