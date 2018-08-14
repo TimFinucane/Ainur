@@ -16,5 +16,10 @@ public interface Algorithm {
      */
     void run(Graph graph, int processors);
 
+    /**
+     * Gets the current best schedule the algorithm is inspecting.
+     *
+     * @return The current best schedule.
+     */
     Schedule getCurrentBest();
 }
