@@ -5,6 +5,7 @@ import common.graph.Node;
 import common.schedule.Schedule;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -22,5 +23,6 @@ public interface LowerBound {
      *                     (i.e. all dependencies accounted for in the partial schedule).
      * @return A lower bound of the optimal solution length
      */
+    int estimate(Graph graph, Schedule schedule, HashSet<Node> nodesToVisit);
 
 }

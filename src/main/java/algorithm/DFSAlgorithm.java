@@ -85,7 +85,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
                 if( _arborist.prune(graph, curSchedule, toBePlaced)
-                    || _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime() )
+                    || _lowerBound.estimate(graph, curSchedule, nextAvailableNodes) >= _communicator.getCurrentBest().getEndTime() )
                     continue;
 
                 // Check if we have reached the max depth for searching - if so, the notify our notifier
