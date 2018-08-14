@@ -145,7 +145,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      */
     private void placeLastNode(Graph graph, SimpleSchedule schedule, Node last) {
         // Choose where to add it:
-        int[] earliestStarts = Helpers.calculateEarliestTimes(graph, schedule, last);
+        int[] earliestStarts = calculateEarliestTimes(graph, schedule, last);
 
         // Find best of them
         int minIndex = 0;

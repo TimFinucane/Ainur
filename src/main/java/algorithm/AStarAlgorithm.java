@@ -94,24 +94,33 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                     // generate a new task that is placed on the earliest possible time for current processor
                     Task taskToPlace = new Task(proc, earliestStarts[proc], node);
 
-                    // generates a schedule with new task added.
-                    SimpleSchedule newSchedule = schedule;
-                    schedule.addTask(taskToPlace);
-
-                    // find all the nodes that can now be visited after adding current node to schedule
-                    HashSet<Node> nextNodesToAdd = Helpers.calculateNextNodes(graph, schedule, nextNodes, node);
-
-                    // find the lower bound associated to the newly generated schedule.
-                    int newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
-
-                    // check to see if heuristics suggest exploring path
-                    if (_arborist.prune(graph, schedule, taskToPlace)
-                            || newLowerBound >= _communicator.getCurrentBest().getEndTime()){
+                    // if pruner suggests culling this branch, do not explore this schedule
+                    if (_arborist.prune(graph, schedule, taskToPlace)) {
                         _numCulled++;
                         continue;
-                    } else { // partial schedule should be explored and thus, added to the search space
-                        schedulesToVisit.put(newLowerBound, newSchedule);
+
+                    } else { // explore this schedule
+
+                        // generates a schedule with new task added.
+                        SimpleSchedule newSchedule = schedule;
+                        schedule.addTask(taskToPlace);
+
+                        // find all the nodes that can now be visited after adding current node to schedule
+                        HashSet<Node> nextNodesToAdd = Helpers.calculateNextNodes(graph, schedule, nextNodes, node);
+
+                        // find the lower bound associated to the newly generated schedule.
+                        int newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
+
+                        // check to see if heuristics suggest exploring path based on new schedule lower bound estimate
+                        if (newLowerBound >= _communicator.getCurrentBest().getEndTime()) {
+                            _numCulled++;
+                            continue;
+                        } else { // explore new schedule by adding it to the search space
+                            schedulesToVisit.put(newLowerBound, newSchedule);
+                        }
+
                     }
+
                     // current schedule has now been explored so does not need to be revisited
                     schedulesToVisit.remove(schedule);
                 }
