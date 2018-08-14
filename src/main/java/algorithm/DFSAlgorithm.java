@@ -89,29 +89,24 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 Task toBePlaced = new Task(processor, earliestStarts[processor], node);
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
-                if( _arborist.prune(graph, curSchedule, toBePlaced)
-                    || _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime()) {
+                if( _arborist.prune(graph, curSchedule, toBePlaced) ) {
                     _numCulled++;
                     continue;
                 }
 
-                // Check if we have reached the max depth for searching - if so, the notify our notifier
-                if(curSchedule.size() + 1 >= _depth){
-                    // Copy the schedule and nodes so that they aren't modified when passed on.
-                    SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
-                    newSchedule.addTask(toBePlaced);
-                    _communicator.explorePartialSolution(newSchedule, new HashSet<>(nextAvailableNodes));
-                }
-                // Else continue searching through the graph for another schedule solution
-                else {
+                curSchedule.addTask(toBePlaced);
+                // Check whether to continue (delve deeper)
+                if( _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime()) {
+                    _numCulled++;
+                } else { // We are meant to continue with this schedule
                     _numExplored++;
-                    // Ok all that has failed so i guess we have to actually recurse with it.
-                    // Push the task, run recurse, pop the task. Saves on copying.
-                    curSchedule.addTask(toBePlaced);
-                    recurse(graph, curSchedule, nextAvailableNodes);
-                    curSchedule.removeTask(toBePlaced);
+                    // Either pass the schedule to our communicator
+                    if (curSchedule.size() + 1 >= _depth)
+                        _communicator.explorePartialSolution(new SimpleSchedule(curSchedule), nextAvailableNodes);
+                    else
+                        recurse(graph, curSchedule, nextAvailableNodes);
                 }
-
+                curSchedule.removeTask(toBePlaced);
             }
         }
     }
