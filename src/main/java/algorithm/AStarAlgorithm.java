@@ -84,6 +84,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
             for (Node node : nextNodes) {
+                _currentNode = node;
 
                 // find the earliest possible time the current node could be placed on each processor
                 int[] earliestStarts = Helpers.calculateEarliestTimes(graph, schedule, node);
@@ -116,6 +117,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                             _numCulled++;
                             continue;
                         } else { // explore new schedule by adding it to the search space
+                            _numExplored++;
                             schedulesToVisit.put(newLowerBound, newSchedule);
                         }
 
@@ -133,16 +135,16 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
     @Override
     public int branchesCulled() {
-        return 0;
+        return _numCulled;
     }
 
     @Override
     public int branchesExplored() {
-        return 0;
+        return _numExplored;
     }
 
     @Override
     public Node currentNode() {
-        return null;
+        return _currentNode;
     }
 }
