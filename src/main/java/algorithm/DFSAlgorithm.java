@@ -20,6 +20,10 @@ public class DFSAlgorithm extends BoundableAlgorithm {
     protected Arborist _arborist;
     protected LowerBound _lowerBound;
 
+    private int _numCulled = 0;
+    private int _numExplored = 0;
+    private Node _currentNode;
+
     /**
      * Constructor for DFSAlgorithm class.
      * @param arborist : A pruner to use in algorithm
@@ -81,6 +85,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
             // There might be better code to do this or via method?
             for(Edge edge : graph.getOutgoingEdges(node)) {
                 Node nodeToAdd = edge.getDestinationNode();
+                _currentNode = nodeToAdd;
 
                 boolean parentsInSchedule = true;
                 for(Edge parentEdge : graph.getIncomingEdges(nodeToAdd)) {
@@ -128,8 +133,10 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
                 if( _arborist.prune(graph, curSchedule, toBePlaced)
-                    || _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime() )
+                    || _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime()) {
+                    _numCulled++;
                     continue;
+                }
 
                 // Check if we have reached the max depth for searching - if so, the notify our notifier
                 if(curSchedule.size() + 1 >= _depth){
@@ -141,6 +148,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 // Else continue searching through the graph for another schedule solution
                 else {
                     // Ok all that has failed so i guess we have to actually recurse with it
+                    _numExplored++;
                     curSchedule.addTask(toBePlaced);
                     recurse(graph, curSchedule, nextAvailableNodes);
                     curSchedule.removeTask(toBePlaced);
@@ -148,5 +156,29 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
             }
         }
+    }
+
+    /**
+     * @see Algorithm#branchesCulled()
+     */
+    @Override
+    public int branchesCulled() {
+        return _numCulled;
+    }
+
+    /**
+     * @see Algorithm#branchesExplored()
+     */
+    @Override
+    public int branchesExplored() {
+        return _numExplored;
+    }
+
+    /**
+     * @see Algorithm#currentNode() 
+     */
+    @Override
+    public Node currentNode() {
+        return _currentNode;
     }
 }
