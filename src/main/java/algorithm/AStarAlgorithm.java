@@ -2,13 +2,11 @@ package algorithm;
 
 import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
-import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.util.*;
 
@@ -20,6 +18,9 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private int _depth;
     private Arborist _arborist;
     private LowerBound _lowerBound;
+
+    // amount of memory allocated for the algorithm
+    private static final double PERCENTAGE_MEMORY_TO_USE = 70;
 
     private int _numCulled = 0;
     private int _numExplored = 0;
@@ -63,18 +64,26 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         run(graph, simpleSchedule, nextNodes);
     }
 
-    private void run(Graph graph, SimpleSchedule schedule, HashSet<Node> nextNodes) {
+    private void run(Graph graph, SimpleSchedule rootSchedule, HashSet<Node> nextNodes) {
+
+
 
         // TODO: REPLACE TREEMAP DATA STRUCTURE
         TreeMap<Integer, SimpleSchedule> schedulesToVisit = new TreeMap<>();
 
         //initial best estimate is just the first explored partial schedule.
-        schedulesToVisit.put(_lowerBound.estimate(graph, schedule, graph.getEntryPoints()), schedule);
+        schedulesToVisit.put(_lowerBound.estimate(graph, rootSchedule, graph.getEntryPoints()), rootSchedule);
 
         while (!schedulesToVisit.isEmpty()) {
             Map.Entry<Integer, SimpleSchedule> integerScheduleEntry = schedulesToVisit.firstEntry();
 
             SimpleSchedule curSchedule = integerScheduleEntry.getValue();
+
+            if (!continueRunning()) {
+                // TODO figure out how to get the next nodes associated to current best schedule
+                HashSet<Node> nextNodesToAdd = Helpers.calculateNextNodes(graph, curSchedule, );
+                _communicator.explorePartialSolution(curSchedule, );
+            }
 
             // if the schedule is complete, it is optimal.
             if (curSchedule.size() == graph.size()) {
@@ -87,27 +96,27 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                 _currentNode = node;
 
                 // find the earliest possible time the current node could be placed on each processor
-                int[] earliestStarts = Helpers.calculateEarliestTimes(graph, schedule, node);
+                int[] earliestStarts = Helpers.calculateEarliestTimes(graph, curSchedule, node);
 
                 // place the node on each possible processor to generate all possible schedules
-                for (int proc = 0; proc < schedule.getNumProcessors(); proc++){
+                for (int proc = 0; proc < rootSchedule.getNumProcessors(); proc++){
 
                     // generate a new task that is placed on the earliest possible time for current processor
                     Task taskToPlace = new Task(proc, earliestStarts[proc], node);
 
                     // if pruner suggests culling this branch, do not explore this schedule
-                    if (_arborist.prune(graph, schedule, taskToPlace)) {
+                    if (_arborist.prune(graph, curSchedule, taskToPlace)) {
                         _numCulled++;
                         continue;
 
                     } else { // explore this schedule
 
                         // generates a schedule with new task added.
-                        SimpleSchedule newSchedule = schedule;
-                        schedule.addTask(taskToPlace);
+                        SimpleSchedule newSchedule = curSchedule;
+                        newSchedule.addTask(taskToPlace);
 
                         // find all the nodes that can now be visited after adding current node to schedule
-                        HashSet<Node> nextNodesToAdd = Helpers.calculateNextNodes(graph, schedule, nextNodes, node);
+                        HashSet<Node> nextNodesToAdd = Helpers.calculateNextNodes(graph, curSchedule, nextNodes, node);
 
                         // find the lower bound associated to the newly generated schedule.
                         int newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
@@ -124,7 +133,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                     }
 
                     // current schedule has now been explored so does not need to be revisited
-                    schedulesToVisit.remove(schedule);
+                    schedulesToVisit.remove(curSchedule);
                 }
 
             }
@@ -132,17 +141,46 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         }
     }
 
+    /**
+     * Helper method to determine if the algorithm is using over its threshold value of memory and if so if it should
+     * continue to run.
+     * @return Whether or not the algorithm has enough memory to keep running.
+     */
+    private boolean continueRunning(){
+        Runtime runtime = Runtime.getRuntime();
 
+        // determines the amount of memory that has been used out of the maximum amount that could be allocated to it
+        long memoryUsed = runtime.maxMemory() - runtime.freeMemory();
+        // calculates the percentage of memory that has been used
+        long percentUsed = (memoryUsed/ runtime.maxMemory())*100;
+
+        //if algorithm has used more than a set percentage it should pass its implementation to another thread.
+        if (percentUsed > PERCENTAGE_MEMORY_TO_USE) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @see Algorithm#branchesCulled()
+     */
     @Override
     public int branchesCulled() {
         return _numCulled;
     }
 
+    /**
+     * @see Algorithm#branchesExplored()
+     */
     @Override
     public int branchesExplored() {
         return _numExplored;
     }
 
+    /**
+     * @see Algorithm#currentNode()
+     */
     @Override
     public Node currentNode() {
         return _currentNode;
