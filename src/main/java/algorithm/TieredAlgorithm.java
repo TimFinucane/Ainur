@@ -64,7 +64,6 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     public void run(Graph graph, int processors) {
         _graph = graph;
         for (int i = 0 ; i<_threads.length ; i++) {
-            final int threadNo = i;
             _threads[i] = new Thread(() -> runThread());
             _threads[i].start();
         }
