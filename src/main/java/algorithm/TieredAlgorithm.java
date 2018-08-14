@@ -118,15 +118,14 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     public Node currentNode() {
         // Since several algorithms can be running concurrently just select the first running algorithm
         // which is not null.
-        Algorithm algorithm = null;
-        Node node;
+        Node node = null;
         for (int i = 0; i < _algorithmsRunning.length; i++) {
             if (_algorithmsRunning[i] != null) {
-                algorithm = _algorithmsRunning[(int)(Math.random() * _algorithmsRunning.length)];
+                node = _algorithmsRunning[i].currentNode();
             }
         }
 
-        return algorithm.currentNode();
+        return node;
     }
 
     /**
