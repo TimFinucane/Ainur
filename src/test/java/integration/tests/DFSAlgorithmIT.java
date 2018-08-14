@@ -4,6 +4,7 @@ import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
+import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
@@ -49,10 +50,8 @@ public class DFSAlgorithmIT {
 
         // Set up algorithm classes
         _algorithmWithAllHeuristics = new DFSAlgorithm(
-                (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                                new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
-                new CriticalPath());
+            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+            new CriticalPath());
     }
 
 

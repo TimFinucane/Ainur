@@ -3,6 +3,7 @@ package integration.tests;
 import algorithm.*;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
+import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
@@ -54,9 +55,7 @@ public class DFSAlgorithmMultiThreadedIT {
         _algorithmhAllHeuristics4Threads = new TieredAlgorithm(4,
                 (tier, communicator) -> new DFSAlgorithm(
                     communicator,
-                    (pruningGraph, pruningSchedule, pruningTask) ->
-                        new StartTimePruner().prune(pruningGraph, pruningSchedule, pruningTask) ||
-                        new ProcessorOrderPruner().prune(pruningGraph, pruningSchedule, pruningTask),
+                    Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
                     new CriticalPath(),
                     tier == 0 ? 8 : 10000
         ));
