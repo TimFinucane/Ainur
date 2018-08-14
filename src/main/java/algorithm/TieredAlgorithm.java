@@ -17,8 +17,12 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
     private AlgorithmFactory            _generator;
     private Thread[]                    _threads;
+    private BoundableAlgorithm[]        _algorithmsRunning;
 
     private Graph                       _graph;
+
+    private int                         _totalCulled;
+    private int                         _totalExplored;
 
     /**
      * Does not get given a schedule to start with, it's initial guess is instead infinite.
@@ -29,6 +33,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         super();
         _generator = generator;
         _threads = new Thread[threads - 1];
+        _algorithmsRunning = new BoundableAlgorithm[threads - 1];
         // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
         _schedulesToExplore = new LinkedBlockingQueue<>((threads - 1) * 2);
     }
@@ -53,11 +58,11 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     @Override
     public void run(Graph graph, int processors) {
         _graph = graph;
-        for (int i = 0 ; i<_threads.length ; i++){
-            _threads[i] = new Thread(this::runThread);
+        for (int i = 0 ; i<_threads.length ; i++) {
+            final int threadNo = i;
+            _threads[i] = new Thread(() -> runThread(threadNo));
             _threads[i].start();
         }
-
         BoundableAlgorithm algorithm = _generator.create(0, this);
         algorithm.run(_graph, new SimpleSchedule(processors), new HashSet<>(graph.getEntryPoints()));
 
@@ -75,6 +80,56 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     }
 
     /**
+     * @see Algorithm#branchesCulled()
+     */
+    @Override
+    public int branchesCulled() {
+        // Add the sum of nodes culled by algorithms that have finished running
+        int sum = _totalCulled;
+
+        // Add explored from the currently running algorithms
+        for (BoundableAlgorithm algorithm : _algorithmsRunning) {
+            if (algorithm != null)
+                sum += algorithm.branchesCulled();
+        }
+        return sum;
+    }
+
+    /**
+     * @see Algorithm#branchesExplored()
+     */
+    @Override
+    public int branchesExplored() {
+        // Add the sum of nodes explored by algorithms that have finished running
+        int sum = _totalExplored;
+
+        // Add explored from the currently running algorithms
+        for (BoundableAlgorithm algorithm : _algorithmsRunning) {
+            if (algorithm != null)
+                sum += algorithm.branchesExplored();
+        }
+        return sum;
+    }
+
+    /**
+     * @see Algorithm#currentNode()
+     */
+    @Override
+    public Node currentNode() {
+        // Since several algorithms can be running concurrently just select the first running algorithm
+        // which is not null.
+        Algorithm algorithm = null;
+        Node node;
+        for (int i = 0; i < _algorithmsRunning.length; i++) {
+            if (_algorithmsRunning[i] != null) {
+                algorithm = _algorithmsRunning[(int)(Math.random() * _algorithmsRunning.length)];
+            }
+        }
+
+        return algorithm.currentNode();
+    }
+
+    /**
      * @see MultiAlgorithmCommunicator#explorePartialSolution(Schedule, HashSet)
      */
     @Override
@@ -89,13 +144,14 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      * Runs a single thread, on which algorithms will be created to deal with
      * partial solutions as they come.
      */
-    private void runThread() {
+    private void runThread(int threadNo) {
+
         // Thread only stops when the algorithm is claimed to be complete
         try {
             while (true) {
                 // Try and get a schedule
                 Pair<Schedule, HashSet<Node>> pair = _schedulesToExplore.take();
-                runAlgorithmOn(1, pair.getKey(), pair.getValue());
+                runAlgorithmOn(threadNo,1, pair.getKey(), pair.getValue());
             }
         } catch(InterruptedException e) {
             return;
@@ -109,7 +165,19 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      * @param schedule : Schedule to add to
      * @param nextNodes : Helpful list of next nodes to look through
      */
-    private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
-        _generator.create(tier, this).run(_graph, schedule, nextNodes);
+    private void runAlgorithmOn(int threadIndex, int tier, Schedule schedule, HashSet<Node> nextNodes) {
+        BoundableAlgorithm algorithm = _generator.create(tier, this);
+
+        // Assign the currently running algorithm to the corresponding thread index
+        _algorithmsRunning[threadIndex] = algorithm;
+        algorithm.run(_graph, schedule, nextNodes);
+
+        // Increment counters
+        _totalExplored += algorithm.branchesExplored();
+        _totalCulled += algorithm.branchesCulled();
+
+        // When the algorithm has finished running set it's reference to null so its values are not used in subsequent
+        // calculations
+        _algorithmsRunning[threadIndex] = null;
     }
 }
