@@ -10,10 +10,10 @@ import java.util.Map;
  */
 public class Graph {
     public static class Builder {
-        private Map<String, Node>   _nodes = new HashMap<>();
-        private List<Edge>          _edges = new ArrayList<>();
-        private int                 _idCounter = 0;
-        private String              _name = "";
+        private Map<String, Node> _nodes = new HashMap<>();
+        private List<Edge> _edges = new ArrayList<>();
+        private int _idCounter = 0;
+        private String _name = "";
 
         public Builder() {}
 
@@ -52,17 +52,18 @@ public class Graph {
             return this;
         }
 
-        public Graph        build() {
+        public Graph build() {
             return new Graph(_name, new ArrayList<>(_nodes.values()), _edges);
         }
     }
 
-    private final String            _name;
-    private final List<Node>        _nodes;
+    private final String _name;
+    private final List<Node> _nodes;
+    private final List<Edge> _edges;
     // Storage of edges is relative to how nodes access them.
-    private final List<List<Edge>>  _incomingEdges = new ArrayList<>();
-    private final List<List<Edge>>  _outgoingEdges = new ArrayList<>();
-    private final List<Node>        _entryPoints = new ArrayList<>(); // Starting nodes of graph
+    private final List<List<Edge>> _incomingEdges = new ArrayList<>();
+    private final List<List<Edge>> _outgoingEdges = new ArrayList<>();
+    private final List<Node> _entryPoints = new ArrayList<>(); // Starting nodes of graph
 
     /**
      * Default constructor for a Graph object
@@ -70,6 +71,7 @@ public class Graph {
     protected Graph(String name, List<Node> nodes, List<Edge> edges) {
         _name = name;
         _nodes = nodes;
+        _edges = edges;
 
         // Initialize the edge lists
         for(int i = 0; i < _nodes.size(); ++i) {
@@ -119,13 +121,20 @@ public class Graph {
     }
 
     /**
+     * Get all the edges in the graph
+     */
+    public List<Edge> getAllEdges() {
+        return _edges;
+    }
+
+    /**
      * Gets the number of nodes in the graph
      */
-    public int        size() {
+    public int size() {
         return _nodes.size();
     }
 
-    public String     getName() {
+    public String getName() {
         return _name;
     }
 
@@ -133,7 +142,7 @@ public class Graph {
      * Finds a node by its associated label.
      * WARNING: This is inefficient and should not be used in production code.
      */
-    public Node       findByLabel(String label) {
+    public Node findByLabel(String label) {
         return _nodes.stream().filter((Node node) -> {return node.getLabel().equals(label);}).findFirst().get();
     }
 }
