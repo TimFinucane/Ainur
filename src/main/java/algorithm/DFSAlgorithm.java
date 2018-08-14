@@ -12,8 +12,8 @@ import static algorithm.Helpers.*;
  */
 public class DFSAlgorithm extends BoundableAlgorithm {
     private int _depth;
-    protected Arborist _arborist;
-    protected LowerBound _lowerBound;
+    private Arborist _arborist;
+    private LowerBound _lowerBound;
 
     private int _numCulled = 0;
     private int _numExplored = 0;
