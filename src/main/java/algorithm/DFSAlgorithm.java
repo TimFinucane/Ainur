@@ -98,8 +98,11 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 // Check whether to continue (delve deeper)
                 if( _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime()) {
                     _numCulled++;
-                } else { // We are meant to continue with this schedule
+                }
+                // We are meant to continue with this schedule
+                else {
                     _numExplored++;
+
                     // Either pass the schedule to our communicator
                     if (curSchedule.size() + 1 >= _depth)
                         _communicator.explorePartialSolution(new SimpleSchedule(curSchedule), nextAvailableNodes);
