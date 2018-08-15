@@ -8,6 +8,7 @@ import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import javafx.util.Pair;
+import org.graphstream.algorithm.AlgorithmComputationTrigger;
 
 import java.util.*;
 
@@ -77,12 +78,16 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
             SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
 
-            if (!continueRunning()) {
-                // TODO figure out how to get the next nodes associated to current best schedule
-                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule, );
-                _communicator.explorePartialSolution(curSchedule, );
-            }
+            nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
 
+//            if (!continueRunning()) {
+//                // TODO figure out how to get the next nodes associated to current best schedule
+//                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule, );
+//                _communicator.explorePartialSolution(curSchedule, );
+//            }
+
+            int scheduleSize = curSchedule.size();
+            int graphSize = graph.size();
             // if the schedule is complete, it is optimal.
             if (curSchedule.size() == graph.size()) {
                 _communicator.update(curSchedule);
@@ -92,6 +97,9 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
             for (Node node : nextNodes) {
                 _currentNode = node;
+
+                // find all the nodes that can now be visited after adding current node to schedule
+                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule, nextNodes, node);
 
                 // find the earliest possible time the current node could be placed on each processor
                 int[] earliestStarts = AlgorithmUtils.calculateEarliestTimes(graph, curSchedule, node);
@@ -111,8 +119,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                         SimpleSchedule newSchedule = curSchedule;
                         newSchedule.addTask(taskToPlace);
 
-                        // find all the nodes that can now be visited after adding current node to schedule
-                        HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule, nextNodes, node);
 
                         // find the lower bound associated to the newly generated schedule.
                         int newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
@@ -127,7 +133,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                     }
                 }
             }
-
         }
     }
 
