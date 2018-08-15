@@ -26,9 +26,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private int _numExplored = 0;
     private Node _currentNode;
 
-    //used for polling so that memory usage is only checked every 10 iterations.
-    private int memoryCounter = 0;
-
     /**
      * Constructor for DFSAlgorithm class.
      * @param arborist : A pruner to use in algorithm
@@ -65,6 +62,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     }
 
     private void run(Graph graph, SimpleSchedule rootSchedule, HashSet<Node> nextNodes) {
+        System.out.println("hello!");
 
         PriorityQueue<Pair<Integer, SimpleSchedule>> schedulesToVisit = new PriorityQueue<>(new ScheduleComparator());
 
@@ -72,8 +70,9 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, graph.getEntryPoints());
         schedulesToVisit.add(new Pair<>(firstLowerBound, rootSchedule));
 
+        int memoryCounter = 0;
+
         while (!schedulesToVisit.isEmpty()) {
-            memoryCounter++;
 
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
             SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
@@ -88,9 +87,10 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
 
             //only poll for memory usage every 5 iterations.
+            memoryCounter++;
             if (memoryCounter == 10){
                 memoryCounter = 0;
-                if (!outOfMemory()) {
+                if (outOfMemory()) {
                     HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
                     _communicator.explorePartialSolution(curSchedule, nextNodesToAdd);
                     continue;
@@ -156,8 +156,9 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         // calculates the percentage of memory that has been used
         long percentUsed = (memoryUsed/runtime.maxMemory())*100;
 
+        System.out.println(percentUsed);
         //if algorithm has used more than a set percentage it should pass its implementation to another thread.
-        return !(percentUsed > PERCENTAGE_MEMORY_TO_USE);
+        return (percentUsed > PERCENTAGE_MEMORY_TO_USE);
     }
 
 
