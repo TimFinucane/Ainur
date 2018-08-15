@@ -74,26 +74,15 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, graph.getEntryPoints());
         schedulesToVisit.add(new Pair(firstLowerBound, rootSchedule));
 
-        int count = 0;
-
         while (!schedulesToVisit.isEmpty()) {
-            count++;
-            if (count == 2) {
-                System.out.println("Hello");
-            }
+
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
             SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
 
-            // if the schedule is complete (contains all nodes), it is optimal.
-            System.out.println("iteration: " + count);
-            for (int i = 0; i < curSchedule.getNumProcessors(); i++) {
-                System.out.println("processor " + i + ": " + curSchedule.size(i));
-            }
             System.out.println(curSchedule.size());
-            System.out.println(graph.size());
-
 
             if (curSchedule.size() == graph.size()) {
+                System.out.println("finished");
                 _communicator.update(curSchedule);
                 return;
             }
@@ -106,7 +95,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 //                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule, );
 //                _communicator.explorePartialSolution(curSchedule, );
 //            }
-
 
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
             for (Node node : nextNodes) {
@@ -130,12 +118,16 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                     } else { // explore this schedule
 
                         // generates a schedule with new task added.
-                        SimpleSchedule newSchedule = curSchedule;
+                        SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                         newSchedule.addTask(taskToPlace);
 
-
                         // find the lower bound associated to the newly generated schedule.
-                        int newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
+                        int newLowerBound;
+                        if (nextNodesToAdd.isEmpty()) { // if all nodes are in the schedule, "lower bound" becomes end time
+                            newLowerBound = newSchedule.getEndTime();
+                        } else {
+                            newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
+                        }
 
                         // if heuristics evaluate lower bound to be greater than current best, cull this branch.
                         if (newLowerBound >= _communicator.getCurrentBest().getEndTime()) {

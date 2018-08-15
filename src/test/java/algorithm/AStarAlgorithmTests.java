@@ -16,15 +16,16 @@ public class AStarAlgorithmTests {
         // Use two processors, simple graph
         Graph graph = new Graph.Builder()
                 .node("a", 3)
-                .node("b", 5)
-                .node("c", 1)
-//                .node("d", 1)
-//                .node("e", 3)
-                .edge("a", "c", 1)
-                .edge("a", "b", 4)
-//                .edge("c", "e", 4)
-//                .edge("b", "e", 2)
+                .node("b", 4)
+                .node("c", 2)
+                .node("d", 1)
+                .node("e", 3)
+                .edge("a", "c", 2)
+                .edge("b", "d", 3)
+                .edge("c", "e", 4)
+                .edge("b", "e", 2)
                 .build();
+
 
         Algorithm algorithm = new AStarAlgorithm(new ProcessorOrderPruner(), new CriticalPath());
 
