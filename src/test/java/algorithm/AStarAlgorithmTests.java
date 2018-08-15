@@ -1,9 +1,7 @@
 package algorithm;
 
-import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.IsNotAPruner;
-import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.Task;
@@ -27,7 +25,7 @@ public class AStarAlgorithmTests {
                 .build();
 
 
-        Algorithm algorithm = new AStarAlgorithm(new ProcessorOrderPruner(), new CriticalPath());
+        Algorithm algorithm = new AStarAlgorithm(new IsNotAPruner(), new NaiveBound());
 
         algorithm.run(graph, 2);
         Schedule result = algorithm.getCurrentBest();

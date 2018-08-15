@@ -79,10 +79,8 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
             SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
 
-            System.out.println(curSchedule.size());
-
+            // if current schedule contains all nodes, it is optimal.
             if (curSchedule.size() == graph.size()) {
-                System.out.println("finished");
                 _communicator.update(curSchedule);
                 return;
             }
@@ -90,11 +88,11 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // get the nodes that can be added to this schedule
             nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
 
-//            if (!continueRunning()) {
-//                // TODO figure out how to get the next nodes associated to current best schedule
-//                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule, );
-//                _communicator.explorePartialSolution(curSchedule, );
-//            }
+            if (!continueRunning()) {
+                // TODO figure out how to get the next nodes associated to current best schedule
+                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
+                _communicator.explorePartialSolution(curSchedule, nextNodesToAdd);
+            }
 
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
             for (Node node : nextNodes) {
@@ -126,7 +124,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                         if (nextNodesToAdd.isEmpty()) { // if all nodes are in the schedule, "lower bound" becomes end time
                             newLowerBound = newSchedule.getEndTime();
                         } else {
-                            newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
+                            newLowerBound = newSchedule.getEndTime() + _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
                         }
 
                         // if heuristics evaluate lower bound to be greater than current best, cull this branch.
@@ -174,7 +172,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // if pair1 has a smaller path weight integer than pair2 it gets ordered first
             if (pair1.getKey() < pair2.getKey()) {
                 return -1;
-            } else if (pair1.getKey().equals(pair2.getKey())) {
+            } else if (pair1.getKey() == (pair2.getKey())) {
                 return 0;
             } else {
                 return 1;
