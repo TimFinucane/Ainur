@@ -23,8 +23,6 @@ public class ScheduleVisualiser extends Region {
 
     public ScheduleVisualiser() {
         this.setMinHeight(300);
-        this.setMinWidth(1400);
-        this.setMaxWidth(1400);
     }
 
     /**
