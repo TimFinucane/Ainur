@@ -16,7 +16,6 @@ import java.util.*;
  */
 public class AStarAlgorithm extends BoundableAlgorithm {
 
-    private int _depth;
     private Arborist _arborist;
     private LowerBound _lowerBound;
 
@@ -40,7 +39,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         super(communicator);
         _arborist = arborist;
         _lowerBound = lowerBound;
-        _depth = depth;
     }
 
     /**
@@ -52,8 +50,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         super();
         _arborist = arborist;
         _lowerBound = lowerBound;
-        //In this case should iterate through all layers of partial schedules.
-        _depth = Integer.MAX_VALUE;
     }
 
     @Override
@@ -94,9 +90,10 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             //only poll for memory usage every 5 iterations.
             if (memoryCounter == 10){
                 memoryCounter = 0;
-                if (!continueRunning()) {
+                if (!outOfMemory()) {
                     HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
                     _communicator.explorePartialSolution(curSchedule, nextNodesToAdd);
+                    continue;
                 }
             }
 
@@ -151,7 +148,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
      * continue to run.
      * @return Whether or not the algorithm has enough memory to keep running.
      */
-    private boolean continueRunning(){
+    private boolean outOfMemory(){
         Runtime runtime = Runtime.getRuntime();
 
         // determines the amount of memory that has been used out of the maximum amount that could be allocated to it
