@@ -7,11 +7,11 @@ import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.IsNotAPruner;
-import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.graph.Graph;
 import io.dot.DotGraphReader;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -40,11 +40,11 @@ public class AinurVisualiserTest extends Application {
         _graph = this.loadGraph(GRAPH_FILE);
 
         // Test the dfs implementation on visualiser
-        //this.testDfs(primaryStage);
+        this.testDfs(primaryStage);
 
         // Test the tiered algorithm implementation on visualiser
         Stage secondStage = new Stage();
-        this.testTiered(secondStage);
+        //this.testTiered(secondStage);
     }
 
     /**
@@ -106,7 +106,9 @@ public class AinurVisualiserTest extends Application {
             @Override
             protected void done() {
                 super.done();
-                av.stop();
+                Platform.runLater(() -> {
+                    av.stop();
+                });
             }
         };
 
