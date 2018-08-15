@@ -4,6 +4,7 @@ import algorithm.Algorithm;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
+import javafx.application.Platform;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -75,10 +76,11 @@ public class AinurVisualiser extends Region {
         _running = true;
 
         while (_running) {
-            this.updateGraph();
-            // Currently can't update these for some reason
-            //this.updateSchedule();
-            // this.updateStatistics();
+            Platform.runLater(() -> {
+                updateGraph();
+                updateSchedule();
+                updateStatistics();
+            });
             TimeUnit.MILLISECONDS.sleep(POLLING_DELAY);
         }
     }
@@ -117,7 +119,6 @@ public class AinurVisualiser extends Region {
      * Uses this node to update the GraphVisualiser.
      */
     private void updateGraph() {
-        System.out.println("graph");
         Node currentNode = _algorithm.currentNode();
         _gv.update(currentNode);
         // TODO check type of algorithm, if tiered get list if not get single
@@ -129,7 +130,6 @@ public class AinurVisualiser extends Region {
      * Uses this schedule to update the ScheduleVisualiser.
      */
     private void updateSchedule() {
-        System.out.println("schedule");
         Schedule currentSchedule = _algorithm.getCurrentBest();
         _sv.update(currentSchedule);
     }
@@ -140,7 +140,6 @@ public class AinurVisualiser extends Region {
      * Uses these statistics to update the AlgorithmStatisticsVisualiser.
      */
     private void updateStatistics() {
-        System.out.println("stats");
         _stats.setSearchSpaceCulled(_algorithm.branchesCulled());
         _stats.setSearchSpaceLookedAt(_algorithm.branchesExplored());
         _asv.update(_stats);
