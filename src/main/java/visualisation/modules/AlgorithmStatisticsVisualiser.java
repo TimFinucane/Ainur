@@ -95,7 +95,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _processorsUsedValue = new Label(String.format("%d", coresUsed));
         _processorsUsedValue.setFont(DEFAULT_FONT);
 
-        _branchesCoveredLabel = new Label("Branches covered:");
+        _branchesCoveredLabel = new Label("Branches explored:");
         _branchesCoveredLabel.setFont(DEFAULT_FONT);
         _branchesCoveredValue = new Label(String.format("%d", 0));
         _branchesCoveredValue.setFont(DEFAULT_FONT);
