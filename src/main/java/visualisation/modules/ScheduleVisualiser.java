@@ -3,6 +3,7 @@ package visualisation.modules;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -20,6 +21,16 @@ public class ScheduleVisualiser extends Region {
     private static final Color BORDER_COLOR = Color.BLACK;
     private double rowHeight;
     private double colWidth;
+
+    private VBox _vBox;
+
+    public ScheduleVisualiser() {
+        _vBox = new VBox();
+        _vBox.setMinHeight(WINDOW_HEIGHT);
+        _vBox.setMinWidth(WINDOW_WIDTH);
+        _vBox.setPadding(new Insets(15));
+        this.getChildren().add(_vBox);
+    }
 
     /**
      * Updates the visualisation to display the input schedule.
@@ -49,10 +60,9 @@ public class ScheduleVisualiser extends Region {
         }
 
         // Uses a VBox to get desired vertical alignment
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(15));
-        vBox.getChildren().addAll(grid, axis);
-        this.getChildren().add(vBox);
+        _vBox.getChildren().clear();
+        _vBox.getChildren().addAll(grid, axis);
+        this.getChildren().add(_vBox);
     }
 
 
