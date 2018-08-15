@@ -1,6 +1,7 @@
 package visualisation;
 
 import algorithm.Algorithm;
+import algorithm.TieredAlgorithm;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
@@ -13,6 +14,7 @@ import visualisation.modules.GraphVisualiser;
 import visualisation.modules.ScheduleVisualiser;
 import visualisation.modules.Statistics;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class AinurVisualiser extends Region {
@@ -32,8 +34,11 @@ public class AinurVisualiser extends Region {
     private AlgorithmStatisticsVisualiser _asv;
     private Statistics _stats;
 
-    // Used to indicate whether or not the
+    // Used to indicate whether or not the algorithm is running
     private boolean _running;
+
+    // Used to indicate whether or not the algorithm is tiered
+    private boolean _isTiered;
 
     /* Constructors */
 
@@ -60,6 +65,9 @@ public class AinurVisualiser extends Region {
         _stats = new Statistics();
         _stats.setMaxScheduleBound(uppedBound);
         _stats.setMinScheduleBound(lowerBound);
+
+        // See if algorithm is tiered.
+        _isTiered = isTiered(_algorithm);
 
         // Set up layout
         this.setUpLayout();
@@ -119,9 +127,14 @@ public class AinurVisualiser extends Region {
      * Uses this node to update the GraphVisualiser.
      */
     private void updateGraph() {
-        Node currentNode = _algorithm.currentNode();
-        _gv.update(currentNode);
-        // TODO check type of algorithm, if tiered get list if not get single
+        if (_isTiered) {
+            TieredAlgorithm tAlgorithm = (TieredAlgorithm) _algorithm;
+            List<Node> nodeList = tAlgorithm.currentNodes();
+            _gv.update(nodeList);
+        } else {
+            Node currentNode = _algorithm.currentNode();
+            _gv.update(currentNode);
+        }
     }
 
     /**
@@ -132,6 +145,18 @@ public class AinurVisualiser extends Region {
     private void updateSchedule() {
         Schedule currentSchedule = _algorithm.getCurrentBest();
         _sv.update(currentSchedule);
+    }
+
+    /**
+     * Private helper method.
+     * Checks to see if an algorithm is an instance of a tiered algorithm.
+     * @returns True if is tiered, false otherwise.
+     */
+    private boolean isTiered(Algorithm algorithm) {
+        if (algorithm instanceof TieredAlgorithm) {
+            return true;
+        }
+        return false;
     }
 
     /**

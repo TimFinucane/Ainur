@@ -27,7 +27,7 @@ public class GraphVisualiser extends Region {
 
     // Window dimensions
     public static final int WINDOW_HEIGHT = 500;
-    public static final int WINDOW_WIDTH = 800;
+    public static final int WINDOW_WIDTH = 750;
 
     // Used for styling the graph and its nodes
     public static final String STYLE_SHEET =
@@ -150,7 +150,8 @@ public class GraphVisualiser extends Region {
         }
 
         for (Node node:  nodes) {
-            _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
+            if (node != null)
+                _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
         }
 
         _currentNodes = nodes;

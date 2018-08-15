@@ -6,6 +6,7 @@ import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.Arborist;
+import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.graph.Graph;
@@ -39,11 +40,11 @@ public class AinurVisualiserTest extends Application {
         _graph = this.loadGraph(GRAPH_FILE);
 
         // Test the dfs implementation on visualiser
-        this.testDfs(primaryStage);
+        //this.testDfs(primaryStage);
 
         // Test the tiered algorithm implementation on visualiser
         Stage secondStage = new Stage();
-        //this.testTiered(secondStage);
+        this.testTiered(secondStage);
     }
 
     /**
@@ -54,37 +55,11 @@ public class AinurVisualiserTest extends Application {
     public void testDfs(Stage stage) {
         Algorithm dfsAlgorithm = new DFSAlgorithm(
                 Arborist.combine(new StartTimePruner()),
-                new NaiveBound()
+                new CriticalPath()
         );
         AinurVisualiser av = new AinurVisualiser(dfsAlgorithm, _graph, 0, 100, 4);
         this.setScene(stage, av);
-
-        Task task = new Task<Void>() {
-            @Override
-            public Void call() throws InterruptedException {
-                av.run();
-                return null;
-            }
-        };
-
-        Task task2 = new Task<Void>() {
-            @Override
-            public Void call() {
-                dfsAlgorithm.run(_graph, 4);
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                super.done();
-                av.stop();
-            }
-        };
-
-        new Thread(task).start();
-        new Thread(task2).start();
-
-        //av.stop();
+        this.runThreads(dfsAlgorithm, av);
     }
 
     /**
@@ -96,13 +71,47 @@ public class AinurVisualiserTest extends Application {
         int cores = 4;
         Algorithm tieredAlgorithm = new TieredAlgorithm(cores, (tier, communicator) ->
                 new DFSAlgorithm(communicator,
-                        Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                        new CriticalPath(),
+                        new IsNotAPruner(),
+                        new NaiveBound(),
                         tier == 0 ? 8 : Integer.MAX_VALUE // Depth is 8 for first tier, infinite for second tier
                 )
         );
         AinurVisualiser av = new AinurVisualiser(tieredAlgorithm, _graph, 0, 100, cores);
         this.setScene(stage, av);
+        this.runThreads(tieredAlgorithm, av);
+    }
+
+    /**
+     * Private helper method for running algorithm and visualisation threads.
+     *
+     * @param algorithm algorithm to run in algorithm thread
+     * @param av visualiser to run in visualiser thread
+     */
+    private void runThreads(Algorithm algorithm, AinurVisualiser av) {
+        Task visualiserTask = new Task<Void>() {
+            @Override
+            public Void call() throws InterruptedException {
+                av.run();
+                return null;
+            }
+        };
+
+        Task algorithmTask = new Task<Void>() {
+            @Override
+            public Void call() {
+                algorithm.run(_graph, 4);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                super.done();
+                av.stop();
+            }
+        };
+
+        new Thread(visualiserTask).start();
+        new Thread(algorithmTask).start();
     }
 
     /**
