@@ -3,7 +3,6 @@ package visualisation.modules;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -15,21 +14,17 @@ import javafx.scene.text.Text;
  */
 public class ScheduleVisualiser extends Region {
 
-    private static final double WINDOW_WIDTH = 1000;
+    private static final double WINDOW_WIDTH = 1400;
     private static final double WINDOW_HEIGHT = 200;
     private static final Color FILL_COLOR = Color.LAVENDER;
     private static final Color BORDER_COLOR = Color.BLACK;
     private double rowHeight;
     private double colWidth;
 
-    private VBox _vBox;
-
     public ScheduleVisualiser() {
-        _vBox = new VBox();
-        _vBox.setMinHeight(WINDOW_HEIGHT);
-        _vBox.setMinWidth(WINDOW_WIDTH);
-        _vBox.setPadding(new Insets(15));
-        this.getChildren().add(_vBox);
+        this.setMinHeight(300);
+        this.setMinWidth(1400);
+        this.setMaxWidth(1400);
     }
 
     /**
@@ -63,9 +58,10 @@ public class ScheduleVisualiser extends Region {
         }
 
         // Uses a VBox to get desired vertical alignment
-        _vBox.getChildren().clear();
-        _vBox.getChildren().addAll(grid, axis);
-        this.getChildren().add(_vBox);
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(15));
+        vBox.getChildren().addAll(grid, axis);
+        this.getChildren().add(vBox);
     }
 
 
