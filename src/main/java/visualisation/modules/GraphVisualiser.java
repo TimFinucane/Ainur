@@ -146,7 +146,8 @@ public class GraphVisualiser extends Region {
             return;
 
         for (Node node: _currentNodes) {
-            _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
+            if (node != null)
+                _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
         }
 
         for (Node node:  nodes) {
