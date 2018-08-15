@@ -25,6 +25,8 @@ public class CriticalPath implements LowerBound {
 
         // Map to store Nodes and the critical path to reach that node.
         Map<Node, Integer> nodePathWeights = new HashMap<>();
+        // Ensures that schedule end time is returned if it is less than the critical path
+        nodePathWeights.put(null, schedule.getEndTime());
 
         List<Node> nodesToVisit = new ArrayList<>(nextNodesToVisit);
 
