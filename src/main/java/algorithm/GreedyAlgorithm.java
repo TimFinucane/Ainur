@@ -6,6 +6,7 @@ import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import scala.Int;
+import sun.awt.image.IntegerInterleavedRaster;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 
 public class GreedyAlgorithm implements Algorithm {
+
+    private Schedule _schedule = null;
 
     @Override
     public void run(Graph graph, int processors) {
@@ -68,12 +71,12 @@ public class GreedyAlgorithm implements Algorithm {
             nodesToVisit = new ArrayList<>(Helpers.calculateNextNodes(graph, schedule, new HashSet<>(nodesToVisit), nodeAdded));
         }
 
-        return schedule.getEndTime();
+        _schedule = schedule;
     }
 
     @Override
     public Schedule getCurrentBest() {
-        return null;
+        return _schedule;
     }
 
     @Override
