@@ -45,7 +45,7 @@ public class ScheduleVisualiser extends Region {
         GridPane grid = setDimensions(endTime, numProc);
 
         // Generates an axis to display the schedule timing
-        NumberAxis axis = new NumberAxis("Schedule Time",0, endTime, 1);
+        NumberAxis axis = new NumberAxis("Schedule Time",0, endTime, (endTime / 20)); // endTime / x for x tick marks
         axis.setMinWidth(WINDOW_WIDTH);
 
         // Adds tasks to visualisation for each processor
