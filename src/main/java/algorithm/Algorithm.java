@@ -44,4 +44,6 @@ public interface Algorithm {
      * @return The current node being explored.
      */
     Node currentNode();
+
+    int lowerBound();
 }
