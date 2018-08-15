@@ -106,8 +106,9 @@ public class AinurVisualiser extends Region {
      */
     public void stop() {
         updateGraph();
-        updateStatistics();
         updateSchedule();
+        updateStatistics();
+        _asv.stop();
         _running = false;
     }
 

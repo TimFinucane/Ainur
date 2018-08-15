@@ -6,6 +6,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -177,20 +178,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
         getChildren().addAll(outerVBox);
     }
 
-    private GridPane createLabelGrid() {
-
-        GridPane gridPane = new GridPane();
-        gridPane.getColumnConstraints().addAll(
-                new ColumnConstraints(LABEL_GRID_COLUMN_WIDTH),
-                new ColumnConstraints(80)
-        );
-        RowConstraints rc = new RowConstraints(LABEL_GRID_ROW_HEIGHT);
-        rc.setMinHeight(100);
-        gridPane.getRowConstraints().add(rc);
-
-        return gridPane;
-    }
-
 
     /**
      * This method is responsible for updating the state of a schedule time bounding visualisation, as well as updating
@@ -207,6 +194,14 @@ public class AlgorithmStatisticsVisualiser extends Region {
         updateTimeLabel(); // Update Time label
 
         updateLabels(statistics); // Update misc. statistics labels
+
+    }
+
+
+
+    public void stop() {
+
+        _timeLabel.setTextFill(Color.RED);
 
     }
 
@@ -314,6 +309,20 @@ public class AlgorithmStatisticsVisualiser extends Region {
         }
     }
 
+
+    private GridPane createLabelGrid() {
+
+        GridPane gridPane = new GridPane();
+        gridPane.getColumnConstraints().addAll(
+                new ColumnConstraints(LABEL_GRID_COLUMN_WIDTH),
+                new ColumnConstraints(80)
+        );
+        RowConstraints rc = new RowConstraints(LABEL_GRID_ROW_HEIGHT);
+        rc.setMinHeight(100);
+        gridPane.getRowConstraints().add(rc);
+
+        return gridPane;
+    }
 
 
     /**
