@@ -88,9 +88,11 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         while (!schedulesToVisit.isEmpty()) {
 
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
-            SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
+            Pair<Integer, SimpleSchedule> currentPair = schedulesToVisit.poll();
+            SimpleSchedule curSchedule = currentPair.getValue();
+            int curLowerBound = currentPair.getKey();
 
-            if (_communicator.getCurrentBest().getEndTime() <= curSchedule.getEndTime()) {
+            if (_communicator.getCurrentBest().getEndTime() <= curLowerBound) {
                 System.out.println("A* exiting prematurely with best:");
                 System.out.println(curSchedule.getEndTime());
                 return;

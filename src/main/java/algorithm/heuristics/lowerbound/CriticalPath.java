@@ -1,12 +1,9 @@
 package algorithm.heuristics.lowerbound;
 
-import algorithm.Helpers;
-import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
-import common.schedule.Task;
 
 import java.util.*;
 
