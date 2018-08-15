@@ -6,6 +6,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -33,8 +34,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     // Should stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
     private final double _initialLowerBound;
-    private final double _initialUpperBound;
-    private final double _initialBoundRange;
+    private double _initialUpperBound;
+    private double _initialBoundRange;
 
     // For keeping track of number of updates, certain visualizations may use this to prevent over updating
     private long _updateIteration;
@@ -177,20 +178,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
         getChildren().addAll(outerVBox);
     }
 
-    private GridPane createLabelGrid() {
-
-        GridPane gridPane = new GridPane();
-        gridPane.getColumnConstraints().addAll(
-                new ColumnConstraints(LABEL_GRID_COLUMN_WIDTH),
-                new ColumnConstraints(80)
-        );
-        RowConstraints rc = new RowConstraints(LABEL_GRID_ROW_HEIGHT);
-        rc.setMinHeight(100);
-        gridPane.getRowConstraints().add(rc);
-
-        return gridPane;
-    }
-
 
     /**
      * This method is responsible for updating the state of a schedule time bounding visualisation, as well as updating
@@ -207,6 +194,14 @@ public class AlgorithmStatisticsVisualiser extends Region {
         updateTimeLabel(); // Update Time label
 
         updateLabels(statistics); // Update misc. statistics labels
+
+    }
+
+
+
+    public void stop() {
+
+        _timeLabel.setTextFill(Color.RED);
 
     }
 
@@ -229,7 +224,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         _branchesCoveredValue.setText(String.format("%6.2e", (float)statistics.getSearchSpaceLookedAt()));
         _branchesCulledValue.setText(String.format("%6.2e", (float)statistics.getSearchSpaceCulled()));
-        _cullingRateValue.setText(String.format("%.1f%%",  100 * (float)statistics.getSearchSpaceCulled() / statistics.getSearchSpaceLookedAt()));
+        _cullingRateValue.setText(String.format("%.1f%%",  100 * (float)statistics.getSearchSpaceCulled() / (statistics.getSearchSpaceLookedAt() + statistics.getSearchSpaceCulled())));
 
         NumberFormat format = NumberFormat.getInstance();
         Runtime runtime = Runtime.getRuntime(); // For the commas in 100,000
@@ -246,6 +241,14 @@ public class AlgorithmStatisticsVisualiser extends Region {
      * @param statistics
      */
     private void updateBoundingChart(Statistics statistics) {
+
+        if (_updateIteration == 1) { // Lol
+            _initialUpperBound = statistics.getMaxScheduleBound();
+            _boundingAxis.setUpperBound(_initialUpperBound);
+            _initialBoundRange = _initialUpperBound - _initialLowerBound;
+            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
+        }
+
         // calculate left and right rectangle widths with regards to bound progression and visualisation width
         int leftRectangleWidth = (int)(((statistics.getMinScheduleBound() - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
         int rightRectangleWidth = (int)(((_initialUpperBound - statistics.getMaxScheduleBound()) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
@@ -306,6 +309,20 @@ public class AlgorithmStatisticsVisualiser extends Region {
         }
     }
 
+
+    private GridPane createLabelGrid() {
+
+        GridPane gridPane = new GridPane();
+        gridPane.getColumnConstraints().addAll(
+                new ColumnConstraints(LABEL_GRID_COLUMN_WIDTH),
+                new ColumnConstraints(80)
+        );
+        RowConstraints rc = new RowConstraints(LABEL_GRID_ROW_HEIGHT);
+        rc.setMinHeight(100);
+        gridPane.getRowConstraints().add(rc);
+
+        return gridPane;
+    }
 
 
     /**
