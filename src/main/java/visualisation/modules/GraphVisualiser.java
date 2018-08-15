@@ -6,7 +6,6 @@ import common.graph.Node;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.Region;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.layout.HierarchicalLayout;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 
@@ -80,8 +79,9 @@ public class GraphVisualiser extends Region {
      * Takes an Ainur Graph, creates a graphstream graph swing element and wraps this in a javafx component.
      *
      * @param graph The Ainur graph to be visualised.
+     * @param highQualityRender True for high quality render, false otherwise
      */
-    public GraphVisualiser(Graph graph) {
+    public GraphVisualiser(Graph graph, boolean highQualityRender) {
         // Use the fully compliant css renderer for graphstream
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
@@ -95,6 +95,10 @@ public class GraphVisualiser extends Region {
         _swingNode = new SwingNode();
         _dimension = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        // If instructed to render with high quality add attribute
+        if (highQualityRender)
+            this.setHighRenderQuality(true);
+
         // Create the swing content & adds it to the visualiser
         this.createSwingContent();
         this.getChildren().add(_swingNode);
@@ -102,6 +106,16 @@ public class GraphVisualiser extends Region {
         // Set visualiser dimensions
         this.setMinHeight(WINDOW_HEIGHT);
         this.setMinWidth(WINDOW_WIDTH);
+    }
+
+    /**
+     * Constuctor for GraphVisualiser class.
+     * Takes an Ainur Graph, creates a graphstream graph swing element and wraps this in a javafx component.
+     *
+     * @param graph The Ainur graph to be visualised.
+     */
+    public GraphVisualiser(Graph graph) {
+        this(graph, true);
     }
 
     /* Public Methods */
@@ -138,6 +152,16 @@ public class GraphVisualiser extends Region {
         }
 
         _currentNodes = nodes;
+    }
+
+    public void setHighRenderQuality(boolean highQuality) {
+        if (highQuality) {
+            _gsGraph.addAttribute("ui.quality");
+            _gsGraph.addAttribute("ui.antialias");
+        } else {
+            _gsGraph.removeAttribute("ui.quality");
+            _gsGraph.removeAttribute("ui.antialias");
+        }
     }
 
     /* Private Helper Methods */
