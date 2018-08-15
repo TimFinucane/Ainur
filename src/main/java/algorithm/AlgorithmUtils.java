@@ -12,25 +12,24 @@ public class AlgorithmUtils {
      */
     public static HashSet<Node> calculateNextNodes(Graph graph, Schedule schedule) {
 
-        HashSet<Node> nodesToAdd = new HashSet<>();
+        HashSet<Node> unscheduledNodes = new HashSet<>();
 
         // finds all the nodes that have not yet been added to the schedule.
         for (Node node : graph.getNodes()) {
             if (schedule.findTask(node) == null) {
-                nodesToAdd.add(node);
+                unscheduledNodes.add(node);
             }
         }
+        HashSet<Node> nodesToAdd = new HashSet<>(unscheduledNodes);
 
         // node can only be added next to the schedule if all its parents are in the schedule
-        for (Node node : nodesToAdd) {
+        for (Node node : unscheduledNodes) {
             for (Edge edge : graph.getIncomingEdges(node)){
                 Node parentNode = edge.getOriginNode();
                 //if a parent is not in the schedule then this node cannot be added.
                 if (!schedule.contains(parentNode)){
-                    if (nodesToAdd.contains(node)){
-                        nodesToAdd.remove(node);
-                        continue;
-                    }
+                    nodesToAdd.remove(node);
+                    continue;
                 }
             }
         }

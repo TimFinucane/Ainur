@@ -74,10 +74,31 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, graph.getEntryPoints());
         schedulesToVisit.add(new Pair(firstLowerBound, rootSchedule));
 
+        int count = 0;
+
         while (!schedulesToVisit.isEmpty()) {
+            count++;
+            if (count == 2) {
+                System.out.println("Hello");
+            }
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
             SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
 
+            // if the schedule is complete (contains all nodes), it is optimal.
+            System.out.println("iteration: " + count);
+            for (int i = 0; i < curSchedule.getNumProcessors(); i++) {
+                System.out.println("processor " + i + ": " + curSchedule.size(i));
+            }
+            System.out.println(curSchedule.size());
+            System.out.println(graph.size());
+
+
+            if (curSchedule.size() == graph.size()) {
+                _communicator.update(curSchedule);
+                return;
+            }
+
+            // get the nodes that can be added to this schedule
             nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
 
 //            if (!continueRunning()) {
@@ -86,13 +107,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 //                _communicator.explorePartialSolution(curSchedule, );
 //            }
 
-            int scheduleSize = curSchedule.size();
-            int graphSize = graph.size();
-            // if the schedule is complete, it is optimal.
-            if (curSchedule.size() == graph.size()) {
-                _communicator.update(curSchedule);
-                return;
-            }
 
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
             for (Node node : nextNodes) {
