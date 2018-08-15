@@ -45,5 +45,8 @@ public interface Algorithm {
      */
     Node currentNode();
 
+    /**
+     * Finds the minimum possible length of a solution. When complete, should be equal to the current best end time.
+     */
     int lowerBound();
 }
