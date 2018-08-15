@@ -5,7 +5,6 @@ import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.*;
 import common.schedule.*;
 import java.util.*;
-import static algorithm.AlgorithmUtils.*;
 
 /**
  * A DFS implementation of the Algorithm class.
@@ -100,7 +99,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                     // Copy the schedule and nodes so that they aren't modified when passed on.
                     SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
                     newSchedule.addTask(toBePlaced);
-                    _communicator.explorePartialSolution(newSchedule, new HashSet<>(nextAvailableNodes));
+                    _communicator.explorePartialSolution(graph, newSchedule, new HashSet<>(nextAvailableNodes));
                 }
                 // Else continue searching through the graph for another schedule solution
                 else {

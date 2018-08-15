@@ -138,14 +138,14 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     }
 
     /**
-     * @see MultiAlgorithmCommunicator#explorePartialSolution(Schedule, HashSet)
+     * @see MultiAlgorithmCommunicator#explorePartialSolution(Graph, Schedule, HashSet)
      */
     @Override
-    public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
+    public void explorePartialSolution(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         // We will try to add the above to the schedule. If theres not enough room (too many schedules to explore),
         // as it is obvious exploration is getting out of hand we will instead run it here, in this thread, RIGHT NOW!!!
         if(!_schedulesToExplore.offer(new Pair<>(schedule, nextNodes)))
-            runAlgorithmOn(1, schedule, nextNodes);
+            runAlgorithmOn(1, graph, schedule, nextNodes);
     }
 
     /**
@@ -159,7 +159,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
             while (true) {
                 // Try and get a schedule
                 Pair<Schedule, HashSet<Node>> pair = _schedulesToExplore.take();
-                runAlgorithmOn(1, pair.getKey(), pair.getValue());
+                runAlgorithmOn(1, _graph, pair.getKey(), pair.getValue());
             }
         } catch(InterruptedException e) {
             return;
@@ -170,15 +170,16 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      * Runs an algorithm on a specified tier with a schedule to add to and a helpful list of nodes
      * to look at next
      * @param tier :
+     * @param graph
      * @param schedule : Schedule to add to
      * @param nextNodes : Helpful list of next nodes to look through
      */
-    private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
+    private void runAlgorithmOn(int tier, Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         BoundableAlgorithm algorithm = _generator.create(tier, this);
 
         // Add alogorithm to running algorithm list
         _algorithmsRunning.add(algorithm);
-        algorithm.run(_graph, schedule, nextNodes);
+        algorithm.run(graph, schedule, nextNodes);
 
         // Increment counters
         _totalExplored += algorithm.branchesExplored();

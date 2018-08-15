@@ -44,13 +44,24 @@ public class AStarAlgorithm extends BoundableAlgorithm {
      * @param lowerBound : A lower-bound to use in algorithm
      */
     public AStarAlgorithm(Arborist arborist, LowerBound lowerBound){
-        super();
+
+        super(new MultiAlgorithmCommunicator(){
+            @Override
+            void explorePartialSolution(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
+                BoundableAlgorithm dfs = new DFSAlgorithm(arborist, lowerBound);
+                System.out.println("DFS about to execute");
+                dfs.run(graph, schedule, nextNodes);
+                update(dfs.getCurrentBest());
+                System.out.println(dfs.getCurrentBest().getEndTime());
+            }
+        });
         _arborist = arborist;
         _lowerBound = lowerBound;
     }
 
     @Override
     public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
+
         SimpleSchedule simpleSchedule;
 
         if (schedule instanceof SimpleSchedule) {
@@ -67,19 +78,29 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         PriorityQueue<Pair<Integer, SimpleSchedule>> schedulesToVisit = new PriorityQueue<>(new ScheduleComparator());
 
         //initial best estimate is just the first explored partial schedule.
-        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, graph.getEntryPoints());
+        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, new ArrayList<>(nextNodes));
         schedulesToVisit.add(new Pair<>(firstLowerBound, rootSchedule));
 
         int memoryCounter = 0;
+
+        boolean outOfMemory = false;
 
         while (!schedulesToVisit.isEmpty()) {
 
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
             SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
 
+            if (_communicator.getCurrentBest().getEndTime() <= curSchedule.getEndTime()) {
+                System.out.println("A* exiting prematurely with best:");
+                System.out.println(curSchedule.getEndTime());
+                return;
+            }
+
             // if current schedule contains all nodes, it is optimal.
             if (curSchedule.size() == graph.size()) {
                 _communicator.update(curSchedule);
+                System.out.println("returning A*");
+                System.out.println(getCurrentBest().getEndTime());
                 return;
             }
 
@@ -89,12 +110,12 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             //only poll for memory usage every 5 iterations.
             memoryCounter++;
             if (memoryCounter == 10){
+                outOfMemory = outOfMemory();
                 memoryCounter = 0;
-                if (outOfMemory()) {
-                    HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
-                    _communicator.explorePartialSolution(curSchedule, nextNodesToAdd);
-                    continue;
-                }
+            }
+            if (outOfMemory) {
+                _communicator.explorePartialSolution(graph, curSchedule, nextNodes);
+                continue;
             }
 
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
@@ -129,13 +150,8 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                             newLowerBound = _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextNodesToAdd));
                         }
 
-                        // if heuristics evaluate lower bound to be greater than current best, cull this branch.
-                        if (newLowerBound >= _communicator.getCurrentBest().getEndTime()) {
-                            _numCulled++;
-                        } else { // explore new schedule by adding it to the search space
-                            _numExplored++;
-                            schedulesToVisit.add(new Pair<>(newLowerBound, new SimpleSchedule(curSchedule)));
-                        }
+                        _numExplored++;
+                        schedulesToVisit.add(new Pair<>(newLowerBound, new SimpleSchedule(curSchedule)));
                         curSchedule.removeTask(taskToPlace);
                     }
                 }
@@ -152,11 +168,10 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         Runtime runtime = Runtime.getRuntime();
 
         // determines the amount of memory that has been used out of the maximum amount that could be allocated to it
-        long memoryUsed = runtime.maxMemory() - runtime.freeMemory();
+        double memoryUsed = runtime.maxMemory() - runtime.freeMemory();
         // calculates the percentage of memory that has been used
-        long percentUsed = (memoryUsed/runtime.maxMemory())*100;
+        double percentUsed = (memoryUsed/runtime.maxMemory())*100;
 
-        System.out.println(percentUsed);
         //if algorithm has used more than a set percentage it should pass its implementation to another thread.
         return (percentUsed > PERCENTAGE_MEMORY_TO_USE);
     }
@@ -174,13 +189,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         @Override
         public int compare(Pair<Integer, SimpleSchedule> pair1, Pair<Integer, SimpleSchedule> pair2) {
             // if pair1 has a smaller path weight integer than pair2 it gets ordered first
-            if (pair1.getKey() < pair2.getKey()) {
-                return -1;
-            } else if (pair1.getKey().equals((pair2.getKey()))) {
-                return 0;
-            } else {
-                return 1;
-            }
+            return pair1.getKey().compareTo(pair2.getKey());
         }
     }
 

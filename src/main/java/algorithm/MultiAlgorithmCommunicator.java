@@ -1,5 +1,6 @@
 package algorithm;
 
+import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.*;
 import java.util.HashSet;
@@ -31,9 +32,10 @@ public class MultiAlgorithmCommunicator {
     /**
      * Called when a boundable algorithm has reached its depth and wants the given partial schedule to be explored.
      * The default implementation throws as it is for solutions which do not require explorePartialSolution
+     * @param graph
      * @param schedule The partial schedule to explore
      */
-    void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
+    void explorePartialSolution(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         throw new UnsupportedOperationException("Can't explore a partial solution with an undefined MultiAlgorithmCommunicator");
     }
 }
