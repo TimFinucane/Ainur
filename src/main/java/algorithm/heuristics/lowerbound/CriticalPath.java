@@ -1,5 +1,6 @@
 package algorithm.heuristics.lowerbound;
 
+import algorithm.Helpers;
 import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.Edge;
 import common.graph.Graph;
@@ -23,93 +24,55 @@ public class CriticalPath implements LowerBound {
      * @param nextNodesToVisit : All the nodes that can be added imminently to the partial schedule
      * @return estimate : int
      */
-    public int estimate(Graph graph, Schedule schedule, List<Node> nextNodesToVisit) {
+    public int estimate(Graph graph, Schedule schedule, HashSet<Node> nextNodesToVisit) {
 
         // Map to store Nodes and the critical path to reach that node.
         Map<Node, Integer> nodePathWeights = new HashMap<>();
-        // Nodes that have already been scheduled.
-        List<Node> scheduledNodes = getScheduledNodes(schedule);
 
-        // First nodes to be visited should be entry point nodes
-        List<Node> unvisitedNodes = new ArrayList<>(nextNodesToVisit);
-
-        // Populate the queue with all the nodes that have not yet been added to the schedule
-        for (Node node : graph.getNodes()) {
-            if (!scheduledNodes.contains(node) && !nextNodesToVisit.contains(node)) {
-                unvisitedNodes.add(node);
-            }
-        }
+        List<Node> nodesToVisit = new ArrayList<>(nextNodesToVisit);
 
         // Only iterate through when there are still nodes that have not been analysed.
-        while (!unvisitedNodes.isEmpty()) {
+        outerNodeLoop:
+        while (!nodesToVisit.isEmpty()) {
             //inspect the element currently at the head of the queue but do not remove
-            Node currentNode = unvisitedNodes.get(0);
+            Node currentNode = nodesToVisit.get(0);
+            nodesToVisit.remove(0);
 
-            List<Integer> pathWeights = new ArrayList<>();
-            boolean canVisit = true;
+            List<Integer> potentialPathWeights = new ArrayList<>();
 
-            //check to see that all parents of this node have been visited or are already scheduled
+            // Finds the (estimated) earliest this node can exist in our schedule, based on where parent nodes exist.
             for (Edge incomingEdge : graph.getIncomingEdges(currentNode)) {
                 Node parent = incomingEdge.getOriginNode();
 
-                // finds the weight of the critical path up until that parent.
+                // If the parent is in nodepathweights, use that calculation, if its in schedule we can just get its end time.
                 if (nodePathWeights.containsKey(parent)){
-                    pathWeights.add(nodePathWeights.get(parent));
+                    potentialPathWeights.add(nodePathWeights.get(parent));
                 }
-                // if parents haven't already been visited and they're not in the schedule, node cannot be visited.
-                else if (!scheduledNodes.contains(parent)) {
-                    canVisit = false;
-                    break;
+                else if (schedule.contains(parent)) {
+                    potentialPathWeights.add(schedule.findTask(parent).getEndTime());
+                }
+                // If it's in neither, this node can't be visited yet. We will put it back in the list and move to
+                // the next node
+                else {
+                    nodesToVisit.add(currentNode);
+                    continue outerNodeLoop; // Skip all below code, move to next node.
                 }
             }
 
-            if (canVisit) { // add critical path value of node to the map
-                if (pathWeights.isEmpty()) { // if node is a root in the subgraph just add own cost.
-                    nodePathWeights.put(currentNode, currentNode.getComputationCost());
-                } else { // put the max of the paths from a parent plus the node's own cost.
-                    nodePathWeights.put(currentNode, Collections.max(pathWeights) + currentNode.getComputationCost());
-                }
+            // The real path weight will be the maximum potential path weight + the weight of the node. This is the
+            // earliest the current node could end at when placed in the schedule
+            int pathWeight = currentNode.getComputationCost();
+            if (!potentialPathWeights.isEmpty())
+                pathWeight += Collections.max(potentialPathWeights);
 
-                unvisitedNodes.remove(0);
+            nodePathWeights.put(currentNode, pathWeight);
 
-            } else { // if node's parents have not all been visited, node must be revisited later
-                //node is shifted from head to back of the queue
-                unvisitedNodes.remove(0);
-                unvisitedNodes.add(currentNode);
-            }
+            // Add children of the current node, now that we have visited it.
+            for(Edge edge : graph.getOutgoingEdges(currentNode))
+                nodesToVisit.add(edge.getDestinationNode());
         }
 
         // return the maximum of all computed critical paths.
         return Collections.max(nodePathWeights.values());
-
-    }
-
-    /**
-     * Helper method to find all the nodes that have already been visited in the given schedule.
-     * @param schedule schedule containing nodes
-     * @return nodes in the schedule
-     */
-    private List<Node> getScheduledNodes(Schedule schedule){
-        List<Node> scheduledNodes = new ArrayList<>();
-
-        // Generates a list storing all the nodes that have already been scheduled at some point
-        for (int i = 0; i < schedule.getNumProcessors(); ++i) {
-            for (Task task : schedule.getTasks(i)) {
-                scheduledNodes.add(task.getNode());
-            }
-        }
-        return scheduledNodes;
-    }
-
-
-    /**
-     * Method provides an estimate of the lower bound based on parameters provided
-     * @param graph : Graph
-     * @param schedule : Schedule
-     * @return estimate : int
-     */
-    //TODO - implementation
-    public int estimate(Graph graph, Schedule schedule) {
-        throw new UnsupportedOperationException();
     }
 }
