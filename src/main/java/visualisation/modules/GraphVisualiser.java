@@ -221,10 +221,9 @@ public class GraphVisualiser extends Region {
             // Set Swing window dimensions
             view.setPreferredSize(_dimension);
 
-            // Set Hierarchical layout with node "0" being the root
-            HierarchicalLayout hl = new HierarchicalLayout();
-            hl.setRoots(ROOT_NODE_LABEL);
-            viewer.enableAutoLayout(hl);
+            // Handle setting up viewer
+            viewer.enableAutoLayout();
+
 
             // Remove the ability to move nodes on the graph with mouse
             MouseMotionListener mouseMotionListener = view.getMouseMotionListeners()[0];
