@@ -21,7 +21,7 @@ public class AinurVisualiser extends Region {
 
     /* MACROS */
 
-    public final static int POLLING_DELAY = 100 ;
+    public final static int POLLING_DELAY = 100;
 
     /* Fields */
 
@@ -83,12 +83,18 @@ public class AinurVisualiser extends Region {
     public void run() throws InterruptedException {
         _running = true;
 
+        long numIterations = 0;
         while (_running) {
+            long finalNumIterations = numIterations;
             Platform.runLater(() -> {
                 updateGraph();
-                updateSchedule();
                 updateStatistics();
+
+                if (finalNumIterations % 100 == 0) {
+                    updateSchedule();
+                }
             });
+            numIterations++;
             TimeUnit.MILLISECONDS.sleep(POLLING_DELAY);
         }
     }
@@ -99,6 +105,9 @@ public class AinurVisualiser extends Region {
      * This should be called from another thread to interrupt the show method's while loop
      */
     public void stop() {
+        updateGraph();
+        updateStatistics();
+        updateSchedule();
         _running = false;
     }
 
