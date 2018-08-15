@@ -2,8 +2,11 @@ package visualisation;
 
 import algorithm.Algorithm;
 import common.graph.Graph;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import visualisation.modules.AlgorithmStatisticsVisualiser;
 import visualisation.modules.GraphVisualiser;
@@ -32,16 +35,17 @@ public class AinurVisualiser extends Region {
      * @param algorithm the algorithm to visualise
      * @param graph The task graph to be displayed
      * @param lowerBound the lowerbound of the algorithm //TODO this should be removed when a method to get this is implemented
+     * @param uppedBound the uppedbound of the algorithm //TODO this should be removed when a method to get this is implemented
      * @param coresUsed The number of cores to be used
      */
-    public AinurVisualiser(Algorithm algorithm, Graph graph, int lowerBound, long coresUsed) {
+    public AinurVisualiser(Algorithm algorithm, Graph graph, int lowerBound, int uppedBound, long coresUsed) {
         // Assign Args
         _algorithm = algorithm;
 
         // Initialise visualisers
         _gv = new GraphVisualiser(graph);
         _sv = new ScheduleVisualiser();
-        _asv = new AlgorithmStatisticsVisualiser(lowerBound, algorithm.getCurrentBest().getEndTime(), coresUsed);
+        _asv = new AlgorithmStatisticsVisualiser(lowerBound, uppedBound, coresUsed);
 
         this.setUpLayout();
     }
@@ -51,8 +55,7 @@ public class AinurVisualiser extends Region {
     /**
      * Creates a stage and displays the visualiser in it.
      */
-    public void show(){
-        Stage stage = new Stage();
+    public void show(Stage stage){
         Scene scene = new Scene(this);
         stage.setScene(scene);
         stage.show();
@@ -67,7 +70,13 @@ public class AinurVisualiser extends Region {
      * This method lays out the visualiser modules on the in the parent component (this)
      */
     private void setUpLayout() {
-        //TODO implement me!
+        HBox graphStatHBox = new HBox();
+        graphStatHBox.getChildren().addAll(_gv, _asv);
+
+        VBox outerVBox = new VBox();
+        outerVBox.getChildren().addAll(graphStatHBox, _sv);
+
+        this.getChildren().add(outerVBox);
     }
 
     /**
