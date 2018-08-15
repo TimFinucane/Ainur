@@ -106,9 +106,7 @@ public class AinurVisualiserTest extends Application {
             @Override
             protected void done() {
                 super.done();
-                Platform.runLater(() -> {
-                    av.stop();
-                });
+                Platform.runLater(() -> av.stop());
             }
         };
 

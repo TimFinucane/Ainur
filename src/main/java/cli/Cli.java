@@ -168,7 +168,6 @@ public class Cli {
         if (cmdLine.hasOption("v")) {
             _visualise = true;
             System.out.println("You instructed Ainur to visualise the scheduling process!");
-            System.out.println("Unfortunately this feature is yet to be implemented... stay tuned");
         }
     }
 
