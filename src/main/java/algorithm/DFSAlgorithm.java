@@ -107,7 +107,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                     continue;
                 }
                 curSchedule.addTask(toBePlaced);
-                int nodesLowerBound = _lowerBound.estimate(_graph, curSchedule, new ArrayList<>(nextAvailableNodes.get(node)));
+                int nodesLowerBound = _lowerBound.estimate(_graph, curSchedule, nextAvailableNodes.get(node));
                 curSchedule.removeTask(toBePlaced);
 
                 // Now add it to our sorted node info
