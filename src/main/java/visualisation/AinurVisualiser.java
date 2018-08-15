@@ -59,7 +59,7 @@ public class AinurVisualiser extends Region {
         // Initialise visualisers
         _gv = new GraphVisualiser(graph);
         _sv = new ScheduleVisualiser();
-        _asv = new AlgorithmStatisticsVisualiser(lowerBound, uppedBound, coresUsed);
+        _asv = new AlgorithmStatisticsVisualiser(lowerBound, 100000000, coresUsed);
 
         // Initialise stats object
         _stats = new Statistics();
@@ -176,6 +176,9 @@ public class AinurVisualiser extends Region {
     private void updateStatistics() {
         _stats.setSearchSpaceCulled(_algorithm.branchesCulled());
         _stats.setSearchSpaceLookedAt(_algorithm.branchesExplored());
+
+        _stats.setMaxScheduleBound(_algorithm.getCurrentBest().getEndTime());
+
         _asv.update(_stats);
     }
 }

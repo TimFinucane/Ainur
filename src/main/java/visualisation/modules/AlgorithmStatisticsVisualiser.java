@@ -33,8 +33,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     // Should stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
     private final double _initialLowerBound;
-    private final double _initialUpperBound;
-    private final double _initialBoundRange;
+    private double _initialUpperBound;
+    private double _initialBoundRange;
 
     // For keeping track of number of updates, certain visualizations may use this to prevent over updating
     private long _updateIteration;
@@ -229,7 +229,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         _branchesCoveredValue.setText(String.format("%6.2e", (float)statistics.getSearchSpaceLookedAt()));
         _branchesCulledValue.setText(String.format("%6.2e", (float)statistics.getSearchSpaceCulled()));
-        _cullingRateValue.setText(String.format("%.1f%%",  100 * (float)statistics.getSearchSpaceCulled() / statistics.getSearchSpaceLookedAt()));
+        _cullingRateValue.setText(String.format("%.1f%%",  100 * (float)statistics.getSearchSpaceCulled() / (statistics.getSearchSpaceLookedAt() + statistics.getSearchSpaceCulled())));
 
         NumberFormat format = NumberFormat.getInstance();
         Runtime runtime = Runtime.getRuntime(); // For the commas in 100,000
@@ -246,6 +246,14 @@ public class AlgorithmStatisticsVisualiser extends Region {
      * @param statistics
      */
     private void updateBoundingChart(Statistics statistics) {
+
+        if (_updateIteration == 1) { // Lol
+            _initialUpperBound = statistics.getMaxScheduleBound();
+            _boundingAxis.setUpperBound(_initialUpperBound);
+            _initialBoundRange = _initialUpperBound - _initialLowerBound;
+            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
+        }
+
         // calculate left and right rectangle widths with regards to bound progression and visualisation width
         int leftRectangleWidth = (int)(((statistics.getMinScheduleBound() - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
         int rightRectangleWidth = (int)(((_initialUpperBound - statistics.getMaxScheduleBound()) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
