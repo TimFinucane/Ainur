@@ -32,7 +32,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
      * @param lowerBound : A lower-bound to use in algorithm
      * @param communicator : A communicator used to communicate with tieredAlgorithms
      */
-    public AStarAlgorithm(MultiAlgorithmCommunicator communicator, Arborist arborist, LowerBound lowerBound, int depth) {
+    public AStarAlgorithm(MultiAlgorithmCommunicator communicator, Arborist arborist, LowerBound lowerBound) {
         super(communicator);
         _arborist = arborist;
         _lowerBound = lowerBound;
@@ -73,7 +73,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     }
 
     private void run(Graph graph, SimpleSchedule rootSchedule, HashSet<Node> nextNodes) {
-        System.out.println("hello!");
 
         PriorityQueue<Pair<Integer, SimpleSchedule>> schedulesToVisit = new PriorityQueue<>(new ScheduleComparator());
 

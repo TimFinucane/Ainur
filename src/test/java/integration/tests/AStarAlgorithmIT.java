@@ -3,6 +3,7 @@ package integration.tests;
 import algorithm.AStarAlgorithm;
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
+import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.Arborist;
@@ -13,6 +14,7 @@ import common.Validator;
 import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
+import integration.tests.repeatable.test.RepeatTest;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.Assert;
@@ -20,6 +22,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import scala.Int;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +32,7 @@ import java.io.InputStream;
 import static junit.framework.TestCase.*;
 
 /**
- * This class's purpose is to provide a suite for testing DFSAlgorithm's functionality with regards to reading in a graph
+ * This class's purpose is to provide a suite for testing AStarAlgorithm's functionality with regards to reading in a graph
  * object and outputting a schedule that is both optimal and valid. Graphs are sourced from data/graphs/, reading in of
  * of these also occurs before every test.
  */
@@ -39,6 +42,7 @@ public class AStarAlgorithmIT {
     private static final String SEP = File.separator;
 
     private Algorithm _algorithmWithAllHeuristics;
+    private Algorithm _algorithmhAllHeuristics4Threads;
 
     private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
     private static final String NODES_8_FILENAME = String.format("data%sgraphs%sNodes_8_Random.dot", SEP, SEP);
@@ -54,6 +58,23 @@ public class AStarAlgorithmIT {
         _algorithmWithAllHeuristics = new AStarAlgorithm(
                 Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
                 new CriticalPath());
+
+        // Set up algorithm classes
+        _algorithmhAllHeuristics4Threads = new TieredAlgorithm(4,
+                (tier, communicator) -> {
+                if (tier == 0) {
+                    return new AStarAlgorithm(
+                            communicator,
+                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                            new CriticalPath());
+                } else {
+                    return new DFSAlgorithm(
+                            communicator,
+                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                            new CriticalPath(),
+                            Integer.MAX_VALUE);
+                }
+                });
     }
 
 
@@ -68,7 +89,7 @@ public class AStarAlgorithmIT {
         Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new DFSAlgorithm(new IsNotAPruner(), new NaiveBound());
+        Algorithm algorithm = new AStarAlgorithm(new IsNotAPruner(), new NaiveBound());
         algorithm.run(graph, 4);
 
         //Manually start algorithm on graph
@@ -270,6 +291,33 @@ public class AStarAlgorithmIT {
         // Execute algorithm w/ all heuristics
         _algorithmWithAllHeuristics.run(graph, 4);
         Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
+
+        assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
+    }
+
+
+    /**
+     * WARNING: Test will not reliably pass without sleep function as there are intermittent concurrency issues with
+     * current implementation of threading with A*.
+     */
+    @Test
+    @RepeatTest(times = 3)
+    public void testAlgorithm11Node4ProcessorAllHeuristics4Threads() {
+
+        Graph graph = getGraph(NODES_11_FILENAME);
+
+        // Execute algorithm w/ all heuristics
+        _algorithmhAllHeuristics4Threads.run(graph, 4);
+
+        // TODO fix bug that requires sleeping
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
 
         assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
