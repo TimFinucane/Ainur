@@ -4,16 +4,18 @@ import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
 import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.Arborist;
+import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.graph.Graph;
 import io.dot.DotGraphReader;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.Ignore;
-import visualisation.modules.GraphVisualiser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +36,7 @@ public class AinurVisualiserTest extends Application {
      * Displays visualiser
      */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         _graph = this.loadGraph(GRAPH_FILE);
 
         // Test the dfs implementation on visualiser
@@ -52,11 +54,31 @@ public class AinurVisualiserTest extends Application {
      */
     public void testDfs(Stage stage) {
         Algorithm dfsAlgorithm = new DFSAlgorithm(
-                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                new CriticalPath()
+                Arborist.combine(new IsNotAPruner()),
+                new NaiveBound()
         );
         AinurVisualiser av = new AinurVisualiser(dfsAlgorithm, _graph, 0, 100, 4);
         this.setScene(stage, av);
+
+
+        Task task = new Task<Void>() {
+            @Override public Void call() throws InterruptedException {
+                av.run();
+                return null;
+            }
+        };
+
+        Task task2 = new Task<Void>() {
+            @Override public Void call() {
+                dfsAlgorithm.run(_graph, 4);
+                return null;
+            }
+        };
+
+        new Thread(task).start();
+        new Thread(task2).start();
+
+        //av.stop();
     }
 
     /**
