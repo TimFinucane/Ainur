@@ -96,7 +96,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
                 curSchedule.addTask(toBePlaced);
                 // Check whether to continue (delve deeper)
-                if( _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime()) {
+                if( _lowerBound.estimate(graph, curSchedule, nextAvailableNodes) >= _communicator.getCurrentBest().getEndTime()) {
                     _numCulled++;
                 }
                 // We are meant to continue with this schedule
