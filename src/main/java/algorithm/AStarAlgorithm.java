@@ -7,6 +7,7 @@ import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
+import javafx.util.Pair;
 
 import java.util.*;
 
@@ -66,17 +67,15 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
     private void run(Graph graph, SimpleSchedule rootSchedule, HashSet<Node> nextNodes) {
 
-        // TODO: REPLACE TREEMAP DATA STRUCTURE
-        TreeMap<Integer, SimpleSchedule> schedulesToVisit = new TreeMap<>();
+        PriorityQueue<Pair<Integer, SimpleSchedule>> schedulesToVisit = new PriorityQueue<>(new ScheduleComparator());
 
         //initial best estimate is just the first explored partial schedule.
-        schedulesToVisit.put(_lowerBound.estimate(graph, rootSchedule, graph.getEntryPoints()), rootSchedule);
+        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, graph.getEntryPoints());
+        schedulesToVisit.add(new Pair(firstLowerBound, rootSchedule));
 
         while (!schedulesToVisit.isEmpty()) {
-
-            //TODO figure out dis shit!
-            Map.Entry<Integer, SimpleSchedule> integerScheduleEntry = schedulesToVisit.firstEntry();
-            SimpleSchedule curSchedule = integerScheduleEntry.getValue();
+            // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
+            SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
 
             if (!continueRunning()) {
                 // TODO figure out how to get the next nodes associated to current best schedule
@@ -106,8 +105,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                     // if pruner suggests culling this branch, do not explore this schedule
                     if (_arborist.prune(graph, curSchedule, taskToPlace)) {
                         _numCulled++;
-                        continue;
-
                     } else { // explore this schedule
 
                         // generates a schedule with new task added.
@@ -120,19 +117,15 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                         // find the lower bound associated to the newly generated schedule.
                         int newLowerBound = _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
 
-                        // check to see if heuristics suggest exploring path based on new schedule lower bound estimate
+                        // if heuristics evaluate lower bound to be greater than current best, cull this branch.
                         if (newLowerBound >= _communicator.getCurrentBest().getEndTime()) {
                             _numCulled++;
-                            continue;
                         } else { // explore new schedule by adding it to the search space
                             _numExplored++;
-                            schedulesToVisit.put(newLowerBound, newSchedule);
+                            schedulesToVisit.add(new Pair(newLowerBound, newSchedule));
                         }
                     }
-                    // current schedule has now been explored so does not need to be revisited
-                    schedulesToVisit.remove(curSchedule);
                 }
-
             }
 
         }
@@ -152,10 +145,29 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         long percentUsed = (memoryUsed/runtime.maxMemory())*100;
 
         //if algorithm has used more than a set percentage it should pass its implementation to another thread.
-        if (percentUsed > PERCENTAGE_MEMORY_TO_USE) {
-            return false;
-        } else {
-            return true;
+        return !(percentUsed > PERCENTAGE_MEMORY_TO_USE);
+    }
+
+
+    /**
+     * Used to make sure pairs of schedules and their corresponding lower bound estimate are sorted by their lower
+     * bound estimates.
+     */
+    private class ScheduleComparator implements Comparator<Pair<Integer, SimpleSchedule>> {
+
+        /**
+         * Defines the ordering of pairs, those with a smaller integer lower bound come first.
+         */
+        @Override
+        public int compare(Pair<Integer, SimpleSchedule> pair1, Pair<Integer, SimpleSchedule> pair2) {
+            // if pair1 has a smaller path weight integer than pair2 it gets ordered first
+            if (pair1.getKey() < pair2.getKey()) {
+                return -1;
+            } else if (pair1.getKey().equals(pair2.getKey())) {
+                return 0;
+            } else {
+                return 1;
+            }
         }
     }
 
