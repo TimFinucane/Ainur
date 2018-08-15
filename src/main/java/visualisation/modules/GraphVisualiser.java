@@ -57,9 +57,6 @@ public class GraphVisualiser extends Region {
     public static final String UI_STYLE_SHEET = "ui.stylesheet";
     public static final String MARKED_CLASS = "marked";
 
-    // The label of the root node
-    public static final String ROOT_NODE_LABEL = "0";
-
     /* Fields */
 
     // Used for rendering swing component in javafx
@@ -129,9 +126,11 @@ public class GraphVisualiser extends Region {
      * @param node The node which is to be selected
      */
     public void update(Node node) {
-        List<Node> nodeList = new ArrayList<>();
-        nodeList.add(node);
-        this.update(nodeList);
+        if (node != null) {
+            List<Node> nodeList = new ArrayList<>();
+            nodeList.add(node);
+            this.update(nodeList);
+        }
     }
 
     /**
@@ -143,6 +142,9 @@ public class GraphVisualiser extends Region {
      * @param nodes The list of nodes to highlight.
      */
     public void update(List<Node> nodes) {
+        if (nodes.size() < 1 || nodes == null)
+            return;
+
         for (Node node: _currentNodes) {
             _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
         }
@@ -229,7 +231,7 @@ public class GraphVisualiser extends Region {
             MouseMotionListener mouseMotionListener = view.getMouseMotionListeners()[0];
             view.removeMouseMotionListener(mouseMotionListener);
 
-            // Assogn the view to the swingNode component
+            // Assign the view to the swingNode component
             _swingNode.setContent(view);
         });
     }

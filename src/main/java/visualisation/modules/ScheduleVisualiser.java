@@ -37,6 +37,9 @@ public class ScheduleVisualiser extends Region {
      * @param schedule : schedule to visualise
      */
     public void update(Schedule schedule) {
+        if (schedule == null)
+            return;
+
         // Makes sure previous visualisation is cleared from the display
         this.getChildren().clear();
 
