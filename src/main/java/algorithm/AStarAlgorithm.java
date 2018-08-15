@@ -93,7 +93,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
             if (_communicator.getCurrentBest().getEndTime() <= curLowerBound) {
                 System.out.println("A* exiting prematurely with best:");
-                System.out.println(curSchedule.getEndTime());
+                System.out.println(curLowerBound);
                 return;
             }
 

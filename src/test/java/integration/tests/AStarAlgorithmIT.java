@@ -15,12 +15,10 @@ import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import integration.tests.repeatable.test.RepeatTest;
+import integration.tests.repeatable.test.RepeatedTestRule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
 import scala.Int;
 
@@ -77,7 +75,8 @@ public class AStarAlgorithmIT {
                 });
     }
 
-
+    @Rule
+    public RepeatedTestRule repeatRule = new RepeatedTestRule();
 
     /**
      * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with no
@@ -323,7 +322,49 @@ public class AStarAlgorithmIT {
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
     }
 
+    @Test
+    @RepeatTest(times = 2)
+    public void testAlgorithm7Node4ProcessorAllHeuristics4Threads(){
+        Graph graph = getGraph(NODES_7_FILENAME);
 
+        // Execute algorithm w/ no heuristics
+        _algorithmhAllHeuristics4Threads.run(graph, 4);
+
+        // TODO fix bug that requires sleeping
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //Manually start algorithm on graph
+        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
+
+        assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
+
+
+    @Test
+    @RepeatTest(times = 3)
+    public void testAlgorithm10Node2ProcessorAllHeuristics2Threads(){
+        Graph graph = getGraph(NODES_10_FILENAME);
+
+        // Execute algorithm w/ all heuristics
+        _algorithmhAllHeuristics4Threads.run(graph, 2);
+
+        // TODO fix bug that requires sleeping
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
+
+        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
 
 
     private Graph getGraph(String filePath) {
