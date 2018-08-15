@@ -1,33 +1,110 @@
 package visualisation;
 
 import algorithm.Algorithm;
-import common.categories.GandalfIntegrationTestsCategory;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import algorithm.DFSAlgorithm;
+import algorithm.TieredAlgorithm;
+import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.pruner.Arborist;
+import algorithm.heuristics.pruner.ProcessorOrderPruner;
+import algorithm.heuristics.pruner.StartTimePruner;
+import common.graph.Graph;
+import io.dot.DotGraphReader;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.junit.Ignore;
+import visualisation.modules.GraphVisualiser;
 
-@Category(GandalfIntegrationTestsCategory.class)
-public class AinurVisualiserTest {
-    Algorithm _dfsAlgorithm;
-    Algorithm _tieredAlgorithm;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
-    @Before
-    public void initialise() {
-        // TODO
-        // Create algorithms
+import static junit.framework.TestCase.fail;
+
+@Ignore
+public class AinurVisualiserTest extends Application {
+
+    // Graph file to load in
+    public static final String GRAPH_FILE = "data/graphs/Nodes_11_OutTree.dot";
+
+    private Graph _graph;
+
+    /**
+     * Displays visualiser
+     */
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        _graph = this.loadGraph(GRAPH_FILE);
+
+        // Test the dfs implementation on visualiser
+        this.testDfs(primaryStage);
+
+        // Test the tiered algorithm implementation on visualiser
+        Stage secondStage = new Stage();
+        //this.testTiered(secondStage);
     }
 
-    @Test
-    public void testDfs() {
-        // TODO test dfs
-        // create visualiser for dfs
-        // run it alongside
+    /**
+     * Test the visualiser on a dfs algorithm
+     *
+     * @param stage the stage to display the visualiser in
+     */
+    public void testDfs(Stage stage) {
+        Algorithm dfsAlgorithm = new DFSAlgorithm(
+                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                new CriticalPath()
+        );
+        AinurVisualiser av = new AinurVisualiser(dfsAlgorithm, _graph, 0, 100, 4);
+        this.setScene(stage, av);
     }
 
-    @Test
-    public void testTiered() {
-        // TODO test tiered
-        // create visualiser for tiered
-        // run it alongside
+    /**
+     * Test the visualiser on a tiered algorithm
+     *
+     * @param stage the stage to display the visualiser in
+     */
+    public void testTiered(Stage stage) {
+        int cores = 4;
+        Algorithm tieredAlgorithm = new TieredAlgorithm(cores, (tier, communicator) ->
+                new DFSAlgorithm(communicator,
+                        Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                        new CriticalPath(),
+                        tier == 0 ? 8 : Integer.MAX_VALUE // Depth is 8 for first tier, infinite for second tier
+                )
+        );
+        AinurVisualiser av = new AinurVisualiser(tieredAlgorithm, _graph, 0, 100, cores);
+        this.setScene(stage, av);
+    }
+
+    /**
+     * Private helper method for loading in a Ainur graph from a file.
+     *
+     * @param pathname The filepath of the .dot file to read from.
+     * @return The Ainur graph read from the .dot file
+     */
+    private Graph loadGraph(String pathname) {
+        File graphFile = new File(pathname);
+        InputStream is = null;
+        try {
+            is = new FileInputStream(graphFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
+        return new DotGraphReader(is).read();
+    }
+
+    /**
+     * Private helper method for creating new windows
+     *
+     * @param stage The stage to put the graph visualiser in.
+     * @param av The graph visualiser to put in the stage.
+     */
+    private void setScene(Stage stage, AinurVisualiser av) {
+        // Set up javafx scene
+        Scene scene = new Scene(av);
+        stage.setScene(scene);
+        stage.show();
     }
 }

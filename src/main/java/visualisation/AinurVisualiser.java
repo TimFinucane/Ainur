@@ -53,14 +53,12 @@ public class AinurVisualiser extends Region {
     /* Public Methods */
 
     /**
-     * Creates a stage and displays the visualiser in it.
+     * This method runs the visualiser alongside the algorithm.
+     * This method periodically polls the algorithm for information about its current status.
+     * This method will then update the visualiser modules accordingly.
      */
-    public void show(Stage stage){
-        Scene scene = new Scene(this);
-        stage.setScene(scene);
-        stage.show();
-
-        this.runVisualiser();
+    public void show(){
+        //TODO implement me
     }
 
     /* Private Helper Methods */
@@ -77,16 +75,6 @@ public class AinurVisualiser extends Region {
         outerVBox.getChildren().addAll(graphStatHBox, _sv);
 
         this.getChildren().add(outerVBox);
-    }
-
-    /**
-     * Private helper method.
-     * This method runs the visualiser alongside the algorithm.
-     * This method periodically polls the algorithm for information about its current status.
-     * This method will then update the visualiser modules accordingly.
-     */
-    private void runVisualiser() {
-        //TODO implement me!
     }
 
     /**
