@@ -1,5 +1,6 @@
 package integration.tests;
 
+import algorithm.AStarAlgorithm;
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
@@ -32,7 +33,7 @@ import static junit.framework.TestCase.*;
  * of these also occurs before every test.
  */
 @Category(GandalfIntegrationTestsCategory.class)
-public class DFSAlgorithmIT {
+public class AStarAlgorithmIT {
 
     private static final String SEP = File.separator;
 
@@ -49,9 +50,9 @@ public class DFSAlgorithmIT {
     public void setup() {
 
         // Set up algorithm classes
-        _algorithmWithAllHeuristics = new DFSAlgorithm(
-            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-            new CriticalPath());
+        _algorithmWithAllHeuristics = new AStarAlgorithm(
+                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                new CriticalPath());
     }
 
 

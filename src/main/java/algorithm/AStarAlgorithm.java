@@ -89,7 +89,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
 
             if (!continueRunning()) {
-                // TODO figure out how to get the next nodes associated to current best schedule
                 HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
                 _communicator.explorePartialSolution(curSchedule, nextNodesToAdd);
             }
@@ -116,15 +115,14 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                     } else { // explore this schedule
 
                         // generates a schedule with new task added.
-                        SimpleSchedule newSchedule = new SimpleSchedule(curSchedule);
-                        newSchedule.addTask(taskToPlace);
+                        curSchedule.addTask(taskToPlace);
 
                         // find the lower bound associated to the newly generated schedule.
                         int newLowerBound;
                         if (nextNodesToAdd.isEmpty()) { // if all nodes are in the schedule, "lower bound" becomes end time
-                            newLowerBound = newSchedule.getEndTime();
+                            newLowerBound = curSchedule.getEndTime();
                         } else {
-                            newLowerBound = newSchedule.getEndTime() + _lowerBound.estimate(graph, newSchedule, new ArrayList<>(nextNodesToAdd));
+                            newLowerBound = curSchedule.getEndTime() + _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextNodesToAdd));
                         }
 
                         // if heuristics evaluate lower bound to be greater than current best, cull this branch.
@@ -132,8 +130,9 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                             _numCulled++;
                         } else { // explore new schedule by adding it to the search space
                             _numExplored++;
-                            schedulesToVisit.add(new Pair(newLowerBound, newSchedule));
+                            schedulesToVisit.add(new Pair(newLowerBound, new SimpleSchedule(curSchedule)));
                         }
+                        curSchedule.removeTask(taskToPlace);
                     }
                 }
             }

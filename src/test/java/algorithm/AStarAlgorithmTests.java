@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class AStarAlgorithmTests {
+
     @Test
     public void simpleTest() {
         // Use two processors, simple graph
@@ -30,9 +31,9 @@ public class AStarAlgorithmTests {
         algorithm.run(graph, 2);
         Schedule result = algorithm.getCurrentBest();
 
-        for(int i = 0; i < result.getNumProcessors(); ++i) {
+        for (int i = 0; i < result.getNumProcessors(); ++i) {
             System.out.println("Processor " + String.valueOf(i));
-            for(Task task : result.getTasks(i))
+            for (Task task : result.getTasks(i))
                 System.out.println(
                         task.getNode().getLabel()
                                 + ", " + String.valueOf(task.getStartTime()) + " to " + String.valueOf(task.getEndTime())
