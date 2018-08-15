@@ -41,7 +41,7 @@ public class CriticalPathTests {
 
         // Calls critical path method with dummy data.
         int criticalPath = lowerBound.estimate(graph, schedule, graph.getEntryPoints());
-        assertEquals(criticalPath, 7);
+        assertEquals(7, criticalPath);
     }
 
     /**
@@ -69,7 +69,7 @@ public class CriticalPathTests {
 
         // Calls critical path method with dummy data.
         int criticalPath = lowerBound.estimate(graph, schedule, graph.getEntryPoints());
-        assertEquals(criticalPath, 18);
+        assertEquals(18, criticalPath);
     }
 
 
@@ -96,7 +96,7 @@ public class CriticalPathTests {
 
         // Calls critical path method with dummy data.
         int criticalPath = lowerBound.estimate(graph, schedule, graph.getEntryPoints());
-        assertEquals(criticalPath, 15);
+        assertEquals(15, criticalPath);
     }
 
     /**
@@ -134,6 +134,6 @@ public class CriticalPathTests {
         }
 
         int criticalPath = lowerBound.estimate(graph, schedule, nodesToVisit);
-        assertEquals(criticalPath, 15);
+        assertEquals(18, criticalPath);
     }
 }
