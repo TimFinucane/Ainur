@@ -6,7 +6,6 @@ import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.Arborist;
-import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.graph.Graph;
@@ -54,24 +53,31 @@ public class AinurVisualiserTest extends Application {
      */
     public void testDfs(Stage stage) {
         Algorithm dfsAlgorithm = new DFSAlgorithm(
-                Arborist.combine(new IsNotAPruner()),
+                Arborist.combine(new StartTimePruner()),
                 new NaiveBound()
         );
         AinurVisualiser av = new AinurVisualiser(dfsAlgorithm, _graph, 0, 100, 4);
         this.setScene(stage, av);
 
-
         Task task = new Task<Void>() {
-            @Override public Void call() throws InterruptedException {
+            @Override
+            public Void call() throws InterruptedException {
                 av.run();
                 return null;
             }
         };
 
         Task task2 = new Task<Void>() {
-            @Override public Void call() {
+            @Override
+            public Void call() {
                 dfsAlgorithm.run(_graph, 4);
                 return null;
+            }
+
+            @Override
+            protected void done() {
+                super.done();
+                av.stop();
             }
         };
 
