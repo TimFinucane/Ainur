@@ -8,7 +8,6 @@ import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import javafx.util.Pair;
-import org.graphstream.algorithm.AlgorithmComputationTrigger;
 
 import java.util.*;
 
@@ -75,7 +74,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
         //initial best estimate is just the first explored partial schedule.
         int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, graph.getEntryPoints());
-        schedulesToVisit.add(new Pair(firstLowerBound, rootSchedule));
+        schedulesToVisit.add(new Pair<>(firstLowerBound, rootSchedule));
 
         while (!schedulesToVisit.isEmpty()) {
             memoryCounter++;
@@ -138,7 +137,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                             _numCulled++;
                         } else { // explore new schedule by adding it to the search space
                             _numExplored++;
-                            schedulesToVisit.add(new Pair(newLowerBound, new SimpleSchedule(curSchedule)));
+                            schedulesToVisit.add(new Pair<>(newLowerBound, new SimpleSchedule(curSchedule)));
                         }
                         curSchedule.removeTask(taskToPlace);
                     }
