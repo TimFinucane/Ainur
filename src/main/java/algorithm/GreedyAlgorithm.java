@@ -25,17 +25,19 @@ public class GreedyAlgorithm implements Algorithm {
         // while there are still nodes that have not been added to the schedule
         while (!(nodesToVisit.isEmpty())) {
             // Get current node we're gonna add to the schedule
-            Node curNode = nodesToVisit.get(0);
-            int[] earliestTimes = Helpers.calculateEarliestTimes(graph, schedule, curNode);
-            // Looks at all the possible time that task can be added and find the earliest position
-            Task bestTask = new Task(0, 0, new Node(Integer.MAX_VALUE, "a", 1));
-            for(int i = 0; i < processors; i++){
-                Task t = new Task(i, earliestTimes[i], curNode);
-                if(t.getEndTime() < bestTask.getEndTime()){
-                    bestTask = t;
-                }
-            }
-
+            Task bestTask = null;
+            int bestTime = Integer.MAX_VALUE;
+           for(Node n : nodesToVisit){
+               int[] earliestTimes = Helpers.calculateEarliestTimes(graph, schedule, n);
+               // Looks at all the possible time that task can be added and find the earliest position
+               for(int i = 0; i < processors; i++){
+                   Task t = new Task(i, earliestTimes[i], n);
+                   if(t.getEndTime() < bestTime){
+                       bestTask = t;
+                       bestTime = t.getEndTime();
+                   }
+               }
+           }
             schedule.addTask(bestTask);
 
             // the next nodes to visit are now those accessible from the new best schedule.
