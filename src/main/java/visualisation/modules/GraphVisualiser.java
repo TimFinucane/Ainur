@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import common.graph.Edge;
 import common.graph.Graph;

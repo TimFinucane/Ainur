@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import javafx.geometry.Insets;
 import javafx.scene.chart.LineChart;

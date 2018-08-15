@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import common.schedule.Schedule;
 import common.schedule.Task;

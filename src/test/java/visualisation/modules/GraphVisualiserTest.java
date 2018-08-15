@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import common.graph.Graph;
 import common.graph.Node;
@@ -7,7 +7,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
