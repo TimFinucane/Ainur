@@ -17,6 +17,7 @@ import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -224,6 +225,7 @@ public class AStarAlgorithmIT {
      * heuristics
      */
     @Test
+    @Ignore
     public void testAlgorithm10Node4ProcessorAllHeuristics() {
 
         Graph graph = getGraph(NODES_10_FILENAME);
@@ -243,6 +245,7 @@ public class AStarAlgorithmIT {
      * Test tests algorithm against graph with 11 nodes on 2 processors with all heuristics
      */
     @Test
+    @Ignore
     public void testAlgorithm11Node2ProcessorAllHeuristics() {
 
         Graph graph = getGraph(NODES_11_FILENAME);
@@ -262,6 +265,7 @@ public class AStarAlgorithmIT {
      * Test tests algorithm against graph with 11 nodes on 4 processors with all heuristics
      */
     @Test
+    @Ignore
     public void testAlgorithm11Node4ProcessorAllHeuristics() {
 
         Graph graph = getGraph(NODES_11_FILENAME);

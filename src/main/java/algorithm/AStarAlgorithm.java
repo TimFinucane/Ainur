@@ -130,7 +130,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                         if (nextNodesToAdd.isEmpty()) { // if all nodes are in the schedule, "lower bound" becomes end time
                             newLowerBound = curSchedule.getEndTime();
                         } else {
-                            newLowerBound = curSchedule.getEndTime() + _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextNodesToAdd));
+                            newLowerBound = _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextNodesToAdd));
                         }
 
                         // if heuristics evaluate lower bound to be greater than current best, cull this branch.
@@ -179,7 +179,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // if pair1 has a smaller path weight integer than pair2 it gets ordered first
             if (pair1.getKey() < pair2.getKey()) {
                 return -1;
-            } else if (pair1.getKey() == (pair2.getKey())) {
+            } else if (pair1.getKey().equals((pair2.getKey()))) {
                 return 0;
             } else {
                 return 1;
