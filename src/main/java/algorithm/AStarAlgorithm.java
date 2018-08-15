@@ -28,6 +28,9 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private int _numExplored = 0;
     private Node _currentNode;
 
+    //used for polling so that memory usage is only checked every 10 iterations.
+    private int memoryCounter = 0;
+
     /**
      * Constructor for DFSAlgorithm class.
      * @param arborist : A pruner to use in algorithm
@@ -75,6 +78,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         schedulesToVisit.add(new Pair(firstLowerBound, rootSchedule));
 
         while (!schedulesToVisit.isEmpty()) {
+            memoryCounter++;
 
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
             SimpleSchedule curSchedule = schedulesToVisit.poll().getValue();
@@ -88,9 +92,13 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // get the nodes that can be added to this schedule
             nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
 
-            if (!continueRunning()) {
-                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
-                _communicator.explorePartialSolution(curSchedule, nextNodesToAdd);
+            //only poll for memory usage every 5 iterations.
+            if (memoryCounter == 10){
+                memoryCounter = 0;
+                if (!continueRunning()) {
+                    HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
+                    _communicator.explorePartialSolution(curSchedule, nextNodesToAdd);
+                }
             }
 
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
