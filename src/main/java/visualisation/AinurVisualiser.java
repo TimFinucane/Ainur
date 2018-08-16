@@ -161,13 +161,10 @@ public class AinurVisualiser extends Region {
     /**
      * Private helper method.
      * Checks to see if an algorithm is an instance of a tiered algorithm.
-     * @returns True if is tiered, false otherwise.
+     * @return True if is tiered, false otherwise.
      */
     private boolean isTiered(Algorithm algorithm) {
-        if (algorithm instanceof TieredAlgorithm) {
-            return true;
-        }
-        return false;
+        return algorithm instanceof TieredAlgorithm;
     }
 
     /**

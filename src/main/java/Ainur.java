@@ -14,13 +14,12 @@ import io.dot.DotGraphReader;
 import io.dot.DotScheduleWriter;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import visualisation.AinurVisualiser;
 
 import java.io.*;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 /** The Main Class for Ainur **/
 public class Ainur extends Application {
@@ -58,16 +57,15 @@ public class Ainur extends Application {
       }
     }
 
-    public static Void onAlgorithmComplete(Schedule schedule) {
-        if (cli.getVisualise() || av != null)
+    private static void onAlgorithmComplete(Schedule schedule) {
+        if (cli.getVisualise())
             Platform.runLater(() -> av.stop());
         try {
             writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to write the outputted schedule to a file!");
             System.exit(1);
         }
-        return null;
     }
 
     /**
@@ -116,15 +114,14 @@ public class Ainur extends Application {
      * @param graph The graph to find a schedule on
      * @param algorithm The algorithm to use to find the schedule
      * @param processors The number of processors to use
-     *
-     * @return The schedule found by the algorithm.
+     * @param onFinished Calback to be called on completion of algorithm
      */
-    private static void runAlgorithm(Graph graph, Algorithm algorithm, int processors, Function<Schedule, Void> onFinished) {
+    private static void runAlgorithm(Graph graph, Algorithm algorithm, int processors, Consumer<Schedule> onFinished) {
         // Run the algorithm
         algorithm.run(graph, processors);
 
         Schedule schedule = algorithm.getCurrentBest();
-        onFinished.apply(schedule);
+        onFinished.accept(schedule);
     }
 
 
@@ -132,7 +129,6 @@ public class Ainur extends Application {
      * Writes the schedule obtained from the scheduling algorithm to a dot file.
      *
      * @param schedule the schedule to write to the .dot file.
-     * @throws FileNotFoundException
      */
     private static void writeSchedule(Graph graph, Schedule schedule, String inputFile, String outputFile) throws IOException {
 
