@@ -12,32 +12,60 @@ import io.GraphReader;
 import io.ScheduleWriter;
 import io.dot.DotGraphReader;
 import io.dot.DotScheduleWriter;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import visualisation.AinurVisualiser;
 
 import java.io.*;
+import java.util.function.Consumer;
 
-public class Ainur {
+/** The Main Class for Ainur **/
+public class Ainur extends Application {
+    private static Cli cli;
+    private static Graph graph;
+    private static Algorithm algorithm;
+    private static AinurVisualiser av;
+
+    /** MAIN **/
     public static void main(String[] args) {
-      Cli cli = new Cli(args);
+      cli = new Cli(args);
       cli.parse();
 
       try {
+          graph = readGraphFile(cli.getInputFile()); // read the graph
+          algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
+          // TODO update upperbound when non optimal implemented
 
-          // Start the program
-          Graph graph = readGraphFile(cli.getInputFile()); // read the graph
-          Schedule schedule = startScheduling(graph, cli.getProcessors(), cli.getCores()); // start scheduling
+          Thread schedulingThread =
+                  new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
 
-          // write the output
-          writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
-
+          if (cli.getVisualise()) {
+              // Launch as javafx application.
+              schedulingThread.start();
+              launch(args);
+          } else {
+              schedulingThread.run();
+              System.exit(0);
+          }
       } catch (IOException io) {
-
           System.out.println("Invalid filename entered, try run it again with a valid filename."
                   + " Process terminated prematurely.");
-
+          System.exit(1);
       }
-
     }
 
+    private static void onAlgorithmComplete(Schedule schedule) {
+        if (cli.getVisualise())
+            Platform.runLater(() -> av.stop());
+        try {
+            writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
+        } catch (IOException e) {
+            System.out.println("Failed to write the outputted schedule to a file!");
+            System.exit(1);
+        }
+    }
 
     /**
      * Reads a graph from the input dot file.
@@ -51,29 +79,48 @@ public class Ainur {
         return graphReader.read();
     }
 
-
-
-    private static Schedule startScheduling(Graph graph, int processors, int cores) {
+    /**
+     * Decides which algorithm should be used based on number of cores.
+     *
+     * @param cores The number of cores to run the algorithm on.
+     *
+     * @return A DFS algorithm if 1 core
+     *      Tiered algorithm otherwise
+     */
+    private static Algorithm chooseAlgorithm(int cores) {
         Algorithm algorithm;
         if(cores == 1) { // Single-threaded DFS algorithm
             algorithm = new DFSAlgorithm(
-                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                new CriticalPath()
+                    Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                    new CriticalPath()
             );
         } else { // Multithreaded, Tiered DFS algorithm
             algorithm = new TieredAlgorithm(cores, (tier, communicator) ->
-                new DFSAlgorithm(communicator,
-                    Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                    new CriticalPath(),
-                    tier == 0 ? 8 : Integer.MAX_VALUE // Depth is 8 for first tier, infinite for second tier
-                )
+                    new DFSAlgorithm(communicator,
+                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                            new CriticalPath(),
+                            tier == 0 ? 8 : Integer.MAX_VALUE // Depth is 8 for first tier, infinite for second tier
+                    )
             );
         }
 
-        //Start
+        return algorithm;
+    }
+
+    /**
+     * Starts scheduling using a provided algorithm.
+     *
+     * @param graph The graph to find a schedule on
+     * @param algorithm The algorithm to use to find the schedule
+     * @param processors The number of processors to use
+     * @param onFinished Calback to be called on completion of algorithm
+     */
+    private static void runAlgorithm(Graph graph, Algorithm algorithm, int processors, Consumer<Schedule> onFinished) {
+        // Run the algorithm
         algorithm.run(graph, processors);
 
-        return algorithm.getCurrentBest();
+        Schedule schedule = algorithm.getCurrentBest();
+        onFinished.accept(schedule);
     }
 
 
@@ -81,7 +128,6 @@ public class Ainur {
      * Writes the schedule obtained from the scheduling algorithm to a dot file.
      *
      * @param schedule the schedule to write to the .dot file.
-     * @throws FileNotFoundException
      */
     private static void writeSchedule(Graph graph, Schedule schedule, String inputFile, String outputFile) throws IOException {
 
@@ -94,5 +140,20 @@ public class Ainur {
         ScheduleWriter scheduleWriter = new DotScheduleWriter(os);
         scheduleWriter.write(schedule, graph, new FileInputStream(inputFile));
 
+    }
+
+    /**
+     * Starts the javafx visualisation.
+     * Takes over control from main.
+     */
+    @Override
+    public void start(Stage primaryStage) {
+        // Start the program
+        av = new AinurVisualiser(algorithm, graph, 0, 100, cli.getProcessors());
+        Scene scene = new Scene(av);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        av.run();
     }
 }

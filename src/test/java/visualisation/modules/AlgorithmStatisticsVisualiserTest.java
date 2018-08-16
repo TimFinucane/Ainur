@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import javafx.application.Application;
 import javafx.application.Platform;

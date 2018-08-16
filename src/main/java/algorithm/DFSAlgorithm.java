@@ -64,6 +64,8 @@ public class DFSAlgorithm extends BoundableAlgorithm {
         recurse(schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
             nextNodes, Integer.MAX_VALUE);
         _curLowerBound = getCurrentBest().getEndTime();
+
+        _currentNode = null;
     }
 
     /**

@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import common.schedule.Schedule;
 import common.schedule.Task;
@@ -14,18 +14,28 @@ import javafx.scene.text.Text;
  */
 public class ScheduleVisualiser extends Region {
 
-    private static final double WINDOW_WIDTH = 1000;
+    private static final double WINDOW_WIDTH = 1400;
     private static final double WINDOW_HEIGHT = 200;
     private static final Color FILL_COLOR = Color.LAVENDER;
     private static final Color BORDER_COLOR = Color.BLACK;
     private double rowHeight;
     private double colWidth;
 
+    public ScheduleVisualiser() {
+        this.setMinHeight(WINDOW_HEIGHT);
+        this.setMinWidth(WINDOW_WIDTH);
+        this.setMaxWidth(WINDOW_WIDTH);
+        this.setMaxHeight(WINDOW_HEIGHT);
+    }
+
     /**
      * Updates the visualisation to display the input schedule.
      * @param schedule : schedule to visualise
      */
     public void update(Schedule schedule) {
+        if (schedule == null)
+            return;
+
         // Makes sure previous visualisation is cleared from the display
         this.getChildren().clear();
 
@@ -38,12 +48,13 @@ public class ScheduleVisualiser extends Region {
         GridPane grid = setDimensions(endTime, numProc);
 
         // Generates an axis to display the schedule timing
-        NumberAxis axis = new NumberAxis("Schedule Time",0, endTime, 1);
+        NumberAxis axis = new NumberAxis("Schedule Time",0, endTime, Math.floor(endTime / 20)); // endTime / x for x tick marks
         axis.setMinWidth(WINDOW_WIDTH);
 
         // Adds tasks to visualisation for each processor
         for (int proc = 0; proc < numProc; proc++) {
             for (Task task : schedule.getTasks(proc)) {
+                System.out.println(task.getStartTime() + " " + task.getEndTime());
                 grid.add(generateRect(task), task.getStartTime(), proc);
             }
         }

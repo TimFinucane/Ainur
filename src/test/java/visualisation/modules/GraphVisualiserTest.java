@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import common.graph.Graph;
 import common.graph.Node;
@@ -7,7 +7,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,9 +48,45 @@ public class GraphVisualiserTest extends Application {
 
         // Create a new stage and test multi and single update;
         Stage thirdStage = new Stage();
-        GraphVisualiser gv3 = new GraphVisualiser(_graph);
+        // Graph should be rendered with low quality
+        GraphVisualiser gv3 = new GraphVisualiser(_graph, false);
         this.setScene(thirdStage, gv3);
         this.testMultiAndSingleUpdate(gv3);
+
+        // Test rendering quality set low
+        Stage fourthStage = new Stage();
+        GraphVisualiser gv4 = new GraphVisualiser(_graph);
+        this.setScene(fourthStage, gv4);
+        this.testLowQualityGraph(gv4);
+
+        // Test rendering quality set low then high
+        Stage fifthStage = new Stage();
+        GraphVisualiser gv5 = new GraphVisualiser(_graph);
+        this.setScene(fifthStage, gv5);
+        this.testLowHighQualityGraph(gv5);
+    }
+
+    /**
+     * Tests the graphvisualisers render quality method succesully switches to low quality
+     *
+     * @param gv graphvisualiser to test on.
+     */
+    public void testLowQualityGraph(GraphVisualiser gv) {
+        // Should set to low quality rendering
+        gv.setHighRenderQuality(false);
+    }
+
+    /**
+     *Tests the graphvisualisers render quality method successfully switches to low then high
+     *
+     * @param gv graphvisualiser to test on.
+     */
+    public void testLowHighQualityGraph(GraphVisualiser gv) {
+        // Should set to low quality rendering
+        gv.setHighRenderQuality(false);
+
+        // Set the quality to high again
+        gv.setHighRenderQuality(true);
     }
 
     /**
