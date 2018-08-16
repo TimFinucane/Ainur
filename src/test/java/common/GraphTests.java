@@ -1,13 +1,11 @@
 package common;
 
-import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.experimental.categories.Category;
 
 import java.util.List;
 

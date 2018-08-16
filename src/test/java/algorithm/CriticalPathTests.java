@@ -2,7 +2,6 @@ package algorithm;
 
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.LowerBound;
-import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
@@ -10,8 +9,6 @@ import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import org.junit.jupiter.api.Test;
-import org.junit.experimental.categories.Category;
-
 
 import java.util.ArrayList;
 import java.util.HashSet;

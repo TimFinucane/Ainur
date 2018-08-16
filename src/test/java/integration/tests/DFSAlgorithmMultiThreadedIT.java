@@ -1,39 +1,31 @@
 package integration.tests;
 
-import algorithm.*;
+import algorithm.Algorithm;
+import algorithm.DFSAlgorithm;
+import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
-import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.Arborist;
-import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
-import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
-import common.graph.Node;
 import common.schedule.Schedule;
-import common.schedule.SimpleSchedule;
-import integration.tests.repeatable.test.RepeatTest;
-import integration.tests.repeatable.test.RepeatedTestRule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import org.junit.*;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicReference;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
+import static junit.framework.TestCase.*;
 
 /**
- * Class provides test to test algorithms running with threading. Makes use of @RepeatTest rule to run a test
+ * Class provides test to test algorithms running with threading. Makes use of @RepeatedTest to run a test
  * multiple times. This is to try and counter and catch errors in threads that might ocour sipiradiacouly. By
  * running a test multiple times we are thoroughly testing it being run in threads.
  */
@@ -47,10 +39,7 @@ public class DFSAlgorithmMultiThreadedIT {
     private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
     private static final String NODES_10_FILENAME = String.format("data%sgraphs%sNodes_10_Random.dot", SEP, SEP);
 
-    @Rule
-    public RepeatedTestRule repeatRule = new RepeatedTestRule();
-
-    @Before
+    @BeforeEach
     public void setup() {
         // Set up algorithm classes
         _algorithmhAllHeuristics4Threads = new TieredAlgorithm(4,
@@ -63,7 +52,7 @@ public class DFSAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 2)
+    @RepeatedTest(2)
     public void testAlgorithm7Node4ProcessorAllHeuristics4Threads(){
         Graph graph = getGraph(NODES_7_FILENAME);
 
@@ -78,7 +67,7 @@ public class DFSAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 3)
+    @RepeatedTest(3)
     public void testAlgorithm11Node4ProcessorAllHeuristics4Threads() {
 
         Graph graph = getGraph(NODES_11_FILENAME);
@@ -92,7 +81,7 @@ public class DFSAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 3)
+    @RepeatedTest(3)
     public void testAlgorithm10Node2ProcessorAllHeuristics2Threads(){
         Graph graph = getGraph(NODES_10_FILENAME);
 

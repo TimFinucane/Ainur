@@ -1,14 +1,12 @@
 package algorithm;
 
-import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.lowerbound.NaiveBound;
-import common.categories.HobbitonUnitTestsCategory;
+import algorithm.heuristics.pruner.IsNotAPruner;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.experimental.categories.Category;
 
 
 public class DFSAlgorithmTests {

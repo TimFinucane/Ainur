@@ -1,6 +1,5 @@
 package common;
 
-import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
@@ -8,7 +7,6 @@ import common.schedule.Task;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.experimental.categories.Category;
 
 public class ValidatorTests {
 

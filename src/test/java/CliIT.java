@@ -1,17 +1,14 @@
 import common.Validator;
-import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Ignore;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.experimental.categories.Category;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
@@ -37,7 +34,7 @@ public class CliIT {
     private static final String NODES_7_FILENAME = Paths.get("data", "graphs", "Nodes_7_OutTree.dot").toString();
     private static final String NODES_7_OUTPUT_FILENAME = Paths.get("data", "graphs", "Nodes_7_OutTree-output.dot").toString();
 
-    @After
+    @AfterEach
     public void clear() {
         new File(NODES_7_OUTPUT_FILENAME).delete();
         new File(CUSTOM_OUTPUT_NAME_SUFFIX).delete();
