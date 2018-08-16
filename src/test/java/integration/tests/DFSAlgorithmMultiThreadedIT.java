@@ -19,6 +19,7 @@ import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +37,7 @@ import static junit.framework.TestCase.fail;
  * multiple times. This is to try and counter and catch errors in threads that might ocour sipiradiacouly. By
  * running a test multiple times we are thoroughly testing it being run in threads.
  */
-@Category(GandalfIntegrationTestsCategory.class)
+@Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public class DFSAlgorithmMultiThreadedIT {
 
     private Algorithm _algorithmhAllHeuristics4Threads;

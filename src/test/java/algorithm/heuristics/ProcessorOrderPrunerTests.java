@@ -7,10 +7,10 @@ import common.graph.Node;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(HobbitonUnitTestsCategory.class)
+
 public class ProcessorOrderPrunerTests {
     private Node nodeA = new Node(3, "a", 0);
     private Node nodeB = new Node(3, "b", 1);

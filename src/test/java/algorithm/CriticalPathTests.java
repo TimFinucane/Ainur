@@ -9,8 +9,9 @@ import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.experimental.categories.Category;
+
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Basic class to test the functionality of the critical path finding implementation.
  */
-@Category(HobbitonUnitTestsCategory.class)
+
 public class CriticalPathTests {
 
     /**

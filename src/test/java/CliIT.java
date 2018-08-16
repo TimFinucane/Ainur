@@ -6,7 +6,8 @@ import io.dot.DotGraphReader;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.*;
@@ -25,7 +26,7 @@ import static org.junit.Assert.fail;
  *
  * This file needs to be in the default package so it can access the Ainur main class.
  */
-@Category(GandalfIntegrationTestsCategory.class)
+@Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public class CliIT {
 
     private static final String CUSTOM_OUTPUT_NAME_NO_SUFFIX = "my_special_file";

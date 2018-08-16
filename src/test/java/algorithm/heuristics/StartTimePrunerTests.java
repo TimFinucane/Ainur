@@ -8,10 +8,10 @@ import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(HobbitonUnitTestsCategory.class)
+
 public class StartTimePrunerTests {
 
     /**

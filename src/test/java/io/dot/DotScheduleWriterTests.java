@@ -6,7 +6,7 @@ import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
  * Class tests DotScheduleWriter by making schedules and getting the writer to write them out to file
  * or in this case, a string to compare with
  */
-@Category(HobbitonUnitTestsCategory.class)
+
 public class DotScheduleWriterTests {
 
     @Test

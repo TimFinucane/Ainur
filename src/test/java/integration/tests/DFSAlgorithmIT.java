@@ -14,9 +14,9 @@ import common.graph.Graph;
 import common.schedule.Schedule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
@@ -31,7 +31,7 @@ import static junit.framework.TestCase.*;
  * object and outputting a schedule that is both optimal and valid. Graphs are sourced from data/graphs/, reading in of
  * of these also occurs before every test.
  */
-@Category(GandalfIntegrationTestsCategory.class)
+@Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public class DFSAlgorithmIT {
 
     private static final String SEP = File.separator;
@@ -45,7 +45,7 @@ public class DFSAlgorithmIT {
     private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
 
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         // Set up algorithm classes
