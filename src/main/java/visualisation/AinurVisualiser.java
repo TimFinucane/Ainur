@@ -25,6 +25,7 @@ public class AinurVisualiser extends Region {
 
     public final static Duration FAST_POLLING_DELAY = Duration.millis(16);
     public final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
+    public final static Duration MEDIUM_POLLING_DELAY = Duration.millis(1000);
 
     /* Fields */
 
@@ -40,6 +41,7 @@ public class AinurVisualiser extends Region {
     // Used to indicate whether or not the algorithm is running
     private Timeline _fastPoller;
     private Timeline _slowPoller;
+    private Timeline _mediumPoller;
 
     // Used to indicate whether or not the algorithm is tiered
     private boolean _isTiered;
@@ -90,15 +92,16 @@ public class AinurVisualiser extends Region {
             this.updateGraphNodes();
         }));
 
-        _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> {
-            this.updateSchedule();
-            _gv.update();
-        }));
+        _mediumPoller = new Timeline(new KeyFrame(MEDIUM_POLLING_DELAY, event -> _gv.update()));
+
+        _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> this.updateSchedule()));
 
         _slowPoller.setCycleCount(Animation.INDEFINITE);
+        _mediumPoller.setCycleCount(Animation.INDEFINITE);
         _fastPoller.setCycleCount(Animation.INDEFINITE);
 
         _fastPoller.play();
+        _mediumPoller.play();
         _slowPoller.play();
     }
 
@@ -111,8 +114,10 @@ public class AinurVisualiser extends Region {
         updateGraphNodes();
         updateSchedule();
         updateStatistics();
+        _gv.update();
         _asv.stop();
         _fastPoller.stop();
+        _mediumPoller.stop();
         _slowPoller.stop();
     }
 

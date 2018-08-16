@@ -129,7 +129,7 @@ public class GraphVisualiser extends Region {
         for (Map.Entry<Node, Long> pair : _nodeFrequencies.entrySet()) {
             double proportion = pair.getValue() / average;
             String nodeLabel = pair.getKey().getLabel();
-            
+
            _gsGraph.getNode(nodeLabel).setAttribute("ui.style", String.format("shadow-width: %f;", proportion * 2));
         }
 
