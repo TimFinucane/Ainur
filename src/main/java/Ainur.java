@@ -20,10 +20,14 @@ import javafx.stage.Stage;
 import visualisation.AinurVisualiser;
 
 import java.io.*;
+import java.util.function.Function;
 
 /** The Main Class for Ainur **/
 public class Ainur extends Application {
     private static Cli cli;
+    private static Graph graph;
+    private static Algorithm algorithm;
+    private static AinurVisualiser av;
 
     /** MAIN **/
     public static void main(String[] args) {
@@ -31,24 +35,36 @@ public class Ainur extends Application {
       cli.parse();
 
       try {
+          graph = readGraphFile(cli.getInputFile()); // read the graph
+          algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
+          av = new AinurVisualiser(algorithm, graph, 0, 100, cli.getProcessors());
+          Thread schedulingThread =
+                  new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
           if (cli.getVisualise()) {
               // Launch as javafx application.
+              schedulingThread.start();
               launch(args);
           } else {
-              // Start the program
-              Graph graph = readGraphFile(cli.getInputFile()); // read the graph
-              Algorithm algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
-              Schedule schedule = startScheduling(graph, algorithm, cli.getProcessors()); // start scheduling
-              // write the output
-              writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
+              schedulingThread.run();
               System.exit(0);
           }
-
       } catch (IOException io) {
           System.out.println("Invalid filename entered, try run it again with a valid filename."
                   + " Process terminated prematurely.");
           System.exit(1);
       }
+    }
+
+    public static Void onAlgorithmComplete(Schedule schedule) {
+        if (cli.getVisualise() || av != null)
+            Platform.runLater(() -> av.stop());
+        try {
+            writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return null;
     }
 
     /**
@@ -66,16 +82,9 @@ public class Ainur extends Application {
     /**
      * Runs the visualisation alongside the algorithm using multithreading.
      *
-     * @param graph The graph to visualise and run on.
-     * @param algorithm The algorithm to run.
      * @param av The visualiser to use.
-     * @param processors The number of processors to schedule on.
-     * @param input The input file name.
-     * @param output The output file name.
      */
-    private static void visualisationScheduling(Graph graph, Algorithm algorithm, AinurVisualiser av, int processors,
-                                                String input, String output) {
-
+    private static void visualisationScheduling(AinurVisualiser av) {
         // Set up the gui polling thread
         Task visualiserTask = new Task<Void>() {
             @Override
@@ -84,35 +93,8 @@ public class Ainur extends Application {
                 return null;
             }
         };
-
-        // Set up the algorithm thread
-        Task algorithmTask = new Task<Void>() {
-            @Override
-            public Void call() {
-                startScheduling(graph, algorithm, processors);
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                super.done();
-                // Stop the visualisation polling
-                Platform.runLater(() -> av.stop());
-
-                // Write the output of the schedule
-                Schedule schedule = algorithm.getCurrentBest();
-                try {
-                    writeSchedule(graph, schedule, input, output);
-                } catch (IOException e) {
-                    System.out.println("Invalid filename entered, try run it again with a valid filename."
-                            + " Process terminated prematurely.");
-                }
-            }
-        };
-
-        // Run the threads.
+        // Run the thread.
         new Thread(visualiserTask).start();
-        new Thread(algorithmTask).start();
     }
 
     /**
@@ -152,11 +134,12 @@ public class Ainur extends Application {
      *
      * @return The schedule found by the algorithm.
      */
-    private static Schedule startScheduling(Graph graph, Algorithm algorithm, int processors) {
+    private static void runAlgorithm(Graph graph, Algorithm algorithm, int processors, Function<Schedule, Void> onFinished) {
         // Run the algorithm
         algorithm.run(graph, processors);
 
-        return algorithm.getCurrentBest();
+        Schedule schedule = algorithm.getCurrentBest();
+        onFinished.apply(schedule);
     }
 
 
@@ -184,16 +167,13 @@ public class Ainur extends Application {
      * Takes over control from main.
      */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws InterruptedException {
         // Start the program
-        Graph graph = readGraphFile(cli.getInputFile()); // read the graph
-        Algorithm algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
-        AinurVisualiser av = new AinurVisualiser(algorithm, graph, 0, 100, cli.getProcessors());
-
         Scene scene = new Scene(av);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        visualisationScheduling(graph, algorithm, av, cli.getProcessors(), cli.getInputFile(), cli.getOutputFile());
+        av.run();
+        //visualisationScheduling(av);
     }
 }

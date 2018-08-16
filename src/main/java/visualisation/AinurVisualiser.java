@@ -5,17 +5,19 @@ import algorithm.TieredAlgorithm;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
-import javafx.application.Platform;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import visualisation.modules.AlgorithmStatisticsVisualiser;
 import visualisation.modules.GraphVisualiser;
 import visualisation.modules.ScheduleVisualiser;
 import visualisation.modules.Statistics;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class AinurVisualiser extends Region {
 
@@ -35,7 +37,7 @@ public class AinurVisualiser extends Region {
     private Statistics _stats;
 
     // Used to indicate whether or not the algorithm is running
-    private boolean _running;
+    private Timeline _poller;
 
     // Used to indicate whether or not the algorithm is tiered
     private boolean _isTiered;
@@ -80,23 +82,32 @@ public class AinurVisualiser extends Region {
      * This method periodically polls the algorithm for information about its current status.
      * This method will then update the visualiser modules accordingly.
      */
-    public void run() throws InterruptedException {
-        _running = true;
+    public void run() {
+        _poller = new Timeline(new KeyFrame(Duration.millis(POLLING_DELAY), event -> {
+            this.updateGraph();
+            this.updateStatistics();
+        }), new KeyFrame(Duration.seconds(2), event -> {
+            this.updateSchedule();
+        }));
 
-        long numIterations = 0;
-        while (_running) {
-            long finalNumIterations = numIterations;
-            Platform.runLater(() -> {
-                updateGraph();
-                updateStatistics();
+        _poller.setCycleCount(Animation.INDEFINITE);
+        _poller.play();
+                /**
+                 long numIterations = 0;
+                 while (_running) {
+                 long finalNumIterations = numIterations;
+                 Platform.runLater(() -> {
+                 updateGraph();
+                 updateStatistics();
 
-                if (finalNumIterations % 20 == 0) {
-                    updateSchedule();
-                }
-            });
-            numIterations++;
-            TimeUnit.MILLISECONDS.sleep(POLLING_DELAY);
-        }
+                 if (finalNumIterations % 20 == 0) {
+                 updateSchedule();
+                 }
+                 });
+                 numIterations++;
+                 TimeUnit.MILLISECONDS.sleep(POLLING_DELAY);
+                 }
+                 **/
     }
 
     /**
@@ -109,7 +120,7 @@ public class AinurVisualiser extends Region {
         updateSchedule();
         updateStatistics();
         _asv.stop();
-        _running = false;
+        _poller.stop();
     }
 
     /* Private Helper Methods */

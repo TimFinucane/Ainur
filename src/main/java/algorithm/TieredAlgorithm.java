@@ -119,6 +119,8 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     @Override
     public Node currentNode() {
         // Since several algorithms can be running concurrently just select a node from a random running algorithm
+        if ( _algorithmsRunning.size() == 0)
+            return null;
         return _algorithmsRunning.get(new Random().nextInt(_algorithmsRunning.size())).currentNode();
     }
 
