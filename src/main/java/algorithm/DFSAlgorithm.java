@@ -106,7 +106,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
                 if (_arborist.prune(_graph, curSchedule, toBePlaced)) {
-                    _numCulled.add(BigInteger.ONE); // Same as _numCulled++;
+                    _numCulled = _numCulled.add(BigInteger.ONE); // Same as _numCulled++;
                     continue;
                 }
                 curSchedule.addTask(toBePlaced);
@@ -125,12 +125,12 @@ public class DFSAlgorithm extends BoundableAlgorithm {
             // Check if lower bound is good enough
             if(taskPair.getKey() >= _communicator.getCurrentBest().getEndTime()) {
                 //Same as _numCulled += orderedTasks.size() + 1;
-                _numCulled.add(new BigInteger(Integer.toString(orderedTasks.size()))).add(BigInteger.ONE);
+                _numCulled = _numCulled.add(new BigInteger(Integer.toString(orderedTasks.size()))).add(BigInteger.ONE);
                 break; // We can break because every subsequent task has a greater lower bound
             }
 
             // We are meant to continue with this schedule
-            _numExplored.add(BigInteger.ONE); // Same as _numExplored++
+            _numExplored = _numExplored.add(BigInteger.ONE); // Same as _numExplored++
             curSchedule.addTask(toBeAdded);
             HashSet<Node> nodesNextAvailableNodes = nextAvailableNodes.get(toBeAdded.getNode());
 
