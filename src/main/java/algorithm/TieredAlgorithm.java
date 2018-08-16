@@ -1,15 +1,19 @@
 package algorithm;
 
-import common.graph.*;
-import common.schedule.*;
+import common.graph.Graph;
+import common.graph.Node;
+import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import javafx.util.Pair;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -26,8 +30,8 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
 
     private Graph                       _graph;
 
-    private int                         _totalCulled;
-    private int                         _totalExplored;
+    private AtomicReference<BigInteger> _totalCulled = new AtomicReference<>(BigInteger.ZERO);
+    private AtomicReference<BigInteger> _totalExplored = new AtomicReference<>(BigInteger.ZERO);
 
     /**
      * Does not get given a schedule to start with, it's initial guess is instead infinite.
@@ -40,7 +44,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         _threads = new Thread[threads];
         _algorithmsRunning = new CopyOnWriteArrayList<>();
         // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
-        _schedulesToExplore = new LinkedBlockingQueue<>((threads) * 2);
+        _schedulesToExplore = new LinkedBlockingQueue<>(threads * 2);
     }
     /**
      * Create a tiered algorithm.
@@ -89,13 +93,13 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      * @see Algorithm#branchesCulled()
      */
     @Override
-    public int branchesCulled() {
+    public BigInteger branchesCulled() {
         // Add the sum of nodes culled by algorithms that have finished running
-        int sum = _totalCulled;
+        BigInteger sum = _totalCulled.get();
 
         // Add culled from the currently running algorithms
         for (BoundableAlgorithm algorithm : _algorithmsRunning) {
-            sum += algorithm.branchesCulled();
+            sum = sum.add(algorithm.branchesCulled());
         }
         return sum;
     }
@@ -104,13 +108,13 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      * @see Algorithm#branchesExplored()
      */
     @Override
-    public int branchesExplored() {
+    public BigInteger branchesExplored() {
         // Add the sum of nodes explored by algorithms that have finished running
-        int sum = _totalExplored;
+        BigInteger sum = _totalExplored.get();
 
         // Add explored from the currently running algorithms
         for (BoundableAlgorithm algorithm : _algorithmsRunning) {
-            sum += algorithm.branchesExplored();
+            sum = sum.add(algorithm.branchesExplored());
         }
         return sum;
     }
@@ -199,8 +203,8 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         algorithm.run(_graph, schedule, nextNodes);
 
         // Increment counters
-        _totalExplored += algorithm.branchesExplored();
-        _totalCulled += algorithm.branchesCulled();
+        _totalExplored.accumulateAndGet(algorithm.branchesExplored(), BigInteger::add);
+        _totalCulled.accumulateAndGet(algorithm.branchesCulled(), BigInteger::add);
 
         // When the algorithm has finished running must remove from list so its values are not used to calculate
         // other values
