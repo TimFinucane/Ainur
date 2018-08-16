@@ -48,7 +48,7 @@ public class ScheduleVisualiser extends VBox {
         // And have a nice bit of pad
         setPadding(new Insets(10));
 
-        setMinHeight(10 + 25 * numProcessors);
+        setPrefHeight(10 + 25 * numProcessors);
     }
 
     /**
