@@ -91,6 +91,7 @@ public class ScheduleVisualiser extends VBox {
                 double width = unitWidth * task.getNode().getComputationCost();
 
                 gc.setFill(FILL_COLOUR);
+                gc.strokeRect(left, top, width, taskHeight);
                 gc.fillRect(left, top,width, taskHeight);
 
                 double centre = left + width / 2;
