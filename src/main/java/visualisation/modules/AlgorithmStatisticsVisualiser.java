@@ -198,7 +198,9 @@ public class AlgorithmStatisticsVisualiser extends Region {
     }
 
 
-
+    /**
+     * To be called when Visualizer is intended to stop
+     */
     public void stop() {
 
         _timeLabel.setTextFill(Color.RED);
@@ -276,7 +278,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
     }
 
 
-
     /**
      * Calculate the current CPU usage of the OS and plot it onto chart
      */
@@ -351,7 +352,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         return cpuChart;
     }
-
 
 
     /**
