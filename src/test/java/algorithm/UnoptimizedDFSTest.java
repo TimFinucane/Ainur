@@ -5,12 +5,9 @@ import algorithm.heuristics.pruner.IsNotAPruner;
 import common.Validator;
 import common.graph.Graph;
 import integration.IntegrationTest;
-import org.junit.jupiter.api.Tag;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public class UnoptimizedDFSTest extends IntegrationTest {
     UnoptimizedDFSTest() {
         super(2); // Only run 7 and 8 nodes
