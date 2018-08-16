@@ -40,6 +40,7 @@ import static junit.framework.TestCase.fail;
 public class DFSAlgorithmMultiThreadedIT {
 
     private Algorithm _algorithmhAllHeuristics4Threads;
+    private Algorithm _algorithmhAllHeuristics2Threads;
 
     private static final String SEP = File.separator;
     private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
@@ -59,6 +60,14 @@ public class DFSAlgorithmMultiThreadedIT {
                     new CriticalPath(),
                     tier == 0 ? 8 : 10000
         ));
+
+        _algorithmhAllHeuristics2Threads = new TieredAlgorithm(2,
+                (tier, communicator) -> new DFSAlgorithm(
+                        communicator,
+                        Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                        new CriticalPath(),
+                        tier == 0 ? 8 : 10000
+                ));
     }
 
     @Test
@@ -71,6 +80,22 @@ public class DFSAlgorithmMultiThreadedIT {
 
         //Manually start algorithm on graph
         Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
+
+        assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
+
+
+    @Test
+    @RepeatTest(times = 2)
+    public void testAlgorithm7Node4ProcessorAllHeuristics2Threads(){
+        Graph graph = getGraph(NODES_7_FILENAME);
+
+        // Execute algorithm w/ no heuristics
+        _algorithmhAllHeuristics2Threads.run(graph, 4);
+
+        //Manually start algorithm on graph
+        Schedule resultManual = _algorithmhAllHeuristics2Threads.getCurrentBest();
 
         assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
@@ -92,7 +117,34 @@ public class DFSAlgorithmMultiThreadedIT {
 
     @Test
     @RepeatTest(times = 3)
+    public void testAlgorithm11Node4ProcessorAllHeuristics2Threads() {
+
+        Graph graph = getGraph(NODES_11_FILENAME);
+
+        // Execute algorithm w/ all heuristics
+        _algorithmhAllHeuristics2Threads.run(graph, 4);
+        Schedule resultManual = _algorithmhAllHeuristics2Threads.getCurrentBest();
+
+        assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
+    }
+
+    @Test
+    @RepeatTest(times = 3)
     public void testAlgorithm10Node2ProcessorAllHeuristics2Threads(){
+        Graph graph = getGraph(NODES_10_FILENAME);
+
+        // Execute algorithm w/ all heuristics
+        _algorithmhAllHeuristics2Threads.run(graph, 2);
+        Schedule resultManual = _algorithmhAllHeuristics2Threads.getCurrentBest();
+
+        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
+        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+    }
+
+    @Test
+    @RepeatTest(times = 3)
+    public void testAlgorithm10Node2ProcessorAllHeuristics4Threads(){
         Graph graph = getGraph(NODES_10_FILENAME);
 
         // Execute algorithm w/ all heuristics
@@ -102,7 +154,6 @@ public class DFSAlgorithmMultiThreadedIT {
         assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
-
 
     private Graph getGraph(String filePath) {
         // Set up File
