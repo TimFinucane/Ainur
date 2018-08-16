@@ -1,4 +1,4 @@
-package algorithm;
+package algorithm.heuristics;
 
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.LowerBound;
