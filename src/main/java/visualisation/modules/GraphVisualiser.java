@@ -28,10 +28,13 @@ public class GraphVisualiser extends Region {
     public static final int WINDOW_HEIGHT = 500;
     public static final int WINDOW_WIDTH = 750;
 
+    // Colours
+    public static final String NODE_HIGHLIGHT_COLOUR = "purple";
+
     // Used for styling the graph and its nodes
     public static final String STYLE_SHEET =
             "node {" +
-            "   fill-color: grey, blue;" +
+            "   fill-color: grey, " + NODE_HIGHLIGHT_COLOUR + ";" +
             "   fill-mode: dyn-plain;" +
             "   text-color: black;" +
             "   text-background-mode: rounded-box;" +
@@ -40,23 +43,22 @@ public class GraphVisualiser extends Region {
             "   size: 15px;" +
             "   stroke-mode: plain;" +
             "   stroke-color: black;" +
-            "   shadow-color: blue, white;" +
+            "   shadow-color: " + NODE_HIGHLIGHT_COLOUR + ", white;" +
             "   shadow-mode: gradient-radial;" +
             "   shadow-offset: 0;" +
-            "}" +
-            "node.marked {" +
-            "   fill-color:red;"  +
-            "   size: 20px;" +
-            "   text-color: red;" +
-            "   text-style: bold;" +
             "}" +
             "edge {" +
             "   arrow-shape: arrow;" +
             "   arrow-size: 15px, 5px;" +
             "   size: 1.5px;" +
             "}";
-    public static final String UI_LABEL = "ui.label";
-    public static final String UI_STYLE_SHEET = "ui.stylesheet";
+    private static final String UI_LABEL = "ui.label";
+    private static final String UI_STYLE_SHEET = "ui.stylesheet";
+    private static final String UI_QUALITY = "ui.quality";
+    private static final String UI_ANTIALIAS = "ui.antialias";
+    private static final String UI_STYLE = "ui.style";
+    private static final String UI_COLOR = "ui.color";
+
 
     /* Fields */
 
@@ -130,8 +132,8 @@ public class GraphVisualiser extends Region {
     public void update(double interpolation) {
         for (int i = 0; i < _newProportions.length; i++) {
             double interpVal = _newProportions[i] *  interpolation + _oldProportions[i] * (1 - interpolation);
-            _gsGraph.getNode(i).setAttribute("ui.style", String.format("shadow-width: %f;", interpVal * 2));
-            _gsGraph.getNode(i).setAttribute("ui.color", interpVal / 2);
+            _gsGraph.getNode(i).setAttribute(UI_STYLE, String.format("shadow-width: %f;", interpVal * 2));
+            _gsGraph.getNode(i).setAttribute(UI_COLOR, interpVal / 2);
         }
     }
 
@@ -172,11 +174,11 @@ public class GraphVisualiser extends Region {
      */
     public void setHighRenderQuality(boolean highQuality) {
         if (highQuality) {
-            _gsGraph.addAttribute("ui.quality");
-            _gsGraph.addAttribute("ui.antialias");
+            _gsGraph.addAttribute(UI_QUALITY);
+            _gsGraph.addAttribute(UI_ANTIALIAS);
         } else {
-            _gsGraph.removeAttribute("ui.quality");
-            _gsGraph.removeAttribute("ui.antialias");
+            _gsGraph.removeAttribute(UI_QUALITY);
+            _gsGraph.removeAttribute(UI_ANTIALIAS);
         }
     }
 
