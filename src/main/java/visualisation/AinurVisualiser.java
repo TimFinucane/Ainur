@@ -26,7 +26,7 @@ public class AinurVisualiser extends Region {
 
     public final static Duration FAST_POLLING_DELAY = Duration.millis(16);
     public final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
-    public final static Duration MEDIUM_POLLING_DELAY = Duration.millis(1000);
+    public final static Duration MEDIUM_POLLING_DELAY = Duration.millis(333);
 
     /* Fields */
 

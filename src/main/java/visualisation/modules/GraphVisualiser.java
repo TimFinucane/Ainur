@@ -31,7 +31,8 @@ public class GraphVisualiser extends Region {
     // Used for styling the graph and its nodes
     public static final String STYLE_SHEET =
             "node {" +
-            "   fill-color: grey;" +
+            "   fill-color: grey, blue;" +
+            "   fill-mode: dyn-plain;" +
             "   text-color: black;" +
             "   text-background-mode: rounded-box;" +
             "   text-alignment: above;" +
@@ -127,34 +128,30 @@ public class GraphVisualiser extends Region {
      * Updates the display to show the current node frequencies.
      */
     public void update(double interpolation) {
-        // Get the sum of frequencies (lol)
-        long total = _nodeFrequencies.values().stream().mapToLong(Long::valueOf).sum();
-        double average = total / (double) _nodeFrequencies.size();
-
         for (int i = 0; i < _newProportions.length; i++) {
             double interpVal = _newProportions[i] *  interpolation + _oldProportions[i] * (1 - interpolation);
             _gsGraph.getNode(i).setAttribute("ui.style", String.format("shadow-width: %f;", interpVal * 2));
-            //_gsGraph.getNode(i).setAttribute("ui.color", );
+            _gsGraph.getNode(i).setAttribute("ui.color", interpVal / 2);
         }
     }
 
     /**
      * Resets the node frequencies.
+     * Updates interpolation values.
      */
     public void flush() {
         _oldProportions = _newProportions;
 
         // Get the sum of frequencies (lol)
         long total = _nodeFrequencies.values().stream().mapToLong(Long::valueOf).sum();
-        double average = total / (double) _nodeFrequencies.size();
+        if (total == 0)
+            total = 1; // cheeky one Tim ;)
 
+        double average = total / (double) _nodeFrequencies.size();
         for (Map.Entry<Node, Long> pair : _nodeFrequencies.entrySet()) {
             _newProportions[pair.getKey().getId()] = pair.getValue() / average;
         }
         _nodeFrequencies.replaceAll((node, Long) -> 0L);
-
-
-
         }
 
     /**
