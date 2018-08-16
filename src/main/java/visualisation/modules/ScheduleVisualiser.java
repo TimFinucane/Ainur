@@ -81,22 +81,23 @@ public class ScheduleVisualiser extends VBox {
         // The width of a single unit time in the schedule. End time is padded by 10% so schedule doesn't go to end
         double unitWidth = canvasWidth / _schedule.getEndTime();
         // The height of each task in the processor
-        double taskHeight = canvasHeight / _schedule.getNumProcessors();
+        double taskGap = 5;
+        double taskHeight = (canvasHeight - 2 - taskGap * _schedule.getNumProcessors()) / _schedule.getNumProcessors();
 
         // Add each task to position
         for(int processor = 0; processor < _schedule.getNumProcessors(); ++processor) {
             for(Task task : _schedule.getTasks(processor)) {
-                double left = unitWidth * task.getStartTime();
-                double top = taskHeight * processor;
-                double width = unitWidth * task.getNode().getComputationCost();
+                int left = (int)(unitWidth * task.getStartTime());
+                int top = (int)(1 + (taskHeight + taskGap) * processor);
+                int width = (int)(unitWidth * task.getNode().getComputationCost());
 
                 gc.setFill(FILL_COLOUR);
                 gc.strokeRect(left, top, width, taskHeight);
-                gc.fillRect(left, top,width, taskHeight);
+                gc.fillRect(left, top, width, taskHeight);
 
-                double centre = left + width / 2;
+                int centre = left + width / 2;
                 gc.setFill(TEXT_COLOUR);
-                gc.setFont( new Font(gc.getFont().getName(), Math.min(taskHeight / 2, width / 2)) );
+                gc.setFont( new Font(gc.getFont().getName(), Math.min(taskHeight / 2.0, width / 2.0)) );
                 gc.fillText(task.getNode().getLabel(), centre, top + taskHeight / 2);
             }
         }
@@ -106,7 +107,7 @@ public class ScheduleVisualiser extends VBox {
 
         // Extend tick marks to full screen
         for(int i = 0; i < _axis.getTickMarks().size(); ++i) {
-            double x = _axis.getTickMarks().get(i).getPosition();
+            int x = (int)Math.round(_axis.getTickMarks().get(i).getPosition());
 
             if(i == _axis.getTickMarks().size() - 1)
                 x -= 1;
