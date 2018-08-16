@@ -8,6 +8,7 @@ import common.schedule.Task;
 import scala.Int;
 import sun.awt.image.IntegerInterleavedRaster;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -55,17 +56,17 @@ public class GreedyAlgorithm implements Algorithm {
 
     @Override
     public Schedule getCurrentBest() {
-        return _schedule;
+        return null;
     }
 
     @Override
-    public int branchesCulled() {
-        return 0;
+    public BigInteger branchesCulled() {
+        return null;
     }
 
     @Override
-    public int branchesExplored() {
-        return 0;
+    public BigInteger branchesExplored() {
+        return null;
     }
 
     @Override
@@ -74,5 +75,8 @@ public class GreedyAlgorithm implements Algorithm {
     }
 
     @Override
-    public int lowerBound() { return 0;  }
+    public int lowerBound() {
+        return 0;
+    }
+
 }
