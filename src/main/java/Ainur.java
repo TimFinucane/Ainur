@@ -149,7 +149,7 @@ public class Ainur extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Start the program
-        av = new AinurVisualiser(algorithm, graph, 0, 100, cli.getCores());
+        av = new AinurVisualiser(algorithm, graph, cli.getProcessors(), 0, 100, cli.getCores());
         Scene scene = new Scene(av);
         primaryStage.setScene(scene);
         primaryStage.show();

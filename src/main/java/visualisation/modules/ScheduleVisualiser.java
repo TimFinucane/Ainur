@@ -24,7 +24,7 @@ public class ScheduleVisualiser extends VBox {
     private Canvas      _scheduleView;
     private NumberAxis  _axis;
 
-    public ScheduleVisualiser() {
+    public ScheduleVisualiser(int numProcessors) {
         _scheduleView = new Canvas();
         Pane canvasHolder = new Pane(_scheduleView);
         // Bind schedule view to its holder so that it resizes when possible
@@ -47,6 +47,8 @@ public class ScheduleVisualiser extends VBox {
 
         // And have a nice bit of pad
         setPadding(new Insets(10));
+
+        setMinHeight(10 + 25 * numProcessors);
     }
 
     /**
@@ -55,7 +57,6 @@ public class ScheduleVisualiser extends VBox {
     public void update(Schedule schedule) {
         _schedule = schedule;
         System.out.println("Preferred height of " + (50 + 25 * schedule.getNumProcessors()));
-        setMinHeight(10 + 25 * schedule.getNumProcessors());
         draw();
     }
 

@@ -63,13 +63,13 @@ public class AinurVisualiser extends VBox {
      * @param upperBound the upperbound of the algorithm //TODO this should be removed when a method to get this is implemented
      * @param coresUsed The number of cores to be used
      */
-    public AinurVisualiser(Algorithm algorithm, Graph graph, int lowerBound, int upperBound, long coresUsed) {
+    public AinurVisualiser(Algorithm algorithm, Graph graph, int numProcessors, int lowerBound, int upperBound, long coresUsed) {
         // Assign Args
         _algorithm = algorithm;
 
         // Initialise visualisers
         _gv = new GraphVisualiser(graph);
-        _sv = new ScheduleVisualiser();
+        _sv = new ScheduleVisualiser(numProcessors);
         _asv = new AlgorithmStatisticsVisualiser(lowerBound, upperBound, coresUsed);
 
         // Initialise stats object
