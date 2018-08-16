@@ -38,7 +38,7 @@ jar {
 }
 
 test {
-    useJUnitPlatform() /*{
-        //excludeTags 'gandalf'
-    }*/
+    useJUnitPlatform {
+        excludeTags 'gandalf'
+    }
 }

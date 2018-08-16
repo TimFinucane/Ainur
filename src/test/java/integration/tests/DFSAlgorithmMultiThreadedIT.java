@@ -15,7 +15,6 @@ import io.dot.DotGraphReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,7 +50,6 @@ public class DFSAlgorithmMultiThreadedIT {
         ));
     }
 
-    @Test
     @RepeatedTest(2)
     public void testAlgorithm7Node4ProcessorAllHeuristics4Threads(){
         Graph graph = getGraph(NODES_7_FILENAME);
@@ -66,7 +64,6 @@ public class DFSAlgorithmMultiThreadedIT {
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
-    @Test
     @RepeatedTest(3)
     public void testAlgorithm11Node4ProcessorAllHeuristics4Threads() {
 
@@ -80,7 +77,7 @@ public class DFSAlgorithmMultiThreadedIT {
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
     }
 
-    @Test
+
     @RepeatedTest(3)
     public void testAlgorithm10Node2ProcessorAllHeuristics2Threads(){
         Graph graph = getGraph(NODES_10_FILENAME);
