@@ -1,7 +1,11 @@
 package algorithm;
 
+import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
+import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.IsNotAPruner;
+import algorithm.heuristics.pruner.ProcessorOrderPruner;
+import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
@@ -29,7 +33,7 @@ public class GreedyAlgorithmTests {
     private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
 
     @Test
-    public void testBasicGraph(){
+    public void testBasicGraph() {
         Graph g = new Graph.Builder()
                 .node("a", 2)
                 .node("b", 3)
@@ -49,7 +53,7 @@ public class GreedyAlgorithmTests {
     }
 
     @Test
-    public void test7Node2ProcessorGraph(){
+    public void test7Node2ProcessorGraph() {
         Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ no heuristics
@@ -63,7 +67,7 @@ public class GreedyAlgorithmTests {
     }
 
     @Test
-    public void test7Node4ProcessorGraph(){
+    public void test7Node4ProcessorGraph() {
         Graph graph = getGraph(NODES_7_FILENAME);
 
         // Execute algorithm w/ no heuristics
@@ -77,7 +81,7 @@ public class GreedyAlgorithmTests {
     }
 
     @Test
-    public void test8Node2ProcessorGraph(){
+    public void test8Node2ProcessorGraph() {
         Graph graph = getGraph(NODES_8_FILENAME);
 
         // Execute algorithm w/ no heuristics
@@ -91,7 +95,7 @@ public class GreedyAlgorithmTests {
     }
 
     @Test
-    public void test8Node4ProcessorGraph(){
+    public void test8Node4ProcessorGraph() {
         Graph graph = getGraph(NODES_8_FILENAME);
 
         // Execute algorithm w/ no heuristics
@@ -105,17 +109,27 @@ public class GreedyAlgorithmTests {
     }
 
     @Test
-    public void test11Node2ProcessorGraph(){
+    public void test11Node2ProcessorGraph() {
         Graph graph = getGraph(NODES_11_FILENAME);
 
         // Execute algorithm w/ no heuristics
-        Algorithm algorithm = new GreedyAlgorithm();
-        algorithm.run(graph, 2);
+        Algorithm greedyAlgorithm = new GreedyAlgorithm();
+        greedyAlgorithm.run(graph, 2);
 
         //Manually start algorithm on graph
-        Schedule resultManual = algorithm.getCurrentBest();
+        Schedule resultGreedy = greedyAlgorithm.getCurrentBest();
 
-        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
+
+        Algorithm _algorithmWithAllHeuristics = new DFSAlgorithm(
+                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                new CriticalPath());
+        _algorithmWithAllHeuristics.run(graph, 2);
+        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
+
+        assertTrue(Validator.isValid(graph, resultGreedy)); // Check answer is valid
+        System.out.println("Difference = " + resultGreedy.getEndTime() / (float) resultManual.getEndTime());
+
+
     }
 
     private Graph getGraph(String filePath) {
