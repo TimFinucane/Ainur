@@ -37,10 +37,10 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     public TieredAlgorithm(int threads, AlgorithmFactory generator) {
         super();
         _generator = generator;
-        _threads = new Thread[threads - 1];
+        _threads = new Thread[threads];
         _algorithmsRunning = new CopyOnWriteArrayList<>();
         // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
-        _schedulesToExplore = new LinkedBlockingQueue<>((threads - 1) * 2);
+        _schedulesToExplore = new LinkedBlockingQueue<>((threads) * 2);
     }
     /**
      * Create a tiered algorithm.
@@ -63,16 +63,18 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     @Override
     public void run(Graph graph, int processors) {
         _graph = graph;
-        for (int i = 0 ; i<_threads.length ; i++) {
-            _threads[i] = new Thread(() -> runThread());
+
+        // Add the empty schedule as first
+        _schedulesToExplore.add(new Pair<>(new SimpleSchedule(processors), new HashSet<>(graph.getEntryPoints())));
+
+        _threads[0] = Thread.currentThread();
+        for (int i = 1 ; i<_threads.length ; i++) {
+            _threads[i] = new Thread(this::runThread);
             _threads[i].start();
         }
-        BoundableAlgorithm algorithm = _generator.create(0, this);
-        algorithm.run(_graph, new SimpleSchedule(processors), new HashSet<>(graph.getEntryPoints()));
 
-        for(Thread t : _threads){
-            t.interrupt();
-        }
+        // Now run on this thread as if it is one of our own:
+        runThread();
     }
 
     /**
@@ -155,8 +157,9 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
         // We will try to add the above to the schedule. If theres not enough room (too many schedules to explore),
         // as it is obvious exploration is getting out of hand we will instead run it here, in this thread, RIGHT NOW!!!
+        // TODO: Tiers are only ever 0 or 1. Change?
         if(!_schedulesToExplore.offer(new Pair<>(schedule, nextNodes)))
-            runAlgorithmOn(1, schedule, nextNodes);
+            runAlgorithmOn(calculateTier(schedule), schedule, nextNodes);
     }
 
     /**
@@ -164,16 +167,18 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      * partial solutions as they come.
      */
     private void runThread() {
-
         // Thread only stops when the algorithm is claimed to be complete
         try {
-            while (true) {
-                // Try and get a schedule
+            while(!Thread.interrupted()) {
+                // If there are no more schedules either running or waiting to be run, close.
+                if(_schedulesToExplore.isEmpty() && _algorithmsRunning.isEmpty())
+                    closeAll(); // Closes all threads, including this one, safely via interrupts.
+
+                // Try and get a schedule. Blocks until this occurs
                 Pair<Schedule, HashSet<Node>> pair = _schedulesToExplore.take();
-                runAlgorithmOn(1, pair.getKey(), pair.getValue());
+                runAlgorithmOn(calculateTier(pair.getKey()), pair.getKey(), pair.getValue());
             }
-        } catch(InterruptedException e) {
-            return;
+        } catch(InterruptedException ignored) {
         }
     }
 
@@ -198,5 +203,22 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         // When the algorithm has finished running must remove from list so its values are not used to calculate
         // other values
         _algorithmsRunning.remove(algorithm);
+    }
+
+    /**
+     * Gets the tier the given schedule should run on.
+     * TODO: Currently only ever gives 0 if empty or 1 otherwise. More tiers?
+     */
+    private int calculateTier(Schedule schedule) {
+        return schedule.size() == 0 ? 0 : 1;
+    }
+
+    /**
+     * Closes all threads. Should only be called once threads have stopped running algorithms, otherwise some threads
+     * may continue running algorithms after this object has apparently finished.
+     */
+    private void closeAll() {
+        for(Thread thread : _threads)
+            thread.interrupt();
     }
 }
