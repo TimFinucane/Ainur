@@ -24,9 +24,12 @@ public class AinurVisualiser extends Region {
 
     /* MACROS */
 
-    public final static Duration FAST_POLLING_DELAY = Duration.millis(16);
-    public final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
-    public final static Duration MEDIUM_POLLING_DELAY = Duration.millis(333);
+    // Delays
+    private final static Duration FAST_POLLING_DELAY = Duration.millis(16);
+    private final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
+    private final static Duration MEDIUM_POLLING_DELAY = Duration.millis(333);
+
+    private final static int INTERPOL_MOD = 3;
 
     /* Fields */
 
@@ -96,8 +99,8 @@ public class AinurVisualiser extends Region {
         AtomicInteger count = new AtomicInteger(0);
         _mediumPoller = new Timeline(new KeyFrame(MEDIUM_POLLING_DELAY, event -> {
             count.incrementAndGet();
-            _gv.update(count.get() / (double) 3);
-            if (count.get() == 3) {
+            _gv.update(count.get() / (double) INTERPOL_MOD);
+            if (count.get() == INTERPOL_MOD) {
                 _gv.flush();
                 count.set(1);
             }
