@@ -77,7 +77,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         PriorityQueue<Pair<Integer, SimpleSchedule>> schedulesToVisit = new PriorityQueue<>(new ScheduleComparator());
 
         //initial best estimate is just the first explored partial schedule.
-        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, new ArrayList<>(nextNodes));
+        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, new HashSet<>(nextNodes));
         schedulesToVisit.add(new Pair<>(firstLowerBound, rootSchedule));
 
         int memoryCounter = 0;
@@ -148,7 +148,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                         if (nextNodesToAdd.isEmpty()) { // if all nodes are in the schedule, "lower bound" becomes end time
                             newLowerBound = curSchedule.getEndTime();
                         } else {
-                            newLowerBound = _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextNodesToAdd));
+                            newLowerBound = _lowerBound.estimate(graph, curSchedule, new HashSet<>(nextNodesToAdd));
                         }
 
                         _numExplored++;
@@ -216,5 +216,10 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     @Override
     public Node currentNode() {
         return _currentNode;
+    }
+
+    @Override
+    public int lowerBound() {
+        return 0;
     }
 }

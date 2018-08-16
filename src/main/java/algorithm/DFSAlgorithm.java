@@ -4,6 +4,8 @@ import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.*;
 import common.schedule.*;
+import javafx.util.Pair;
+
 import java.util.*;
 
 /**
@@ -14,9 +16,12 @@ public class DFSAlgorithm extends BoundableAlgorithm {
     private Arborist _arborist;
     private LowerBound _lowerBound;
 
-    private int _numCulled = 0;
-    private int _numExplored = 0;
-    private Node _currentNode;
+    volatile private int _numCulled = 0;
+    volatile private int _numExplored = 0;
+    volatile private Node _currentNode;
+    volatile private int _curLowerBound;
+
+    private Graph _graph;
 
     /**
      * Constructor for DFSAlgorithm class.
@@ -54,62 +59,86 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      */
     @Override
     public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
-        recurse(graph,
-            schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
-            nextNodes);
+        _graph = graph;
+        recurse(schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
+            nextNodes, Integer.MAX_VALUE);
+        _curLowerBound = getCurrentBest().getEndTime();
     }
 
     /**
      * The recursive part of the algorithm
      *
-     * @param graph The full graph
      * @param curSchedule The partial schedule with all nodes visited by 'parent' recursors in it
      * @param availableNodes A helpful list of nodes available to visit next
+     * @param parentLowerBound The minimum lower bound of the parent recursor. Used to calculate current lower bound.
      */
-    private void recurse(Graph graph, SimpleSchedule curSchedule, HashSet<Node> availableNodes) {
+    @SuppressWarnings("NonAtomicOperationOnVolatileField") // All the volatile non-atomics here are only ever modified in this class, in this thread.
+    private void recurse(SimpleSchedule curSchedule, HashSet<Node> availableNodes, int parentLowerBound) {
         // If only one node left, take it and place it in optimal place. Base case.
-        if(curSchedule.size() + 1 == graph.size()) {
-            placeLastNode(graph, curSchedule, availableNodes.iterator().next());
+        if(curSchedule.size() + 1 == _graph.size()) {
+            placeLastNode(_graph, curSchedule, availableNodes.iterator().next());
             return;
         }
 
-        // Go through every node of our children, recursively
+        // List of tasks ordered by lower bound
+        PriorityQueue<Pair<Integer, Task>> orderedTasks = new PriorityQueue<>(Comparator.comparing(Pair::getKey));
+        HashMap<Node, HashSet<Node>> nextAvailableNodes = new HashMap<>();
+
+        // Go through every node of our children and add it to the priority queue
         for(Node node : availableNodes) {
             _currentNode = node;
             // Calculate what nodes can be added next iteration
-            HashSet<Node> nextAvailableNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule, availableNodes, node);
-            // Get where to place the node for each processor
-            int[] earliestStarts = AlgorithmUtils.calculateEarliestTimes(graph, curSchedule, node);
 
-            // Now we run all possible ways of adding this node to the schedule.
+            HashSet<Node> nodesNextAvailableNodes = AlgorithmUtils.calculateNextNodes(_graph, curSchedule, availableNodes, node);
+            nextAvailableNodes.put(node, nodesNextAvailableNodes);
+
+            // Get where to place the node for each processor
+            int[] earliestStarts = AlgorithmUtils.calculateEarliestTimes(_graph, curSchedule, node);
+
+            // Now we run all possible ways of adding this node to the schedule.c
             // We apply this to the schedule then remove it before using it again,
             // to prevent constant cloning of the schedule
-            for(int processor = 0; processor < curSchedule.getNumProcessors(); ++processor) {
+            for (int processor = 0; processor < curSchedule.getNumProcessors(); ++processor) {
                 Task toBePlaced = new Task(processor, earliestStarts[processor], node);
 
                 // Check whether our heuristics advise continuing down this noble eightfold path
-                if( _arborist.prune(graph, curSchedule, toBePlaced) ) {
+                if (_arborist.prune(_graph, curSchedule, toBePlaced)) {
                     _numCulled++;
                     continue;
                 }
-
                 curSchedule.addTask(toBePlaced);
-                // Check whether to continue (delve deeper)
-                if( _lowerBound.estimate(graph, curSchedule, new ArrayList<>(nextAvailableNodes)) >= _communicator.getCurrentBest().getEndTime()) {
-                    _numCulled++;
-                }
-                // We are meant to continue with this schedule
-                else {
-                    _numExplored++;
-
-                    // Either pass the schedule to our communicator
-                    if (curSchedule.size() + 1 >= _depth)
-                        _communicator.explorePartialSolution(graph, new SimpleSchedule(curSchedule), nextAvailableNodes);
-                    else
-                        recurse(graph, curSchedule, nextAvailableNodes);
-                }
+                int nodesLowerBound = _lowerBound.estimate(_graph, curSchedule, nextAvailableNodes.get(node));
                 curSchedule.removeTask(toBePlaced);
+
+                // Now add it to our sorted node info
+                orderedTasks.add(new Pair<>(nodesLowerBound, toBePlaced));
             }
+        }
+
+        // Now we go through each node in order and recurse on it
+        while(!orderedTasks.isEmpty()) {
+            Pair<Integer, Task> taskPair = orderedTasks.poll();
+            Task toBeAdded = taskPair.getValue();
+            // Check if lower bound is good enough
+            if(taskPair.getKey() >= _communicator.getCurrentBest().getEndTime()) {
+                _numCulled += orderedTasks.size() + 1;
+                break; // We can break because every subsequent task has a greater lower bound
+            }
+
+            // We are meant to continue with this schedule
+            _numExplored++;
+            curSchedule.addTask(toBeAdded);
+            HashSet<Node> nodesNextAvailableNodes = nextAvailableNodes.get(toBeAdded.getNode());
+
+            // Update our current lower bound to the minimum of the two minimum possible values (parent min, and our ordered task min)
+            _curLowerBound = orderedTasks.isEmpty() ? parentLowerBound : Math.min(parentLowerBound, orderedTasks.peek().getKey());
+
+            // Either pass the schedule to our communicator
+            if (curSchedule.size() + 1 >= _depth)
+                _communicator.explorePartialSolution(_graph, new SimpleSchedule(curSchedule), nodesNextAvailableNodes);
+            else
+                recurse(curSchedule, nodesNextAvailableNodes, _curLowerBound);
+            curSchedule.removeTask(toBeAdded);
         }
     }
 
@@ -135,6 +164,11 @@ public class DFSAlgorithm extends BoundableAlgorithm {
     @Override
     public Node currentNode() {
         return _currentNode;
+    }
+
+    @Override
+    public int lowerBound() {
+        return _curLowerBound;
     }
 
     /**

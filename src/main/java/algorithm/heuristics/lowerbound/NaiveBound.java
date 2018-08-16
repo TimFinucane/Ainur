@@ -5,6 +5,7 @@ import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -14,9 +15,9 @@ import java.util.List;
 public class NaiveBound implements LowerBound {
 
     /**
-     * @see LowerBound#estimate(Graph, Schedule, List)
+     * @see LowerBound#estimate(Graph, Schedule, HashSet)
      */
-    public int estimate(Graph graph, Schedule schedule, List<Node> nextNodes) {
+    public int estimate(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         // TODO: Upgrade lower bound to one that at least gets the length of the schedule?
         return 0;
     }
