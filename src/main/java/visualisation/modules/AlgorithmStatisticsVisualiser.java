@@ -69,16 +69,9 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Creates all visual elements and arranges on the screen. Many labels will initially be set to zero.
-     * @param initialLowerBound
-     * @param initialUpperBound
      * @param coresUsed
      */
-    public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound, long coresUsed) {
-
-        // Set bounding variables
-        _initialLowerBound = initialLowerBound;
-        _initialUpperBound = initialUpperBound;
-        _initialBoundRange = _initialUpperBound - _initialLowerBound; // Range of upper and lower bound
+    public AlgorithmStatisticsVisualiser(long coresUsed) {
 
         // Initialize elements
         _boundGrid = createBoundingVisualization();
@@ -87,38 +80,38 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _timeLabel = new Label("0");
         _timeLabel.setFont(DEFAULT_TIME_FONT);
 
-        Label _processorsUsedLabel = new Label("Cores running:");
-        _processorsUsedLabel.setFont(DEFAULT_FONT);
-        Label _processorsUsedValue = new Label(String.format("%d", coresUsed));
-        _processorsUsedValue.setFont(DEFAULT_FONT);
+        Label processorsUsedLabel = new Label("Cores running:");
+        processorsUsedLabel.setFont(DEFAULT_FONT);
+        Label processorsUsedValue = new Label(String.format("%d", coresUsed));
+        processorsUsedValue.setFont(DEFAULT_FONT);
 
-        Label _branchesCoveredLabel = new Label("Branches explored:");
-        _branchesCoveredLabel.setFont(DEFAULT_FONT);
+        Label branchesCoveredLabel = new Label("Branches explored:");
+        branchesCoveredLabel.setFont(DEFAULT_FONT);
         _branchesCoveredValue = new Label(String.format("%d", 0));
         _branchesCoveredValue.setFont(DEFAULT_FONT);
 
-        Label _branchesCulledLabel = new Label("Branches culled:");
-        _branchesCulledLabel.setFont(DEFAULT_FONT);
+        Label branchesCulledLabel = new Label("Branches culled:");
+        branchesCulledLabel.setFont(DEFAULT_FONT);
         _branchesCulledValue = new Label(String.format("%d", 0));
         _branchesCulledValue.setFont(DEFAULT_FONT);
 
-        Label _cullingRateLabel = new Label("Culling rate:");
-        _cullingRateLabel.setFont(DEFAULT_FONT);
+        Label cullingRateLabel = new Label("Culling rate:");
+        cullingRateLabel.setFont(DEFAULT_FONT);
         _cullingRateValue = new Label(String.format("%.1f%%", 0.0));
         _cullingRateValue.setFont(DEFAULT_FONT);
 
-        Label _memoryFreeLabel = new Label("Memory free:");
-        _memoryFreeLabel.setFont(DEFAULT_FONT);
+        Label memoryFreeLabel = new Label("Memory free:");
+        memoryFreeLabel.setFont(DEFAULT_FONT);
         _memoryFreeValue = new Label(String.format(""));
         _memoryFreeValue.setFont(DEFAULT_FONT);
 
-        Label _memoryAllocatedLabel = new Label("Memory Allocated:");
-        _memoryAllocatedLabel.setFont(DEFAULT_FONT);
+        Label memoryAllocatedLabel = new Label("Memory Allocated:");
+        memoryAllocatedLabel.setFont(DEFAULT_FONT);
         _memoryAllocatedValue = new Label("");
         _memoryAllocatedValue.setFont(DEFAULT_FONT);
 
-        Label _memoryMaxLabel = new Label("JVM Memory Limit:");
-        _memoryMaxLabel.setFont(DEFAULT_FONT);
+        Label memoryMaxLabel = new Label("JVM Memory Limit:");
+        memoryMaxLabel.setFont(DEFAULT_FONT);
         _memoryMaxValue = new Label("");
         _memoryMaxValue.setFont(DEFAULT_FONT);
 
@@ -126,21 +119,22 @@ public class AlgorithmStatisticsVisualiser extends Region {
         // Holds the following labels
         GridPane _labelGrid = createLabelGrid();
         _labelGrid.add(_timeLabel, 0, 0);
-        _labelGrid.add(_processorsUsedLabel, 0, 1);
-        _labelGrid.add(_processorsUsedValue, 1, 1);
-        _labelGrid.add(_branchesCoveredLabel, 0, 2);
+        _labelGrid.add(processorsUsedLabel, 0, 1);
+        _labelGrid.add(processorsUsedValue, 1, 1);
+        _labelGrid.add(branchesCoveredLabel, 0, 2);
         _labelGrid.add(_branchesCoveredValue, 1, 2);
-        _labelGrid.add(_branchesCulledLabel, 0, 3);
+        _labelGrid.add(branchesCulledLabel, 0, 3);
         _labelGrid.add(_branchesCulledValue, 1, 3);
-        _labelGrid.add(_cullingRateLabel, 0, 4);
+        _labelGrid.add(cullingRateLabel, 0, 4);
         _labelGrid.add(_cullingRateValue, 1, 4);
-        _labelGrid.add(_memoryFreeLabel, 0, 5);
+        _labelGrid.add(memoryFreeLabel, 0, 5);
         _labelGrid.add(_memoryFreeValue, 1, 5);
-        _labelGrid.add(_memoryAllocatedLabel, 0, 6);
+        _labelGrid.add(memoryAllocatedLabel, 0, 6);
         _labelGrid.add(_memoryAllocatedValue, 1, 6);
-        _labelGrid.add(_memoryMaxLabel, 0, 7);
+        _labelGrid.add(memoryMaxLabel, 0, 7);
         _labelGrid.add(_memoryMaxValue, 1, 7);
 
+        // Create a cpu usage chart
         _cpuChart = createCpuChart();
         _cpuChartData = new XYChart.Series();
         _cpuChart.getData().add(_cpuChartData);
@@ -185,7 +179,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
     public void update(Statistics statistics) {
         _updateIteration++; // Increment iteration of update
 
-        if (_updateIteration == 1) { // Lol
+        // If on first iteration then update all of these parameters
+        if (_updateIteration == 1) {
             _initialUpperBound = statistics.getMaxScheduleBound();
             _initialLowerBound = 0;
             _boundingAxis.setUpperBound(_initialUpperBound);
@@ -215,7 +210,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         _timeLabel.setTextFill(Color.RED);
         _timer.cancel();
-
 
     }
 
