@@ -42,3 +42,11 @@ test {
         excludeTags 'gandalf'
     }
 }
+
+task integrationTest(type: Test) {
+    group = 'verification'
+
+    useJUnitPlatform {
+        includeTags 'gandalf'
+    }
+}
