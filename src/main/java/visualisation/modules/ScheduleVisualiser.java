@@ -54,7 +54,6 @@ public class ScheduleVisualiser extends Region {
         // Adds tasks to visualisation for each processor
         for (int proc = 0; proc < numProc; proc++) {
             for (Task task : schedule.getTasks(proc)) {
-                System.out.println(task.getStartTime() + " " + task.getEndTime());
                 grid.add(generateRect(task), task.getStartTime(), proc);
             }
         }

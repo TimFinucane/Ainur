@@ -37,6 +37,9 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private double _initialUpperBound;
     private double _initialBoundRange;
 
+    private double _bestLower;
+    private double _bestUpper;
+
     // For keeping track of number of updates, certain visualizations may use this to prevent over updating
     private long _updateIteration;
 
@@ -251,11 +254,17 @@ public class AlgorithmStatisticsVisualiser extends Region {
             _boundingAxis.setUpperBound(_initialUpperBound);
             _initialBoundRange = _initialUpperBound - _initialLowerBound;
             _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
+
+            _bestLower = _initialLowerBound;
+            _bestUpper = _initialUpperBound;
         }
 
+        _bestLower = statistics.getMinScheduleBound() > _bestLower ? statistics.getMinScheduleBound() : _bestLower;
+        _bestUpper = statistics.getMaxScheduleBound() < _bestUpper ? statistics.getMaxScheduleBound() : _bestUpper;
+
         // calculate left and right rectangle widths with regards to bound progression and visualisation width
-        int leftRectangleWidth = (int)(((statistics.getMinScheduleBound() - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
-        int rightRectangleWidth = (int)(((_initialUpperBound - statistics.getMaxScheduleBound()) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
+        int leftRectangleWidth = (int)(((_bestLower - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
+        int rightRectangleWidth = (int)(((_initialUpperBound - _bestUpper) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
 
         // Create rectangles with width and color features
         Rectangle leftRectangle = new Rectangle(leftRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
