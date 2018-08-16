@@ -127,7 +127,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      */
     @Override
     public int lowerBound() {
-        int minBound = Integer.MAX_VALUE;
+        int minBound = getCurrentBest().getEndTime();
         for(Algorithm algorithm : _algorithmsRunning)
             minBound = Math.min(minBound, algorithm.lowerBound());
         return minBound;
