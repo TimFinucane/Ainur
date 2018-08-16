@@ -228,6 +228,10 @@ public class AlgorithmStatisticsVisualiser extends Region {
     }
 
 
+    /**
+     * Updates the labels of miscellaneous algorithm metrics branches culled, search space, etc.
+     * @param statistics
+     */
     private void updateLabels(Statistics statistics) {
 
         _branchesCoveredValue.setText(String.format("%6.2e", (float)statistics.getSearchSpaceLookedAt()));
@@ -320,6 +324,10 @@ public class AlgorithmStatisticsVisualiser extends Region {
     }
 
 
+    /**
+     * Creates an empty grid to house miscellaneous metrics labels, branches culled, searched, etc.
+     * @return
+     */
     private GridPane createLabelGrid() {
 
         GridPane gridPane = new GridPane();
