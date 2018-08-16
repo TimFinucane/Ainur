@@ -5,6 +5,7 @@ import common.graph.Node;
 import common.schedule.Schedule;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -22,18 +23,7 @@ public interface LowerBound {
      *                     (i.e. all dependencies accounted for in the partial schedule).
      * @return A lower bound of the optimal solution length
      */
-    int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit);
-
-    /**
-     * Efficiently and heuristically estimates a lower bound for the best possible time of a solution
-     * created using the partial schedule provided.
-     * @param graph The entire graph of the problem
-     * @param schedule A partial/incomplete schedule from which the range of solutions is based
-     * @return A lower bound of the optimal solution length
-     */
-    default int estimate(Graph graph, Schedule schedule){
-        return this.estimate(graph, schedule, new ArrayList<>());
-    }
+    int estimate(Graph graph, Schedule schedule, HashSet<Node> nodesToVisit);
 
     /**
      * Combines multiple lower bounds together by taking the minimum of all of them
@@ -41,18 +31,10 @@ public interface LowerBound {
     static LowerBound combine(LowerBound... bounds) {
         return new LowerBound() {
             @Override
-            public int estimate(Graph graph, Schedule schedule, List<Node> nodesToVisit) {
+            public int estimate(Graph graph, Schedule schedule, HashSet<Node> nodesToVisit) {
                 int min = bounds[0].estimate(graph, schedule, nodesToVisit);
                 for(int i = 1; i < bounds.length; ++i)
                     min = Math.min(min, bounds[i].estimate(graph, schedule, nodesToVisit));
-
-                return min;
-            }
-            @Override
-            public int estimate(Graph graph, Schedule schedule){
-                int min = bounds[0].estimate(graph, schedule);
-                for(int i = 1; i < bounds.length; ++i)
-                    min = Math.min(min, bounds[i].estimate(graph, schedule));
 
                 return min;
             }

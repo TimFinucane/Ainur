@@ -24,7 +24,7 @@ public class CriticalPath implements LowerBound {
      * @param nextNodesToVisit : All the nodes that can be added imminently to the partial schedule
      * @return estimate : int
      */
-    public int estimate(Graph graph, Schedule schedule, List<Node> nextNodesToVisit) {
+    public int estimate(Graph graph, Schedule schedule, HashSet<Node> nextNodesToVisit) {
 
         // Map to store Nodes and the critical path to reach that node.
         Map<Node, Integer> nodePathWeights = new HashMap<>();
@@ -74,16 +74,5 @@ public class CriticalPath implements LowerBound {
 
         // return the maximum of all computed critical paths.
         return Collections.max(nodePathWeights.values());
-    }
-
-    /**
-     * Method provides an estimate of the lower bound based on parameters provided
-     * @param graph : Graph
-     * @param schedule : Schedule
-     * @return estimate : int
-     */
-    //TODO - implementation
-    public int estimate(Graph graph, Schedule schedule) {
-        throw new UnsupportedOperationException();
     }
 }
