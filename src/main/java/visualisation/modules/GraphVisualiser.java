@@ -11,7 +11,6 @@ import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseMotionListener;
 import java.util.*;
 import java.util.List;
 
@@ -40,6 +39,9 @@ public class GraphVisualiser extends Region {
             "   size: 15px;" +
             "   stroke-mode: plain;" +
             "   stroke-color: black;" +
+            "   shadow-color: blue, white;" +
+            "   shadow-mode: gradient-radial;" +
+            "   shadow-offset: 0;" +
             "}" +
             "node.marked {" +
             "   fill-color:red;"  +
@@ -52,10 +54,8 @@ public class GraphVisualiser extends Region {
             "   arrow-size: 15px, 5px;" +
             "   size: 1.5px;" +
             "}";
-    public static final String UI_CLASS = "ui.class";
     public static final String UI_LABEL = "ui.label";
     public static final String UI_STYLE_SHEET = "ui.stylesheet";
-    public static final String MARKED_CLASS = "marked";
 
     /* Fields */
 
@@ -129,10 +129,8 @@ public class GraphVisualiser extends Region {
         for (Map.Entry<Node, Long> pair : _nodeFrequencies.entrySet()) {
             double proportion = pair.getValue() / average;
             String nodeLabel = pair.getKey().getLabel();
-
-            int rgbVal = (int) ((Math.min(proportion, 2) / 2 )* 255);
-
-            _gsGraph.getNode(nodeLabel).addAttribute("ui.style", String.format("fill-color: rgb(%d, %d, %d );", rgbVal, 0, 0));
+            
+           _gsGraph.getNode(nodeLabel).setAttribute("ui.style", String.format("shadow-width: %f;", proportion * 2));
         }
 
         // Reset node frequencies
