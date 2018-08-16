@@ -59,11 +59,8 @@ public class AinurVisualiser extends VBox {
      *
      * @param algorithm the algorithm to visualise
      * @param graph The task graph to be displayed
-     * @param lowerBound the lowerbound of the algorithm //TODO this should be removed when a method to get this is implemented
-     * @param upperBound the upperbound of the algorithm //TODO this should be removed when a method to get this is implemented
-     * @param coresUsed The number of cores to be used
      */
-    public AinurVisualiser(Algorithm algorithm, Graph graph, int numProcessors, int lowerBound, int upperBound) {
+    public AinurVisualiser(Algorithm algorithm, Graph graph, int numProcessors) {
         // Assign Args
         _algorithm = algorithm;
 
@@ -72,12 +69,15 @@ public class AinurVisualiser extends VBox {
         _sv = new ScheduleVisualiser(numProcessors);
 
         int coresUsed = (algorithm instanceof TieredAlgorithm) ? ((TieredAlgorithm) algorithm).numThreads() : 1;
-        _asv = new AlgorithmStatisticsVisualiser(lowerBound, upperBound, coresUsed);
+        // TODO: When getCurrentBest is safe (i.e. using non optimal starting algorithm) remove the math min
+        int upperBound = Math.min(algorithm.getCurrentBest().getEndTime(), 1000);
+        _asv = new AlgorithmStatisticsVisualiser(algorithm.lowerBound(), upperBound, coresUsed);
 
         // Initialise stats object
         _stats = new Statistics();
+
         _stats.setMaxScheduleBound(upperBound);
-        _stats.setMinScheduleBound(lowerBound);
+        _stats.setMinScheduleBound(algorithm.lowerBound());
 
         // See if algorithm is tiered.
         _isTiered = isTiered(_algorithm);
