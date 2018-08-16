@@ -30,9 +30,9 @@ jar {
         // Set main class
         attributes 'Main-Class': mainClassName
     }
-    from {
-        // Compile with dependencies
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    // Compile with dependencies
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
     }
 }
 
