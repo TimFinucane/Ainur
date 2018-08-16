@@ -2,6 +2,9 @@ package visualisation;
 
 import common.schedule.Schedule;
 import common.schedule.Task;
+import javafx.beans.InvalidationListener;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
@@ -14,6 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+
+import javax.swing.event.ChangeListener;
 
 /**
  * Class to deal with the visual rendering of a schedule.
@@ -37,7 +42,7 @@ public class ScheduleVisualiser extends VBox {
         // Ensure that when we resize, it redraws the schedule
         widthProperty().addListener(e -> draw());
         heightProperty().addListener(e -> draw());
-
+        
         // Add the canvas holder, and make sure it takes available height
         getChildren().add(canvasHolder);
         setVgrow(canvasHolder, Priority.ALWAYS);
@@ -45,6 +50,7 @@ public class ScheduleVisualiser extends VBox {
         // And the number axis
         _axis = new NumberAxis(0, 100, 10);
         _axis.setTickLength(10.0);
+        _axis.setTickLabelFont(new Font(_axis.getTickLabelFont().getName(), 16.0));
         getChildren().add(_axis);
 
         // And have a nice bit of pad
@@ -81,7 +87,7 @@ public class ScheduleVisualiser extends VBox {
         double canvasHeight = gc.getCanvas().getHeight();
 
         // The width of a single unit time in the schedule. End time is padded by 10% so schedule doesn't go to end
-        double unitWidth = canvasWidth / (_schedule.getEndTime());
+        double unitWidth = canvasWidth / _schedule.getEndTime();
         // The height of each task in the processor
         double taskHeight = canvasHeight / _schedule.getNumProcessors();
 
@@ -103,11 +109,17 @@ public class ScheduleVisualiser extends VBox {
         }
         // Modify number axis
         _axis.setUpperBound(_schedule.getEndTime());
+        _axis.layout();
 
-        // Extend tick marks
-        for(Axis.TickMark<Number> tickmark : _axis.getTickMarks()) {
-            double x = tickmark.getPosition();
-            gc.strokeLine(x, 0, x, canvasHeight);
+        // Extend tick marks to full screen
+        gc.setFill(BORDER_COLOUR);
+        for(int i = 0; i < _axis.getTickMarks().size(); ++i) {
+            double x = _axis.getTickMarks().get(i).getPosition();
+
+            if(i == _axis.getTickMarks().size() - 1)
+                x -= 1;
+
+            gc.fillRect(x, 0, 1, canvasHeight);
         }
     }
 }
