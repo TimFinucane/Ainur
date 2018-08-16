@@ -21,7 +21,7 @@ public class ScheduleVisualiserTest extends Application {
      */
     public void start(Stage stage) {
         ScheduleVisualiser sv = new ScheduleVisualiser();
-        Scene scene = new Scene(sv);
+        Scene scene = new Scene(sv, 1080, 720);
         stage.setScene(scene);
         stage.show();
         sv.update(generateSchedule());
