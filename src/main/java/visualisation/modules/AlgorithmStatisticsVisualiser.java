@@ -116,7 +116,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         Label memoryFreeLabel = new Label("Memory free:");
         memoryFreeLabel.setFont(DEFAULT_FONT);
-        _memoryFreeValue = new Label(String.format(""));
+        _memoryFreeValue = new Label("");
         _memoryFreeValue.setFont(DEFAULT_FONT);
 
         Label memoryAllocatedLabel = new Label("Memory Allocated:");
@@ -162,6 +162,9 @@ public class AlgorithmStatisticsVisualiser extends Region {
             @Override
             public void run() {
                 _millisecondsRunning += 10;
+
+                if (_millisecondsRunning % 2000 == 0) // Every 2 seconds update cpu usage chart
+                    updateCpuUsageChart();
             }
         }, new Date(), 10);
 
@@ -207,9 +210,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
         }
 
         updateBoundingChart(statistics); // Update bounding chart
-
-        updateCpuUsageChart(); // Update CPU usage chart
-
+        
         updateTimeLabel(); // Update Time label
 
         updateLabels(statistics); // Update misc. statistics labels
@@ -312,36 +313,32 @@ public class AlgorithmStatisticsVisualiser extends Region {
      * Calculate the current CPU usage of the OS and plot it onto chart
      */
     private void updateCpuUsageChart() {
-        if (_updateIteration % 20 == 0) { // Only update chart every 25 iterations of updates.
-            double cpuUsage = 0;
-            try {
-                // Get necessary objects representing OS information
-                MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-                ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
-                AttributeList list = mbs.getAttributes(name, new String[]{ "ProcessCpuLoad" });
+        double cpuUsage = 0;
+        try {
+            // Get necessary objects representing OS information
+            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+            ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+            AttributeList list = mbs.getAttributes(name, new String[]{ "ProcessCpuLoad" });
 
-                if (list.isEmpty()) {
-                    return;
-                }
-
-                // Get cpu usage ratio
-                Attribute att = (Attribute)list.get(0);
-                Double value  = (Double)att.getValue();
-
-                if (value == -1.0) {
-                    return;
-                }
-
-                cpuUsage = ((int)(value * 100));
-            } catch (Exception e) {
+            if (list.isEmpty()) {
+                return;
             }
+
+            // Get cpu usage ratio
+            Attribute att = (Attribute)list.get(0);
+            Double value  = (Double)att.getValue();
+
+            if (value == -1.0) {
+                return;
+            }
+
+            cpuUsage = ((int)(value * 100)); } catch (Exception e) { /* Nothing should happen here imo */}
 
             // Add current cpu usage to chart data structure, chart will automatically update. Divide by 1000 for seconds
             _cpuChartData.getData().add(new XYChart.Data(_millisecondsRunning / 1000, cpuUsage));
             if (_cpuChartData.getData().size() > 50) { // If data size is greater than 100 points begin to remove
                 _cpuChartData.getData().remove(0, 1);
             }
-        }
     }
 
 
