@@ -14,7 +14,6 @@ import java.awt.*;
 import java.awt.event.MouseMotionListener;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is a class used to visually render task graphs.
@@ -236,10 +235,6 @@ public class GraphVisualiser extends Region {
 
             // Handle setting up viewer
             viewer.enableAutoLayout();
-
-            // Remove the ability to move nodes on the graph with mouse
-            MouseMotionListener mouseMotionListener = view.getMouseMotionListeners()[0];
-            view.removeMouseMotionListener(mouseMotionListener);
 
             // Assign the view to the swingNode component
             _swingNode.setContent(view);
