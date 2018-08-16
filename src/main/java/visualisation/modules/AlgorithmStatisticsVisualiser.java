@@ -202,6 +202,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
     public void stop() {
 
         _timeLabel.setTextFill(Color.RED);
+        _timer.cancel();
 
     }
 
