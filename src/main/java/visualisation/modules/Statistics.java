@@ -1,12 +1,14 @@
-package visualisation;
+package visualisation.modules;
+
+import java.math.BigInteger;
 
 public class Statistics {
 
     private int _maxScheduleBound;
     private int _minScheduleBound;
 
-    private long _searchSpaceLookedAt;
-    private long _searchSpaceCulled;
+    private BigInteger _searchSpaceLookedAt;
+    private BigInteger _searchSpaceCulled;
 
     public int getMaxScheduleBound() {
         return _maxScheduleBound;
@@ -24,19 +26,19 @@ public class Statistics {
         this._minScheduleBound = _minScheduleLength;
     }
 
-    public long getSearchSpaceLookedAt() {
+    public BigInteger getSearchSpaceLookedAt() {
         return _searchSpaceLookedAt;
     }
 
-    public void setSearchSpaceLookedAt(long _searchSpaceLookedAt) {
+    public void setSearchSpaceLookedAt(BigInteger _searchSpaceLookedAt) {
         this._searchSpaceLookedAt = _searchSpaceLookedAt;
     }
 
-    public long getSearchSpaceCulled() {
+    public BigInteger getSearchSpaceCulled() {
         return _searchSpaceCulled;
     }
 
-    public void setSearchSpaceCulled(long _searchSpaceCulled) {
+    public void setSearchSpaceCulled(BigInteger _searchSpaceCulled) {
         this._searchSpaceCulled = _searchSpaceCulled;
     }
 }
