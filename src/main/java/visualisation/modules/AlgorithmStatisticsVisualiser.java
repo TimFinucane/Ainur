@@ -19,6 +19,15 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * This class renders a set of statistical components including miscellaneous algorithm metrics, a best schedule
+ * bounding visualization and a cpu usage graph. The elements can be updated constantly with use of the update()
+ * method.
+ *
+ * The constructor initializes ALL elements of the view so if more is to be added it can be done here. Adding new
+ * miscellaneous metric should be done in the labelGrid, as this will align them nicely. All components needing
+ * to be periodically updated can be accessed as a field.
+ */
 public class AlgorithmStatisticsVisualiser extends Region {
 
     // CONSTANTS
