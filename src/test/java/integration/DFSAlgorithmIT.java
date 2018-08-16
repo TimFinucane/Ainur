@@ -1,4 +1,4 @@
-package integration.tests;
+package integration;
 
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
