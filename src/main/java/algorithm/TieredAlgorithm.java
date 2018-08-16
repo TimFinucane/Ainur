@@ -27,8 +27,8 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
 
     private Graph                       _graph;
 
-    private BigInteger                  _totalCulled;
-    private BigInteger                  _totalExplored;
+    private BigInteger                  _totalCulled = BigInteger.ZERO;
+    private BigInteger                  _totalExplored = BigInteger.ZERO;
 
     /**
      * Does not get given a schedule to start with, it's initial guess is instead infinite.
@@ -41,7 +41,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         _threads = new Thread[threads];
         _algorithmsRunning = new CopyOnWriteArrayList<>();
         // Allow up to threads * 2 stored schedules before you cant add any more (and will block on trying to do so)
-        _schedulesToExplore = new LinkedBlockingQueue<>((threads) * 2);
+        _schedulesToExplore = new LinkedBlockingQueue<>(threads * 2);
     }
     /**
      * Create a tiered algorithm.
