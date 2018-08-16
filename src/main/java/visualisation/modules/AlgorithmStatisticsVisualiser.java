@@ -211,6 +211,13 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _timeLabel.setTextFill(Color.RED);
         _timer.cancel();
 
+        // Render finishing rectangle marker in middle column :)
+        Rectangle finishIndicator = new Rectangle();
+        finishIndicator.setStroke(Color.RED);
+        finishIndicator.setStrokeWidth(5);
+        finishIndicator.setHeight(SCHEDULE_TIME_BOUNDING_HEIGHT);
+        _boundGrid.add(finishIndicator, 1, 0);
+
     }
 
 
