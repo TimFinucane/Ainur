@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 public class Statistics {
 

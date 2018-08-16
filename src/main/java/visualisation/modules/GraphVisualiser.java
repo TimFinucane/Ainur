@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import common.graph.Edge;
 import common.graph.Graph;
@@ -6,7 +6,6 @@ import common.graph.Node;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.Region;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.layout.HierarchicalLayout;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 
@@ -28,7 +27,7 @@ public class GraphVisualiser extends Region {
 
     // Window dimensions
     public static final int WINDOW_HEIGHT = 500;
-    public static final int WINDOW_WIDTH = 800;
+    public static final int WINDOW_WIDTH = 750;
 
     // Used for styling the graph and its nodes
     public static final String STYLE_SHEET =
@@ -58,9 +57,6 @@ public class GraphVisualiser extends Region {
     public static final String UI_STYLE_SHEET = "ui.stylesheet";
     public static final String MARKED_CLASS = "marked";
 
-    // The label of the root node
-    public static final String ROOT_NODE_LABEL = "0";
-
     /* Fields */
 
     // Used for rendering swing component in javafx
@@ -80,8 +76,9 @@ public class GraphVisualiser extends Region {
      * Takes an Ainur Graph, creates a graphstream graph swing element and wraps this in a javafx component.
      *
      * @param graph The Ainur graph to be visualised.
+     * @param highQualityRender True for high quality render, false otherwise
      */
-    public GraphVisualiser(Graph graph) {
+    public GraphVisualiser(Graph graph, boolean highQualityRender) {
         // Use the fully compliant css renderer for graphstream
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
@@ -95,6 +92,10 @@ public class GraphVisualiser extends Region {
         _swingNode = new SwingNode();
         _dimension = new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        // If instructed to render with high quality add attribute
+        if (highQualityRender)
+            this.setHighRenderQuality(true);
+
         // Create the swing content & adds it to the visualiser
         this.createSwingContent();
         this.getChildren().add(_swingNode);
@@ -102,6 +103,16 @@ public class GraphVisualiser extends Region {
         // Set visualiser dimensions
         this.setMinHeight(WINDOW_HEIGHT);
         this.setMinWidth(WINDOW_WIDTH);
+    }
+
+    /**
+     * Constuctor for GraphVisualiser class.
+     * Takes an Ainur Graph, creates a graphstream graph swing element and wraps this in a javafx component.
+     *
+     * @param graph The Ainur graph to be visualised.
+     */
+    public GraphVisualiser(Graph graph) {
+        this(graph, true);
     }
 
     /* Public Methods */
@@ -115,9 +126,11 @@ public class GraphVisualiser extends Region {
      * @param node The node which is to be selected
      */
     public void update(Node node) {
-        List<Node> nodeList = new ArrayList<>();
-        nodeList.add(node);
-        this.update(nodeList);
+        if (node != null) {
+            List<Node> nodeList = new ArrayList<>();
+            nodeList.add(node);
+            this.update(nodeList);
+        }
     }
 
     /**
@@ -129,15 +142,30 @@ public class GraphVisualiser extends Region {
      * @param nodes The list of nodes to highlight.
      */
     public void update(List<Node> nodes) {
+        if (nodes.size() < 1 || nodes == null)
+            return;
+
         for (Node node: _currentNodes) {
-            _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
+            if (node != null)
+                _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
         }
 
         for (Node node:  nodes) {
-            _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
+            if (node != null)
+                _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
         }
 
         _currentNodes = nodes;
+    }
+
+    public void setHighRenderQuality(boolean highQuality) {
+        if (highQuality) {
+            _gsGraph.addAttribute("ui.quality");
+            _gsGraph.addAttribute("ui.antialias");
+        } else {
+            _gsGraph.removeAttribute("ui.quality");
+            _gsGraph.removeAttribute("ui.antialias");
+        }
     }
 
     /* Private Helper Methods */
@@ -197,16 +225,14 @@ public class GraphVisualiser extends Region {
             // Set Swing window dimensions
             view.setPreferredSize(_dimension);
 
-            // Set Hierarchical layout with node "0" being the root
-            HierarchicalLayout hl = new HierarchicalLayout();
-            hl.setRoots(ROOT_NODE_LABEL);
-            viewer.enableAutoLayout(hl);
+            // Handle setting up viewer
+            viewer.enableAutoLayout();
 
             // Remove the ability to move nodes on the graph with mouse
             MouseMotionListener mouseMotionListener = view.getMouseMotionListeners()[0];
             view.removeMouseMotionListener(mouseMotionListener);
 
-            // Assogn the view to the swingNode component
+            // Assign the view to the swingNode component
             _swingNode.setContent(view);
         });
     }
