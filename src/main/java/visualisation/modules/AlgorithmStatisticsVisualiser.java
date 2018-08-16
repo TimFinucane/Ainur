@@ -32,7 +32,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private static final Font DEFAULT_TIME_FONT = new Font("Consolas", 20);
 
 
-    // Fields to do with bounds
+    // BOUND FIELDS
     private double _initialLowerBound;
     private double _initialUpperBound;
     private double _initialBoundRange;
@@ -42,6 +42,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     // For keeping track of number of updates, certain visualizations may use this to prevent over updating
     private long _updateIteration;
+
 
     // ELEMENTS
     // Grid
@@ -73,6 +74,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
      * @param coresUsed
      */
     public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound, long coresUsed) {
+
         // Set bounding variables
         _initialLowerBound = initialLowerBound;
         _initialUpperBound = initialUpperBound;
@@ -183,6 +185,18 @@ public class AlgorithmStatisticsVisualiser extends Region {
     public void update(Statistics statistics) {
         _updateIteration++; // Increment iteration of update
 
+        if (_updateIteration == 1) { // Lol
+            _initialUpperBound = statistics.getMaxScheduleBound();
+            _initialLowerBound = 0;
+            _boundingAxis.setUpperBound(_initialUpperBound);
+            _initialBoundRange = _initialUpperBound - _initialLowerBound;
+
+            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
+
+            _bestLower = _initialLowerBound;
+            _bestUpper = _initialUpperBound;
+        }
+
         updateBoundingChart(statistics); // Update bounding chart
 
         updateCpuUsageChart(); // Update CPU usage chart
@@ -241,17 +255,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
      * @param statistics
      */
     private void updateBoundingChart(Statistics statistics) {
-
-        if (_updateIteration == 1) { // Lol
-            _initialUpperBound = statistics.getMaxScheduleBound();
-            _initialLowerBound = 0;
-            _boundingAxis.setUpperBound(_initialUpperBound);
-            _initialBoundRange = _initialUpperBound - _initialLowerBound;
-            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
-
-            _bestLower = _initialLowerBound;
-            _bestUpper = _initialUpperBound;
-        }
 
         // If neither bound changes, no point in continuing to render
         if (statistics.getMinScheduleBound() == _bestLower && statistics.getMaxScheduleBound() == _bestUpper)
