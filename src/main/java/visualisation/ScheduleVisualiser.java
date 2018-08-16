@@ -42,7 +42,7 @@ public class ScheduleVisualiser extends VBox {
         // Ensure that when we resize, it redraws the schedule
         widthProperty().addListener(e -> draw());
         heightProperty().addListener(e -> draw());
-        
+
         // Add the canvas holder, and make sure it takes available height
         getChildren().add(canvasHolder);
         setVgrow(canvasHolder, Priority.ALWAYS);
@@ -112,14 +112,13 @@ public class ScheduleVisualiser extends VBox {
         _axis.layout();
 
         // Extend tick marks to full screen
-        gc.setFill(BORDER_COLOUR);
         for(int i = 0; i < _axis.getTickMarks().size(); ++i) {
             double x = _axis.getTickMarks().get(i).getPosition();
 
             if(i == _axis.getTickMarks().size() - 1)
                 x -= 1;
 
-            gc.fillRect(x, 0, 1, canvasHeight);
+            gc.strokeLine(x, 0, x, canvasHeight);
         }
     }
 }
