@@ -23,7 +23,8 @@ public class AinurVisualiser extends Region {
 
     /* MACROS */
 
-    public final static int POLLING_DELAY = 100;
+    public final static int FAST_POLLING_DELAY = 100;
+    public final static int SLOW_POLLING_DELAY = 2000;
 
     /* Fields */
 
@@ -37,7 +38,8 @@ public class AinurVisualiser extends Region {
     private Statistics _stats;
 
     // Used to indicate whether or not the algorithm is running
-    private Timeline _poller;
+    private Timeline _fastPoller;
+    private Timeline _slowPoller;
 
     // Used to indicate whether or not the algorithm is tiered
     private boolean _isTiered;
@@ -83,31 +85,20 @@ public class AinurVisualiser extends Region {
      * This method will then update the visualiser modules accordingly.
      */
     public void run() {
-        _poller = new Timeline(new KeyFrame(Duration.millis(POLLING_DELAY), event -> {
+        _fastPoller = new Timeline(new KeyFrame(Duration.millis(FAST_POLLING_DELAY), event -> {
             this.updateGraph();
             this.updateStatistics();
-        }), new KeyFrame(Duration.seconds(2), event -> {
+        }));
+
+        _slowPoller = new Timeline(new KeyFrame(Duration.millis(SLOW_POLLING_DELAY), event -> {
             this.updateSchedule();
         }));
 
-        _poller.setCycleCount(Animation.INDEFINITE);
-        _poller.play();
-                /**
-                 long numIterations = 0;
-                 while (_running) {
-                 long finalNumIterations = numIterations;
-                 Platform.runLater(() -> {
-                 updateGraph();
-                 updateStatistics();
+        _slowPoller.setCycleCount(Animation.INDEFINITE);
+        _fastPoller.setCycleCount(Animation.INDEFINITE);
 
-                 if (finalNumIterations % 20 == 0) {
-                 updateSchedule();
-                 }
-                 });
-                 numIterations++;
-                 TimeUnit.MILLISECONDS.sleep(POLLING_DELAY);
-                 }
-                 **/
+        _fastPoller.play();
+        _slowPoller.play();
     }
 
     /**
@@ -120,7 +111,8 @@ public class AinurVisualiser extends Region {
         updateSchedule();
         updateStatistics();
         _asv.stop();
-        _poller.stop();
+        _fastPoller.stop();
+        _slowPoller.stop();
     }
 
     /* Private Helper Methods */
