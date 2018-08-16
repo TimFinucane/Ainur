@@ -202,6 +202,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _timeLabel.setTextFill(Color.RED);
         _timer.cancel();
 
+
     }
 
 
@@ -236,7 +237,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
 
     /**
-     * Update the bounding chart to appropriate state given the current min and max boundary times.
+     * Update the bounding chart to appropriate state given the current min and max boundary times. This chart re-renders both rectangles if one changes.
      * @param statistics
      */
     private void updateBoundingChart(Statistics statistics) {
@@ -252,6 +253,11 @@ public class AlgorithmStatisticsVisualiser extends Region {
             _bestUpper = _initialUpperBound;
         }
 
+        // If neither bound changes, no point in continuing to render
+        if (statistics.getMinScheduleBound() == _bestLower && statistics.getMaxScheduleBound() == _bestUpper)
+            return;
+
+        // If current statistics are better than locally stored bests, overwrite.
         _bestLower = statistics.getMinScheduleBound() > _bestLower ? statistics.getMinScheduleBound() : _bestLower;
         _bestUpper = statistics.getMaxScheduleBound() < _bestUpper ? statistics.getMaxScheduleBound() : _bestUpper;
 
