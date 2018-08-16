@@ -63,7 +63,7 @@ public class AinurVisualiser extends Region {
         // Initialise visualisers
         _gv = new GraphVisualiser(graph);
         _sv = new ScheduleVisualiser();
-        _asv = new AlgorithmStatisticsVisualiser(lowerBound, 100000000, coresUsed);
+        _asv = new AlgorithmStatisticsVisualiser(lowerBound, upperBound, coresUsed);
 
         // Initialise stats object
         _stats = new Statistics();

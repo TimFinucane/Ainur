@@ -37,7 +37,6 @@ public class Ainur extends Application {
           graph = readGraphFile(cli.getInputFile()); // read the graph
           algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
           // TODO update upperbound when non optimal implemented
-          av = new AinurVisualiser(algorithm, graph, 0, 100, cli.getProcessors());
 
           Thread schedulingThread =
                   new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
@@ -150,6 +149,7 @@ public class Ainur extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Start the program
+        av = new AinurVisualiser(algorithm, graph, 0, 100, cli.getProcessors());
         Scene scene = new Scene(av);
         primaryStage.setScene(scene);
         primaryStage.show();
