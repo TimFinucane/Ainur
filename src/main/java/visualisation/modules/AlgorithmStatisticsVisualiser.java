@@ -31,6 +31,11 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private static final Font DEFAULT_FONT = new Font("Consolas", 12);
     private static final Font DEFAULT_TIME_FONT = new Font("Consolas", 20);
 
+    private static final Paint BOUNDING_RECTANGLE_FILL = Paint.valueOf("#b475d6");
+    private static final Color BOUNDING_RECTANGLE_STROKE_FILL = Color.BLACK;
+    private static final Color FINISHING_TICK_MARK_FILL = Color.RED;
+    private static final Color FINISHING_TIMER_FONT_FILL = Color.RED;
+
 
     // BOUND FIELDS
     private double _initialLowerBound;
@@ -208,12 +213,12 @@ public class AlgorithmStatisticsVisualiser extends Region {
      */
     public void stop() {
 
-        _timeLabel.setTextFill(Color.RED);
+        _timeLabel.setTextFill(FINISHING_TIMER_FONT_FILL);
         _timer.cancel();
 
         // Render finishing rectangle marker in middle column :)
         Rectangle finishIndicator = new Rectangle();
-        finishIndicator.setStroke(Color.RED);
+        finishIndicator.setStroke(FINISHING_TICK_MARK_FILL);
         finishIndicator.setStrokeWidth(5);
         finishIndicator.setHeight(SCHEDULE_TIME_BOUNDING_HEIGHT);
         _boundGrid.add(finishIndicator, 1, 0);
@@ -276,10 +281,10 @@ public class AlgorithmStatisticsVisualiser extends Region {
         // Create rectangles with width and color features
         Rectangle leftRectangle = new Rectangle(leftRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
         Rectangle rightRectangle = new Rectangle(rightRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
-        leftRectangle.setFill(Paint.valueOf("#b475d6"));
-        leftRectangle.setStroke(Color.BLACK);
-        rightRectangle.setFill(Paint.valueOf("#b475d6"));
-        rightRectangle.setStroke(Color.BLACK);
+        leftRectangle.setFill(BOUNDING_RECTANGLE_FILL);
+        leftRectangle.setStroke(BOUNDING_RECTANGLE_STROKE_FILL);
+        rightRectangle.setFill(BOUNDING_RECTANGLE_FILL);
+        rightRectangle.setStroke(BOUNDING_RECTANGLE_STROKE_FILL);
 
         // Clear previous column information of chart and update with current columns
         _boundGrid.getColumnConstraints().clear();
