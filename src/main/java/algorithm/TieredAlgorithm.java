@@ -20,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algorithm {
     // This is a queue of all the schedules to be explored, as well as the next nodes to visit for each.
     private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
-    private List<BoundableAlgorithm> _algorithmsRunning;
+    private List<BoundableAlgorithm>    _algorithmsRunning;
     private AlgorithmFactory            _generator;
     private Thread[]                    _threads;
 
@@ -122,6 +122,17 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     public Node currentNode() {
         // Since several algorithms can be running concurrently just select a node from a random running algorithm
         return _algorithmsRunning.get(new Random().nextInt(_algorithmsRunning.size())).currentNode();
+    }
+
+    /**
+     * @see Algorithm#lowerBound()
+     */
+    @Override
+    public int lowerBound() {
+        int minBound = Integer.MAX_VALUE;
+        for(Algorithm algorithm : _algorithmsRunning)
+            minBound = Math.min(minBound, algorithm.lowerBound());
+        return minBound;
     }
 
     /**
