@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import common.graph.Node;
 import common.schedule.Schedule;
