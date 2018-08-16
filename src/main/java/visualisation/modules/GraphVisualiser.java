@@ -228,7 +228,6 @@ public class GraphVisualiser extends Region {
             // Handle setting up viewer
             viewer.enableAutoLayout();
 
-
             // Remove the ability to move nodes on the graph with mouse
             MouseMotionListener mouseMotionListener = view.getMouseMotionListeners()[0];
             view.removeMouseMotionListener(mouseMotionListener);
