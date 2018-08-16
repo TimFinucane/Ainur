@@ -23,8 +23,8 @@ public class AinurVisualiser extends Region {
 
     /* MACROS */
 
-    public final static int FAST_POLLING_DELAY = 100;
-    public final static int SLOW_POLLING_DELAY = 2000;
+    public final static Duration FAST_POLLING_DELAY = Duration.millis(100);
+    public final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
 
     /* Fields */
 
@@ -85,14 +85,12 @@ public class AinurVisualiser extends Region {
      * This method will then update the visualiser modules accordingly.
      */
     public void run() {
-        _fastPoller = new Timeline(new KeyFrame(Duration.millis(FAST_POLLING_DELAY), event -> {
+        _fastPoller = new Timeline(new KeyFrame(FAST_POLLING_DELAY, event -> {
             this.updateGraph();
             this.updateStatistics();
         }));
 
-        _slowPoller = new Timeline(new KeyFrame(Duration.millis(SLOW_POLLING_DELAY), event -> {
-            this.updateSchedule();
-        }));
+        _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> this.updateSchedule()));
 
         _slowPoller.setCycleCount(Animation.INDEFINITE);
         _fastPoller.setCycleCount(Animation.INDEFINITE);
