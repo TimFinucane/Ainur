@@ -118,47 +118,6 @@ public class GraphVisualiser extends Region {
 
     /* Public Methods */
 
-//    /**
-//     * Updates the current node that is highlighted.
-//     * This node will be red. It will also be bigger.
-//     * All other nodes will be black.
-//     * This method is intended to be called with a solo algorithm.
-//     *
-//     * @param node The node which is to be selected
-//     */
-//    public void update(Node node) {
-//        if (node != null) {
-//            List<Node> nodeList = new ArrayList<>();
-//            nodeList.add(node);
-//            this.update(nodeList);
-//        }
-//    }
-//
-//    /**
-//     * Updates the current nodes that are highlighted.
-//     * These nodes will be red and bigger than unhighlighted nodes.
-//     * All other nodes will be black.
-//     * This method is intended to be called when multiple algorithms are running concurrently.
-//     *
-//     * @param nodes The list of nodes to highlight.
-//     */
-//    public void update(List<Node> nodes) {
-//        if (nodes.size() < 1 || nodes == null)
-//            return;
-//
-//        for (Node node: _currentNodes) {
-//            if (node != null)
-//                _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
-//        }
-//
-//        for (Node node:  nodes) {
-//            if (node != null)
-//                _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
-//        }
-//
-//        _currentNodes = nodes;
-//    }
-
     /**
      * Updates the display to show the current node frequencies.
      */
