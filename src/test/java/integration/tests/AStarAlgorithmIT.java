@@ -40,7 +40,6 @@ public class AStarAlgorithmIT {
     private static final String SEP = File.separator;
 
     private Algorithm _algorithmWithAllHeuristics;
-    private Algorithm _algorithmhAllHeuristics4Threads;
 
     private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
     private static final String NODES_8_FILENAME = String.format("data%sgraphs%sNodes_8_Random.dot", SEP, SEP);
@@ -56,23 +55,6 @@ public class AStarAlgorithmIT {
         _algorithmWithAllHeuristics = new AStarAlgorithm(
                 Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
                 new CriticalPath());
-
-        // Set up algorithm classes
-        _algorithmhAllHeuristics4Threads = new TieredAlgorithm(4,
-                (tier, communicator) -> {
-                if (tier == 0) {
-                    return new AStarAlgorithm(
-                            communicator,
-                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                            new CriticalPath());
-                } else {
-                    return new DFSAlgorithm(
-                            communicator,
-                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                            new CriticalPath(),
-                            Integer.MAX_VALUE);
-                }
-                });
     }
 
     @Rule
@@ -99,8 +81,6 @@ public class AStarAlgorithmIT {
     }
 
 
-
-
     /**
      * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with
      * lower bounds and pruning.
@@ -119,8 +99,6 @@ public class AStarAlgorithmIT {
     }
 
 
-
-
     /**
      * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with
      * lower bounds and pruning.
@@ -137,8 +115,6 @@ public class AStarAlgorithmIT {
         assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
-
-
 
 
     // Tests for cli interacting with reader
@@ -162,8 +138,6 @@ public class AStarAlgorithmIT {
     }
 
 
-
-
     /**
      * Test tests algorithm against graph with 8 nodes and 4 layers, one two processors with critical path
      * heuristics
@@ -180,8 +154,6 @@ public class AStarAlgorithmIT {
         assertEquals(581, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
-
-
 
 
     /**
@@ -201,8 +173,6 @@ public class AStarAlgorithmIT {
     }
 
 
-
-
     /**
      * Test tests algorithm against graph with 9 nodes and 4 layers, one two processors with all heuristics
      */
@@ -218,8 +188,6 @@ public class AStarAlgorithmIT {
         assertEquals(55, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
-
-
 
 
     /**
@@ -258,8 +226,6 @@ public class AStarAlgorithmIT {
     }
 
 
-
-
     /**
      * Test tests algorithm against graph with 11 nodes on 2 processors with all heuristics
      */
@@ -276,9 +242,6 @@ public class AStarAlgorithmIT {
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
     }
 
-
-
-
     /**
      * Test tests algorithm against graph with 11 nodes on 4 processors with all heuristics
      */
@@ -294,78 +257,6 @@ public class AStarAlgorithmIT {
         assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
     }
-
-
-    /**
-     * WARNING: Test will not reliably pass without sleep function as there are intermittent concurrency issues with
-     * current implementation of threading with A*.
-     */
-    @Test
-    @RepeatTest(times = 3)
-    public void testAlgorithm11Node4ProcessorAllHeuristics4Threads() {
-
-        Graph graph = getGraph(NODES_11_FILENAME);
-
-        // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics4Threads.run(graph, 4);
-
-        // TODO fix bug that requires sleeping
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
-
-        assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
-    }
-
-    @Test
-    @RepeatTest(times = 2)
-    public void testAlgorithm7Node4ProcessorAllHeuristics4Threads(){
-        Graph graph = getGraph(NODES_7_FILENAME);
-
-        // Execute algorithm w/ no heuristics
-        _algorithmhAllHeuristics4Threads.run(graph, 4);
-
-        // TODO fix bug that requires sleeping
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //Manually start algorithm on graph
-        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
-
-        assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
-    }
-
-
-    @Test
-    @RepeatTest(times = 3)
-    public void testAlgorithm10Node2ProcessorAllHeuristics2Threads(){
-        Graph graph = getGraph(NODES_10_FILENAME);
-
-        // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics4Threads.run(graph, 2);
-
-        // TODO fix bug that requires sleeping
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
-
-        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
-    }
-
 
     private Graph getGraph(String filePath) {
         // Set up File
