@@ -27,16 +27,29 @@ public class DFSIntegrationTests extends IntegrationTest {
 
 
     public DFSIntegrationTests() {
+
+        List<String> tempGraphs = new ArrayList<>();
         // Get all files in data/SampleData/Input, override graphs for this to be the value
         File inputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
-        graphs = Arrays.asList(inputFolder.list());
+        for (String fileString : inputFolder.list()) {
+            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30"))
+                tempGraphs.add(fileString);
+        }
+
+        graphs = tempGraphs;
+
         for (int i = 0; i < graphs.size(); i++)
             graphs.set(i, String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + graphs.get(i));
 
         // Make a list of lists with one pair in each corresponding to the number of processors and
         // optimal solution for that graph.
         File outputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Output")));
-        List<String> outputFiles = Arrays.asList(outputFolder.list());
+        List<String> outputFiles = new ArrayList<>();
+        for (String fileString : outputFolder.list()) {
+            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30")) {
+                outputFiles.add(fileString);
+            }
+        }
         List<List<Pair<Integer, Integer>>> optimalSchedulesReplacement = new ArrayList<>();
 
         for (String outputFileNameString : outputFiles) {
