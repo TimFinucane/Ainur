@@ -1,7 +1,5 @@
 package algorithm;
 
-import algorithm.Algorithm;
-import algorithm.DFSAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
@@ -9,6 +7,7 @@ import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
+import integration.IntegrationTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

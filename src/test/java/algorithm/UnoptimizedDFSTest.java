@@ -1,11 +1,10 @@
 package algorithm;
 
-import algorithm.Algorithm;
-import algorithm.DFSAlgorithm;
 import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.IsNotAPruner;
 import common.Validator;
 import common.graph.Graph;
+import integration.IntegrationTest;
 import org.junit.jupiter.api.Tag;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
