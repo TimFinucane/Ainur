@@ -12,8 +12,9 @@ import org.graphstream.ui.view.Viewer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is a class used to visually render task graphs.
@@ -66,8 +67,8 @@ public class GraphVisualiser extends Region {
     // Graph stream object used for display
     private org.graphstream.graph.Graph _gsGraph;
 
-    // Keeps track of the current highlighted node
-    private List<Node> _currentNodes;
+    // Keeps track of how many times a node has been visited
+    private Map<Node, Long> _nodeFrequencies;
 
     /* Constructors */
 
@@ -82,7 +83,7 @@ public class GraphVisualiser extends Region {
         // Use the fully compliant css renderer for graphstream
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
-        _currentNodes = new ArrayList<>();
+        _nodeFrequencies = new HashMap<>();
 
         // Create the graphstream graph
         _gsGraph = createGSGraph(graph);
@@ -117,47 +118,85 @@ public class GraphVisualiser extends Region {
 
     /* Public Methods */
 
+//    /**
+//     * Updates the current node that is highlighted.
+//     * This node will be red. It will also be bigger.
+//     * All other nodes will be black.
+//     * This method is intended to be called with a solo algorithm.
+//     *
+//     * @param node The node which is to be selected
+//     */
+//    public void update(Node node) {
+//        if (node != null) {
+//            List<Node> nodeList = new ArrayList<>();
+//            nodeList.add(node);
+//            this.update(nodeList);
+//        }
+//    }
+//
+//    /**
+//     * Updates the current nodes that are highlighted.
+//     * These nodes will be red and bigger than unhighlighted nodes.
+//     * All other nodes will be black.
+//     * This method is intended to be called when multiple algorithms are running concurrently.
+//     *
+//     * @param nodes The list of nodes to highlight.
+//     */
+//    public void update(List<Node> nodes) {
+//        if (nodes.size() < 1 || nodes == null)
+//            return;
+//
+//        for (Node node: _currentNodes) {
+//            if (node != null)
+//                _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
+//        }
+//
+//        for (Node node:  nodes) {
+//            if (node != null)
+//                _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
+//        }
+//
+//        _currentNodes = nodes;
+//    }
+
     /**
-     * Updates the current node that is highlighted.
-     * This node will be red. It will also be bigger.
-     * All other nodes will be black.
-     * This method is intended to be called with a solo algorithm.
-     *
-     * @param node The node which is to be selected
+     * Updates the display to show the current node frequencies.
      */
-    public void update(Node node) {
-        if (node != null) {
-            List<Node> nodeList = new ArrayList<>();
-            nodeList.add(node);
-            this.update(nodeList);
+    public void update() {
+        // Get the sum of frequencies (lol)
+        long total = _nodeFrequencies.values().stream().mapToLong(Long::valueOf).sum();
+        double average = total / (double) _nodeFrequencies.size();
+
+        // Calculate the proportion for each node
+        for (Map.Entry<Node, Long> pair : _nodeFrequencies.entrySet()) {
+            double proportion = pair.getValue() / average;
+            String nodeLabel = pair.getKey().getLabel();
+
+            int rgbVal = (int) ((Math.min(proportion, 2) / 2 )* 255);
+
+            _gsGraph.getNode(nodeLabel).addAttribute("ui.style", String.format("fill-color: rgb(%d, %d, %d );", rgbVal, 0, 0));
         }
+
+        // Reset node frequencies
+        this.flushNodeFrequencies();
     }
 
     /**
-     * Updates the current nodes that are highlighted.
-     * These nodes will be red and bigger than unhighlighted nodes.
-     * All other nodes will be black.
-     * This method is intended to be called when multiple algorithms are running concurrently.
+     * Increment a nodes frequency.
      *
-     * @param nodes The list of nodes to highlight.
+     * @param node The node whose frequency to increment.
      */
-    public void update(List<Node> nodes) {
-        if (nodes.size() < 1 || nodes == null)
-            return;
-
-        for (Node node: _currentNodes) {
-            if (node != null)
-                _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
-        }
-
-        for (Node node:  nodes) {
-            if (node != null)
-                _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
-        }
-
-        _currentNodes = nodes;
+    public void nodeVisited(Node node) {
+        if (node != null)
+            _nodeFrequencies.put(node, _nodeFrequencies.get(node) + 1);
     }
 
+    /**
+     * Sets the render quality of the graph.
+     *
+     * @param highQuality True sets the quality to high
+     *                    False sets the quality to low
+     */
     public void setHighRenderQuality(boolean highQuality) {
         if (highQuality) {
             _gsGraph.addAttribute("ui.quality");
@@ -169,6 +208,14 @@ public class GraphVisualiser extends Region {
     }
 
     /* Private Helper Methods */
+
+    /**
+     * Private helper method.
+     * Resets the node frequencies.
+     */
+    public void flushNodeFrequencies() {
+        _nodeFrequencies.replaceAll((node, Long) -> 0L);
+    }
 
     /**
      * This is a private helper method.
@@ -194,6 +241,9 @@ public class GraphVisualiser extends Region {
             gsGraph.addNode(label);
             // Add the label to be displayed alongside the node
             gsGraph.getNode(label).addAttribute(UI_LABEL, label);
+
+            // Initialise the node frequencies
+            _nodeFrequencies.put(node, 0L);
         }
 
         // Cycle through the edges and add them to the graphstream graph

@@ -23,7 +23,7 @@ public class AinurVisualiser extends Region {
 
     /* MACROS */
 
-    public final static Duration FAST_POLLING_DELAY = Duration.millis(100);
+    public final static Duration FAST_POLLING_DELAY = Duration.millis(16);
     public final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
 
     /* Fields */
@@ -86,11 +86,14 @@ public class AinurVisualiser extends Region {
      */
     public void run() {
         _fastPoller = new Timeline(new KeyFrame(FAST_POLLING_DELAY, event -> {
-            this.updateGraph();
             this.updateStatistics();
+            this.updateGraphNodes();
         }));
 
-        _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> this.updateSchedule()));
+        _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> {
+            this.updateSchedule();
+            _gv.update();
+        }));
 
         _slowPoller.setCycleCount(Animation.INDEFINITE);
         _fastPoller.setCycleCount(Animation.INDEFINITE);
@@ -105,7 +108,7 @@ public class AinurVisualiser extends Region {
      * This should be called from another thread to interrupt the show method's while loop
      */
     public void stop() {
-        updateGraph();
+        updateGraphNodes();
         updateSchedule();
         updateStatistics();
         _asv.stop();
@@ -137,14 +140,15 @@ public class AinurVisualiser extends Region {
      * Gets the current node / nodes from an algorithm.
      * Uses this node to update the GraphVisualiser.
      */
-    private void updateGraph() {
+    private void updateGraphNodes() {
         if (_isTiered) {
             TieredAlgorithm tAlgorithm = (TieredAlgorithm) _algorithm;
             List<Node> nodeList = tAlgorithm.currentNodes();
-            _gv.update(nodeList);
+            for (Node node : nodeList)
+                _gv.nodeVisited(node);
         } else {
             Node currentNode = _algorithm.currentNode();
-            _gv.update(currentNode);
+            _gv.nodeVisited(currentNode);
         }
     }
 
