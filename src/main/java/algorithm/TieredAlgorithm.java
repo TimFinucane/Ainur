@@ -158,7 +158,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     private void runThread() {
         // Thread only stops when the algorithm is claimed to be complete
         try {
-            while(true) {
+            while(!Thread.interrupted()) {
                 // If there are no more schedules either running or waiting to be run, close.
                 if(_schedulesToExplore.isEmpty() && _algorithmsRunning.isEmpty())
                     closeAll(); // Closes all threads, including this one, safely via interrupts.
