@@ -33,7 +33,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private static final Font DEFAULT_TIME_FONT = new Font("Consolas", 20);
 
     // Should stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
-    private final double _initialLowerBound;
+    private double _initialLowerBound;
     private double _initialUpperBound;
     private double _initialBoundRange;
 
@@ -244,6 +244,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         if (_updateIteration == 1) { // Lol
             _initialUpperBound = statistics.getMaxScheduleBound();
+            _initialLowerBound = 0;
             _boundingAxis.setUpperBound(_initialUpperBound);
             _initialBoundRange = _initialUpperBound - _initialLowerBound;
             _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
@@ -257,7 +258,9 @@ public class AlgorithmStatisticsVisualiser extends Region {
         Rectangle leftRectangle = new Rectangle(leftRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
         Rectangle rightRectangle = new Rectangle(rightRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
         leftRectangle.setFill(Paint.valueOf("#b475d6"));
+        leftRectangle.setStroke(Color.BLACK);
         rightRectangle.setFill(Paint.valueOf("#b475d6"));
+        rightRectangle.setStroke(Color.BLACK);
 
         // Clear previous column information of chart and update with current columns
         _boundGrid.getColumnConstraints().clear();

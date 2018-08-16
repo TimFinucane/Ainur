@@ -53,10 +53,7 @@ public class AinurVisualiserTest extends Application {
      * @param stage the stage to display the visualiser in
      */
     public void testDfs(Stage stage) {
-        Algorithm dfsAlgorithm = new DFSAlgorithm(
-                Arborist.combine(new StartTimePruner()),
-                new CriticalPath()
-        );
+        Algorithm dfsAlgorithm = new DFSAlgorithm(new IsNotAPruner(), new NaiveBound());
         AinurVisualiser av = new AinurVisualiser(dfsAlgorithm, _graph, 0, 100, 4);
         this.setScene(stage, av);
         this.runThreads(dfsAlgorithm, av);

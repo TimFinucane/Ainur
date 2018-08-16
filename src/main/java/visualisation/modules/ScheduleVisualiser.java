@@ -22,7 +22,10 @@ public class ScheduleVisualiser extends Region {
     private double colWidth;
 
     public ScheduleVisualiser() {
-        this.setMinHeight(300);
+        this.setMinHeight(WINDOW_HEIGHT);
+        this.setMinWidth(WINDOW_WIDTH);
+        this.setMaxWidth(WINDOW_WIDTH);
+        this.setMaxHeight(WINDOW_HEIGHT);
     }
 
     /**

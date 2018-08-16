@@ -90,7 +90,7 @@ public class AinurVisualiser extends Region {
                 updateGraph();
                 updateStatistics();
 
-                if (finalNumIterations % 100 == 0) {
+                if (finalNumIterations % 20 == 0) {
                     updateSchedule();
                 }
             });
@@ -179,6 +179,7 @@ public class AinurVisualiser extends Region {
         _stats.setSearchSpaceLookedAt(_algorithm.branchesExplored());
 
         _stats.setMaxScheduleBound(_algorithm.getCurrentBest().getEndTime());
+        _stats.setMinScheduleBound(_algorithm.lowerBound());
 
         _asv.update(_stats);
     }
