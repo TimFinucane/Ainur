@@ -3,117 +3,116 @@ package visualisation.modules;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 /**
  * Class to deal with the visual rendering of a schedule.
  */
-public class ScheduleVisualiser extends Region {
+public class ScheduleVisualiser extends VBox {
+    private static final Color FILL_COLOUR = Color.LAVENDER;
+    private static final Color BORDER_COLOUR = Color.BLACK;
+    private static final Color TEXT_COLOUR = Color.BLACK;
 
-    private static final double WINDOW_WIDTH = 1400;
-    private static final double WINDOW_HEIGHT = 200;
-    private static final Color FILL_COLOR = Color.LAVENDER;
-    private static final Color BORDER_COLOR = Color.BLACK;
-    private double rowHeight;
-    private double colWidth;
+    private Schedule    _schedule;
+    private Canvas      _scheduleView;
+    private NumberAxis  _axis;
 
     public ScheduleVisualiser() {
-        this.setMinHeight(WINDOW_HEIGHT);
-        this.setMinWidth(WINDOW_WIDTH);
-        this.setMaxWidth(WINDOW_WIDTH);
-        this.setMaxHeight(WINDOW_HEIGHT);
+        _scheduleView = new Canvas();
+        Pane canvasHolder = new Pane(_scheduleView);
+        // Bind schedule view to its holder so that it resizes when possible
+        _scheduleView.widthProperty().bind(canvasHolder.widthProperty());
+        _scheduleView.heightProperty().bind(canvasHolder.heightProperty());
+
+        // Ensure that when we resize, it redraws the schedule
+        widthProperty().addListener(e -> draw());
+        heightProperty().addListener(e -> draw());
+
+        // Add the canvas holder, and make sure it takes available height
+        getChildren().add(canvasHolder);
+        setVgrow(canvasHolder, Priority.ALWAYS);
+
+        // And the number axis
+        _axis = new NumberAxis(0, 100, 10);
+        _axis.setTickLength(10.0);
+        _axis.setTickLabelFont(new Font(_axis.getTickLabelFont().getName(), 16.0));
+        getChildren().add(_axis);
+
+        // And have a nice bit of pad
+        setPadding(new Insets(10));
     }
 
     /**
-     * Updates the visualisation to display the input schedule.
-     * @param schedule : schedule to visualise
+     * Called to update the schedule being rendered to screen
      */
     public void update(Schedule schedule) {
-        if (schedule == null)
+        _schedule = schedule;
+        draw();
+    }
+
+    /**
+     * Draws the schedule
+     */
+    private void draw() {
+        GraphicsContext gc = _scheduleView.getGraphicsContext2D();
+
+        // If there is no schedule, don't remove whatever was on the screen before. TODO: Intended behaviour?
+        if(_schedule == null)
             return;
 
-        // Makes sure previous visualisation is cleared from the display
-        this.getChildren().clear();
+        gc.clearRect(0, 0, getWidth(), getHeight());
 
-        double endTime = schedule.getEndTime();
-        double numProc = schedule.getNumProcessors();
-        rowHeight = (WINDOW_HEIGHT/numProc)*0.85;
-        colWidth = WINDOW_WIDTH/endTime;
+        // Colours of the tasks
+        gc.setFill(FILL_COLOUR);
+        gc.setStroke(BORDER_COLOUR);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setTextBaseline(VPos.CENTER);
 
-        // Generates a grid structure to display all the tasks with
-        GridPane grid = setDimensions(endTime, numProc);
+        double canvasWidth = gc.getCanvas().getWidth();
+        double canvasHeight = gc.getCanvas().getHeight();
 
-        // Generates an axis to display the schedule timing
-        NumberAxis axis = new NumberAxis("Schedule Time",0, endTime, Math.floor(endTime / 20)); // endTime / x for x tick marks
-        axis.setMinWidth(WINDOW_WIDTH);
+        // The width of a single unit time in the schedule. End time is padded by 10% so schedule doesn't go to end
+        double unitWidth = canvasWidth / _schedule.getEndTime();
+        // The height of each task in the processor
+        double taskGap = 5;
+        double taskHeight = (canvasHeight - 2 - taskGap * _schedule.getNumProcessors()) / _schedule.getNumProcessors();
 
-        // Adds tasks to visualisation for each processor
-        for (int proc = 0; proc < numProc; proc++) {
-            for (Task task : schedule.getTasks(proc)) {
-                System.out.println(task.getStartTime() + " " + task.getEndTime());
-                grid.add(generateRect(task), task.getStartTime(), proc);
+        // Add each task to position
+        for(int processor = 0; processor < _schedule.getNumProcessors(); ++processor) {
+            for(Task task : _schedule.getTasks(processor)) {
+                int left = (int)(unitWidth * task.getStartTime());
+                int top = (int)(1 + (taskHeight + taskGap) * processor);
+                int width = (int)(unitWidth * task.getNode().getComputationCost());
+
+                gc.setFill(FILL_COLOUR);
+                gc.strokeRect(left, top, width, taskHeight);
+                gc.fillRect(left, top, width, taskHeight);
+
+                int centre = left + width / 2;
+                gc.setFill(TEXT_COLOUR);
+                gc.setFont( new Font(gc.getFont().getName(), Math.min(taskHeight / 2.0, width / 2.0)) );
+                gc.fillText(task.getNode().getLabel(), centre, top + taskHeight / 2);
             }
         }
+        // Modify number axis
+        _axis.setUpperBound(_schedule.getEndTime());
+        _axis.layout();
 
-        // Uses a VBox to get desired vertical alignment
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(15));
-        vBox.getChildren().addAll(grid, axis);
-        this.getChildren().add(vBox);
-    }
+        // Extend tick marks to full screen
+        for(int i = 0; i < _axis.getTickMarks().size(); ++i) {
+            int x = (int)Math.round(_axis.getTickMarks().get(i).getPosition());
 
+            if(i == _axis.getTickMarks().size() - 1)
+                x -= 1;
 
-    /**
-     * Generates a Grid pane with number of cols to be the end time of the schedule and number of cols to be the
-     * number of processors.
-     * @param endTime : end time of the schedule to display
-     * @param numProc : number of processors in this schedule
-     * @return : a GridPane to display the schedule.
-     */
-    private GridPane setDimensions(double endTime, double numProc) {
-        GridPane grid = new GridPane();
-
-        // Generates endTime cols and sizes them to fit window size
-        double colWidth = WINDOW_WIDTH/endTime;
-        for (int i = 0; i < endTime; i++) {
-            ColumnConstraints cc = new ColumnConstraints(colWidth);
-            grid.getColumnConstraints().add(cc);
+            gc.strokeLine(x, 0, x, canvasHeight);
         }
-
-        // Generates numProc rows and sizes them to fit window size
-        double rowHeight = WINDOW_HEIGHT/numProc;
-        for (int i = 0; i < numProc; i++) {
-            RowConstraints rc = new RowConstraints(rowHeight);
-            grid.getRowConstraints().add(rc);
-        }
-
-        return grid;
-    }
-
-    /**
-     * Generates a Rectangle to display the input task
-     * @param task : task to display
-     */
-    private StackPane generateRect(Task task) {
-        Rectangle rect = new Rectangle();
-
-        // Set height to fit in appropriate number of grid squares
-        rect.setHeight(rowHeight);
-        rect.setWidth(colWidth*task.getNode().getComputationCost());
-
-        // Adds aesthetics
-        rect.setFill(FILL_COLOR);
-        rect.setStroke(BORDER_COLOR);
-
-        // Displays the rectangle with the task's label
-        Text text = new Text(task.getNode().getLabel());
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(rect, text);
-
-        return stackPane;
     }
 }
