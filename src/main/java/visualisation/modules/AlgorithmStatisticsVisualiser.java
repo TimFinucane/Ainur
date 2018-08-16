@@ -65,8 +65,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private final GridPane _boundGrid;
     private final NumberAxis _boundingAxis;
 
-    // Cpu chart
-    private final LineChart<Number, Number> _cpuChart;
     private final XYChart.Series _cpuChartData;
 
     // Label Values that need to be periodically updated through life of visualizer
@@ -85,7 +83,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Creates all visual elements and arranges on the screen. Many labels will initially be set to zero.
-     * @param coresUsed
+     * @param coresUsed : Cores algorithm runs on
      */
     public AlgorithmStatisticsVisualiser(long coresUsed) {
 
@@ -151,7 +149,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _labelGrid.add(_memoryMaxValue, 1, 7);
 
         // Create a cpu usage chart
-        _cpuChart = createCpuChart();
+        // Cpu chart
+        LineChart<Number, Number> _cpuChart = createCpuChart();
         _cpuChartData = new XYChart.Series();
         _cpuChart.getData().add(_cpuChartData);
         _updateIteration = 0;
@@ -193,7 +192,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
     /**
      * This method is responsible for updating the state of a schedule time bounding visualisation, as well as updating
      * the values of several on screen statistics in text-format.
-     * @param statistics
+     * @param statistics : updateStatistics
      */
     public void update(Statistics statistics) {
         _updateIteration++; // Increment iteration of update
@@ -241,20 +240,19 @@ public class AlgorithmStatisticsVisualiser extends Region {
     /**
      * Sets the time elapsed from the start of the counter of _millisecondsRunning and converts into the form
      * hh:mm:ss:ms
-     * @return
      */
     private void updateTimeLabel() {
-        _timeLabel.setText(String.format(String.format("%02d:%02d:%02d.%01d",
+        _timeLabel.setText(String.format("%02d:%02d:%02d.%01d",
                 _millisecondsRunning/(3600*1000),
                 _millisecondsRunning/(60*1000) % 60,
                 _millisecondsRunning/1000 % 60,
-                _millisecondsRunning % 1000 / 100)));
+                _millisecondsRunning % 1000 / 100));
     }
 
 
     /**
      * Updates the labels of miscellaneous algorithm metrics branches culled, search space, etc.
-     * @param statistics
+     * @param statistics : Update statistics
      */
     private void updateLabels(Statistics statistics) {
 
@@ -278,7 +276,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Update the bounding chart to appropriate state given the current min and max boundary times. This chart re-renders both rectangles if one changes.
-     * @param statistics
+     * @param statistics : Update statistics
      */
     private void updateBoundingChart(Statistics statistics) {
 
@@ -350,7 +348,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Creates an empty grid to house miscellaneous metrics labels, branches culled, searched, etc.
-     * @return
+     * @return GridPane : grid pane to hold labels
      */
     private GridPane createLabelGrid() {
 
@@ -369,7 +367,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Create a line chart labelled with CPU usage information.
-     * @return
+     * @return LineChart<Number,Number> : line chart representing cpu usage
      */
     private LineChart<Number,Number> createCpuChart() {
 
@@ -393,7 +391,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Create a grid pane with constant height and no columns
-     * @return
+     * @return GridPane : grid pan for bounding vis.
      */
     private GridPane createBoundingVisualization() {
 
@@ -409,14 +407,12 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Creates an axis intended for bounding visualization
-     * @return
+     * @return NumberAxis : number axis for bounding vis.
      */
     private NumberAxis createBoundingVisualizationAxis() {
 
         // Set uper and lower bounds to that of initial schedule estimates, set tick marks to be 1/20th of the way across
-        NumberAxis numberAxis = new NumberAxis("Schedule Time Units", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
-
-        return numberAxis;
+        return new NumberAxis("Schedule Time Units", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
     }
 
 }
