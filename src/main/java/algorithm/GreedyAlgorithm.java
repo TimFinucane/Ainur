@@ -13,6 +13,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Class runs a greedy algorithm on a graph to produce a valid schedule. Logic is that for each itteration, the
+ * algorithm looks at all nodes that are possible to place (ie. all nodes whose parents are all in schedule) and
+ * chooses the one which will result in the smallest schedule run time.
+ */
 public class GreedyAlgorithm implements Algorithm {
 
     private Schedule _schedule = null;
@@ -24,9 +29,9 @@ public class GreedyAlgorithm implements Algorithm {
 
         // while there are still nodes that have not been added to the schedule
         while (!(nodesToVisit.isEmpty())) {
-            // Get current node we're gonna add to the schedule
             Task bestTask = null;
             int bestTime = Integer.MAX_VALUE;
+            // Go through all current nodes avilable and select the one that would give the smallest run time
            for(Node n : nodesToVisit){
                int[] earliestTimes = Helpers.calculateEarliestTimes(graph, schedule, n);
                // Looks at all the possible time that task can be added and find the earliest position
@@ -38,6 +43,7 @@ public class GreedyAlgorithm implements Algorithm {
                    }
                }
            }
+           // Add the best tas kto schedule
             schedule.addTask(bestTask);
 
             // the next nodes to visit are now those accessible from the new best schedule.
@@ -66,4 +72,7 @@ public class GreedyAlgorithm implements Algorithm {
     public Node currentNode() {
         return null;
     }
+
+    @Override
+    public int lowerBound() { return 0;  }
 }
