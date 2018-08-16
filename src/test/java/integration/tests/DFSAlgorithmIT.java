@@ -22,7 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import static junit.framework.TestCase.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class's purpose is to provide a suite for testing DFSAlgorithm's functionality with regards to reading in a graph

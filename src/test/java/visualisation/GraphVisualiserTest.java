@@ -6,8 +6,7 @@ import io.dot.DotGraphReader;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.junit.Ignore;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +20,7 @@ import static junit.framework.TestCase.fail;
 /**
  * Class used to check the rendering of the GraphVisualiser class.
  */
-@Ignore
+@Disabled
 public class GraphVisualiserTest extends Application {
 
     // Graph file to load in

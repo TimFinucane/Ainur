@@ -5,8 +5,8 @@ import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import common.graph.Node;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ProcessorOrderPrunerTests {
@@ -19,7 +19,7 @@ public class ProcessorOrderPrunerTests {
         SimpleSchedule schedule = new SimpleSchedule(2);
         schedule.addTask(new Task(0, 0, nodeA));
 
-        Assert.assertFalse(arborist.prune(null, schedule, new Task(1, 0, nodeB)));
+        assertFalse(arborist.prune(null, schedule, new Task(1, 0, nodeB)));
     }
 
     @Test
@@ -27,7 +27,7 @@ public class ProcessorOrderPrunerTests {
         SimpleSchedule schedule = new SimpleSchedule(2);
         schedule.addTask(new Task(0, 0, nodeB));
 
-        Assert.assertTrue(arborist.prune(null, schedule, new Task(1, 0, nodeA)));
+        assertTrue(arborist.prune(null, schedule, new Task(1, 0, nodeA)));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ProcessorOrderPrunerTests {
         schedule.addTask(new Task(0, 0, nodeB));
         schedule.addTask(new Task(1, 0, new Node(1, "a", 3)));
 
-        Assert.assertFalse(arborist.prune(null, schedule, new Task(1, 0, nodeA)));
+        assertFalse(arborist.prune(null, schedule, new Task(1, 0, nodeA)));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ProcessorOrderPrunerTests {
         SimpleSchedule schedule = new SimpleSchedule(2);
         schedule.addTask(new Task(0, 2, nodeA));
 
-        Assert.assertFalse(arborist.prune(null, schedule, new Task(1, 4, nodeB)));
+        assertFalse(arborist.prune(null, schedule, new Task(1, 4, nodeB)));
     }
 
     @Test
@@ -52,6 +52,6 @@ public class ProcessorOrderPrunerTests {
         SimpleSchedule schedule = new SimpleSchedule(2);
         schedule.addTask(new Task(0, 2, nodeB));
 
-        Assert.assertTrue(arborist.prune(null, schedule, new Task(1, 1, nodeA)));
+        assertTrue(arborist.prune(null, schedule, new Task(1, 1, nodeA)));
     }
 }

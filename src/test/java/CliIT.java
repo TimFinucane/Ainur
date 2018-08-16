@@ -12,8 +12,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Aside from the banging name, this class aims to test the CLI functionality by passing in arguments to the CLI from

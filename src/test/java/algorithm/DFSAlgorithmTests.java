@@ -5,8 +5,8 @@ import algorithm.heuristics.pruner.IsNotAPruner;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.Task;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class DFSAlgorithmTests {
@@ -39,6 +39,6 @@ public class DFSAlgorithmTests {
                 );
         }
 
-        Assert.assertEquals(9, result.getEndTime());
+        assertEquals(9, result.getEndTime());
     }
 }

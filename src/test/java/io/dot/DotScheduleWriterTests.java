@@ -4,13 +4,14 @@ import common.graph.Graph;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import io.ScheduleWriter;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Class tests DotScheduleWriter by making schedules and getting the writer to write them out to file
@@ -65,7 +66,7 @@ public class DotScheduleWriterTests {
                 "\t2 -> 3\t [Weight=2];\n" +
                 "}\n\n";
 
-        Assert.assertEquals(expected, bs.toString());
+        assertEquals(expected, bs.toString());
     }
 
     @Test
@@ -113,8 +114,7 @@ public class DotScheduleWriterTests {
                 "\tguysguysjustchillout\t [Weight=1, Start=6, Processor=1];\n" +
                 "\tgiddaypaulineimsteph -> guysguysjustchillout\t [Weight=2];\n" +
                 "}\n\n";
-
-        Assert.assertEquals(expected, bs.toString());
+        assertEquals(expected, bs.toString());
     }
 
 
@@ -164,6 +164,6 @@ public class DotScheduleWriterTests {
                 "\t2 -> 3\t [Weight=2];\n" +
                 "}\n\n";
 
-        Assert.assertEquals(expected, bs.toString());
+        assertEquals(expected, bs.toString());
     }
 }
