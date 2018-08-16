@@ -1,7 +1,9 @@
 package algorithm;
 
-import common.graph.*;
-import common.schedule.*;
+import common.graph.Graph;
+import common.graph.Node;
+import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import javafx.util.Pair;
 
 import java.math.BigInteger;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -27,8 +30,8 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
 
     private Graph                       _graph;
 
-    private BigInteger                  _totalCulled = BigInteger.ZERO;
-    private BigInteger                  _totalExplored = BigInteger.ZERO;
+    private AtomicReference<BigInteger> _totalCulled = new AtomicReference<>(BigInteger.ZERO);
+    private AtomicReference<BigInteger> _totalExplored = new AtomicReference<>(BigInteger.ZERO);
 
     /**
      * Does not get given a schedule to start with, it's initial guess is instead infinite.
@@ -92,7 +95,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     @Override
     public BigInteger branchesCulled() {
         // Add the sum of nodes culled by algorithms that have finished running
-        BigInteger sum = _totalCulled;
+        BigInteger sum = _totalCulled.get();
 
         // Add culled from the currently running algorithms
         for (BoundableAlgorithm algorithm : _algorithmsRunning) {
@@ -107,7 +110,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     @Override
     public BigInteger branchesExplored() {
         // Add the sum of nodes explored by algorithms that have finished running
-        BigInteger sum = _totalExplored;
+        BigInteger sum = _totalExplored.get();
 
         // Add explored from the currently running algorithms
         for (BoundableAlgorithm algorithm : _algorithmsRunning) {
@@ -200,8 +203,8 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         algorithm.run(_graph, schedule, nextNodes);
 
         // Increment counters
-        _totalExplored = _totalExplored.add(algorithm.branchesExplored());
-        _totalCulled = _totalCulled.add(algorithm.branchesCulled());
+        _totalExplored.accumulateAndGet(algorithm.branchesExplored(), BigInteger::add);
+        _totalCulled.accumulateAndGet(algorithm.branchesCulled(), BigInteger::add);
 
         // When the algorithm has finished running must remove from list so its values are not used to calculate
         // other values
