@@ -48,12 +48,13 @@ public class ScheduleVisualiser extends Region {
         GridPane grid = setDimensions(endTime, numProc);
 
         // Generates an axis to display the schedule timing
-        NumberAxis axis = new NumberAxis("Schedule Time",0, endTime, (endTime / 20)); // endTime / x for x tick marks
+        NumberAxis axis = new NumberAxis("Schedule Time",0, endTime, Math.floor(endTime / 20)); // endTime / x for x tick marks
         axis.setMinWidth(WINDOW_WIDTH);
 
         // Adds tasks to visualisation for each processor
         for (int proc = 0; proc < numProc; proc++) {
             for (Task task : schedule.getTasks(proc)) {
+                System.out.println(task.getStartTime() + " " + task.getEndTime());
                 grid.add(generateRect(task), task.getStartTime(), proc);
             }
         }
