@@ -125,7 +125,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
             // Check if lower bound is good enough
             if(taskPair.getKey() >= _communicator.getCurrentBest().getEndTime()) {
                 //Same as _numCulled += orderedTasks.size() + 1;
-                _numCulled = _numCulled.add(new BigInteger(Integer.toString(orderedTasks.size()))).add(BigInteger.ONE);
+                _numCulled = _numCulled.add(BigInteger.valueOf(orderedTasks.size() + 1));
                 break; // We can break because every subsequent task has a greater lower bound
             }
 
