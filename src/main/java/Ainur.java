@@ -37,9 +37,12 @@ public class Ainur extends Application {
       try {
           graph = readGraphFile(cli.getInputFile()); // read the graph
           algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
+          // TODO update upperbound when non optimal implemented
           av = new AinurVisualiser(algorithm, graph, 0, 100, cli.getProcessors());
+
           Thread schedulingThread =
                   new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
+
           if (cli.getVisualise()) {
               // Launch as javafx application.
               schedulingThread.start();
@@ -77,24 +80,6 @@ public class Ainur extends Application {
         InputStream is = new FileInputStream(inputFile);
         GraphReader graphReader = new DotGraphReader(is);
         return graphReader.read();
-    }
-
-    /**
-     * Runs the visualisation alongside the algorithm using multithreading.
-     *
-     * @param av The visualiser to use.
-     */
-    private static void visualisationScheduling(AinurVisualiser av) {
-        // Set up the gui polling thread
-        Task visualiserTask = new Task<Void>() {
-            @Override
-            public Void call() throws InterruptedException {
-                av.run();
-                return null;
-            }
-        };
-        // Run the thread.
-        new Thread(visualiserTask).start();
     }
 
     /**
@@ -167,13 +152,12 @@ public class Ainur extends Application {
      * Takes over control from main.
      */
     @Override
-    public void start(Stage primaryStage) throws InterruptedException {
+    public void start(Stage primaryStage) {
         // Start the program
         Scene scene = new Scene(av);
         primaryStage.setScene(scene);
         primaryStage.show();
 
         av.run();
-        //visualisationScheduling(av);
     }
 }

@@ -53,10 +53,10 @@ public class AinurVisualiser extends Region {
      * @param algorithm the algorithm to visualise
      * @param graph The task graph to be displayed
      * @param lowerBound the lowerbound of the algorithm //TODO this should be removed when a method to get this is implemented
-     * @param uppedBound the uppedbound of the algorithm //TODO this should be removed when a method to get this is implemented
+     * @param upperBound the upperbound of the algorithm //TODO this should be removed when a method to get this is implemented
      * @param coresUsed The number of cores to be used
      */
-    public AinurVisualiser(Algorithm algorithm, Graph graph, int lowerBound, int uppedBound, long coresUsed) {
+    public AinurVisualiser(Algorithm algorithm, Graph graph, int lowerBound, int upperBound, long coresUsed) {
         // Assign Args
         _algorithm = algorithm;
 
@@ -67,7 +67,7 @@ public class AinurVisualiser extends Region {
 
         // Initialise stats object
         _stats = new Statistics();
-        _stats.setMaxScheduleBound(uppedBound);
+        _stats.setMaxScheduleBound(upperBound);
         _stats.setMinScheduleBound(lowerBound);
 
         // See if algorithm is tiered.
