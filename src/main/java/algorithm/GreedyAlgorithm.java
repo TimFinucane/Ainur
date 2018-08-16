@@ -56,17 +56,17 @@ public class GreedyAlgorithm implements Algorithm {
 
     @Override
     public Schedule getCurrentBest() {
-        return null;
+        return _schedule;
     }
 
     @Override
     public BigInteger branchesCulled() {
-        return null;
+        return BigInteger.ZERO;
     }
 
     @Override
     public BigInteger branchesExplored() {
-        return null;
+        return BigInteger.ZERO;
     }
 
     @Override
