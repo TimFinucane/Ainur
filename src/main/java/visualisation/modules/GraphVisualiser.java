@@ -69,6 +69,10 @@ public class GraphVisualiser extends Region {
     // Keeps track of how many times a node has been visited
     private Map<Node, Long> _nodeFrequencies;
 
+    // Interpolation arrays
+    private double[] _oldProportions;
+    private double[] _newProportions;
+
     /* Constructors */
 
     /**
@@ -83,6 +87,8 @@ public class GraphVisualiser extends Region {
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
         _nodeFrequencies = new HashMap<>();
+        _oldProportions = new double[graph.size()];
+        _newProportions = new double[graph.size()];
 
         // Create the graphstream graph
         _gsGraph = createGSGraph(graph);
@@ -120,22 +126,36 @@ public class GraphVisualiser extends Region {
     /**
      * Updates the display to show the current node frequencies.
      */
-    public void update() {
+    public void update(double interpolation) {
         // Get the sum of frequencies (lol)
         long total = _nodeFrequencies.values().stream().mapToLong(Long::valueOf).sum();
         double average = total / (double) _nodeFrequencies.size();
 
-        // Calculate the proportion for each node
-        for (Map.Entry<Node, Long> pair : _nodeFrequencies.entrySet()) {
-            double proportion = pair.getValue() / average;
-            String nodeLabel = pair.getKey().getLabel();
-
-           _gsGraph.getNode(nodeLabel).setAttribute("ui.style", String.format("shadow-width: %f;", proportion * 2));
+        for (int i = 0; i < _newProportions.length; i++) {
+            double interpVal = _newProportions[i] *  interpolation + _oldProportions[i] * (1 - interpolation);
+            _gsGraph.getNode(i).setAttribute("ui.style", String.format("shadow-width: %f;", interpVal * 2));
+            //_gsGraph.getNode(i).setAttribute("ui.color", );
         }
-
-        // Reset node frequencies
-        this.flushNodeFrequencies();
     }
+
+    /**
+     * Resets the node frequencies.
+     */
+    public void flush() {
+        _oldProportions = _newProportions;
+
+        // Get the sum of frequencies (lol)
+        long total = _nodeFrequencies.values().stream().mapToLong(Long::valueOf).sum();
+        double average = total / (double) _nodeFrequencies.size();
+
+        for (Map.Entry<Node, Long> pair : _nodeFrequencies.entrySet()) {
+            _newProportions[pair.getKey().getId()] = pair.getValue() / average;
+        }
+        _nodeFrequencies.replaceAll((node, Long) -> 0L);
+
+
+
+        }
 
     /**
      * Increment a nodes frequency.
@@ -164,14 +184,6 @@ public class GraphVisualiser extends Region {
     }
 
     /* Private Helper Methods */
-
-    /**
-     * Private helper method.
-     * Resets the node frequencies.
-     */
-    public void flushNodeFrequencies() {
-        _nodeFrequencies.replaceAll((node, Long) -> 0L);
-    }
 
     /**
      * This is a private helper method.

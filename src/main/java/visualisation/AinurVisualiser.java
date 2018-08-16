@@ -18,6 +18,7 @@ import visualisation.modules.ScheduleVisualiser;
 import visualisation.modules.Statistics;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AinurVisualiser extends Region {
 
@@ -92,7 +93,15 @@ public class AinurVisualiser extends Region {
             this.updateGraphNodes();
         }));
 
-        _mediumPoller = new Timeline(new KeyFrame(MEDIUM_POLLING_DELAY, event -> _gv.update()));
+        AtomicInteger count = new AtomicInteger(0);
+        _mediumPoller = new Timeline(new KeyFrame(MEDIUM_POLLING_DELAY, event -> {
+            count.incrementAndGet();
+            _gv.update(count.get() / (double) 3);
+            if (count.get() == 3) {
+                _gv.flush();
+                count.set(1);
+            }
+        }));
 
         _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> this.updateSchedule()));
 
@@ -114,7 +123,7 @@ public class AinurVisualiser extends Region {
         updateGraphNodes();
         updateSchedule();
         updateStatistics();
-        _gv.update();
+        _gv.update(1); // TODO stop graph / clear graph vis
         _asv.stop();
         _fastPoller.stop();
         _mediumPoller.stop();
