@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.Ignore;
 
+import java.math.BigInteger;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -56,8 +57,8 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
         Statistics stats = new Statistics();
         stats.setMaxScheduleBound(maxTime / 10);
         stats.setMinScheduleBound(minTime / 10);
-        stats.setSearchSpaceLookedAt((long)(minTime * 4.4));
-        stats.setSearchSpaceCulled((long)(minTime / 2.8));
+        stats.setSearchSpaceLookedAt(new BigInteger(Integer.toString((int)(minTime * 4.4))));
+        stats.setSearchSpaceCulled(new BigInteger(Integer.toString((int)(minTime / 2.8))));
 
         return stats;
 
