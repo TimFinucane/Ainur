@@ -7,12 +7,14 @@ import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
+import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import junit.framework.TestCase;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +25,11 @@ import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Calss is a test suite that tests GreedyAlgorithm. Runs it with pre-made graphs and test graph files. Each test
+ * verifys that the schedule is a valid schedule, not that it is optimal. Does not
+ */
+@Category(GandalfIntegrationTestsCategory.class)
 public class GreedyAlgorithmTests {
 
     private static final String SEP = File.separator;
@@ -33,7 +40,7 @@ public class GreedyAlgorithmTests {
     private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
 
     @Test
-    public void testBasicGraph() {
+    public void testBasic3NodeGraph() {
         Graph g = new Graph.Builder()
                 .node("a", 2)
                 .node("b", 3)
@@ -109,6 +116,66 @@ public class GreedyAlgorithmTests {
     }
 
     @Test
+    public void test9Node2ProcessorGraph() {
+        Graph graph = getGraph(NODES_9_FILENAME);
+
+        // Execute algorithm w/ no heuristics
+        Algorithm greedyAlgorithm = new GreedyAlgorithm();
+        greedyAlgorithm.run(graph, 2);
+
+        //Manually start algorithm on graph
+        Schedule resultGreedy = greedyAlgorithm.getCurrentBest();
+
+        assertTrue(Validator.isValid(graph, resultGreedy)); // Check answer is valid
+
+    }
+
+    @Test
+    public void test9Node4ProcessorGraph() {
+        Graph graph = getGraph(NODES_9_FILENAME);
+
+        // Execute algorithm w/ no heuristics
+        Algorithm greedyAlgorithm = new GreedyAlgorithm();
+        greedyAlgorithm.run(graph, 4);
+
+        //Manually start algorithm on graph
+        Schedule resultGreedy = greedyAlgorithm.getCurrentBest();
+
+        assertTrue(Validator.isValid(graph, resultGreedy)); // Check answer is valid
+
+    }
+
+    @Test
+    public void test10Node2ProcessorGraph() {
+        Graph graph = getGraph(NODES_10_FILENAME);
+
+        // Execute algorithm w/ no heuristics
+        Algorithm greedyAlgorithm = new GreedyAlgorithm();
+        greedyAlgorithm.run(graph, 2);
+
+        //Manually start algorithm on graph
+        Schedule resultGreedy = greedyAlgorithm.getCurrentBest();
+
+        assertTrue(Validator.isValid(graph, resultGreedy)); // Check answer is valid
+
+    }
+
+    @Test
+    public void test10Node4ProcessorGraph() {
+        Graph graph = getGraph(NODES_10_FILENAME);
+
+        // Execute algorithm w/ no heuristics
+        Algorithm greedyAlgorithm = new GreedyAlgorithm();
+        greedyAlgorithm.run(graph, 4);
+
+        //Manually start algorithm on graph
+        Schedule resultGreedy = greedyAlgorithm.getCurrentBest();
+
+        assertTrue(Validator.isValid(graph, resultGreedy)); // Check answer is valid
+
+    }
+
+    @Test
     public void test11Node2ProcessorGraph() {
         Graph graph = getGraph(NODES_11_FILENAME);
 
@@ -119,16 +186,22 @@ public class GreedyAlgorithmTests {
         //Manually start algorithm on graph
         Schedule resultGreedy = greedyAlgorithm.getCurrentBest();
 
+        assertTrue(Validator.isValid(graph, resultGreedy)); // Check answer is valid
 
-        Algorithm _algorithmWithAllHeuristics = new DFSAlgorithm(
-                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                new CriticalPath());
-        _algorithmWithAllHeuristics.run(graph, 2);
-        Schedule resultManual = _algorithmWithAllHeuristics.getCurrentBest();
+    }
+
+    @Test
+    public void test11Node4ProcessorGraph() {
+        Graph graph = getGraph(NODES_11_FILENAME);
+
+        // Execute algorithm w/ no heuristics
+        Algorithm greedyAlgorithm = new GreedyAlgorithm();
+        greedyAlgorithm.run(graph, 4);
+
+        //Manually start algorithm on graph
+        Schedule resultGreedy = greedyAlgorithm.getCurrentBest();
 
         assertTrue(Validator.isValid(graph, resultGreedy)); // Check answer is valid
-        System.out.println("Difference = " + resultGreedy.getEndTime() / (float) resultManual.getEndTime());
-
 
     }
 
