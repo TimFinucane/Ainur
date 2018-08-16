@@ -14,6 +14,8 @@ import scala.util.parsing.combinator.testing.Str;
 
 import javax.management.*;
 import java.lang.management.ManagementFactory;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -255,9 +257,13 @@ public class AlgorithmStatisticsVisualiser extends Region {
      */
     private void updateLabels(Statistics statistics) {
 
-        _branchesCoveredValue.setText(String.format("%6.2e", (float)statistics.getSearchSpaceLookedAt()));
-        _branchesCulledValue.setText(String.format("%6.2e", (float)statistics.getSearchSpaceCulled()));
-        _cullingRateValue.setText(String.format("%.1f%%",  100 * (float)statistics.getSearchSpaceCulled() / (statistics.getSearchSpaceLookedAt() + statistics.getSearchSpaceCulled())));
+        _branchesCoveredValue.setText(String.format("%s", new BigDecimal(statistics.getSearchSpaceLookedAt()).toString()));
+        _branchesCulledValue.setText(String.format("%s", new BigDecimal(statistics.getSearchSpaceCulled()).toString()));
+
+        // Big integer division requires that you convert into decimals so as to not lose precision (as integer division does).
+        BigDecimal searchSpaceCulledAsBigDec = new BigDecimal(statistics.getSearchSpaceCulled());
+        BigDecimal searchSpaceLookedAtAsBigDec = new BigDecimal(statistics.getSearchSpaceLookedAt());
+        _cullingRateValue.setText(String.format("%.1f%%", 100 * searchSpaceCulledAsBigDec.divide(searchSpaceCulledAsBigDec.add(searchSpaceLookedAtAsBigDec), MathContext.DECIMAL32).floatValue()));
 
         NumberFormat format = NumberFormat.getInstance();
         Runtime runtime = Runtime.getRuntime(); // For the commas in 100,000
