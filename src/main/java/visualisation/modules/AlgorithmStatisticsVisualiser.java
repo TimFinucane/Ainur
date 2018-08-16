@@ -21,8 +21,7 @@ import java.util.TimerTask;
 
 public class AlgorithmStatisticsVisualiser extends Region {
 
-
-    // Constant dimensions
+    // CONSTANTS
     private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 100;
     private static final int SCHEDULE_TIME_BOUNDING_WIDTH = 750;
 
@@ -32,7 +31,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private static final Font DEFAULT_FONT = new Font("Consolas", 12);
     private static final Font DEFAULT_TIME_FONT = new Font("Consolas", 20);
 
-    // Should stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
+
+    // Fields to do with bounds
     private double _initialLowerBound;
     private double _initialUpperBound;
     private double _initialBoundRange;
@@ -43,6 +43,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
     // For keeping track of number of updates, certain visualizations may use this to prevent over updating
     private long _updateIteration;
 
+    // ELEMENTS
     // Grid
     private final GridPane _boundGrid;
     private final NumberAxis _boundingAxis;
@@ -51,27 +52,18 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private final LineChart<Number, Number> _cpuChart;
     private final XYChart.Series _cpuChartData;
 
-    // Labels
+    // Label Values that need to be periodically updated through life of visualizer
+    private final Timer _timer; // Timer
+    private long _millisecondsRunning;
     private final Label _timeLabel;
-    private final GridPane _labelGrid; // Holds the following labels
-    private final Label _processorsUsedLabel;
-    private final Label _branchesCoveredLabel;
-    private final Label _branchesCulledLabel;
-    private final Label _cullingRateLabel;
-    private final Label _memoryFreeLabel;
-    private final Label _memoryAllocatedLabel;
-    private final Label _memoryMaxLabel;
-    private Label _processorsUsedValue;
-    private Label _branchesCoveredValue;
+
+    private Label _branchesCoveredValue; // Metrics labels
     private Label _branchesCulledValue;
     private Label _cullingRateValue;
     private Label _memoryFreeValue;
     private Label _memoryAllocatedValue;
     private Label _memoryMaxValue;
 
-    // Timer
-    private final Timer _timer;
-    private long _millisecondsRunning;
 
 
     /**
@@ -93,43 +85,44 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _timeLabel = new Label("0");
         _timeLabel.setFont(DEFAULT_TIME_FONT);
 
-        _processorsUsedLabel = new Label("Cores running:");
+        Label _processorsUsedLabel = new Label("Cores running:");
         _processorsUsedLabel.setFont(DEFAULT_FONT);
-        _processorsUsedValue = new Label(String.format("%d", coresUsed));
+        Label _processorsUsedValue = new Label(String.format("%d", coresUsed));
         _processorsUsedValue.setFont(DEFAULT_FONT);
 
-        _branchesCoveredLabel = new Label("Branches explored:");
+        Label _branchesCoveredLabel = new Label("Branches explored:");
         _branchesCoveredLabel.setFont(DEFAULT_FONT);
         _branchesCoveredValue = new Label(String.format("%d", 0));
         _branchesCoveredValue.setFont(DEFAULT_FONT);
 
-        _branchesCulledLabel = new Label("Branches culled:");
+        Label _branchesCulledLabel = new Label("Branches culled:");
         _branchesCulledLabel.setFont(DEFAULT_FONT);
         _branchesCulledValue = new Label(String.format("%d", 0));
         _branchesCulledValue.setFont(DEFAULT_FONT);
 
-        _cullingRateLabel = new Label("Culling rate:");
+        Label _cullingRateLabel = new Label("Culling rate:");
         _cullingRateLabel.setFont(DEFAULT_FONT);
         _cullingRateValue = new Label(String.format("%.1f%%", 0.0));
         _cullingRateValue.setFont(DEFAULT_FONT);
 
-        _memoryFreeLabel = new Label("Memory free:");
+        Label _memoryFreeLabel = new Label("Memory free:");
         _memoryFreeLabel.setFont(DEFAULT_FONT);
         _memoryFreeValue = new Label(String.format(""));
         _memoryFreeValue.setFont(DEFAULT_FONT);
 
-        _memoryAllocatedLabel = new Label("Memory Allocated:");
+        Label _memoryAllocatedLabel = new Label("Memory Allocated:");
         _memoryAllocatedLabel.setFont(DEFAULT_FONT);
         _memoryAllocatedValue = new Label("");
         _memoryAllocatedValue.setFont(DEFAULT_FONT);
 
-        _memoryMaxLabel = new Label("JVM Memory Limit:");
+        Label _memoryMaxLabel = new Label("JVM Memory Limit:");
         _memoryMaxLabel.setFont(DEFAULT_FONT);
         _memoryMaxValue = new Label("");
         _memoryMaxValue.setFont(DEFAULT_FONT);
 
         // Add label elements to label grid so are aligned
-        _labelGrid = createLabelGrid();
+        // Holds the following labels
+        GridPane _labelGrid = createLabelGrid();
         _labelGrid.add(_timeLabel, 0, 0);
         _labelGrid.add(_processorsUsedLabel, 0, 1);
         _labelGrid.add(_processorsUsedValue, 1, 1);
