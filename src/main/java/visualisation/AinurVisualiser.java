@@ -8,8 +8,9 @@ import common.schedule.Schedule;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import visualisation.modules.AlgorithmStatisticsVisualiser;
@@ -20,7 +21,7 @@ import visualisation.modules.Statistics;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class AinurVisualiser extends Region {
+public class AinurVisualiser extends VBox {
 
     /* MACROS */
 
@@ -145,11 +146,14 @@ public class AinurVisualiser extends Region {
         graphStatHBox.getChildren().addAll(_gv, _asv);
 
         // Put the schedule visualiser underneath
-        VBox outerVBox = new VBox();
-        outerVBox.getChildren().addAll(graphStatHBox, _sv);
+        //VBox outerVBox = new VBox();
+        this.getChildren().addAll(graphStatHBox, _sv);
 
+        //setVgrow(graphStatHBox, Priority.SOMETIMES); TODO: Set this when the gv and asv are resizable
+        setVgrow(_sv, Priority.SOMETIMES);
+        setPadding(new Insets(15));
         // add to the AinurVisualiser
-        this.getChildren().add(outerVBox);
+        //this.getChildren().add(outerVBox);
     }
 
     /**
