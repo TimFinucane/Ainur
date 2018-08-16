@@ -230,7 +230,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
         // Big integer division requires that you convert into decimals so as to not lose precision (as integer division does).
         BigDecimal searchSpaceCulledAsBigDec = new BigDecimal(statistics.getSearchSpaceCulled());
         BigDecimal searchSpaceLookedAtAsBigDec = new BigDecimal(statistics.getSearchSpaceLookedAt());
-        _cullingRateValue.setText(String.format("%.1f%%", 100 * searchSpaceCulledAsBigDec.divide(searchSpaceCulledAsBigDec.add(searchSpaceLookedAtAsBigDec), MathContext.DECIMAL32).floatValue()));
+        if (!searchSpaceCulledAsBigDec.equals(BigDecimal.ZERO) && !searchSpaceLookedAtAsBigDec.equals(BigDecimal.ZERO)) // We only want to divide if we know for sure the algorithm has some metrics for us
+            _cullingRateValue.setText(String.format("%.1f%%", 100 * searchSpaceCulledAsBigDec.divide(searchSpaceCulledAsBigDec.add(searchSpaceLookedAtAsBigDec), MathContext.DECIMAL32).floatValue()));
 
         NumberFormat format = NumberFormat.getInstance();
         Runtime runtime = Runtime.getRuntime(); // For the commas in 100,000
