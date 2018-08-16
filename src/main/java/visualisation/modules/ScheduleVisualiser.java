@@ -56,7 +56,6 @@ public class ScheduleVisualiser extends VBox {
      */
     public void update(Schedule schedule) {
         _schedule = schedule;
-        System.out.println("Preferred height of " + (50 + 25 * schedule.getNumProcessors()));
         draw();
     }
 
