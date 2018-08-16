@@ -30,6 +30,7 @@ public class GraphVisualiser extends Region {
 
     // Colours
     public static final String NODE_HIGHLIGHT_COLOUR = "purple";
+    public static final String NODE_FINISH_COLOUR = "green";
 
     // Used for styling the graph and its nodes
     public static final String STYLE_SHEET =
@@ -47,6 +48,13 @@ public class GraphVisualiser extends Region {
             "   shadow-mode: gradient-radial;" +
             "   shadow-offset: 0;" +
             "}" +
+            "node.finished {" +
+            "   shadow-color: " + NODE_FINISH_COLOUR + ", white;" +
+            "   shadow-width: 8;" +
+            "   shadow-mode: gradient-radial;" +
+            "   shadow-offset: 0;" +
+            "   fill-color: " + NODE_FINISH_COLOUR + ";" +
+            "}" +
             "edge {" +
             "   arrow-shape: arrow;" +
             "   arrow-size: 15px, 5px;" +
@@ -58,6 +66,8 @@ public class GraphVisualiser extends Region {
     private static final String UI_ANTIALIAS = "ui.antialias";
     private static final String UI_STYLE = "ui.style";
     private static final String UI_COLOR = "ui.color";
+    private static final String UI_CLASS = "ui.class";
+    private static final String UI_FINISHED_ATTRIBUTE = "finished";
 
 
     /* Fields */
@@ -164,6 +174,17 @@ public class GraphVisualiser extends Region {
     public void nodeVisited(Node node) {
         if (node != null)
             _nodeFrequencies.put(node, _nodeFrequencies.get(node) + 1);
+    }
+
+    /**
+     * Method called when algorithm has finished running.
+     * Highlights all nodes as green and finishes.
+     */
+    public void stop() {
+        for (Node node : _nodeFrequencies.keySet()) {
+            _gsGraph.getNode(node.getId()).addAttribute(UI_CLASS, UI_FINISHED_ATTRIBUTE);
+        }
+
     }
 
     /**

@@ -100,6 +100,7 @@ public class AinurVisualiser extends Region {
         _mediumPoller = new Timeline(new KeyFrame(MEDIUM_POLLING_DELAY, event -> {
             count.incrementAndGet();
             _gv.update(count.get() / (double) INTERPOL_MOD);
+
             if (count.get() == INTERPOL_MOD) {
                 _gv.flush();
                 count.set(1);
@@ -123,10 +124,9 @@ public class AinurVisualiser extends Region {
      * This should be called from another thread to interrupt the show method's while loop
      */
     public void stop() {
-        updateGraphNodes();
         updateSchedule();
         updateStatistics();
-        _gv.update(1); // TODO stop graph / clear graph vis
+        _gv.stop();
         _asv.stop();
         _fastPoller.stop();
         _mediumPoller.stop();
