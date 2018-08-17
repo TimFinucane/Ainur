@@ -213,6 +213,16 @@ public class AlgorithmStatisticsVisualiser extends Region {
             _bestUpper = _initialUpperBound;
         }
 
+        // If initial upper bound is still max value check again and reassign scale
+        if (_initialUpperBound == Integer.MAX_VALUE) {
+            _initialUpperBound = statistics.getMaxScheduleBound();
+            _boundingAxis.setUpperBound(_initialUpperBound);
+            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
+            _initialBoundRange = _initialUpperBound - _initialLowerBound;
+            _bestUpper = _initialUpperBound;
+        }
+
+
         updateBoundingChart(statistics); // Update bounding chart
         
         updateTimeLabel(); // Update Time label
