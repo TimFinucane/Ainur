@@ -29,8 +29,6 @@
 }
 
 .ainur-vis {
-    -fx-background-color: -fx-light-black-colour;
-    -fx-padding: 0 2 2 2;
 }
 
 .graph-vis {
@@ -72,7 +70,12 @@
     -fx-text-fill: -fx-green-colour !important;
 }
 
-/* Tool bar */
+/* Window stuff */
+
+.window-border {
+    -fx-border-color: -fx-light-black-colour;
+    -fx-border-width: 0 4 4 4;
+}
 
 .tool-bar {
     -fx-background-color: -fx-light-black-colour;

@@ -14,6 +14,7 @@ import io.dot.DotGraphReader;
 import io.dot.DotScheduleWriter;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -41,6 +42,7 @@ public class Ainur extends Application {
     private static AinurVisualiser av;
     private static Thread schedulingThread;
     double x, y;
+    boolean leftDraggedState = false, rightDraggedState = false, bottomDraggedState = false;
 
     /** MAIN **/
 
@@ -164,6 +166,8 @@ public class Ainur extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        Scene scene;
+
         // Start the program
         // Load an ainur visualiser
         av = new AinurVisualiser(algorithm, graph, cli.getProcessors());
@@ -173,10 +177,6 @@ public class Ainur extends Application {
 
         ToolBar toolBar = new ToolBar();
 
-        int height = 30;
-        toolBar.setPrefHeight(height);
-        toolBar.setMinHeight(height);
-        toolBar.setMaxHeight(height);
         toolBar.getItems().add(new WindowButtons());
         toolBar.getStyleClass().add("toolbar");
 
@@ -191,16 +191,80 @@ public class Ainur extends Application {
         });
 
         // Insert custom task bar and visualiser into border pane.
-        BorderPane borderPane = new BorderPane();
+        BorderPane border = new BorderPane();
+        border.setCenter(av);
+        border.getStyleClass().add("window-border");
 
+        BorderPane borderPane = new BorderPane();
         av.getStyleClass().add("ainur-vis");
 
         borderPane.setTop(toolBar);
-        borderPane.setCenter(av);
+        borderPane.setCenter(border);
 
         // Set scene and show
-        Scene scene = new Scene(borderPane);
+        scene = new Scene(borderPane);
         primaryStage.setScene(scene);
+
+        // AAAAAA (also known as resizability)
+        border.setOnMouseMoved(fuckMe -> {
+            double borderSize = border.getCenter().getLayoutX();
+
+            boolean left = fuckMe.getX() < borderSize;
+            boolean right = fuckMe.getX() > border.getWidth() - borderSize;
+            boolean bottom = fuckMe.getY() > border.getHeight() - borderSize;
+
+            if(left && !bottom)
+                scene.setCursor(Cursor.W_RESIZE);
+            else if(left && bottom)
+                scene.setCursor(Cursor.SW_RESIZE);
+            else if(bottom && !left && !right)
+                scene.setCursor(Cursor.S_RESIZE);
+            else if(bottom && right)
+                scene.setCursor(Cursor.SE_RESIZE);
+            else if(right)
+                scene.setCursor(Cursor.E_RESIZE);
+            else
+                scene.setCursor(Cursor.DEFAULT);
+        });
+        border.setOnMousePressed(fuckMe -> {
+            this.x = fuckMe.getScreenX();
+            this.y = fuckMe.getScreenY();
+
+            double borderSize = border.getCenter().getLayoutX();
+
+            leftDraggedState = fuckMe.getX() < borderSize;
+            rightDraggedState = fuckMe.getX() > border.getWidth() - borderSize;
+            bottomDraggedState = fuckMe.getY() > border.getHeight() - borderSize;
+        });
+
+        border.setOnMouseDragged(fuckMe -> {
+            double deltaX = fuckMe.getScreenX() - this.x;
+            double deltaY = fuckMe.getScreenY() - this.y;
+            this.x = fuckMe.getScreenX();
+            this.y = fuckMe.getScreenY();
+
+            if(leftDraggedState) {
+                double nextWidth = primaryStage.getWidth() - deltaX;
+
+                if(nextWidth > borderPane.minWidth(borderPane.getHeight()) && nextWidth < borderPane.maxWidth(borderPane.getHeight())) {
+                    primaryStage.setX(primaryStage.getX() + deltaX);
+                    primaryStage.setWidth(nextWidth);
+                }
+            } else if(rightDraggedState) {
+                double nextWidth = primaryStage.getWidth() + deltaX;
+
+                System.out.println(primaryStage.getMinWidth());
+                if(nextWidth > borderPane.minWidth(borderPane.getHeight()) && nextWidth < borderPane.maxWidth(borderPane.getHeight()))
+                    primaryStage.setWidth(nextWidth);
+            }
+            if (bottomDraggedState) {
+                double nextHeight = primaryStage.getHeight() + deltaY;
+
+                if(nextHeight > borderPane.minHeight(borderPane.getWidth()) && nextHeight < borderPane.maxHeight(borderPane.getWidth()))
+                    primaryStage.setHeight(nextHeight);
+            }
+        });
+
         scene.getStylesheets().add(getClass().getResource(STYLE_SHEET).toExternalForm());
         primaryStage.show();
 
