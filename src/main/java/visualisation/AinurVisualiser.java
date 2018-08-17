@@ -97,6 +97,7 @@ public class AinurVisualiser extends VBox {
         VBox.setVgrow(_bounds, Priority.SOMETIMES);
 
         HBox statsWrapper = new HBox(statsBox);
+        HBox.setHgrow(statsBox, Priority.SOMETIMES);
         statsWrapper.getStyleClass().addAll(STATS_CLASS_CSS, VIS_CLASS_CSS);
 
         HBox graphWrapper = new HBox(_graph);
