@@ -6,8 +6,6 @@ import common.schedule.Schedule;
 import integration.IntegrationTest;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -15,14 +13,6 @@ import static junit.framework.TestCase.assertTrue;
  * verifys that the schedule is a valid schedule, not that it is optimal. Does not
  */
 public class GreedyAlgorithmTests extends IntegrationTest {
-
-    private static final String SEP = File.separator;
-    private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
-    private static final String NODES_8_FILENAME = String.format("data%sgraphs%sNodes_8_Random.dot", SEP, SEP);
-    private static final String NODES_9_FILENAME = String.format("data%sgraphs%sNodes_9_SeriesParallel.dot", SEP, SEP);
-    private static final String NODES_10_FILENAME = String.format("data%sgraphs%sNodes_10_Random.dot", SEP, SEP);
-    private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
-
     @Test
     public void testBasic3NodeGraph() {
         Graph g = new Graph.Builder()
