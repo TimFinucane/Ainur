@@ -37,6 +37,9 @@ import java.util.TimerTask;
 public class AlgorithmStatisticsVisualiser extends VBox {
 
     // CONSTANTS
+    private static final String TIME_LABEL_CLASS_CSS = "time-label";
+    private static final String STATS_CONTENT_CLASS_CSS = "stats-content";
+
     private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 100;
     private static final int SCHEDULE_TIME_BOUNDING_WIDTH = 750;
 
@@ -90,7 +93,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         _boundingAxis = createBoundingVisualizationAxis();
 
         _timeLabel = new Label("0");
-        _timeLabel.getStyleClass().add("time-label");
+        _timeLabel.getStyleClass().add(TIME_LABEL_CLASS_CSS);
 
         Label processorsUsedLabel = new Label("Cores running:");
         Label processorsUsedValue = new Label(String.format("%d", coresUsed));
@@ -137,7 +140,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         LineChart<Number, Number> _cpuChart = createCpuChart();
         _cpuChartData = new XYChart.Series<>();
         _cpuChart.getData().add(_cpuChartData);
-        _cpuChartData.getNode().getStyleClass().add("stats-content");
+        _cpuChartData.getNode().getStyleClass().add(STATS_CONTENT_CLASS_CSS);
         _updateIteration = 0;
 
 

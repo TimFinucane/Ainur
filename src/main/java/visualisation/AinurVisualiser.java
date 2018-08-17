@@ -24,6 +24,12 @@ public class AinurVisualiser extends VBox {
 
     /* MACROS */
 
+    // css classes
+    private final static String GRAPH_CLASS_CSS = "graph-vis";
+    private final static String STATS_CLASS_CSS = "stats-vis";
+    private final static String SCHEDULE_CLASS_CSS = "schedule-vis";
+    private final static String VIS_CLASS_CSS = "vis";
+
     // Delays
     private final static Duration FAST_POLLING_DELAY = Duration.millis(16);
     private final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
@@ -145,18 +151,18 @@ public class AinurVisualiser extends VBox {
         // Put the graph and stats visualiser side by side
         HBox graphWraper = new HBox();
         graphWraper.getChildren().add(_gv);
-        graphWraper.getStyleClass().addAll("graph-vis", "vis");
+        graphWraper.getStyleClass().addAll(GRAPH_CLASS_CSS, VIS_CLASS_CSS);
 
         HBox statsWrapper = new HBox();
         statsWrapper.getChildren().add(_asv);
-        statsWrapper.getStyleClass().addAll("stats-vis", "vis");
+        statsWrapper.getStyleClass().addAll(STATS_CLASS_CSS, VIS_CLASS_CSS);
 
         HBox graphStatHBox = new HBox();
         graphStatHBox.getChildren().addAll(graphWraper, statsWrapper);
         HBox.setHgrow(_asv, Priority.SOMETIMES);
 
         // Put the schedule visualiser underneath
-        _sv.getStyleClass().addAll("schedule-vis", "vis");
+        _sv.getStyleClass().addAll(SCHEDULE_CLASS_CSS, VIS_CLASS_CSS);
         this.getChildren().addAll(graphStatHBox, _sv);
 
         //setVgrow(graphStatHBox, Priority.SOMETIMES); TODO: Set this when the gv and asv are resizable
