@@ -1,0 +1,105 @@
+package integration;
+
+import algorithm.AStarAlgorithm;
+import algorithm.Algorithm;
+import algorithm.DFSAlgorithm;
+import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.pruner.Arborist;
+import algorithm.heuristics.pruner.ProcessorOrderPruner;
+import algorithm.heuristics.pruner.StartTimePruner;
+import common.Validator;
+import common.graph.Graph;
+import common.schedule.Schedule;
+import io.GraphReader;
+import io.dot.DotGraphReader;
+import javafx.util.Pair;
+import org.junit.Assert;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class AStarIntegrationTests extends IntegrationTest {
+
+
+    public AStarIntegrationTests() {
+
+        List<String> tempGraphs = new ArrayList<>();
+        // Get all files in data/SampleData/Input, override graphs for this to be the value
+        File inputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
+        for (String fileString : inputFolder.list()) {
+            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30"))
+                tempGraphs.add(fileString);
+        }
+
+        graphs = tempGraphs;
+
+        for (int i = 0; i < graphs.size(); i++)
+            graphs.set(i, String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + graphs.get(i));
+
+        // Make a list of lists with one pair in each corresponding to the number of processors and
+        // optimal solution for that graph.
+        File outputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Output")));
+        List<String> outputFiles = new ArrayList<>();
+        for (String fileString : outputFolder.list()) {
+            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30")) {
+                outputFiles.add(fileString);
+            }
+        }
+        List<List<Pair<Integer, Integer>>> optimalSchedulesReplacement = new ArrayList<>();
+
+        for (String outputFileNameString : outputFiles) {
+
+            InputStream is1 = null;
+            InputStream is2 = null;
+            try {
+                is1 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
+                is2 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            int graphProcessorNo = scheduleProcessors(is1);
+            int graphOptimalSolution = scheduleLength(is2);
+
+            List<Pair<Integer, Integer>> listToAdd = new ArrayList<>();
+            Pair<Integer, Integer> pair = new Pair<>(graphProcessorNo, graphOptimalSolution);
+            listToAdd.add(pair);
+            optimalSchedulesReplacement.add(listToAdd);
+        }
+
+        optimalSchedules = optimalSchedulesReplacement;
+    }
+
+    @Override
+    protected void runAgainstOptimal(String graph, int processors, int optimalScheduleLength) {
+
+        // Single threaded DFS implementation
+        Algorithm dfsAlgorithm = new AStarAlgorithm(
+                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                new CriticalPath()
+        );
+
+
+        GraphReader reader = null;
+        try {
+            reader = new DotGraphReader(new FileInputStream(graph));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Graph inputGraph = reader.read();
+
+        dfsAlgorithm.run(inputGraph, processors);
+        Schedule schedule = dfsAlgorithm.getCurrentBest();
+
+        Assert.assertEquals(optimalScheduleLength, schedule.getEndTime());
+        Assert.assertTrue(Validator.isValid(inputGraph, schedule));
+    }
+
+
+}

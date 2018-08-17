@@ -50,10 +50,8 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             @Override
             void explorePartialSolution(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
                 BoundableAlgorithm dfs = new DFSAlgorithm(arborist, lowerBound);
-                System.out.println("DFS about to execute");
                 dfs.run(graph, schedule, nextNodes);
                 update(dfs.getCurrentBest());
-                System.out.println(dfs.getCurrentBest().getEndTime());
             }
         });
         _arborist = arborist;
@@ -93,16 +91,12 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             int curLowerBound = currentPair.getKey();
 
             if (_communicator.getCurrentBest().getEndTime() <= curLowerBound) {
-                System.out.println("A* exiting prematurely with best:");
-                System.out.println(curLowerBound);
                 return;
             }
 
             // if current schedule contains all nodes, it is optimal.
             if (curSchedule.size() == graph.size()) {
                 _communicator.update(curSchedule);
-                System.out.println("returning A*");
-                System.out.println(getCurrentBest().getEndTime());
                 return;
             }
 
