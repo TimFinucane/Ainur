@@ -15,7 +15,13 @@ import io.dot.DotScheduleWriter;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToolBar;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import visualisation.AinurVisualiser;
 
 import java.io.*;
@@ -35,6 +41,7 @@ public class Ainur extends Application {
     private static Algorithm algorithm;
     private static AinurVisualiser av;
     private static Thread schedulingThread;
+    double x, y;
 
     /** MAIN **/
 
@@ -159,13 +166,59 @@ public class Ainur extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Start the program
+        // Load an ainur visualiser
         av = new AinurVisualiser(algorithm, graph, cli.getProcessors());
-        Scene scene = new Scene(av);
+
+        // Replace gross default taskbar with custom one
+        primaryStage.initStyle(StageStyle.UNDECORATED);
+
+        ToolBar toolBar = new ToolBar();
+
+        int height = 30;
+        toolBar.setPrefHeight(height);
+        toolBar.setMinHeight(height);
+        toolBar.setMaxHeight(height);
+        toolBar.getItems().add(new WindowButtons());
+        toolBar.getStyleClass().add("toolbar");
+
+        // Add ability to move window from taskbar
+        toolBar.setOnMousePressed(me -> {
+            this.x = toolBar.getScene().getWindow().getX() - me.getScreenX();
+            this.y = toolBar.getScene().getWindow().getY() - me.getScreenY();
+        });
+        toolBar.setOnMouseDragged(me -> {
+            primaryStage.setX(me.getScreenX() + this.x);
+            primaryStage.setY(me.getScreenY() + this.y);
+        });
+
+        // Insert custom task bar and visualiser into border pane.
+        BorderPane borderPane = new BorderPane();
+
+        borderPane.setTop(toolBar);
+        borderPane.setCenter(av);
+
+        // Set scene and show
+        Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         scene.getStylesheets().add(getClass().getResource(STYLE_SHEET).toExternalForm());
         primaryStage.show();
 
+        // Start tasks
         schedulingThread.start();
         av.run();
+    }
+
+    /**
+     * Custom class for custom window taskbar
+     */
+    private class WindowButtons extends HBox {
+        public WindowButtons() {
+            Button closeBtn = new Button("X");
+            closeBtn.getStyleClass().add("close-button");
+
+            closeBtn.setOnAction(actionEvent -> Platform.exit());
+
+            this.getChildren().add(closeBtn);
+        }
     }
 }
