@@ -177,7 +177,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         setPadding(new Insets(15));
         getChildren().addAll(labelAndCpuVBox, boundVBox);
         VBox.setVgrow(labelAndCpuVBox, Priority.SOMETIMES);
-        VBox.setVgrow(boundVBox, Priority.SOMETIMES);
+        //VBox.setVgrow(boundVBox, Priority.SOMETIMES); TODO:
     }
 
 
