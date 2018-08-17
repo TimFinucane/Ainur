@@ -259,7 +259,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
      */
     private void updateLabels(Statistics statistics) {
 
-        NumberFormat numberFormat = new DecimalFormat("0.0E0");
+        NumberFormat numberFormat = new DecimalFormat("0.00E0");
 
         _branchesCoveredValue.setText(String.format("%s", numberFormat.format(new BigDecimal(statistics.getSearchSpaceLookedAt()))));
         _branchesCulledValue.setText(String.format("%s", numberFormat.format(new BigDecimal(statistics.getSearchSpaceCulled()))));
