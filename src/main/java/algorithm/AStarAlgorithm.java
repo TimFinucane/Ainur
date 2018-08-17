@@ -115,7 +115,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                 memoryCounter = 0;
             }
             if (outOfMemory) {
-                _communicator.explorePartialSolution(graph, new SimpleSchedule(curSchedule), nextNodes);
+                _communicator.explorePartialSolution(graph, curSchedule, nextNodes);
                 continue;
             }
 
