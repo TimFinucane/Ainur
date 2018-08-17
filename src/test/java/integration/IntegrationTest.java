@@ -142,22 +142,28 @@ public abstract class IntegrationTest {
 
         List<Task> tasks = new ArrayList<>();
         int id = 0;
-        int processorNo = 0;
+        int noOfProcessors = 0;
 
         while (m.find()) {
             tasks.add(new Task(
                     Integer.parseInt(m.group(2)), // Processor no.
                     Integer.parseInt(m.group(3)), // Start time
                     new Node(Integer.parseInt(m.group(4)), m.group(1), id))); // Node w/ weight and label
+
             id++;
             // In examples processors seem to start at 0, so for processors labelled up to n there are n+1 processors.
-            if (processorNo < Integer.parseInt(m.group(2)) + 1)
-                processorNo = Integer.parseInt(m.group(2)) + 1;
+            if (noOfProcessors < Integer.parseInt(m.group(2)) + 1)
+                noOfProcessors = Integer.parseInt(m.group(2)) + 1;
         }
 
-        Schedule schedule = new SimpleSchedule(0);
+        // Have to wait for all tasks to be searched before number of processors can be attained.
+        Schedule schedule = new SimpleSchedule(noOfProcessors);
 
-        return 0;
+        // Populate schedule
+        for (Task task : tasks)
+            schedule.addTask(task);
+
+        return schedule.getEndTime();
     }
 
 
