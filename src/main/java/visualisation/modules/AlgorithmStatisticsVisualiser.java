@@ -202,24 +202,15 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         // If on first iteration then update all of these parameters
         if (_updateIteration == 1) {
-            _initialUpperBound = statistics.getMaxScheduleBound();
-            _initialLowerBound = 0;
-            _boundingAxis.setUpperBound(_initialUpperBound);
+            reassignXScale(statistics);
+            _initialLowerBound = 0; // We want to start from 0 I reckon
             _initialBoundRange = _initialUpperBound - _initialLowerBound;
-
-            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
-
             _bestLower = _initialLowerBound;
-            _bestUpper = _initialUpperBound;
         }
 
         // If initial upper bound is still max value check again and reassign scale
         if (_initialUpperBound == Integer.MAX_VALUE) {
-            _initialUpperBound = statistics.getMaxScheduleBound();
-            _boundingAxis.setUpperBound(_initialUpperBound);
-            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
-            _initialBoundRange = _initialUpperBound - _initialLowerBound;
-            _bestUpper = _initialUpperBound;
+            reassignXScale(statistics);
         }
 
 
@@ -229,6 +220,15 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
         updateLabels(statistics); // Update misc. statistics labels
 
+    }
+
+
+    private void reassignXScale(Statistics statistics) {
+        _initialUpperBound = statistics.getMaxScheduleBound();
+        _boundingAxis.setUpperBound(_initialUpperBound);
+        _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
+        _initialBoundRange = _initialUpperBound - _initialLowerBound;
+        _bestUpper = _initialUpperBound;
     }
 
 
