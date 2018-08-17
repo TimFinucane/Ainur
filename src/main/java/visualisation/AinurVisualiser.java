@@ -162,16 +162,15 @@ public class AinurVisualiser extends VBox {
         HBox.setHgrow(_asv, Priority.SOMETIMES);
 
         // Put the schedule visualiser underneath
-        HBox scheduleWrapper = new HBox();
-        scheduleWrapper.getChildren().add(_sv);
+        HBox scheduleWrapper = new HBox(_sv);
         scheduleWrapper.getStyleClass().addAll(SCHEDULE_CLASS_CSS, VIS_CLASS_CSS);
+        HBox.setHgrow(_sv, Priority.ALWAYS);
+
+        VBox.setVgrow(scheduleWrapper, Priority.ALWAYS);
+
         this.getChildren().addAll(graphStatHBox, scheduleWrapper);
 
         //setVgrow(graphStatHBox, Priority.SOMETIMES); TODO: Set this when the gv and asv are resizable
-        setVgrow(scheduleWrapper, Priority.SOMETIMES);
-        HBox.setHgrow(_sv, Priority.ALWAYS);
-        // add to the AinurVisualiser
-        //this.getChildren().add(outerVBox);
     }
 
     /**

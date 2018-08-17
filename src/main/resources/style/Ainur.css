@@ -29,8 +29,6 @@
 }
 
 .ainur-vis {
-    -fx-background-color: -fx-light-black-colour;
-    -fx-padding: 0 2 2 2;
 }
 
 .graph-vis {
@@ -43,6 +41,10 @@
 
 .schedule-vis {
     -fx-padding: 10 10 10 10;
+}
+
+.inner-schedule {
+    -fx-padding: 20 25 10 25;
 }
 
 .stats-vis * {
@@ -72,7 +74,44 @@
     -fx-text-fill: -fx-green-colour !important;
 }
 
-/* Tool bar */
+
+.scroll-bar {
+    -fx-font-size: 18;
+}
+
+.scroll-bar:horizontal, .scroll-bar:vertical{
+    -fx-background-color: -fx-white-colour;
+}
+
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar .decrement-arrow,
+.scroll-bar .increment-arrow {
+    -fx-background-color: -fx-white-colour;
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0em;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-white-colour;
+    -fx-background-radius: 5em;
+}
+
+/* Window stuff */
+
+.window-border {
+    -fx-border-color: -fx-light-black-colour;
+    -fx-border-width: 0 4 4 4;
+}
 
 .tool-bar {
     -fx-background-color: -fx-light-black-colour;
