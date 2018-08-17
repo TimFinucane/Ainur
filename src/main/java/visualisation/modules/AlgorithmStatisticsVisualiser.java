@@ -1,6 +1,7 @@
 package visualisation.modules;
 
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -17,7 +18,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.NumberFormat;
 import java.util.Date;
@@ -33,7 +33,7 @@ import java.util.TimerTask;
  * miscellaneous metric should be done in the labelGrid, as this will align them nicely. All components needing
  * to be periodically updated can be accessed as a field.
  */
-public class AlgorithmStatisticsVisualiser extends Region {
+public class AlgorithmStatisticsVisualiser extends VBox {
 
     // CONSTANTS
     private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 100;
@@ -98,39 +98,25 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _timeLabel.setFont(DEFAULT_TIME_FONT);
 
         Label processorsUsedLabel = new Label("Cores running:");
-        processorsUsedLabel.setFont(DEFAULT_FONT);
         Label processorsUsedValue = new Label(String.format("%d", coresUsed));
-        processorsUsedValue.setFont(DEFAULT_FONT);
 
         Label branchesCoveredLabel = new Label("Branches explored:");
-        branchesCoveredLabel.setFont(DEFAULT_FONT);
         _branchesCoveredValue = new Label(String.format("%d", 0));
-        _branchesCoveredValue.setFont(DEFAULT_FONT);
 
         Label branchesCulledLabel = new Label("Branches culled:");
-        branchesCulledLabel.setFont(DEFAULT_FONT);
         _branchesCulledValue = new Label(String.format("%d", 0));
-        _branchesCulledValue.setFont(DEFAULT_FONT);
 
         Label cullingRateLabel = new Label("Culling rate:");
-        cullingRateLabel.setFont(DEFAULT_FONT);
         _cullingRateValue = new Label(String.format("%.1f%%", 0.0));
-        _cullingRateValue.setFont(DEFAULT_FONT);
 
         Label memoryFreeLabel = new Label("Memory free:");
-        memoryFreeLabel.setFont(DEFAULT_FONT);
         _memoryFreeValue = new Label("");
-        _memoryFreeValue.setFont(DEFAULT_FONT);
 
         Label memoryAllocatedLabel = new Label("Memory Allocated:");
-        memoryAllocatedLabel.setFont(DEFAULT_FONT);
         _memoryAllocatedValue = new Label("");
-        _memoryAllocatedValue.setFont(DEFAULT_FONT);
 
         Label memoryMaxLabel = new Label("JVM Memory Limit:");
-        memoryMaxLabel.setFont(DEFAULT_FONT);
         _memoryMaxValue = new Label("");
-        _memoryMaxValue.setFont(DEFAULT_FONT);
 
         // Add label elements to label grid so are aligned
         // Holds the following labels
@@ -150,6 +136,9 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _labelGrid.add(_memoryAllocatedValue, 1, 6);
         _labelGrid.add(memoryMaxLabel, 0, 7);
         _labelGrid.add(_memoryMaxValue, 1, 7);
+
+        for(Node node : _labelGrid.getChildren())
+            ((Label) node).setFont(DEFAULT_FONT);
 
         // Create a cpu usage chart
         // Cpu chart
@@ -183,12 +172,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
         boundVBox.getChildren().addAll(_boundGrid, _boundingAxis);
 
         // Add previously created boxes into VBox; one on top of another
-        VBox outerVBox = new VBox();
-        outerVBox.setPadding(new Insets(15));
-        outerVBox.getChildren().addAll(labelAndCpuVBox, boundVBox);
-
-        // Add final VBox to this regions children
-        getChildren().addAll(outerVBox);
+        setPadding(new Insets(15));
+        getChildren().addAll(labelAndCpuVBox, boundVBox);
     }
 
 
