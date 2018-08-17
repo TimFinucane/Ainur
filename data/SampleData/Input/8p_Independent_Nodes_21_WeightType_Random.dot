@@ -1,0 +1,23 @@
+digraph Independent_Nodes_21_WeightType_Random {
+	1	 [Weight=6];
+	2	 [Weight=6];
+	3	 [Weight=3];
+	4	 [Weight=9];
+	5	 [Weight=4];
+	6	 [Weight=10];
+	7	 [Weight=3];
+	8	 [Weight=9];
+	9	 [Weight=7];
+	10	 [Weight=9];
+	11	 [Weight=7];
+	12	 [Weight=10];
+	13	 [Weight=4];
+	14	 [Weight=3];
+	15	 [Weight=2];
+	16	 [Weight=8];
+	17	 [Weight=3];
+	18	 [Weight=8];
+	19	 [Weight=9];
+	20	 [Weight=8];
+	21	 [Weight=4];
+}

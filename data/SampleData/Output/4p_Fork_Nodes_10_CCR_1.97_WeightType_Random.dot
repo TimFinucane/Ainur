@@ -1,0 +1,21 @@
+digraph "Fork_Nodes_10_CCR_1.97_WeightType_Random" {
+	1	 [Processor=0,Start=0,Weight=7];
+	2	 [Processor=1,Start=26,Weight=4];
+	1 -> 2	 [Weight=15];
+	3	 [Processor=2,Start=23,Weight=8];
+	1 -> 3	 [Weight=15];
+	4	 [Processor=2,Start=13,Weight=10];
+	1 -> 4	 [Weight=6];
+	5	 [Processor=3,Start=19,Weight=4];
+	1 -> 5	 [Weight=12];
+	6	 [Processor=0,Start=7,Weight=6];
+	1 -> 6	 [Weight=24];
+	7	 [Processor=3,Start=25,Weight=9];
+	1 -> 7	 [Weight=18];
+	8	 [Processor=0,Start=22,Weight=9];
+	1 -> 8	 [Weight=27];
+	9	 [Processor=1,Start=16,Weight=10];
+	1 -> 9	 [Weight=9];
+	10	 [Processor=0,Start=13,Weight=9];
+	1 -> 10	 [Weight=24];
+}

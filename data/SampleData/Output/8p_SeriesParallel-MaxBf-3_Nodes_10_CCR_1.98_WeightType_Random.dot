@@ -1,0 +1,24 @@
+digraph "SeriesParallel-MaxBf-3_Nodes_10_CCR_1.98_WeightType_Random" {
+	1	 [Processor=0,Start=0,Weight=4];
+	2	 [Processor=0,Start=4,Weight=5];
+	1 -> 2	 [Weight=8];
+	3	 [Processor=0,Start=9,Weight=10];
+	2 -> 3	 [Weight=5];
+	5	 [Processor=1,Start=26,Weight=5];
+	3 -> 5	 [Weight=7];
+	6	 [Processor=0,Start=19,Weight=9];
+	3 -> 6	 [Weight=5];
+	7	 [Processor=1,Start=22,Weight=3];
+	3 -> 7	 [Weight=3];
+	4	 [Processor=1,Start=44,Weight=6];
+	9	 [Processor=1,Start=31,Weight=3];
+	5 -> 9	 [Weight=10];
+	10	 [Processor=1,Start=34,Weight=2];
+	5 -> 10	 [Weight=17];
+	6 -> 4	 [Weight=14];
+	7 -> 4	 [Weight=5];
+	8	 [Processor=1,Start=36,Weight=8];
+	8 -> 4	 [Weight=15];
+	9 -> 8	 [Weight=12];
+	10 -> 8	 [Weight=8];
+}

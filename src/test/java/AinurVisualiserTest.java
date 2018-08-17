@@ -1,8 +1,7 @@
-import common.categories.GandalfIntegrationTestsCategory;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(GandalfIntegrationTestsCategory.class)
+@Tag("gandalf")
 public class AinurVisualiserTest {
 
     @Test
