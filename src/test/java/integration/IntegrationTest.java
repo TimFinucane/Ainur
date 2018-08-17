@@ -35,7 +35,9 @@ public abstract class IntegrationTest {
             Paths.get("data", "graphs", "Nodes_11_OutTree.dot").toString(),
                 Paths.get("data", "graphs", "InTree-Unbalanced-MaxBf-3_Nodes_10_CCR_10.00_WeightType_Random.dot").toString(),
                 Paths.get("data", "graphs", "Join_Nodes_10_CCR_10.07_WeightType_Random.dot").toString(),
-                Paths.get("data", "graphs", "Random_Nodes_21_Density_5.14_CCR_0.10_WeightType_Random.dot").toString()
+                Paths.get("data", "graphs", "Random_Nodes_21_Density_5.14_CCR_0.10_WeightType_Random.dot").toString(),
+                Paths.get("data", "graphs", "Fork_Nodes_10_CCR_10.00_WeightType_Random.dot").toString(),
+                Paths.get("data", "graphs", "Fork_Join_Nodes_10_CCR_10.01_WeightType_Random.dot").toString()
 
         );
         optimalSchedules = Arrays.asList(
@@ -46,7 +48,9 @@ public abstract class IntegrationTest {
             Arrays.asList(new Pair<>(2, 350), new Pair<>(4, 227)),  // 11 nodes
             Arrays.asList(new Pair<>(2, 56), new Pair<>(4, 56)),  // 11 nodes
             Arrays.asList(new Pair<>(2, 54), new Pair<>(4, 52)),  // 11 nodes
-            Arrays.asList(new Pair<>(2, 3946), new Pair<>(4, 3837))  // 11 nodes
+            Arrays.asList(new Pair<>(2, 3946), new Pair<>(4, 3837)),  // 11 nodes
+            Arrays.asList(new Pair<>(4, 47), new Pair<>(8, 47)), // 11 nodes
+            Arrays.asList(new Pair<>(4, 69), new Pair<>(8, 69))  // 11 nodes
         );
     }
 
