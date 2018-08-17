@@ -9,6 +9,7 @@ import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import javafx.util.Pair;
 
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -22,8 +23,8 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     // amount of memory allocated for the algorithm
     private static final double PERCENTAGE_MEMORY_TO_USE = 70;
 
-    private int _numCulled = 0;
-    private int _numExplored = 0;
+    private BigInteger _numCulled = BigInteger.ZERO;
+    private BigInteger _numExplored = BigInteger.ZERO;
     private Node _currentNode;
 
     /**
@@ -137,7 +138,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
                     // if pruner suggests culling this branch, do not explore this schedule
                     if (_arborist.prune(graph, curSchedule, taskToPlace)) {
-                        _numCulled++;
+                        _numCulled = _numCulled.add(BigInteger.ONE);
                     } else { // explore this schedule
 
                         // generates a schedule with new task added.
@@ -151,7 +152,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                             newLowerBound = _lowerBound.estimate(graph, curSchedule, new HashSet<>(nextNodesToAdd));
                         }
 
-                        _numExplored++;
+                        _numExplored = _numExplored.add(BigInteger.ONE);
                         schedulesToVisit.add(new Pair<>(newLowerBound, new SimpleSchedule(curSchedule)));
                         curSchedule.removeTask(taskToPlace);
                     }
@@ -198,7 +199,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
      * @see Algorithm#branchesCulled()
      */
     @Override
-    public int branchesCulled() {
+    public BigInteger branchesCulled() {
         return _numCulled;
     }
 
@@ -206,7 +207,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
      * @see Algorithm#branchesExplored()
      */
     @Override
-    public int branchesExplored() {
+    public BigInteger branchesExplored() {
         return _numExplored;
     }
 
@@ -220,6 +221,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
     @Override
     public int lowerBound() {
-        return 0;
+        return 0; // TODO: please do this.
     }
 }
