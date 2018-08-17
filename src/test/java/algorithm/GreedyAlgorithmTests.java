@@ -1,18 +1,11 @@
 package algorithm;
 
-import algorithm.heuristics.lowerbound.CriticalPath;
-import algorithm.heuristics.lowerbound.NaiveBound;
-import algorithm.heuristics.pruner.Arborist;
-import algorithm.heuristics.pruner.IsNotAPruner;
-import algorithm.heuristics.pruner.ProcessorOrderPruner;
-import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
-import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
+import integration.IntegrationTest;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -23,13 +16,12 @@ import java.io.InputStream;
 
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Calss is a test suite that tests GreedyAlgorithm. Runs it with pre-made graphs and test graph files. Each test
  * verifys that the schedule is a valid schedule, not that it is optimal. Does not
  */
-@Category(GandalfIntegrationTestsCategory.class)
+@Category(IntegrationTest.class)
 public class GreedyAlgorithmTests {
 
     private static final String SEP = File.separator;
