@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -23,11 +26,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algorithm {
     // This is a queue of all the schedules to be explored, as well as the next nodes to visit for each.
-    private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>>   _schedulesToExplore;
-    private List<BoundableAlgorithm>    _algorithmsRunning;
-    private AlgorithmFactory            _generator;
+    private LinkedBlockingQueue<Pair<Schedule, HashSet<Node>>> _schedulesToExplore;
+
+    private Lock                        _waitForItemsLock = new ReentrantLock();
+    private Lock                        _shutDownLock = new ReentrantLock();
+    private AtomicInteger               _running = new AtomicInteger(0);
     private Thread[]                    _threads;
 
+    private List<BoundableAlgorithm>    _algorithmsRunning;
+    private AlgorithmFactory            _generator;
     private Graph                       _graph;
 
     private AtomicReference<BigInteger> _totalCulled = new AtomicReference<>(BigInteger.ZERO);
@@ -79,6 +86,14 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
 
         // Now run on this thread as if it is one of our own:
         runThread();
+
+        try {
+            for (int i = 1; i < _threads.length; i++)
+                _threads[i].join();
+        } catch(InterruptedException ignored) {
+            // If this happens, there was a problem. Most likely close was somehow called twice, which seems to happen in junit?
+            // We should still have a correct answer anyway, so never mind it.
+        }
     }
 
     /**
@@ -86,7 +101,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      */
     @Override
     public Schedule getCurrentBest() {
-        return _globalBest.get();
+        return super.getCurrentBest();
     }
 
     /**
@@ -169,7 +184,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         // as it is obvious exploration is getting out of hand we will instead run it here, in this thread, RIGHT NOW!!!
         // TODO: Tiers are only ever 0 or 1. Change?
         if(!_schedulesToExplore.offer(new Pair<>(schedule, nextNodes)))
-            runAlgorithmOn(calculateTier(schedule), schedule, nextNodes);
+            runAlgorithmOn(calculateTier(schedule), _graph, schedule, nextNodes);
     }
 
     /**
@@ -177,34 +192,44 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      * partial solutions as they come.
      */
     private void runThread() {
-        // Thread only stops when the algorithm is claimed to be complete
+        // Effectively a while true loop (loop forever)
         try {
-            while(!Thread.interrupted()) {
-                // If there are no more schedules either running or waiting to be run, close.
-                if(_schedulesToExplore.isEmpty() && _algorithmsRunning.isEmpty())
-                    closeAll(); // Closes all threads, including this one, safely via interrupts.
+            while (!Thread.interrupted()) {
+                tryClose();
 
-                // Try and get a schedule. Blocks until this occurs
-                Pair<Schedule, HashSet<Node>> pair = _schedulesToExplore.take();
-                runAlgorithmOn(calculateTier(pair.getKey()), pair.getKey(), pair.getValue());
+                Pair<Schedule, HashSet<Node>> pair;
+                _waitForItemsLock.lockInterruptibly();
+                try {
+                    // Ensure the operation of taking a schedule and saying we are running is atomic, as we want to
+                    // say we are running the instant we have a schedule to run.
+                    pair = _schedulesToExplore.take();
+                    _running.incrementAndGet();
+                } finally {
+                    _waitForItemsLock.unlock();
+                }
+
+                runAlgorithmOn(calculateTier(pair.getKey()), _graph, pair.getKey(), pair.getValue());
+                _running.decrementAndGet();
             }
         } catch(InterruptedException ignored) {
+            // If we have been interrupted, we are meant to finish running
         }
     }
 
     /**
      * Runs an algorithm on a specified tier with a schedule to add to and a helpful list of nodes
      * to look at next
-     * @param tier :
+     * @param tier : The tier of the algorithm
+     * @param graph : The graph
      * @param schedule : Schedule to add to
      * @param nextNodes : Helpful list of next nodes to look through
      */
-    private void runAlgorithmOn(int tier, Schedule schedule, HashSet<Node> nextNodes) {
+    private void runAlgorithmOn(int tier, Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         BoundableAlgorithm algorithm = _generator.create(tier, this);
-
-        // Add alogorithm to running algorithm list
+        // Add algorithm to running algorithm list
         _algorithmsRunning.add(algorithm);
-        algorithm.run(_graph, schedule, nextNodes);
+
+        algorithm.run(graph, schedule, nextNodes);
 
         // Increment counters
         _totalExplored.accumulateAndGet(algorithm.branchesExplored(), BigInteger::add);
@@ -224,12 +249,18 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     }
 
     /**
-     * Closes all threads. Should only be called once threads have stopped running algorithms, otherwise some threads
-     * may continue running algorithms after this object has apparently finished.
+     * Checks whether it is time to close threads. If it is, then it will close threads.
      */
-    private void closeAll() {
-        for(Thread thread : _threads)
-            thread.interrupt();
+    private void tryClose() throws InterruptedException {
+        _shutDownLock.lockInterruptibly(); // Ensure no two threads both try to close.
+        try {
+            // If running is 0, nothing is in the middle of running an algorithm, and we can exit.
+            if(_schedulesToExplore.isEmpty() && _running.get() == 0) {
+                for (Thread thread : _threads)
+                    thread.interrupt(); // Yes, it is safe to call this on yourself, it'll get picked up later
+            }
+        } finally {
+            _shutDownLock.unlock();
+        }
     }
-
 }
