@@ -139,6 +139,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
 
         for(Node node : _labelGrid.getChildren())
             ((Label) node).setFont(DEFAULT_FONT);
+        _timeLabel.setFont(DEFAULT_TIME_FONT);
 
         // Create a cpu usage chart
         // Cpu chart
