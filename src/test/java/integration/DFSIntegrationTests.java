@@ -30,7 +30,8 @@ public class DFSIntegrationTests extends IntegrationTest {
         // Get all files in data/SampleData/Input, override graphs for this to be the value
         File inputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
         graphs = Arrays.asList(inputFolder.list());
-
+        for (int i = 0; i < graphs.size(); i++)
+            graphs.set(i, String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + graphs.get(i));
 
         // Make a list of lists with one pair in each corresponding to the number of processors and
         // optimal solution for that graph.
@@ -42,7 +43,7 @@ public class DFSIntegrationTests extends IntegrationTest {
 
             InputStream is = null;
             try {
-                is = new FileInputStream(outputFileNameString);
+                is = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -56,6 +57,7 @@ public class DFSIntegrationTests extends IntegrationTest {
         }
 
         optimalSchedules = optimalSchedulesReplacement;
+        System.out.println(optimalSchedules);
     }
 
     @Override
