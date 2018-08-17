@@ -79,8 +79,6 @@ public class BoundingChart extends VBox {
         _curLowerBound = Math.max(_curLowerBound, lowerBound); // TODO: Check for int max
         _curUpperBound = Math.min(_curUpperBound, upperBound); // TODO: Check for int max
 
-        System.out.println(lowerBound + ", " + upperBound);
-
         draw();
     }
 
