@@ -15,8 +15,6 @@ import io.dot.DotScheduleWriter;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import scala.App;
-import visualisation.AinurVisualiser;
 
 import java.io.*;
 import java.util.function.Consumer;
@@ -30,6 +28,8 @@ public class Ainur extends Application {
     private static Graph graph;
     private static Algorithm algorithm;
     private static Thread schedulingThread;
+
+    static VisualiserWindow window;
 
     /** MAIN **/
 
@@ -63,7 +63,7 @@ public class Ainur extends Application {
 
     private static void onAlgorithmComplete(Schedule schedule) {
         if (cli.getVisualise())
-            Platform.runLater(() -> av.stop());
+            Platform.runLater(() -> window.stop());
         try {
             writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
         } catch (IOException e) {
@@ -149,7 +149,7 @@ public class Ainur extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        VisualiserWindow window = new VisualiserWindow(algorithm, graph, cli.getProcessors());
+        window = new VisualiserWindow(algorithm, graph, cli.getProcessors());
         window.visualise(primaryStage);
     }
 }

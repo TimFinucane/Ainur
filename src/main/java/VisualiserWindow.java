@@ -16,20 +16,20 @@ public class VisualiserWindow {
     private static final String STYLE_SHEET = "/style/Ainur.css";
 
 
-    private AinurVisualiser av;
-    private double  x;
-    private double  y;
-    private boolean leftDraggedState = false;
-    private boolean rightDraggedState = false;
-    private boolean bottomDraggedState = false;
+    private AinurVisualiser _av;
+    private double _x;
+    private double _y;
+    private boolean _leftDraggedState = false;
+    private boolean _rightDraggedState = false;
+    private boolean _bottomDraggedState = false;
 
-    private Stage       stage;
-    private Scene       scene;
-    private BorderPane  window;
+    private Stage _stage;
+    private Scene _scene;
+    private BorderPane _window;
 
     public VisualiserWindow(Algorithm algorithm, Graph graph, int numProcessors) {
         // Load an ainur visualiser
-        av = new AinurVisualiser(algorithm, graph, numProcessors);
+        _av = new AinurVisualiser(algorithm, graph, numProcessors);
     }
 
     /**
@@ -37,33 +37,37 @@ public class VisualiserWindow {
      * Takes over control from main.
      */
     public void visualise(Stage primaryStage) {
-        stage = primaryStage;
+        _stage = primaryStage;
 
         // Replace gross default taskbar with custom one
-        stage.initStyle(StageStyle.UNDECORATED);
+        _stage.initStyle(StageStyle.UNDECORATED);
 
         BorderPane border = createResizableBorderBox();
-        border.setCenter(av);
+        border.setCenter(_av);
 
-        window = new BorderPane();
-        window.setTop(createMovableToolbar());
-        window.setCenter(border);
+        _window = new BorderPane();
+        _window.setTop(createMovableToolbar());
+        _window.setCenter(border);
 
-        // Set scene and show
-        scene = new Scene(window);
-        primaryStage.setScene(scene);
+        // Set _scene and show
+        _scene = new Scene(_window);
+        primaryStage.setScene(_scene);
 
-        av.getStyleClass().add("ainur-vis");
+        _av.getStyleClass().add("ainur-vis");
 
-        scene.getStylesheets().add(getClass().getResource(STYLE_SHEET).toExternalForm());
+        _scene.getStylesheets().add(getClass().getResource(STYLE_SHEET).toExternalForm());
         primaryStage.show();
 
-        av.run();
+        _av.run();
+    }
+
+    public void stop() {
+        _av.stop();
     }
 
     private BorderPane  createResizableBorderBox() {
         BorderPane border = new BorderPane();
-        border.getStyleClass().add("window-border");
+        border.getStyleClass().add("_window-border");
 
         // AAAAAA (also known as resizability)
         border.setOnMouseMoved(fuckMe -> {
@@ -74,52 +78,52 @@ public class VisualiserWindow {
             boolean bottom = fuckMe.getY() > border.getHeight() - borderSize;
 
             if(left && !bottom)
-                scene.setCursor(Cursor.W_RESIZE);
+                _scene.setCursor(Cursor.W_RESIZE);
             else if(left && bottom)
-                scene.setCursor(Cursor.SW_RESIZE);
+                _scene.setCursor(Cursor.SW_RESIZE);
             else if(bottom && !left && !right)
-                scene.setCursor(Cursor.S_RESIZE);
+                _scene.setCursor(Cursor.S_RESIZE);
             else if(bottom && right)
-                scene.setCursor(Cursor.SE_RESIZE);
+                _scene.setCursor(Cursor.SE_RESIZE);
             else if(right)
-                scene.setCursor(Cursor.E_RESIZE);
+                _scene.setCursor(Cursor.E_RESIZE);
             else
-                scene.setCursor(Cursor.DEFAULT);
+                _scene.setCursor(Cursor.DEFAULT);
         });
         border.setOnMousePressed(fuckMe -> {
-            this.x = fuckMe.getScreenX();
-            this.y = fuckMe.getScreenY();
+            this._x = fuckMe.getScreenX();
+            this._y = fuckMe.getScreenY();
 
             double borderSize = border.getCenter().getLayoutX();
 
-            leftDraggedState = fuckMe.getX() < borderSize;
-            rightDraggedState = fuckMe.getX() > border.getWidth() - borderSize;
-            bottomDraggedState = fuckMe.getY() > border.getHeight() - borderSize;
+            _leftDraggedState = fuckMe.getX() < borderSize;
+            _rightDraggedState = fuckMe.getX() > border.getWidth() - borderSize;
+            _bottomDraggedState = fuckMe.getY() > border.getHeight() - borderSize;
         });
         border.setOnMouseDragged(fuckMe -> {
-            double deltaX = fuckMe.getScreenX() - this.x;
-            double deltaY = fuckMe.getScreenY() - this.y;
-            this.x = fuckMe.getScreenX();
-            this.y = fuckMe.getScreenY();
+            double deltaX = fuckMe.getScreenX() - this._x;
+            double deltaY = fuckMe.getScreenY() - this._y;
+            this._x = fuckMe.getScreenX();
+            this._y = fuckMe.getScreenY();
 
-            if(leftDraggedState) {
-                double nextWidth = stage.getWidth() - deltaX;
+            if(_leftDraggedState) {
+                double nextWidth = _stage.getWidth() - deltaX;
 
-                if(nextWidth > window.minWidth(window.getHeight()) && nextWidth < window.maxWidth(window.getHeight())) {
-                    stage.setX(stage.getX() + deltaX);
-                    stage.setWidth(nextWidth);
+                if(nextWidth > _window.minWidth(_window.getHeight()) && nextWidth < _window.maxWidth(_window.getHeight())) {
+                    _stage.setX(_stage.getX() + deltaX);
+                    _stage.setWidth(nextWidth);
                 }
-            } else if(rightDraggedState) {
-                double nextWidth = stage.getWidth() + deltaX;
+            } else if(_rightDraggedState) {
+                double nextWidth = _stage.getWidth() + deltaX;
 
-                if(nextWidth > window.minWidth(window.getHeight()) && nextWidth < window.maxWidth(window.getHeight()))
-                    stage.setWidth(nextWidth);
+                if(nextWidth > _window.minWidth(_window.getHeight()) && nextWidth < _window.maxWidth(_window.getHeight()))
+                    _stage.setWidth(nextWidth);
             }
-            if (bottomDraggedState) {
-                double nextHeight = stage.getHeight() + deltaY;
+            if (_bottomDraggedState) {
+                double nextHeight = _stage.getHeight() + deltaY;
 
-                if(nextHeight > window.minHeight(window.getWidth()) && nextHeight < window.maxHeight(window.getWidth()))
-                    stage.setHeight(nextHeight);
+                if(nextHeight > _window.minHeight(_window.getWidth()) && nextHeight < _window.maxHeight(_window.getWidth()))
+                    _stage.setHeight(nextHeight);
             }
         });
 
@@ -130,20 +134,20 @@ public class VisualiserWindow {
         toolBar.getItems().add(new WindowButtons());
         toolBar.getStyleClass().add("toolbar");
 
-        // Add ability to move window from taskbar
+        // Add ability to move _window from taskbar
         toolBar.setOnMousePressed(me -> {
-            this.x = toolBar.getScene().getWindow().getX() - me.getScreenX();
-            this.y = toolBar.getScene().getWindow().getY() - me.getScreenY();
+            this._x = toolBar.getScene().getWindow().getX() - me.getScreenX();
+            this._y = toolBar.getScene().getWindow().getY() - me.getScreenY();
         });
         toolBar.setOnMouseDragged(me -> {
-            stage.setX(me.getScreenX() + this.x);
-            stage.setY(me.getScreenY() + this.y);
+            _stage.setX(me.getScreenX() + this._x);
+            _stage.setY(me.getScreenY() + this._y);
         });
 
         return toolBar;
     }
     /**
-     * Custom class for custom window taskbar
+     * Custom class for custom _window taskbar
      */
     private class WindowButtons extends HBox {
         public WindowButtons() {
