@@ -162,7 +162,6 @@ public class AinurVisualiser extends VBox {
 
         //setVgrow(graphStatHBox, Priority.SOMETIMES); TODO: Set this when the gv and asv are resizable
         setVgrow(_sv, Priority.SOMETIMES);
-        setPadding(new Insets(15));
         // add to the AinurVisualiser
         //this.getChildren().add(outerVBox);
     }

@@ -193,6 +193,8 @@ public class Ainur extends Application {
         // Insert custom task bar and visualiser into border pane.
         BorderPane borderPane = new BorderPane();
 
+        av.getStyleClass().add("ainur-vis");
+
         borderPane.setTop(toolBar);
         borderPane.setCenter(av);
 

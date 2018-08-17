@@ -10,11 +10,17 @@
 
 .vis {
     -fx-padding: 10;
+    -fx-background-color: #fafafa;
+}
+
+.ainur-vis {
+    -fx-background-color: #484848;
+    -fx-padding: 0 2 2 2;
 }
 
 .stats-vis * {
     -fx-background-color: #b8a2ff !important;
-    -fx-text-fill: #fafafa;
+    -fx-text-fill: #fafafa !important;
 }
 
 .schedule-vis * {
