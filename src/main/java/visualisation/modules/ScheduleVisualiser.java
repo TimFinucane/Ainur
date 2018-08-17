@@ -20,6 +20,7 @@ import javafx.scene.text.TextAlignment;
  */
 public class ScheduleVisualiser extends VBox {
     private static final String INNER_SCHEDULE_CLASS_CSS = "inner-schedule";
+    private static final String CANVAS_PADDING_CLASS = "canvas-padding";
 
     private static final Color FILL_COLOUR = Color.web(Config.UI_PRIMARY_COLOUR);
     private static final Color TEXT_COLOUR = Color.BLACK;
@@ -35,26 +36,28 @@ public class ScheduleVisualiser extends VBox {
         _scheduleView.widthProperty().bind(canvasHolder.widthProperty());
         _scheduleView.heightProperty().bind(canvasHolder.heightProperty());
 
-        ScrollPane scrollPane = new ScrollPane(canvasHolder);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setPrefHeight(100);
-
         // Ensure that when we resize, it redraws the schedule
         widthProperty().addListener(e -> draw());
         heightProperty().addListener(e -> draw());
-
-        // Add the canvas holder, and make sure it takes available height
-        getChildren().add(scrollPane);
-        setVgrow(scrollPane, Priority.ALWAYS);
 
         // And the number axis
         _axis = new NumberAxis(0, 100, 10);
         _axis.setTickLength(10.0);
         _axis.setTickLabelFont(new Font(_axis.getTickLabelFont().getName(), 16.0));
-        getChildren().add(_axis);
 
+        VBox scheduleWrapper = new VBox();
+        scheduleWrapper.getChildren().addAll(canvasHolder, _axis);
+        scheduleWrapper.getStyleClass().addAll(CANVAS_PADDING_CLASS);
+
+        ScrollPane scrollPane = new ScrollPane(scheduleWrapper);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setPrefHeight(150);
+
+        // Add the canvas holder, and make sure it takes available height
+        getChildren().add(scrollPane);
+        setVgrow(scrollPane, Priority.ALWAYS);
         // And have a nice bit of pad
         this.getStyleClass().add(INNER_SCHEDULE_CLASS_CSS);
 
