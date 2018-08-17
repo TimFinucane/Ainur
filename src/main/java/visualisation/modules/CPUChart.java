@@ -19,6 +19,7 @@ public class CPUChart extends HBox {
     private static final String STATS_CONTENT_CLASS_CSS = "stats-content";
 
     private final double _updateFrequency;
+    private double _time = 0;
 
     private XYChart.Series<Number, Number> _chartData = new XYChart.Series<>();
 
@@ -80,9 +81,10 @@ public class CPUChart extends HBox {
         } catch (Exception e) { /* Nothing should happen here imo */ }
 
         // Add current cpu usage to chart data structure, chart will automatically update. Divide by 1000 for seconds
-        _chartData.getData().add(new XYChart.Data<>(_updateFrequency, cpuUsage));
+        _chartData.getData().add(new XYChart.Data<>(_time, cpuUsage));
         if (_chartData.getData().size() > 50) { // If data size is greater than 100 points begin to remove
             _chartData.getData().remove(0, 1);
         }
+        _time += _updateFrequency;
     }
 }

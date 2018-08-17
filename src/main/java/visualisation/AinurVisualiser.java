@@ -7,7 +7,6 @@ import common.graph.Node;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -86,12 +85,14 @@ public class AinurVisualiser extends VBox {
         _finishedLabel.setVisible(false);
 
         // Create the stats section
-        HBox statsUpper = new HBox(_statistics, _cpuChart);
-        statsUpper.setPadding(new Insets(15));
+        // TODO: Comment and/or split into methods?
+        VBox extraStats = new VBox(_timeLabel, _statistics);
+
+        HBox statsUpper = new HBox(extraStats, _cpuChart);
         HBox.setHgrow(_statistics, Priority.SOMETIMES);
         HBox.setHgrow(_cpuChart, Priority.SOMETIMES);
 
-        VBox statsBox = new VBox(_finishedLabel, _timeLabel, statsUpper, _bounds);
+        VBox statsBox = new VBox(_finishedLabel, statsUpper, _bounds);
         statsBox.setAlignment(Pos.CENTER);
         VBox.setVgrow(statsUpper, Priority.SOMETIMES);
         VBox.setVgrow(_bounds, Priority.SOMETIMES);
@@ -127,8 +128,8 @@ public class AinurVisualiser extends VBox {
         _fastPoller = new Timeline(new KeyFrame(FAST_POLLING_DELAY, event -> {
             _bounds.update(_algorithm.lowerBound(), _algorithm.getCurrentBest().getEndTime());
             _statistics.update(_algorithm.branchesExplored(), _algorithm.branchesCulled());
-
             updateTimeLabel(_fastPoller.getTotalDuration());
+
             updateGraphNodes();
         }));
 
@@ -143,7 +144,10 @@ public class AinurVisualiser extends VBox {
             }
         }));
 
-        _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> _schedule.update(_algorithm.getCurrentBest())));
+        _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> {
+            _schedule.update(_algorithm.getCurrentBest());
+            _cpuChart.update();
+        }));
 
         _slowPoller.setCycleCount(Animation.INDEFINITE);
         _mediumPoller.setCycleCount(Animation.INDEFINITE);
