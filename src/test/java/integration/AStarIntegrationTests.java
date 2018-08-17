@@ -2,7 +2,6 @@ package integration;
 
 import algorithm.AStarAlgorithm;
 import algorithm.Algorithm;
-import algorithm.DFSAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
@@ -12,17 +11,10 @@ import common.graph.Graph;
 import common.schedule.Schedule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import javafx.util.Pair;
 import org.junit.Assert;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class AStarIntegrationTests extends IntegrationTest {
 
@@ -55,6 +47,4 @@ public class AStarIntegrationTests extends IntegrationTest {
         Assert.assertEquals(optimalScheduleLength, schedule.getEndTime());
         Assert.assertTrue(Validator.isValid(inputGraph, schedule));
     }
-
-
 }

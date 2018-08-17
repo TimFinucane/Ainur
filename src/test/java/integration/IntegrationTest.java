@@ -1,10 +1,6 @@
 package integration;
 
 import common.graph.Graph;
-import common.graph.Node;
-import common.schedule.Schedule;
-import common.schedule.SimpleSchedule;
-import common.schedule.Task;
 import io.dot.DotGraphReader;
 import javafx.util.Pair;
 import org.junit.jupiter.api.*;
@@ -23,7 +19,7 @@ public abstract class IntegrationTest {
     // These are protected to allow subclasses to add or modify them
     protected List<String>                        graphs;
     // Shows the number of processors and the end time of the schedule.
-    protected List<List<Pair<Integer, Integer>>>  optimalSchedules;
+    protected List<Pair<Integer, Integer>>  optimalSchedules;
 
     /**
      * Integration tests that run on lots of graph inputs
@@ -54,7 +50,7 @@ public abstract class IntegrationTest {
                 outputFiles.add(fileString);
             }
         }
-        List<List<Pair<Integer, Integer>>> optimalSchedulesReplacement = new ArrayList<>();
+        List<Pair<Integer, Integer>> optimalSchedulesReplacement = new ArrayList<>();
 
         for (String outputFileNameString : outputFiles) {
 
@@ -70,10 +66,8 @@ public abstract class IntegrationTest {
             int graphProcessorNo = scheduleProcessors(is1);
             int graphOptimalSolution = scheduleLength(is2);
 
-            List<Pair<Integer, Integer>> listToAdd = new ArrayList<>();
             Pair<Integer, Integer> pair = new Pair<>(graphProcessorNo, graphOptimalSolution);
-            listToAdd.add(pair);
-            optimalSchedulesReplacement.add(listToAdd);
+            optimalSchedulesReplacement.add(pair);
         }
 
         optimalSchedules = optimalSchedulesReplacement;
@@ -97,7 +91,7 @@ public abstract class IntegrationTest {
         for (int graphIdx = 0; graphIdx < graphs.size(); ++graphIdx) {
                     String graphName = graphs.get(graphIdx);
 
-                    for (Pair<Integer, Integer> processorOptimalTime : optimalSchedules.get(graphIdx)) {
+                    Pair<Integer, Integer> processorOptimalTime = optimalSchedules.get(graphIdx);
 
                         optimalTests.add(DynamicTest.dynamicTest(
                                 generateName(graphName, processorOptimalTime),
@@ -108,7 +102,6 @@ public abstract class IntegrationTest {
                                 )
                         ));
                     }
-            }
         return optimalTests;
     }
 

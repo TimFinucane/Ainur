@@ -13,17 +13,10 @@ import common.graph.Graph;
 import common.schedule.Schedule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import javafx.util.Pair;
 import org.junit.Assert;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class AStarMultiThreadingIntegrationTests extends IntegrationTest {
 
