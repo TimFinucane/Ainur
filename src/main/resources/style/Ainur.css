@@ -63,6 +63,15 @@
     -fx-font-size: 20;
 }
 
+.finished-label {
+    -fx-font: bold 20 "Roboto Mono Medium";
+    -fx-text-fill: -fx-green-colour !important;
+}
+
+.time-label-finished {
+    -fx-text-fill: -fx-green-colour !important;
+}
+
 /* Tool bar */
 
 .tool-bar {

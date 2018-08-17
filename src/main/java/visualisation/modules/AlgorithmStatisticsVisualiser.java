@@ -2,16 +2,13 @@ package visualisation.modules;
 
 import common.Config;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -39,6 +36,8 @@ public class AlgorithmStatisticsVisualiser extends VBox {
     // CONSTANTS
     private static final String TIME_LABEL_CLASS_CSS = "time-label";
     private static final String STATS_CONTENT_CLASS_CSS = "stats-content";
+    private static final String TIME_LABEL_FINISH_CLASS_CSS = "time-label-finished";
+    private static final String FINISHED_LABEL_CLASS = "finished-label";
 
     private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 100;
     private static final int SCHEDULE_TIME_BOUNDING_WIDTH = 750;
@@ -80,7 +79,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
     private Label _memoryAllocatedValue;
     private Label _memoryMaxValue;
 
-
+    private Label _finishedLabel;
 
     /**
      * Creates all visual elements and arranges on the screen. Many labels will initially be set to zero.
@@ -115,6 +114,10 @@ public class AlgorithmStatisticsVisualiser extends VBox {
 
         Label memoryMaxLabel = new Label("JVM Memory Limit:");
         _memoryMaxValue = new Label("");
+
+        _finishedLabel = new Label("SCHEDULING COMPLETE");
+        _finishedLabel.getStyleClass().add(FINISHED_LABEL_CLASS);
+        _finishedLabel.setVisible(false);
 
         // Add label elements to label grid so are aligned
         // Holds the following labels
@@ -158,9 +161,12 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         }, new Date(), 10);
 
         // Create horizontal box with misc. labels to the left of cpu chart
+        VBox labelVbox = new VBox();
+        labelVbox.getChildren().addAll(_finishedLabel, _labelGrid);
+
         HBox labelAndCpuVBox = new HBox();
         labelAndCpuVBox.setPadding(new Insets(15));
-        labelAndCpuVBox.getChildren().addAll(_labelGrid, _cpuChart);
+        labelAndCpuVBox.getChildren().addAll(labelVbox, _cpuChart);
         HBox.setHgrow(_cpuChart, Priority.SOMETIMES);
 
         // Create vertical box with the bounding visualization and it's axis in vertical alignment
@@ -211,7 +217,8 @@ public class AlgorithmStatisticsVisualiser extends VBox {
      */
     public void stop() {
 
-        _timeLabel.setTextFill(FINISHING_TIMER_FONT_FILL);
+        _finishedLabel.setVisible(true);
+        _timeLabel.getStyleClass().add(TIME_LABEL_FINISH_CLASS_CSS);
         _timer.cancel();
 
         // Render finishing rectangle marker in middle column :)
