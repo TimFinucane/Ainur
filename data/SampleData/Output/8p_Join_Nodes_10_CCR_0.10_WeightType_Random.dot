@@ -1,0 +1,21 @@
+digraph "Join_Nodes_10_CCR_0.10_WeightType_Random" {
+	1	 [Processor=0,Start=0,Weight=43];
+	10	 [Processor=2,Start=73,Weight=57];
+	1 -> 10	 [Weight=10];
+	2	 [Processor=1,Start=0,Weight=36];
+	2 -> 10	 [Weight=10];
+	3	 [Processor=2,Start=0,Weight=71];
+	3 -> 10	 [Weight=4];
+	4	 [Processor=3,Start=0,Weight=71];
+	4 -> 10	 [Weight=2];
+	5	 [Processor=4,Start=0,Weight=50];
+	5 -> 10	 [Weight=4];
+	6	 [Processor=5,Start=0,Weight=64];
+	6 -> 10	 [Weight=5];
+	7	 [Processor=6,Start=0,Weight=57];
+	7 -> 10	 [Weight=7];
+	8	 [Processor=1,Start=36,Weight=14];
+	8 -> 10	 [Weight=6];
+	9	 [Processor=7,Start=0,Weight=57];
+	9 -> 10	 [Weight=4];
+}
