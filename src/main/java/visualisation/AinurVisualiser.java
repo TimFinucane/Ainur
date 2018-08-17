@@ -8,8 +8,9 @@ import common.schedule.Schedule;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import visualisation.modules.AlgorithmStatisticsVisualiser;
@@ -18,13 +19,18 @@ import visualisation.modules.ScheduleVisualiser;
 import visualisation.modules.Statistics;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class AinurVisualiser extends Region {
+public class AinurVisualiser extends VBox {
 
     /* MACROS */
 
-    public final static Duration FAST_POLLING_DELAY = Duration.millis(100);
-    public final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
+    // Delays
+    private final static Duration FAST_POLLING_DELAY = Duration.millis(16);
+    private final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
+    private final static Duration MEDIUM_POLLING_DELAY = Duration.millis(333);
+
+    private final static int INTERPOL_MOD = 3;
 
     /* Fields */
 
@@ -40,6 +46,7 @@ public class AinurVisualiser extends Region {
     // Used to indicate whether or not the algorithm is running
     private Timeline _fastPoller;
     private Timeline _slowPoller;
+    private Timeline _mediumPoller;
 
     // Used to indicate whether or not the algorithm is tiered
     private boolean _isTiered;
@@ -52,23 +59,25 @@ public class AinurVisualiser extends Region {
      *
      * @param algorithm the algorithm to visualise
      * @param graph The task graph to be displayed
-     * @param lowerBound the lowerbound of the algorithm //TODO this should be removed when a method to get this is implemented
-     * @param upperBound the upperbound of the algorithm //TODO this should be removed when a method to get this is implemented
-     * @param coresUsed The number of cores to be used
      */
-    public AinurVisualiser(Algorithm algorithm, Graph graph, int lowerBound, int upperBound, long coresUsed) {
+    public AinurVisualiser(Algorithm algorithm, Graph graph, int numProcessors) {
         // Assign Args
         _algorithm = algorithm;
 
         // Initialise visualisers
         _gv = new GraphVisualiser(graph);
-        _sv = new ScheduleVisualiser();
-        _asv = new AlgorithmStatisticsVisualiser(lowerBound, upperBound, coresUsed);
+        _sv = new ScheduleVisualiser(numProcessors);
+
+        int coresUsed = (algorithm instanceof TieredAlgorithm) ? ((TieredAlgorithm) algorithm).numThreads() : 1;
+        // TODO: When getCurrentBest is safe (i.e. using non optimal starting algorithm) remove the math min
+        int upperBound = Math.min(algorithm.getCurrentBest().getEndTime(), 1000);
+        _asv = new AlgorithmStatisticsVisualiser(algorithm.lowerBound(), upperBound, coresUsed);
 
         // Initialise stats object
         _stats = new Statistics();
+
         _stats.setMaxScheduleBound(upperBound);
-        _stats.setMinScheduleBound(lowerBound);
+        _stats.setMinScheduleBound(algorithm.lowerBound());
 
         // See if algorithm is tiered.
         _isTiered = isTiered(_algorithm);
@@ -86,16 +95,29 @@ public class AinurVisualiser extends Region {
      */
     public void run() {
         _fastPoller = new Timeline(new KeyFrame(FAST_POLLING_DELAY, event -> {
-            this.updateGraph();
             this.updateStatistics();
+            this.updateGraphNodes();
+        }));
+
+        AtomicInteger count = new AtomicInteger(0);
+        _mediumPoller = new Timeline(new KeyFrame(MEDIUM_POLLING_DELAY, event -> {
+            count.incrementAndGet();
+            _gv.update(count.get() / (double) INTERPOL_MOD);
+
+            if (count.get() == INTERPOL_MOD) {
+                _gv.flush();
+                count.set(1);
+            }
         }));
 
         _slowPoller = new Timeline(new KeyFrame(SLOW_POLLING_DELAY, event -> this.updateSchedule()));
 
         _slowPoller.setCycleCount(Animation.INDEFINITE);
+        _mediumPoller.setCycleCount(Animation.INDEFINITE);
         _fastPoller.setCycleCount(Animation.INDEFINITE);
 
         _fastPoller.play();
+        _mediumPoller.play();
         _slowPoller.play();
     }
 
@@ -105,11 +127,12 @@ public class AinurVisualiser extends Region {
      * This should be called from another thread to interrupt the show method's while loop
      */
     public void stop() {
-        updateGraph();
         updateSchedule();
         updateStatistics();
+        _gv.stop();
         _asv.stop();
         _fastPoller.stop();
+        _mediumPoller.stop();
         _slowPoller.stop();
     }
 
@@ -125,11 +148,14 @@ public class AinurVisualiser extends Region {
         graphStatHBox.getChildren().addAll(_gv, _asv);
 
         // Put the schedule visualiser underneath
-        VBox outerVBox = new VBox();
-        outerVBox.getChildren().addAll(graphStatHBox, _sv);
+        //VBox outerVBox = new VBox();
+        this.getChildren().addAll(graphStatHBox, _sv);
 
+        //setVgrow(graphStatHBox, Priority.SOMETIMES); TODO: Set this when the gv and asv are resizable
+        setVgrow(_sv, Priority.SOMETIMES);
+        setPadding(new Insets(15));
         // add to the AinurVisualiser
-        this.getChildren().add(outerVBox);
+        //this.getChildren().add(outerVBox);
     }
 
     /**
@@ -137,14 +163,15 @@ public class AinurVisualiser extends Region {
      * Gets the current node / nodes from an algorithm.
      * Uses this node to update the GraphVisualiser.
      */
-    private void updateGraph() {
+    private void updateGraphNodes() {
         if (_isTiered) {
             TieredAlgorithm tAlgorithm = (TieredAlgorithm) _algorithm;
             List<Node> nodeList = tAlgorithm.currentNodes();
-            _gv.update(nodeList);
+            for (Node node : nodeList)
+                _gv.nodeVisited(node);
         } else {
             Node currentNode = _algorithm.currentNode();
-            _gv.update(currentNode);
+            _gv.nodeVisited(currentNode);
         }
     }
 

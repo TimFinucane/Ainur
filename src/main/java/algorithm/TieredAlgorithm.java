@@ -141,6 +141,10 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         return minBound;
     }
 
+    public int numThreads() {
+        return _threads.length;
+    }
+
     /**
      * Gets the list of current nodes being examined by each currently running algorithm
      *
