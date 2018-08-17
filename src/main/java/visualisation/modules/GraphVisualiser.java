@@ -1,9 +1,11 @@
 package visualisation.modules;
 
+import common.Config;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import javafx.embed.swing.SwingNode;
+import javafx.geometry.Insets;
 import javafx.scene.layout.Region;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swingViewer.ViewPanel;
@@ -29,23 +31,19 @@ public class GraphVisualiser extends Region {
     public static final int WINDOW_WIDTH = 750;
 
     // Colours
-    public static final String NODE_HIGHLIGHT_COLOUR = "#7C4DFF";
-    public static final String NODE_FINISH_COLOUR = "#4CAF50";
-    public static final String NODE_HIGHLIGHT_COLOUR_2 = "#484848";
-    public static final String NODE_COLOUR = "#fafafa";
+    public static final String NODE_HIGHLIGHT_COLOUR = Config.UI_PRIMARY_COLOUR;
+    public static final String NODE_FINISH_COLOUR = Config.UI_GREEN_COLOUR;
+    public static final String NODE_HIGHLIGHT_COLOUR_2 = Config.UI_LIGHT_BLACK_COLOUR;
 
     // Used for styling the graph and its nodes
     public static final String STYLE_SHEET =
             "node {" +
-            "   fill-color:" + NODE_COLOUR +", " + NODE_HIGHLIGHT_COLOUR + ";" +
+            "   fill-color:" + Config.UI_SECONDAY_COLOR +", " + NODE_HIGHLIGHT_COLOUR + ";" +
             "   fill-mode: dyn-plain;" +
-            "   text-color: " + NODE_COLOUR +";" +
+            "   text-color: " + Config.UI_WHITE_COLOUR +";" +
             "   text-alignment: above;" +
             "   text-size: 15px;" +
             "   size: 15px;" +
-            "   stroke-mode: plain;" +
-            "   stroke-color: black;" +
-            "   stroke-width: 0.5;" +
             "   shadow-color: " + NODE_HIGHLIGHT_COLOUR + ", " + NODE_HIGHLIGHT_COLOUR_2 + ";" +
             "   shadow-mode: gradient-radial;" +
             "   shadow-offset: 0;" +
@@ -62,13 +60,10 @@ public class GraphVisualiser extends Region {
             "   arrow-shape: arrow;" +
             "   arrow-size: 15px, 5px;" +
             "   size: 1.5px;" +
-            "   fill-color: " + NODE_COLOUR + ";" +
-            "   stroke-mode: plain;" +
-            "   stroke-color: black;" +
-            "   stroke-width: 0.5;" +
+            "   fill-color: " + Config.UI_SECONDAY_COLOR + ";" +
             "}" +
             "graph {" +
-            "   fill-color: #484848;" +
+            "   fill-color: " + Config.UI_LIGHT_BLACK_COLOUR + ";" +
             "}";
     private static final String UI_LABEL = "ui.label";
     private static final String UI_STYLE_SHEET = "ui.stylesheet";
