@@ -1,9 +1,21 @@
 package integration;
 
 import algorithm.Algorithm;
+import algorithm.DFSAlgorithm;
+import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.pruner.Arborist;
+import algorithm.heuristics.pruner.ProcessorOrderPruner;
+import algorithm.heuristics.pruner.StartTimePruner;
+import common.graph.Graph;
+import common.schedule.Schedule;
+import io.GraphReader;
+import io.dot.DotGraphReader;
 import javafx.util.Pair;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,15 +26,27 @@ public class DFSIntegrationTests extends IntegrationTest {
 
     public DFSIntegrationTests() {
         // Get all files in data/SampleData/Input, override graphs for this to be the value
-        File folder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
-        graphs = Arrays.asList(folder.list());
+        File inputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
+        graphs = Arrays.asList(inputFolder.list());
+
 
         // Make a list of lists with one pair in each corresponding to the number of processors and
         // optimal solution for that graph.
+        File outputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Output")));
+        List<String> outputFiles = Arrays.asList(outputFolder.list());
         List<List<Pair<Integer, Integer>>> optimalSchedulesReplacement = new ArrayList<>();
-        for (String graphString : graphs) {
-            int graphProcessorNo = scheduleProcessors(graphString);
-            int graphOptimalSolution = scheduleLength(graphString);
+
+        for (String outputFileNameString : outputFiles) {
+
+            InputStream is = null;
+            try {
+                is = new FileInputStream(outputFileNameString);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            int graphProcessorNo = scheduleProcessors(is);
+            int graphOptimalSolution = scheduleLength(is);
 
             List<Pair<Integer, Integer>> listToAdd = new ArrayList<>();
             listToAdd.add(new Pair<>(graphProcessorNo, graphOptimalSolution));
@@ -35,9 +59,23 @@ public class DFSIntegrationTests extends IntegrationTest {
     @Override
     protected void runAgainstOptimal(String graph, int processors, int optimalScheduleLength) {
 
+        // Single threaded DFS implementation
+        Algorithm dfsAlgorithm = new DFSAlgorithm(
+                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                new CriticalPath()
+        );
 
-//        Algorithm dfsAlgorithm = new
-        
+
+        GraphReader reader = null;
+        try {
+            reader = new DotGraphReader(new FileInputStream(graph));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Graph inputGraph = reader.read();
+
+        dfsAlgorithm.run(inputGraph, processors);
+        Schedule schedule = dfsAlgorithm.getCurrentBest();
 
     }
 
