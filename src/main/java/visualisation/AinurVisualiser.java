@@ -8,7 +8,6 @@ import common.schedule.Schedule;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -163,22 +162,15 @@ public class AinurVisualiser extends VBox {
         HBox.setHgrow(_asv, Priority.SOMETIMES);
 
         // Put the schedule visualiser underneath
-        HBox scheduleWrapper = new HBox();
+        HBox scheduleWrapper = new HBox(_sv);
         scheduleWrapper.getStyleClass().addAll(SCHEDULE_CLASS_CSS, VIS_CLASS_CSS);
+        HBox.setHgrow(_sv, Priority.ALWAYS);
 
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(_sv);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setVmax(100);
-        scrollPane.setPrefSize(150, 150);
-
-        scheduleWrapper.getChildren().add(scrollPane);
+        VBox.setVgrow(scheduleWrapper, Priority.ALWAYS);
 
         this.getChildren().addAll(graphStatHBox, scheduleWrapper);
 
         //setVgrow(graphStatHBox, Priority.SOMETIMES); TODO: Set this when the gv and asv are resizable
-        HBox.setHgrow(scrollPane, Priority.ALWAYS);
     }
 
     /**

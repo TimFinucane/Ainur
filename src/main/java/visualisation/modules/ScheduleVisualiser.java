@@ -7,7 +7,10 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.layout.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -32,13 +35,18 @@ public class ScheduleVisualiser extends VBox {
         _scheduleView.widthProperty().bind(canvasHolder.widthProperty());
         _scheduleView.heightProperty().bind(canvasHolder.heightProperty());
 
+        ScrollPane scrollPane = new ScrollPane(canvasHolder);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
         // Ensure that when we resize, it redraws the schedule
         widthProperty().addListener(e -> draw());
         heightProperty().addListener(e -> draw());
 
         // Add the canvas holder, and make sure it takes available height
-        getChildren().add(canvasHolder);
-        setVgrow(canvasHolder, Priority.ALWAYS);
+        getChildren().add(scrollPane);
+        setVgrow(scrollPane, Priority.ALWAYS);
 
         // And the number axis
         _axis = new NumberAxis(0, 100, 10);
@@ -49,7 +57,10 @@ public class ScheduleVisualiser extends VBox {
         // And have a nice bit of pad
         this.getStyleClass().add(INNER_SCHEDULE_CLASS_CSS);
 
-        setPrefHeight(10 + 25 * numProcessors);
+        canvasHolder.setMinHeight(25 * numProcessors);
+        canvasHolder.setPrefHeight(50 * numProcessors);
+        _axis.setMinHeight(25);
+        scrollPane.setMinHeight(100);
     }
 
     /**
