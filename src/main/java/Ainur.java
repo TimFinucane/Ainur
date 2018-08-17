@@ -253,7 +253,6 @@ public class Ainur extends Application {
             } else if(rightDraggedState) {
                 double nextWidth = primaryStage.getWidth() + deltaX;
 
-                System.out.println(primaryStage.getMinWidth());
                 if(nextWidth > borderPane.minWidth(borderPane.getHeight()) && nextWidth < borderPane.maxWidth(borderPane.getHeight()))
                     primaryStage.setWidth(nextWidth);
             }
