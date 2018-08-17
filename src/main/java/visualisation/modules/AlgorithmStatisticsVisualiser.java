@@ -43,8 +43,8 @@ public class AlgorithmStatisticsVisualiser extends VBox {
     private static final double LABEL_GRID_COLUMN_WIDTH = 150;
     private static final double LABEL_GRID_ROW_HEIGHT = 20;
 
-    private static final Color FINISHING_TICK_MARK_FILL = Color.RED;
-    private static final Color FINISHING_TIMER_FONT_FILL = Color.RED;
+    private static final Color FINISHING_TICK_MARK_FILL = Color.web(Config.UI_GREEN_COLOUR);
+    private static final Color FINISHING_TIMER_FONT_FILL = Color.web(Config.UI_GREEN_COLOUR);
 
     // BOUND FIELDS
     private double _initialLowerBound;
