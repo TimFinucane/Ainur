@@ -24,11 +24,21 @@
 
 .tool-bar {
     -fx-background-color: #484848;
+    -fx-padding: 0;
 }
 
 .close-button {
     -fx-background-color: #484848;
     -fx-text-fill: #fafafa;
+    -fx-font-size: 14;
+    -fx-background-radius: 0;
+    -fx-fill-width: 20px;
+    -fx-alignment: center-right;
+}
+
+.close-button:hover {
+    -fx-background-color: #6d6d6d;
+    -fx-font: bold 14.5 "Roboto Mono Medium";
 }
 
 .stats-content {
