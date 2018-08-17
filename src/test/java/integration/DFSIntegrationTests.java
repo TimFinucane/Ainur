@@ -1,11 +1,11 @@
 package integration;
 
+import algorithm.Algorithm;
 import javafx.util.Pair;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,17 +17,27 @@ public class DFSIntegrationTests extends IntegrationTest {
         File folder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
         graphs = Arrays.asList(folder.list());
 
-        // get optimal schedules from data/SampleData/Output
+        // Make a list of lists with one pair in each corresponding to the number of processors and
+        // optimal solution for that graph.
+        List<List<Pair<Integer, Integer>>> optimalSchedulesReplacement = new ArrayList<>();
         for (String graphString : graphs) {
+            int graphProcessorNo = scheduleProcessors(graphString);
+            int graphOptimalSolution = scheduleLength(graphString);
 
-            Pair<Integer, Integer> processorWithOptimal = new Pair<>(0, 0);
+            List<Pair<Integer, Integer>> listToAdd = new ArrayList<>();
+            listToAdd.add(new Pair<>(graphProcessorNo, graphOptimalSolution));
+            optimalSchedulesReplacement.add(listToAdd);
         }
+
+        optimalSchedules = optimalSchedulesReplacement;
     }
 
     @Override
     protected void runAgainstOptimal(String graph, int processors, int optimalScheduleLength) {
 
 
+//        Algorithm dfsAlgorithm = new
+        
 
     }
 
