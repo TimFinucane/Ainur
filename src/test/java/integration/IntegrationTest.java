@@ -17,10 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -158,6 +155,8 @@ public abstract class IntegrationTest {
 
         // Have to wait for all tasks to be searched before number of processors can be attained.
         Schedule schedule = new SimpleSchedule(noOfProcessors);
+
+        Collections.sort(tasks, Comparator.comparingInt(Task::getStartTime)); // This line is pretty sick: Order tasks by start time so that scheduler doesn't complain
 
         // Populate schedule
         for (Task task : tasks)
