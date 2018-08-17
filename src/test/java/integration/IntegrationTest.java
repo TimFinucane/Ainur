@@ -137,32 +137,16 @@ public abstract class IntegrationTest {
         Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
         Matcher m = taskPattern.matcher(inputTextAsString);
 
-        List<Task> tasks = new ArrayList<>();
-        int id = 0;
-        int noOfProcessors = 0;
-
+        int maxTaskEndTime = 0;
+        // loop through all nodes looking for latest start time
         while (m.find()) {
-            tasks.add(new Task(
-                    Integer.parseInt(m.group(2)), // Processor no.
-                    Integer.parseInt(m.group(3)), // Start time
-                    new Node(Integer.parseInt(m.group(4)), m.group(1), id))); // Node w/ weight and label
+            // Start time + Weight
+            int taskEndTime = Integer.parseInt(m.group(3)) + Integer.parseInt(m.group(4));
+            maxTaskEndTime = taskEndTime > maxTaskEndTime ? taskEndTime : maxTaskEndTime;
 
-            id++;
-            // In examples processors seem to start at 0, so for processors labelled up to n there are n+1 processors.
-            if (noOfProcessors < Integer.parseInt(m.group(2)) + 1)
-                noOfProcessors = Integer.parseInt(m.group(2)) + 1;
         }
 
-        // Have to wait for all tasks to be searched before number of processors can be attained.
-        Schedule schedule = new SimpleSchedule(noOfProcessors);
-
-        Collections.sort(tasks, Comparator.comparingInt(Task::getStartTime)); // This line is pretty sick: Order tasks by start time so that scheduler doesn't complain
-
-        // Populate schedule
-        for (Task task : tasks)
-            schedule.addTask(task);
-
-        return schedule.getEndTime();
+        return maxTaskEndTime;
     }
 
 
