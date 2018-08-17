@@ -28,6 +28,7 @@ public class AinurVisualiser extends VBox {
     private final static String SCHEDULE_CLASS_CSS = "schedule-vis";
     private final static String VIS_CLASS_CSS = "vis";
     private static final String FINISHED_LABEL_CLASS = "finished-label";
+    private static final String TIME_LABEL_CLASS_CSS = "time-label";
     private static final String TIME_LABEL_FINISH_CLASS_CSS = "time-label-finished";
 
     // Delays
@@ -36,6 +37,8 @@ public class AinurVisualiser extends VBox {
     private final static Duration MEDIUM_POLLING_DELAY = Duration.millis(333);
 
     private final static int INTERPOL_MOD = 3;
+
+    private final long _startTime;
 
     /* Fields */
 
@@ -69,6 +72,8 @@ public class AinurVisualiser extends VBox {
         // Assign Args
         _algorithm = algorithm;
 
+        _startTime = System.currentTimeMillis();
+
         int coresUsed = (algorithm instanceof TieredAlgorithm) ? ((TieredAlgorithm) algorithm).numThreads() : 1;
         // TODO: When getCurrentBest is safe (i.e. using non optimal starting algorithm) remove the math min
         int upperBound = Math.min(algorithm.getCurrentBest().getEndTime(), 1000);
@@ -80,13 +85,16 @@ public class AinurVisualiser extends VBox {
         _cpuChart = new CPUChart(SLOW_POLLING_DELAY.toMillis() / 1000.0);
         _statistics = new StatisticsVisualiser(coresUsed);
 
+        _timeLabel.getStyleClass().add(TIME_LABEL_CLASS_CSS);
         _finishedLabel = new Label("SCHEDULING COMPLETE");
         _finishedLabel.getStyleClass().add(FINISHED_LABEL_CLASS);
         _finishedLabel.setVisible(false);
 
         // Create the stats section
         // TODO: Comment and/or split into methods?
-        VBox extraStats = new VBox(_timeLabel, _statistics);
+        VBox extraStats = new VBox(20, _timeLabel, _statistics);
+        extraStats.setAlignment(Pos.TOP_CENTER);
+        VBox.setVgrow(_statistics, Priority.SOMETIMES);
 
         HBox statsUpper = new HBox(extraStats, _cpuChart);
         HBox.setHgrow(_statistics, Priority.SOMETIMES);
@@ -128,7 +136,7 @@ public class AinurVisualiser extends VBox {
         _fastPoller = new Timeline(new KeyFrame(FAST_POLLING_DELAY, event -> {
             _bounds.update(_algorithm.lowerBound(), _algorithm.getCurrentBest().getEndTime());
             _statistics.update(_algorithm.branchesExplored(), _algorithm.branchesCulled());
-            updateTimeLabel(_fastPoller.getTotalDuration());
+            updateTimeLabel(Duration.millis(System.currentTimeMillis() - _startTime));
 
             updateGraphNodes();
         }));

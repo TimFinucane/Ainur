@@ -1,8 +1,10 @@
 package visualisation.modules;
 
+import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 
 import java.math.BigDecimal;
@@ -12,17 +14,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class StatisticsVisualiser extends GridPane {
-    private static final double LABEL_GRID_COLUMN_WIDTH = 150;
-    private static final double LABEL_GRID_ROW_HEIGHT = 20;
 
     private static final String TIME_LABEL_CLASS_CSS = "time-label";
-    private static final String STATS_CONTENT_CLASS_CSS = "stats-content";
-    private static final String TIME_LABEL_FINISH_CLASS_CSS = "time-label-finished";
     private static final String FINISHED_LABEL_CLASS = "finished-label";
 
     // Label Values that need to be periodically updated through life of visualizer
-    private final Label _timeLabel;
-
     private Label _branchesCoveredValue; // Metrics labels
     private Label _branchesCulledValue;
     private Label _cullingRateValue;
@@ -30,20 +26,15 @@ public class StatisticsVisualiser extends GridPane {
     private Label _memoryAllocatedValue;
     private Label _memoryMaxValue;
 
-    private Label _finishedLabel;
-
     public StatisticsVisualiser(int coresUsed) {
         getColumnConstraints().addAll(
-            new ColumnConstraints(LABEL_GRID_COLUMN_WIDTH),
-            new ColumnConstraints(80)
+            new ColumnConstraints(135, 200, -1, Priority.SOMETIMES, HPos.LEFT, true),
+            new ColumnConstraints(75, 100, -1, Priority.SOMETIMES, HPos.RIGHT, true)
         );
 
-        RowConstraints rc = new RowConstraints(LABEL_GRID_ROW_HEIGHT);
+        RowConstraints rc = new RowConstraints(20, 70, -1);
         rc.setMinHeight(100);
         getRowConstraints().add(rc);
-
-        _timeLabel = new Label("0");
-        _timeLabel.getStyleClass().add(TIME_LABEL_CLASS_CSS);
 
         Label processorsUsedLabel = new Label("Cores running:");
         Label branchesCoveredLabel = new Label("Branches explored:");
@@ -63,7 +54,6 @@ public class StatisticsVisualiser extends GridPane {
 
         // Add label elements to label grid so are aligned
         // Holds the following labels
-        add(_timeLabel,             0, 0, 2, 1);
         add(processorsUsedLabel,    0, 1);
         add(processorsUsedValue,    1, 1);
         add(branchesCoveredLabel,   0, 2);
@@ -78,10 +68,6 @@ public class StatisticsVisualiser extends GridPane {
         add(_memoryAllocatedValue,  1, 6);
         add(memoryMaxLabel,         0, 7);
         add(_memoryMaxValue,        1, 7);
-
-        _finishedLabel = new Label("SCHEDULING COMPLETE");
-        _finishedLabel.getStyleClass().add(FINISHED_LABEL_CLASS);
-        _finishedLabel.setVisible(false);
     }
 
     /**
