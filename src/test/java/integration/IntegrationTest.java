@@ -1,6 +1,8 @@
 package integration;
 
 import common.graph.Graph;
+import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import io.dot.DotGraphReader;
 import javafx.util.Pair;
 import org.junit.jupiter.api.Assumptions;
@@ -11,10 +13,13 @@ import org.junit.jupiter.api.TestFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 @Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public abstract class IntegrationTest {
@@ -107,6 +112,35 @@ public abstract class IntegrationTest {
             return null;
         }
     }
+
+    /**
+     * Returns an integer value of the schedule length given a file in .dot format. Attributes must be
+     * specified in the form of [Processor=<>,Start=<>,Weight=<>]
+     * @param file
+     * @return
+     */
+    protected int scheduleLength(File file) throws FileNotFoundException {
+        return scheduleLength(new FileInputStream(file));
+    }
+
+    /**
+     * Returns an integer value of the schedule length given an input stream of text in dot format. Attributes must be
+     * specified in the form of [Processor=<>,Start=<>,Weight=<>]
+     * @param is
+     * @return
+     */
+    protected int scheduleLength(InputStream is) {
+
+        Scanner s = new Scanner(is).useDelimiter("\\A");
+        String asString = s.hasNext() ? s.next() : "";
+
+        Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
+
+        Schedule schedule = new SimpleSchedule(0);
+
+        return 0;
+    }
+
 
     private String generateName(String graph, Pair<Integer, Integer> processorOptimalTime) {
         return graph.substring(graph.lastIndexOf(File.separatorChar) + 1, graph.lastIndexOf('.')) // Just the file name part
