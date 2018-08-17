@@ -1,6 +1,7 @@
 package visualisation.modules;
 
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -17,17 +18,24 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class AlgorithmStatisticsVisualiser extends Region {
+/**
+ * This class renders a set of statistical components including miscellaneous algorithm metrics, a best schedule
+ * bounding visualization and a cpu usage graph. The elements can be updated constantly with use of the update()
+ * method.
+ *
+ * The constructor initializes ALL elements of the view so if more is to be added it can be done here. Adding new
+ * miscellaneous metric should be done in the labelGrid, as this will align them nicely. All components needing
+ * to be periodically updated can be accessed as a field.
+ */
+public class AlgorithmStatisticsVisualiser extends VBox {
 
-
-    // Constant dimensions
+    // CONSTANTS
     private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 100;
     private static final int SCHEDULE_TIME_BOUNDING_WIDTH = 750;
 
@@ -37,56 +45,50 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private static final Font DEFAULT_FONT = new Font("Consolas", 12);
     private static final Font DEFAULT_TIME_FONT = new Font("Consolas", 20);
 
-    // Should stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
+    private static final Paint BOUNDING_RECTANGLE_FILL = Paint.valueOf("#b475d6");
+    private static final Color BOUNDING_RECTANGLE_STROKE_FILL = Color.BLACK;
+    private static final Color FINISHING_TICK_MARK_FILL = Color.RED;
+    private static final Color FINISHING_TIMER_FONT_FILL = Color.RED;
+
+
+    // BOUND FIELDS
     private double _initialLowerBound;
     private double _initialUpperBound;
     private double _initialBoundRange;
 
+    private double _bestLower;
+    private double _bestUpper;
+
     // For keeping track of number of updates, certain visualizations may use this to prevent over updating
     private long _updateIteration;
 
+
+    // ELEMENTS
     // Grid
     private final GridPane _boundGrid;
     private final NumberAxis _boundingAxis;
 
-    // Cpu chart
-    private final LineChart<Number, Number> _cpuChart;
-    private final XYChart.Series _cpuChartData;
+    private final XYChart.Series<Number, Number> _cpuChartData;
 
-    // Labels
+    // Label Values that need to be periodically updated through life of visualizer
+    private final Timer _timer; // Timer
+    private long _millisecondsRunning;
     private final Label _timeLabel;
-    private final GridPane _labelGrid; // Holds the following labels
-    private final Label _processorsUsedLabel;
-    private final Label _branchesCoveredLabel;
-    private final Label _branchesCulledLabel;
-    private final Label _cullingRateLabel;
-    private final Label _memoryFreeLabel;
-    private final Label _memoryAllocatedLabel;
-    private final Label _memoryMaxLabel;
-    private Label _processorsUsedValue;
-    private Label _branchesCoveredValue;
+
+    private Label _branchesCoveredValue; // Metrics labels
     private Label _branchesCulledValue;
     private Label _cullingRateValue;
     private Label _memoryFreeValue;
     private Label _memoryAllocatedValue;
     private Label _memoryMaxValue;
 
-    // Timer
-    private final Timer _timer;
-    private long _millisecondsRunning;
 
 
     /**
      * Creates all visual elements and arranges on the screen. Many labels will initially be set to zero.
-     * @param initialLowerBound
-     * @param initialUpperBound
-     * @param coresUsed
+     * @param coresUsed : Cores algorithm runs on
      */
-    public AlgorithmStatisticsVisualiser(int initialLowerBound, int initialUpperBound, long coresUsed) {
-        // Set bounding variables
-        _initialLowerBound = initialLowerBound;
-        _initialUpperBound = initialUpperBound;
-        _initialBoundRange = _initialUpperBound - _initialLowerBound; // Range of upper and lower bound
+    public AlgorithmStatisticsVisualiser(long coresUsed) {
 
         // Initialize elements
         _boundGrid = createBoundingVisualization();
@@ -95,61 +97,54 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _timeLabel = new Label("0");
         _timeLabel.setFont(DEFAULT_TIME_FONT);
 
-        _processorsUsedLabel = new Label("Cores running:");
-        _processorsUsedLabel.setFont(DEFAULT_FONT);
-        _processorsUsedValue = new Label(String.format("%d", coresUsed));
-        _processorsUsedValue.setFont(DEFAULT_FONT);
+        Label processorsUsedLabel = new Label("Cores running:");
+        Label processorsUsedValue = new Label(String.format("%d", coresUsed));
 
-        _branchesCoveredLabel = new Label("Branches explored:");
-        _branchesCoveredLabel.setFont(DEFAULT_FONT);
+        Label branchesCoveredLabel = new Label("Branches explored:");
         _branchesCoveredValue = new Label(String.format("%d", 0));
-        _branchesCoveredValue.setFont(DEFAULT_FONT);
 
-        _branchesCulledLabel = new Label("Branches culled:");
-        _branchesCulledLabel.setFont(DEFAULT_FONT);
+        Label branchesCulledLabel = new Label("Branches culled:");
         _branchesCulledValue = new Label(String.format("%d", 0));
-        _branchesCulledValue.setFont(DEFAULT_FONT);
 
-        _cullingRateLabel = new Label("Culling rate:");
-        _cullingRateLabel.setFont(DEFAULT_FONT);
+        Label cullingRateLabel = new Label("Culling rate:");
         _cullingRateValue = new Label(String.format("%.1f%%", 0.0));
-        _cullingRateValue.setFont(DEFAULT_FONT);
 
-        _memoryFreeLabel = new Label("Memory free:");
-        _memoryFreeLabel.setFont(DEFAULT_FONT);
-        _memoryFreeValue = new Label(String.format(""));
-        _memoryFreeValue.setFont(DEFAULT_FONT);
+        Label memoryFreeLabel = new Label("Memory free:");
+        _memoryFreeValue = new Label("");
 
-        _memoryAllocatedLabel = new Label("Memory Allocated:");
-        _memoryAllocatedLabel.setFont(DEFAULT_FONT);
+        Label memoryAllocatedLabel = new Label("Memory Allocated:");
         _memoryAllocatedValue = new Label("");
-        _memoryAllocatedValue.setFont(DEFAULT_FONT);
 
-        _memoryMaxLabel = new Label("JVM Memory Limit:");
-        _memoryMaxLabel.setFont(DEFAULT_FONT);
+        Label memoryMaxLabel = new Label("JVM Memory Limit:");
         _memoryMaxValue = new Label("");
-        _memoryMaxValue.setFont(DEFAULT_FONT);
 
         // Add label elements to label grid so are aligned
-        _labelGrid = createLabelGrid();
+        // Holds the following labels
+        GridPane _labelGrid = createLabelGrid();
         _labelGrid.add(_timeLabel, 0, 0);
-        _labelGrid.add(_processorsUsedLabel, 0, 1);
-        _labelGrid.add(_processorsUsedValue, 1, 1);
-        _labelGrid.add(_branchesCoveredLabel, 0, 2);
+        _labelGrid.add(processorsUsedLabel, 0, 1);
+        _labelGrid.add(processorsUsedValue, 1, 1);
+        _labelGrid.add(branchesCoveredLabel, 0, 2);
         _labelGrid.add(_branchesCoveredValue, 1, 2);
-        _labelGrid.add(_branchesCulledLabel, 0, 3);
+        _labelGrid.add(branchesCulledLabel, 0, 3);
         _labelGrid.add(_branchesCulledValue, 1, 3);
-        _labelGrid.add(_cullingRateLabel, 0, 4);
+        _labelGrid.add(cullingRateLabel, 0, 4);
         _labelGrid.add(_cullingRateValue, 1, 4);
-        _labelGrid.add(_memoryFreeLabel, 0, 5);
+        _labelGrid.add(memoryFreeLabel, 0, 5);
         _labelGrid.add(_memoryFreeValue, 1, 5);
-        _labelGrid.add(_memoryAllocatedLabel, 0, 6);
+        _labelGrid.add(memoryAllocatedLabel, 0, 6);
         _labelGrid.add(_memoryAllocatedValue, 1, 6);
-        _labelGrid.add(_memoryMaxLabel, 0, 7);
+        _labelGrid.add(memoryMaxLabel, 0, 7);
         _labelGrid.add(_memoryMaxValue, 1, 7);
 
-        _cpuChart = createCpuChart();
-        _cpuChartData = new XYChart.Series();
+        for(Node node : _labelGrid.getChildren())
+            ((Label) node).setFont(DEFAULT_FONT);
+        _timeLabel.setFont(DEFAULT_TIME_FONT);
+
+        // Create a cpu usage chart
+        // Cpu chart
+        LineChart<Number, Number> _cpuChart = createCpuChart();
+        _cpuChartData = new XYChart.Series<>();
         _cpuChart.getData().add(_cpuChartData);
         _updateIteration = 0;
 
@@ -161,6 +156,9 @@ public class AlgorithmStatisticsVisualiser extends Region {
             @Override
             public void run() {
                 _millisecondsRunning += 10;
+
+                if (_millisecondsRunning % 2000 == 0) // Every 2 seconds update cpu usage chart
+                    updateCpuUsageChart();
             }
         }, new Date(), 10);
 
@@ -168,6 +166,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
         HBox labelAndCpuVBox = new HBox();
         labelAndCpuVBox.setPadding(new Insets(15));
         labelAndCpuVBox.getChildren().addAll(_labelGrid, _cpuChart);
+        HBox.setHgrow(_cpuChart, Priority.SOMETIMES);
 
         // Create vertical box with the bounding visualization and it's axis in vertical alignment
         VBox boundVBox = new VBox();
@@ -175,27 +174,36 @@ public class AlgorithmStatisticsVisualiser extends Region {
         boundVBox.getChildren().addAll(_boundGrid, _boundingAxis);
 
         // Add previously created boxes into VBox; one on top of another
-        VBox outerVBox = new VBox();
-        outerVBox.setPadding(new Insets(15));
-        outerVBox.getChildren().addAll(labelAndCpuVBox, boundVBox);
-
-        // Add final VBox to this regions children
-        getChildren().addAll(outerVBox);
+        setPadding(new Insets(15));
+        getChildren().addAll(labelAndCpuVBox, boundVBox);
+        VBox.setVgrow(labelAndCpuVBox, Priority.SOMETIMES);
+        //VBox.setVgrow(boundVBox, Priority.SOMETIMES); TODO:
     }
 
 
     /**
      * This method is responsible for updating the state of a schedule time bounding visualisation, as well as updating
      * the values of several on screen statistics in text-format.
-     * @param statistics
+     * @param statistics : updateStatistics
      */
     public void update(Statistics statistics) {
         _updateIteration++; // Increment iteration of update
 
+        // If on first iteration then update all of these parameters
+        if (_updateIteration == 1) {
+            _initialUpperBound = statistics.getMaxScheduleBound();
+            _initialLowerBound = 0;
+            _boundingAxis.setUpperBound(_initialUpperBound);
+            _initialBoundRange = _initialUpperBound - _initialLowerBound;
+
+            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
+
+            _bestLower = _initialLowerBound;
+            _bestUpper = _initialUpperBound;
+        }
+
         updateBoundingChart(statistics); // Update bounding chart
-
-        updateCpuUsageChart(); // Update CPU usage chart
-
+        
         updateTimeLabel(); // Update Time label
 
         updateLabels(statistics); // Update misc. statistics labels
@@ -203,10 +211,20 @@ public class AlgorithmStatisticsVisualiser extends Region {
     }
 
 
-
+    /**
+     * To be called when Visualizer is intended to stop
+     */
     public void stop() {
 
-        _timeLabel.setTextFill(Color.RED);
+        _timeLabel.setTextFill(FINISHING_TIMER_FONT_FILL);
+        _timer.cancel();
+
+        // Render finishing rectangle marker in middle column :)
+        Rectangle finishIndicator = new Rectangle();
+        finishIndicator.setStroke(FINISHING_TICK_MARK_FILL);
+        finishIndicator.setStrokeWidth(5);
+        finishIndicator.setHeight(SCHEDULE_TIME_BOUNDING_HEIGHT);
+        _boundGrid.add(finishIndicator, 1, 0);
 
     }
 
@@ -214,17 +232,20 @@ public class AlgorithmStatisticsVisualiser extends Region {
     /**
      * Sets the time elapsed from the start of the counter of _millisecondsRunning and converts into the form
      * hh:mm:ss:ms
-     * @return
      */
     private void updateTimeLabel() {
-        _timeLabel.setText(String.format(String.format("%02d:%02d:%02d.%01d",
+        _timeLabel.setText(String.format("%02d:%02d:%02d.%01d",
                 _millisecondsRunning/(3600*1000),
                 _millisecondsRunning/(60*1000) % 60,
                 _millisecondsRunning/1000 % 60,
-                _millisecondsRunning % 1000 / 100)));
+                _millisecondsRunning % 1000 / 100));
     }
 
 
+    /**
+     * Updates the labels of miscellaneous algorithm metrics branches culled, search space, etc.
+     * @param statistics : Update statistics
+     */
     private void updateLabels(Statistics statistics) {
 
         _branchesCoveredValue.setText(String.format("%s", new BigDecimal(statistics.getSearchSpaceLookedAt()).toString()));
@@ -247,30 +268,30 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
 
     /**
-     * Update the bounding chart to appropriate state given the current min and max boundary times.
-     * @param statistics
+     * Update the bounding chart to appropriate state given the current min and max boundary times. This chart re-renders both rectangles if one changes.
+     * @param statistics : Update statistics
      */
     private void updateBoundingChart(Statistics statistics) {
 
-        if (_updateIteration == 1) { // Lol
-            _initialUpperBound = statistics.getMaxScheduleBound();
-            _initialLowerBound = 0;
-            _boundingAxis.setUpperBound(_initialUpperBound);
-            _initialBoundRange = _initialUpperBound - _initialLowerBound;
-            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
-        }
+        // If neither bound changes, no point in continuing to render
+        if (statistics.getMinScheduleBound() == _bestLower && statistics.getMaxScheduleBound() == _bestUpper)
+            return;
+
+        // If current statistics are better than locally stored bests, overwrite.
+        _bestLower = statistics.getMinScheduleBound() > _bestLower ? statistics.getMinScheduleBound() : _bestLower;
+        _bestUpper = statistics.getMaxScheduleBound() < _bestUpper ? statistics.getMaxScheduleBound() : _bestUpper;
 
         // calculate left and right rectangle widths with regards to bound progression and visualisation width
-        int leftRectangleWidth = (int)(((statistics.getMinScheduleBound() - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
-        int rightRectangleWidth = (int)(((_initialUpperBound - statistics.getMaxScheduleBound()) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
+        int leftRectangleWidth = (int)(((_bestLower - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
+        int rightRectangleWidth = (int)(((_initialUpperBound - _bestUpper) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
 
         // Create rectangles with width and color features
         Rectangle leftRectangle = new Rectangle(leftRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
         Rectangle rightRectangle = new Rectangle(rightRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
-        leftRectangle.setFill(Paint.valueOf("#b475d6"));
-        leftRectangle.setStroke(Color.BLACK);
-        rightRectangle.setFill(Paint.valueOf("#b475d6"));
-        rightRectangle.setStroke(Color.BLACK);
+        leftRectangle.setFill(BOUNDING_RECTANGLE_FILL);
+        leftRectangle.setStroke(BOUNDING_RECTANGLE_STROKE_FILL);
+        rightRectangle.setFill(BOUNDING_RECTANGLE_FILL);
+        rightRectangle.setStroke(BOUNDING_RECTANGLE_STROKE_FILL);
 
         // Clear previous column information of chart and update with current columns
         _boundGrid.getColumnConstraints().clear();
@@ -285,44 +306,43 @@ public class AlgorithmStatisticsVisualiser extends Region {
     }
 
 
-
     /**
      * Calculate the current CPU usage of the OS and plot it onto chart
      */
     private void updateCpuUsageChart() {
-        if (_updateIteration % 20 == 0) { // Only update chart every 25 iterations of updates.
-            double cpuUsage = 0;
-            try {
-                // Get necessary objects representing OS information
-                MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-                ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
-                AttributeList list = mbs.getAttributes(name, new String[]{ "ProcessCpuLoad" });
+        double cpuUsage = 0;
+        try {
+            // Get necessary objects representing OS information
+            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+            ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+            AttributeList list = mbs.getAttributes(name, new String[]{ "ProcessCpuLoad" });
 
-                if (list.isEmpty()) {
-                    return;
-                }
-
-                // Get cpu usage ratio
-                Attribute att = (Attribute)list.get(0);
-                Double value  = (Double)att.getValue();
-
-                if (value == -1.0) {
-                    return;
-                }
-
-                cpuUsage = ((int)(value * 100));
-            } catch (Exception e) {
+            if (list.isEmpty()) {
+                return;
             }
 
+            // Get cpu usage ratio
+            Attribute att = (Attribute)list.get(0);
+            Double value  = (Double)att.getValue();
+
+            if (value == -1.0) {
+                return;
+            }
+
+            cpuUsage = ((int)(value * 100)); } catch (Exception e) { /* Nothing should happen here imo */}
+
             // Add current cpu usage to chart data structure, chart will automatically update. Divide by 1000 for seconds
-            _cpuChartData.getData().add(new XYChart.Data(_millisecondsRunning / 1000, cpuUsage));
+            _cpuChartData.getData().add(new XYChart.Data<>(_millisecondsRunning / 1000, cpuUsage));
             if (_cpuChartData.getData().size() > 50) { // If data size is greater than 100 points begin to remove
                 _cpuChartData.getData().remove(0, 1);
             }
-        }
     }
 
 
+    /**
+     * Creates an empty grid to house miscellaneous metrics labels, branches culled, searched, etc.
+     * @return GridPane : grid pane to hold labels
+     */
     private GridPane createLabelGrid() {
 
         GridPane gridPane = new GridPane();
@@ -340,7 +360,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Create a line chart labelled with CPU usage information.
-     * @return
+     * @return LineChart<Number,Number> : line chart representing cpu usage
      */
     private LineChart<Number,Number> createCpuChart() {
 
@@ -355,17 +375,18 @@ public class AlgorithmStatisticsVisualiser extends Region {
         LineChart<Number, Number>  cpuChart = new LineChart<>(xAxis, yAxis);
         cpuChart.setCreateSymbols(false);
         cpuChart.setLegendVisible(false);
-        cpuChart.setMaxHeight(300);
         cpuChart.setTitle("CPU Usage");
+
+        cpuChart.setMinHeight(200);
+        cpuChart.setMinWidth(200);
 
         return cpuChart;
     }
 
 
-
     /**
      * Create a grid pane with constant height and no columns
-     * @return
+     * @return GridPane : grid pan for bounding vis.
      */
     private GridPane createBoundingVisualization() {
 
@@ -381,14 +402,12 @@ public class AlgorithmStatisticsVisualiser extends Region {
 
     /**
      * Creates an axis intended for bounding visualization
-     * @return
+     * @return NumberAxis : number axis for bounding vis.
      */
     private NumberAxis createBoundingVisualizationAxis() {
 
-        // Set uper and lower bounds to that of initial schedule estimates, set tick marks to be 1/20th of the way across
-        NumberAxis numberAxis = new NumberAxis("Schedule Time Units", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
-
-        return numberAxis;
+        // Set upper and lower bounds to that of initial schedule estimates, set tick marks to be 1/20th of the way across
+        return new NumberAxis("Schedule Time Units", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
     }
 
 }
