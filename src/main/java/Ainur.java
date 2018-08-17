@@ -23,13 +23,10 @@ import java.util.function.Consumer;
 public class Ainur extends Application {
 
     /* Static Fields */
-
     private static Cli cli;
     private static Graph graph;
     private static Algorithm algorithm;
-    private static Thread schedulingThread;
-
-    static VisualiserWindow window;
+    private static VisualiserWindow window;
 
     /** MAIN **/
 
@@ -42,15 +39,17 @@ public class Ainur extends Application {
           algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
           // TODO update upperbound when non optimal implemented
 
-          schedulingThread =
-                  new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
+          Thread schedulingTask = new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
 
           if (cli.getVisualise()) {
-              // Launch as javafx application.
-              schedulingThread.start();
+              // Start the scheduling task in another thread, and begin javafx launch on the main thread
+              window = new VisualiserWindow(algorithm, graph, cli.getProcessors());
+              schedulingTask.start();
+
               Application.launch(args);
           } else {
-              schedulingThread.run();
+              // Run the scheduling task in this thread
+              schedulingTask.run();
           }
       } catch (IOException io) {
           System.out.println("Invalid filename entered, try run it again with a valid filename."
@@ -149,7 +148,6 @@ public class Ainur extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        window = new VisualiserWindow(algorithm, graph, cli.getProcessors());
         window.visualise(primaryStage);
     }
 }

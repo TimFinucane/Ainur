@@ -15,21 +15,31 @@ public class VisualiserWindow {
     /* Macros */
     private static final String STYLE_SHEET = "/style/Ainur.css";
 
-
-    private AinurVisualiser _av;
+    // Window state
     private double _x;
     private double _y;
     private boolean _leftDraggedState = false;
     private boolean _rightDraggedState = false;
     private boolean _bottomDraggedState = false;
 
+    // JavaFX state
     private Stage _stage;
     private Scene _scene;
     private BorderPane _window;
 
+    private AinurVisualiser _av;
+
+    // Input arguments
+    private final Algorithm _algorithm;
+    private final Graph _graph;
+    private final int _numProcessors;
+
+    boolean complete = false;
+
     public VisualiserWindow(Algorithm algorithm, Graph graph, int numProcessors) {
-        // Load an ainur visualiser
-        _av = new AinurVisualiser(algorithm, graph, numProcessors);
+        _algorithm = algorithm;
+        _graph = graph;
+        _numProcessors = numProcessors;
     }
 
     /**
@@ -41,6 +51,9 @@ public class VisualiserWindow {
 
         // Replace gross default taskbar with custom one
         _stage.initStyle(StageStyle.UNDECORATED);
+
+        // Load an ainur visualiser
+        _av = new AinurVisualiser(_algorithm, _graph, _numProcessors);
 
         BorderPane border = createResizableBorderBox();
         border.setCenter(_av);
@@ -59,15 +72,21 @@ public class VisualiserWindow {
         primaryStage.show();
 
         _av.run();
+
+        // Early completion check
+        if(complete)
+            _av.stop();
     }
 
     public void stop() {
-        _av.stop();
+        complete = true;
+        if(_av != null)
+            _av.stop();
     }
 
     private BorderPane  createResizableBorderBox() {
         BorderPane border = new BorderPane();
-        border.getStyleClass().add("_window-border");
+        border.getStyleClass().add("window-border");
 
         // AAAAAA (also known as resizability)
         border.setOnMouseMoved(fuckMe -> {
