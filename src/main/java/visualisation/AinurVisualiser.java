@@ -144,11 +144,19 @@ public class AinurVisualiser extends VBox {
      */
     private void setUpLayout() {
         // Put the graph and stats visualiser side by side
+        HBox graphWraper = new HBox();
+        graphWraper.getChildren().add(_gv);
+        graphWraper.getStyleClass().addAll("graph-vis", "vis");
+
+        HBox statsWrapper = new HBox();
+        statsWrapper.getChildren().add(_asv);
+        statsWrapper.getStyleClass().addAll("stats-vis", "vis");
+
         HBox graphStatHBox = new HBox();
-        graphStatHBox.getChildren().addAll(_gv, _asv);
+        graphStatHBox.getChildren().addAll(graphWraper, statsWrapper);
 
         // Put the schedule visualiser underneath
-        //VBox outerVBox = new VBox();
+        _sv.getStyleClass().addAll("schedule-vis", "vis");
         this.getChildren().addAll(graphStatHBox, _sv);
 
         //setVgrow(graphStatHBox, Priority.SOMETIMES); TODO: Set this when the gv and asv are resizable

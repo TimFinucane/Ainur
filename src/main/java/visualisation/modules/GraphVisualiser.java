@@ -5,7 +5,6 @@ import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import javafx.embed.swing.SwingNode;
-import javafx.geometry.Insets;
 import javafx.scene.layout.Region;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swingViewer.ViewPanel;
@@ -27,7 +26,7 @@ public class GraphVisualiser extends Region {
     /* MACROS */
 
     // Window dimensions
-    public static final int WINDOW_HEIGHT = 500;
+    public static final int WINDOW_HEIGHT = 550;
     public static final int WINDOW_WIDTH = 750;
 
     // Colours

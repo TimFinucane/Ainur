@@ -1,3 +1,27 @@
 .root {
-    
+    -fx-background-color: #fafafa;
 }
+
+.vis {
+    -fx-padding: 10;
+}
+
+.stats-vis * {
+    -fx-background-color: #b8a2ff !important;
+    -fx-text-fill: #fafafa;
+}
+
+.schedule-vis * {
+    -fx-background-color: #ffdba2;
+    -fx-text-fill: #fafafa;
+}
+
+.tool-bar {
+    -fx-background-color: #484848;
+}
+
+.close-button {
+    -fx-background-color: #484848;
+    -fx-text-fill: #fafafa;
+}
+
