@@ -11,11 +11,9 @@ import algorithm.heuristics.pruner.IsNotAPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
-import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
-import integration.tests.repeatable.test.RepeatTest;
-import integration.tests.repeatable.test.RepeatedTestRule;
+import integration.IntegrationTest;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.*;
@@ -34,7 +32,7 @@ import static junit.framework.TestCase.*;
  * object and outputting a schedule that is both optimal and valid. Graphs are sourced from data/graphs/, reading in of
  * of these also occurs before every test.
  */
-@Category(GandalfIntegrationTestsCategory.class)
+@Category(IntegrationTest.class)
 public class AStarAlgorithmIT {
 
     private static final String SEP = File.separator;
@@ -57,8 +55,6 @@ public class AStarAlgorithmIT {
                 new CriticalPath());
     }
 
-    @Rule
-    public RepeatedTestRule repeatRule = new RepeatedTestRule();
 
     /**
      * Tests for reading in data from a file and ensuring algorithm returns valid and optimal schedule with no

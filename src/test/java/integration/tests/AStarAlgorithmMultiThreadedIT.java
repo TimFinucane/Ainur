@@ -6,11 +6,9 @@ import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
-import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
-import integration.tests.repeatable.test.RepeatTest;
-import integration.tests.repeatable.test.RepeatedTestRule;
+import integration.IntegrationTest;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.*;
@@ -32,7 +30,7 @@ import static junit.framework.TestCase.fail;
  *
  * All graphs are run on both two and four threads, to ensure expected behavior is the same for both.
  */
-@Category(GandalfIntegrationTestsCategory.class)
+@Category(IntegrationTest.class)
 public class AStarAlgorithmMultiThreadedIT {
 
     private Algorithm _algorithmhAllHeuristics4Threads;
@@ -44,8 +42,6 @@ public class AStarAlgorithmMultiThreadedIT {
     private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
     private static final String NODES_10_FILENAME = String.format("data%sgraphs%sNodes_10_Random.dot", SEP, SEP);
 
-    @Rule
-    public RepeatedTestRule repeatRule = new RepeatedTestRule();
 
     @Before
     public void setup() {
@@ -59,7 +55,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 2)
     public void testAStarAlgorithm7Node4ProcessorAllHeuristics4Threads(){
         Graph graph = getGraph(NODES_7_FILENAME);
 
@@ -80,7 +75,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 2)
     public void testAStarAlgorithm7Node4ProcessorAllHeuristics2Threads(){
         Graph graph = getGraph(NODES_7_FILENAME);
 
@@ -101,7 +95,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 2)
     public void testAStarAlgorithm7Node4ProcessorAllHeuristics40Threads(){
         Graph graph = getGraph(NODES_7_FILENAME);
 
@@ -122,7 +115,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 3)
     public void testAStarAlgorithm11Node4ProcessorAllHeuristics4Threads() {
 
         Graph graph = getGraph(NODES_11_FILENAME);
@@ -143,7 +135,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 3)
     public void testAStarAlgorithm11Node4ProcessorAllHeuristics2Threads() {
 
         Graph graph = getGraph(NODES_11_FILENAME);
@@ -164,7 +155,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 3)
     public void testAStarAlgorithm11Node4ProcessorAllHeuristics40Threads() {
 
         Graph graph = getGraph(NODES_11_FILENAME);
@@ -185,7 +175,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 3)
     public void testAStarAlgorithm10Node2ProcessorAllHeuristics4Threads(){
         Graph graph = getGraph(NODES_10_FILENAME);
 
@@ -205,7 +194,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 3)
     public void testAStarAlgorithm10Node2ProcessorAllHeuristics2Threads(){
         Graph graph = getGraph(NODES_10_FILENAME);
 
@@ -225,7 +213,6 @@ public class AStarAlgorithmMultiThreadedIT {
     }
 
     @Test
-    @RepeatTest(times = 3)
     public void testAStarAlgorithm10Node2ProcessorAllHeuristics40Threads(){
         Graph graph = getGraph(NODES_10_FILENAME);
 

@@ -30,11 +30,11 @@ public abstract class IntegrationTest {
      */
     public IntegrationTest() {
         graphs = Arrays.asList(
-            Paths.get("data", "graphs", "Nodes_7_OutTree.dot").toString(),
-            Paths.get("data", "graphs", "Nodes_8_Random.dot").toString(),
-            Paths.get("data", "graphs", "Nodes_9_SeriesParallel.dot").toString(),
-            Paths.get("data", "graphs", "Nodes_10_Random.dot").toString(),
-            Paths.get("data", "graphs", "Nodes_11_OutTree.dot").toString(),
+                Paths.get("data", "graphs", "Nodes_7_OutTree.dot").toString(),
+                Paths.get("data", "graphs", "Nodes_8_Random.dot").toString(),
+                Paths.get("data", "graphs", "Nodes_9_SeriesParallel.dot").toString(),
+                Paths.get("data", "graphs", "Nodes_10_Random.dot").toString(),
+                Paths.get("data", "graphs", "Nodes_11_OutTree.dot").toString(),
                 Paths.get("data", "graphs", "InTree-Unbalanced-MaxBf-3_Nodes_10_CCR_10.00_WeightType_Random.dot").toString(),
                 Paths.get("data", "graphs", "Join_Nodes_10_CCR_10.07_WeightType_Random.dot").toString(),
                 Paths.get("data", "graphs", "Random_Nodes_21_Density_5.14_CCR_0.10_WeightType_Random.dot").toString(),
@@ -72,24 +72,24 @@ public abstract class IntegrationTest {
 
     }
 
-
     @TestFactory
     public List<DynamicTest> testOnGraphs() {
         ArrayList<DynamicTest> optimalTests = new ArrayList<>();
+        for (int graphIdx = 0; graphIdx < graphs.size(); ++graphIdx) {
+                    String graphName = graphs.get(graphIdx);
 
-        for(int graphIdx = 0; graphIdx < graphs.size(); ++graphIdx) {
-            String graphName = graphs.get(graphIdx);
-            for(Pair<Integer, Integer> processorOptimalTime : optimalSchedules.get(graphIdx)) {
-                optimalTests.add(DynamicTest.dynamicTest(
-                    generateName(graphName, processorOptimalTime),
-                    () -> runAgainstOptimal(
-                        graphName,
-                        processorOptimalTime.getKey(),
-                        processorOptimalTime.getValue()
-                    )
-                ));
+                    for (Pair<Integer, Integer> processorOptimalTime : optimalSchedules.get(graphIdx)) {
+
+                        optimalTests.add(DynamicTest.dynamicTest(
+                                generateName(graphName, processorOptimalTime),
+                                () -> runAgainstOptimal(
+                                        graphName,
+                                        processorOptimalTime.getKey(),
+                                        processorOptimalTime.getValue()
+                                )
+                        ));
+                    }
             }
-        }
         return optimalTests;
     }
 
