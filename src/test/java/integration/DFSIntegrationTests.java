@@ -41,15 +41,17 @@ public class DFSIntegrationTests extends IntegrationTest {
 
         for (String outputFileNameString : outputFiles) {
 
-            InputStream is = null;
+            InputStream is1 = null;
+            InputStream is2 = null;
             try {
-                is = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
+                is1 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
+                is2 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
 
-            int graphProcessorNo = scheduleProcessors(is);
-            int graphOptimalSolution = scheduleLength(is);
+            int graphProcessorNo = scheduleProcessors(is1);
+            int graphOptimalSolution = scheduleLength(is2);
 
             List<Pair<Integer, Integer>> listToAdd = new ArrayList<>();
             Pair<Integer, Integer> pair = new Pair<>(graphProcessorNo, graphOptimalSolution);

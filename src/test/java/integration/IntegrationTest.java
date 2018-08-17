@@ -123,8 +123,7 @@ public abstract class IntegrationTest {
 
         Scanner s = new Scanner(is).useDelimiter("\\A");
         String inputTextAsString = s.hasNext() ? s.next() : "";
-
-        System.out.println(inputTextAsString);
+        s.close();
 
         Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
         Matcher m = taskPattern.matcher(inputTextAsString);
@@ -150,6 +149,7 @@ public abstract class IntegrationTest {
 
         Scanner s = new Scanner(is).useDelimiter("\\A");
         String inputTextAsString = s.hasNext() ? s.next() : "";
+        s.close();
 
         Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
         Matcher m = taskPattern.matcher(inputTextAsString);
