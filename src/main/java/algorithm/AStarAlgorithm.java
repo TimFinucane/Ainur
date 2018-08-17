@@ -71,12 +71,12 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         run(graph, simpleSchedule, nextNodes);
     }
 
-    private void run(Graph graph, SimpleSchedule rootSchedule, HashSet<Node> nextNodes) {
+    private void run(Graph graph, SimpleSchedule rootSchedule, HashSet<Node> startingNextNodes) {
 
         PriorityQueue<Pair<Integer, SimpleSchedule>> schedulesToVisit = new PriorityQueue<>(new ScheduleComparator());
 
         //initial best estimate is just the first explored partial schedule.
-        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, new HashSet<>(nextNodes));
+        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, new HashSet<>(startingNextNodes));
         schedulesToVisit.add(new Pair<>(firstLowerBound, rootSchedule));
 
         int memoryCounter = 0;
@@ -93,7 +93,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             if (_communicator.getCurrentBest().getEndTime() <= curLowerBound) {
                 return;
             }
-
             // if current schedule contains all nodes, it is optimal.
             if (curSchedule.size() == graph.size()) {
                 _communicator.update(curSchedule);
@@ -101,7 +100,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             }
 
             // get the nodes that can be added to this schedule
-            nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
+            HashSet<Node> nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
 
             //only poll for memory usage every 5 iterations.
             memoryCounter++;
@@ -143,7 +142,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                         if (nextNodesToAdd.isEmpty()) { // if all nodes are in the schedule, "lower bound" becomes end time
                             newLowerBound = curSchedule.getEndTime();
                         } else {
-                            newLowerBound = _lowerBound.estimate(graph, curSchedule, new HashSet<>(nextNodesToAdd));
+                            newLowerBound = _lowerBound.estimate(graph, curSchedule, nextNodesToAdd);
                         }
 
                         _numExplored = _numExplored.add(BigInteger.ONE);
@@ -153,6 +152,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                 }
             }
         }
+        System.out.println("Ran out of explorations");
     }
 
     /**
