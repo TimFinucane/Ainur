@@ -1,7 +1,9 @@
 package integration;
 
+import algorithm.AStarAlgorithm;
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
+import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
@@ -23,10 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DFSIntegrationTests extends IntegrationTest {
+public class AStarMultiThreadingIntegrationTests extends IntegrationTest {
 
 
-    public DFSIntegrationTests() {
+    public AStarMultiThreadingIntegrationTests() {
         super();
     }
 
@@ -34,10 +36,21 @@ public class DFSIntegrationTests extends IntegrationTest {
     protected void runAgainstOptimal(String graph, int processors, int optimalScheduleLength) {
 
         // Single threaded DFS implementation
-        Algorithm dfsAlgorithm = new DFSAlgorithm(
-                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                new CriticalPath()
-        );
+        Algorithm dfsAlgorithm = new TieredAlgorithm(4,
+                (tier, communicator) -> {
+                    if (tier == 0) {
+                        return new AStarAlgorithm(
+                                communicator,
+                                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                                new CriticalPath());
+                    } else {
+                        return new DFSAlgorithm(
+                                communicator,
+                                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                                new CriticalPath(),
+                                Integer.MAX_VALUE);
+                    }
+                });
 
 
         GraphReader reader = null;
