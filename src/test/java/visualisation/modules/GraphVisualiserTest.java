@@ -38,20 +38,17 @@ public class GraphVisualiserTest extends Application {
         // Test single update on primary stage
         GraphVisualiser gv = new GraphVisualiser(_graph);
         this.setScene(primaryStage, gv);
-        this.testSingleUpdate(gv);
 
         // Create a new stage and test multi update on it
         Stage secondStage = new Stage();
         GraphVisualiser gv2 = new GraphVisualiser(_graph);
         this.setScene(secondStage, gv2);
-        this.testMultiUpdate(gv2);
 
         // Create a new stage and test multi and single update;
         Stage thirdStage = new Stage();
         // Graph should be rendered with low quality
         GraphVisualiser gv3 = new GraphVisualiser(_graph, false);
         this.setScene(thirdStage, gv3);
-        this.testMultiAndSingleUpdate(gv3);
 
         // Test rendering quality set low
         Stage fourthStage = new Stage();
@@ -87,67 +84,6 @@ public class GraphVisualiserTest extends Application {
 
         // Set the quality to high again
         gv.setHighRenderQuality(true);
-    }
-
-    /**
-     * Tests the GraphVisualiser's single update method.
-     *
-     * @param gv graphvisualiser to test on.
-     */
-    public void testSingleUpdate(GraphVisualiser gv) {
-        // Test updating.
-        // End result should have 1 highlighted and all other nodes should not be highlighted.
-        gv.update(_graph.findByLabel("0"));
-        gv.update(_graph.findByLabel("1"));
-    }
-
-    /**
-     * Tests the GraphVisualiser's multi update method.
-     *
-     * @param gv graphvisualiser to test on
-     */
-    public void testMultiUpdate(GraphVisualiser gv) {
-        // Test updating
-        // Comment out blocks to check progress at each step
-
-        // 0 and 1 should be highlighted
-        List<Node> update1 = new ArrayList<>();
-        update1.add(_graph.findByLabel("0"));
-        update1.add(_graph.findByLabel("1"));
-        gv.update(update1);
-
-        // 2 and 3 should be highlighted
-        List<Node> update2 = new ArrayList<>();
-        update2.add(_graph.findByLabel("2"));
-        update2.add(_graph.findByLabel("3"));
-        gv.update(update2);
-
-        // Just node 2 should be highlighted
-        List<Node> update3 = new ArrayList<>();
-        update3.add(_graph.findByLabel("2"));
-        gv.update(update3);
-
-        // 0, 2 and 10 should be highlighted
-        update3.add(_graph.findByLabel("0"));
-        update3.add(_graph.findByLabel("10"));
-        gv.update(update3);
-
-        // All nodes should be highlighted
-        List<Node> update4 = new ArrayList<>();
-        update4 = _graph.getNodes();
-        gv.update(update4);
-    }
-
-    /**
-     * Tests the GraphVisualiser's sing and multi update methods together
-     *
-     * @param gv The GraphVisualiser to test on.
-     */
-    public void testMultiAndSingleUpdate(GraphVisualiser gv) {
-        // Should end with just node 9 highlighted
-        this.testMultiUpdate(gv);
-        this.testSingleUpdate(gv);
-        gv.update(_graph.findByLabel("9"));
     }
 
     /**
