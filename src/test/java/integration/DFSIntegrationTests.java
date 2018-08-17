@@ -52,12 +52,12 @@ public class DFSIntegrationTests extends IntegrationTest {
             int graphOptimalSolution = scheduleLength(is);
 
             List<Pair<Integer, Integer>> listToAdd = new ArrayList<>();
-            listToAdd.add(new Pair<>(graphProcessorNo, graphOptimalSolution));
+            Pair<Integer, Integer> pair = new Pair<>(graphProcessorNo, graphOptimalSolution);
+            listToAdd.add(pair);
             optimalSchedulesReplacement.add(listToAdd);
         }
 
         optimalSchedules = optimalSchedulesReplacement;
-        System.out.println(optimalSchedules);
     }
 
     @Override
