@@ -6,7 +6,6 @@ import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Disabled;
 
@@ -20,7 +19,7 @@ public class ScheduleVisualiserTest extends Application {
      * Displays a visualisation of a dummy schedule
      */
     public void start(Stage stage) {
-        ScheduleVisualiser sv = new ScheduleVisualiser();
+        ScheduleVisualiser sv = new ScheduleVisualiser(5);
         Scene scene = new Scene(sv, 1080, 720);
         stage.setScene(scene);
         stage.show();
