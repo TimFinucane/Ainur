@@ -1,22 +1,19 @@
 package common;
 
-import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Category(HobbitonUnitTestsCategory.class)
 public class ValidatorTests {
 
     private Graph _graph;
     private Graph _complexGraph;
 
-    @Before
+    @BeforeEach
     public void initializeGraph()
     {
 
@@ -54,7 +51,7 @@ public class ValidatorTests {
         Schedule schedule = new SimpleSchedule(0);
 
         // Act / Assert
-        Assert.assertTrue(Validator.isValid(_graph, schedule));
+        assertTrue(Validator.isValid(_graph, schedule));
 
     }
 
@@ -69,7 +66,7 @@ public class ValidatorTests {
         schedule.addTask(new Task(0, 25, _graph.findByLabel("c")));
 
         // Act / Assert
-        Assert.assertFalse(Validator.isValid(_graph, schedule));
+        assertFalse(Validator.isValid(_graph, schedule));
 
     }
 
@@ -84,7 +81,7 @@ public class ValidatorTests {
         schedule.addTask(new Task(0, 25, _graph.findByLabel("c")));
 
         // Act / Assert
-        Assert.assertFalse(Validator.isValid(_graph, schedule));
+        assertFalse(Validator.isValid(_graph, schedule));
 
     }
 
@@ -99,7 +96,7 @@ public class ValidatorTests {
         schedule.addTask(new Task(1, 0, _graph.findByLabel("c")));
 
         // Act / Assert
-        Assert.assertFalse(Validator.isValid(_graph, schedule));
+        assertFalse(Validator.isValid(_graph, schedule));
     }
 
     // This tests that isValid passes on a schedule with correct ordering of tasks in relation to their dependencies.
@@ -113,7 +110,7 @@ public class ValidatorTests {
         schedule.addTask(new Task(0, 20, _graph.findByLabel("c")));
 
         // Act / Assert
-        Assert.assertTrue(Validator.isValid(_graph, schedule));
+        assertTrue(Validator.isValid(_graph, schedule));
     }
 
     // This tests that the communication cost is correctly taken into account when dependencies are shifted across processors.
@@ -127,7 +124,7 @@ public class ValidatorTests {
         schedule.addTask(new Task(1, 21, _graph.findByLabel("c")));
 
         // Act / Assert
-        Assert.assertFalse(Validator.isValid(_graph, schedule));
+        assertFalse(Validator.isValid(_graph, schedule));
     }
 
     // This tests that the communication cost is correctly taken into account when dependencies are shifted across processors.
@@ -141,7 +138,7 @@ public class ValidatorTests {
         schedule.addTask(new Task(1, 25, _graph.findByLabel("c")));
 
         // Act / Assert
-        Assert.assertTrue(Validator.isValid(_graph, schedule));
+        assertTrue(Validator.isValid(_graph, schedule));
     }
 
     // This tests that the isValid method correctly evaluates tasks across processors
@@ -155,7 +152,7 @@ public class ValidatorTests {
         schedule.addTask(new Task(1, 15, _graph.findByLabel("c")));
 
         // Act / Assert
-        Assert.assertFalse(Validator.isValid(_graph, schedule));
+        assertFalse(Validator.isValid(_graph, schedule));
     }
 
     @Test
@@ -179,7 +176,7 @@ public class ValidatorTests {
                 "}\n";
 
         // Act / Assert
-        Assert.assertTrue(Validator.isValid(_complexGraph, inputString));
+        assertTrue(Validator.isValid(_complexGraph, inputString));
 
     }
 
@@ -204,7 +201,7 @@ public class ValidatorTests {
                 "}\n";
 
         // Act / Assert
-        Assert.assertFalse(Validator.isValid(_complexGraph, inputString));
+        assertFalse(Validator.isValid(_complexGraph, inputString));
 
     }
 

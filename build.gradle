@@ -12,7 +12,8 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 
     // https://mvnrepository.com/artifact/commons-cli/commons-cli
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
@@ -24,7 +25,7 @@ dependencies {
     compile group: 'org.graphstream', name: 'gs-ui', version: '1.3'
 }
 
-// Complile jar
+// Compile jar
 jar {
     manifest {
         // Set main class
@@ -37,8 +38,15 @@ jar {
 }
 
 test {
-    useJUnit {
-        includeCategories 'common.categories.HobbitonUnitTestsCategory'
-        excludeCategories 'common.categories.GandalfIntegrationTestsCategory'
+    useJUnitPlatform {
+        excludeTags 'gandalf'
+    }
+}
+
+task integrationTest(type: Test) {
+    group = 'verification'
+
+    useJUnitPlatform {
+        includeTags 'gandalf'
     }
 }

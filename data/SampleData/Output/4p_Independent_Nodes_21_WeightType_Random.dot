@@ -1,0 +1,23 @@
+digraph Independent_Nodes_21_WeightType_Random {
+	1	 [Processor=0,Start=0,Weight=6];
+	2	 [Processor=1,Start=0,Weight=6];
+	3	 [Processor=2,Start=0,Weight=3];
+	4	 [Processor=3,Start=0,Weight=9];
+	5	 [Processor=2,Start=3,Weight=4];
+	6	 [Processor=0,Start=6,Weight=10];
+	7	 [Processor=1,Start=6,Weight=3];
+	8	 [Processor=2,Start=7,Weight=9];
+	9	 [Processor=1,Start=9,Weight=7];
+	10	 [Processor=3,Start=9,Weight=9];
+	11	 [Processor=0,Start=16,Weight=7];
+	12	 [Processor=1,Start=16,Weight=10];
+	13	 [Processor=3,Start=18,Weight=4];
+	14	 [Processor=3,Start=22,Weight=3];
+	15	 [Processor=0,Start=23,Weight=2];
+	16	 [Processor=2,Start=16,Weight=8];
+	17	 [Processor=1,Start=26,Weight=3];
+	18	 [Processor=0,Start=25,Weight=8];
+	19	 [Processor=2,Start=24,Weight=9];
+	20	 [Processor=3,Start=25,Weight=8];
+	21	 [Processor=1,Start=29,Weight=4];
+}

@@ -1,0 +1,21 @@
+digraph "InTree-Unbalanced-MaxBf-3_Nodes_10_CCR_2.02_WeightType_Random" {
+	1	 [Processor=0,Start=0,Weight=7];
+	7	 [Processor=1,Start=16,Weight=8];
+	1 -> 7	 [Weight=9];
+	2	 [Processor=1,Start=0,Weight=5];
+	2 -> 7	 [Weight=9];
+	3	 [Processor=2,Start=0,Weight=4];
+	8	 [Processor=2,Start=4,Weight=4];
+	3 -> 8	 [Weight=6];
+	4	 [Processor=3,Start=0,Weight=8];
+	9	 [Processor=1,Start=24,Weight=4];
+	4 -> 9	 [Weight=9];
+	5	 [Processor=1,Start=5,Weight=3];
+	5 -> 9	 [Weight=22];
+	6	 [Processor=1,Start=8,Weight=8];
+	6 -> 9	 [Weight=19];
+	10	 [Processor=1,Start=28,Weight=6];
+	7 -> 10	 [Weight=17];
+	8 -> 10	 [Weight=15];
+	9 -> 10	 [Weight=9];
+}
