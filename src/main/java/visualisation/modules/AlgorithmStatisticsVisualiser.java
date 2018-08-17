@@ -1,5 +1,6 @@
 package visualisation.modules;
 
+import common.Config;
 import javafx.geometry.Insets;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -151,6 +152,7 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _cpuChart = createCpuChart();
         _cpuChartData = new XYChart.Series();
         _cpuChart.getData().add(_cpuChartData);
+        _cpuChartData.getNode().getStyleClass().add("stats-content");
         _updateIteration = 0;
 
 
@@ -267,10 +269,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
         // Create rectangles with width and color features
         Rectangle leftRectangle = new Rectangle(leftRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
         Rectangle rightRectangle = new Rectangle(rightRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
-        leftRectangle.setFill(Paint.valueOf("#b475d6"));
-        leftRectangle.setStroke(Color.BLACK);
-        rightRectangle.setFill(Paint.valueOf("#b475d6"));
-        rightRectangle.setStroke(Color.BLACK);
+        leftRectangle.setFill(Color.web(Config.UI_SECONDAY_COLOR));
+        rightRectangle.setFill(Color.web(Config.UI_SECONDAY_COLOR));
 
         // Clear previous column information of chart and update with current columns
         _boundGrid.getColumnConstraints().clear();

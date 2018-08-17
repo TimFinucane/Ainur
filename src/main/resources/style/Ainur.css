@@ -25,3 +25,7 @@
     -fx-text-fill: #fafafa;
 }
 
+.stats-content {
+    -fx-stroke: #ffdba2;
+}
+
