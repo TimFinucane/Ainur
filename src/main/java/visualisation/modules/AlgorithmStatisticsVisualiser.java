@@ -291,7 +291,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
             return;
 
         // If current statistics are better than locally stored bests, overwrite.
-        _bestLower = statistics.getMinScheduleBound() > _bestLower ? statistics.getMinScheduleBound() : _bestLower;
+        _bestLower = statistics.getMinScheduleBound() != Integer.MAX_VALUE && statistics.getMinScheduleBound() > _bestLower ? statistics.getMinScheduleBound() : _bestLower;
         _bestUpper = statistics.getMaxScheduleBound() < _bestUpper ? statistics.getMaxScheduleBound() : _bestUpper;
 
         // calculate left and right rectangle widths with regards to bound progression and visualisation width
@@ -341,13 +341,14 @@ public class AlgorithmStatisticsVisualiser extends VBox {
                 return;
             }
 
-            cpuUsage = ((int)(value * 100)); } catch (Exception e) { /* Nothing should happen here imo */}
+            cpuUsage = ((int)(value * 100));
+        } catch (Exception e) { /* Nothing should happen here imo */}
 
-            // Add current cpu usage to chart data structure, chart will automatically update. Divide by 1000 for seconds
-            _cpuChartData.getData().add(new XYChart.Data<>(_millisecondsRunning / 1000, cpuUsage));
-            if (_cpuChartData.getData().size() > 50) { // If data size is greater than 100 points begin to remove
-                _cpuChartData.getData().remove(0, 1);
-            }
+        // Add current cpu usage to chart data structure, chart will automatically update. Divide by 1000 for seconds
+        _cpuChartData.getData().add(new XYChart.Data<>(_millisecondsRunning / 1000, cpuUsage));
+        if (_cpuChartData.getData().size() > 50) { // If data size is greater than 100 points begin to remove
+            _cpuChartData.getData().remove(0, 1);
+        }
     }
 
 
