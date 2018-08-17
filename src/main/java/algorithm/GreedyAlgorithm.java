@@ -1,16 +1,14 @@
 package algorithm;
 
+import com.sun.deploy.ref.Helpers;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import scala.Int;
-import sun.awt.image.IntegerInterleavedRaster;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -34,7 +32,7 @@ public class GreedyAlgorithm implements Algorithm {
             int bestTime = Integer.MAX_VALUE;
             // Go through all current nodes avilable and select the one that would give the smallest run time
            for(Node n : nodesToVisit){
-               int[] earliestTimes = Helpers.calculateEarliestTimes(graph, schedule, n);
+               int[] earliestTimes = AlgorithmUtils.calculateEarliestTimes(graph, schedule, n);
                // Looks at all the possible time that task can be added and find the earliest position
                for(int i = 0; i < processors; i++){
                    Task t = new Task(i, earliestTimes[i], n);
@@ -48,7 +46,7 @@ public class GreedyAlgorithm implements Algorithm {
             schedule.addTask(bestTask);
 
             // the next nodes to visit are now those accessible from the new best schedule.
-            nodesToVisit = new ArrayList<>(Helpers.calculateNextNodes(graph, schedule, new HashSet<>(nodesToVisit), bestTask.getNode()));
+            nodesToVisit = new ArrayList<>(AlgorithmUtils.calculateNextNodes(graph, schedule, new HashSet<>(nodesToVisit), bestTask.getNode()));
         }
 
         _schedule = schedule;
