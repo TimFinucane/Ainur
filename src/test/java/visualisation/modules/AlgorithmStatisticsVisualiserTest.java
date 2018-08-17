@@ -26,7 +26,7 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
         minTime = 0;
         maxTime = 1000;
 
-        AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser(4);
+        AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser(4, 0, 1000);
         sv.update(generateStatistics());
         Scene scene = new Scene(sv);
         stage.setScene(scene);

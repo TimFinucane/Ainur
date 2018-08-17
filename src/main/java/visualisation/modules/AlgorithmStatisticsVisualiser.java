@@ -8,7 +8,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -41,30 +40,22 @@ public class AlgorithmStatisticsVisualiser extends VBox {
     private static final String FINISHED_LABEL_CLASS = "finished-label";
 
     private static final int SCHEDULE_TIME_BOUNDING_HEIGHT = 100;
-    private static final int SCHEDULE_TIME_BOUNDING_WIDTH = 750;
 
     private static final double LABEL_GRID_COLUMN_WIDTH = 150;
     private static final double LABEL_GRID_ROW_HEIGHT = 20;
 
     private static final Color FINISHING_TICK_MARK_FILL = Color.web(Config.UI_LIGHT_BLACK_COLOUR);
-    private static final Color FINISHING_TIMER_FONT_FILL = Color.web(Config.UI_GREEN_COLOUR);
 
     // BOUND FIELDS
     private double _initialLowerBound;
     private double _initialUpperBound;
-    private double _initialBoundRange;
-
-    private double _bestLower;
-    private double _bestUpper;
 
     // For keeping track of number of updates, certain visualizations may use this to prevent over updating
     private long _updateIteration;
 
 
     // ELEMENTS
-    // Grid
-    private final GridPane _boundGrid;
-    private final NumberAxis _boundingAxis;
+    private BoundingChart _boundingChart;
 
     private final XYChart.Series<Number, Number> _cpuChartData;
 
@@ -86,12 +77,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
      * Creates all visual elements and arranges on the screen. Many labels will initially be set to zero.
      * @param coresUsed : Cores algorithm runs on
      */
-    public AlgorithmStatisticsVisualiser(long coresUsed) {
-
-        // Initialize elements
-        _boundGrid = createBoundingVisualization();
-        _boundingAxis = createBoundingVisualizationAxis();
-
+    public AlgorithmStatisticsVisualiser(long coresUsed, int initialLowerBound, int initialUpperBound) {
         _timeLabel = new Label("0");
         _timeLabel.getStyleClass().add(TIME_LABEL_CLASS_CSS);
 
@@ -170,14 +156,12 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         labelAndCpuVBox.getChildren().addAll(labelVbox, _cpuChart);
         HBox.setHgrow(_cpuChart, Priority.SOMETIMES);
 
-        // Create vertical box with the bounding visualization and it's axis in vertical alignment
-        VBox boundVBox = new VBox();
-        boundVBox.setPadding(new Insets(5));
-        boundVBox.getChildren().addAll(_boundGrid, _boundingAxis);
+        // Create bounding chart
+        _boundingChart = new BoundingChart(initialLowerBound, initialUpperBound);
 
         // Add previously created boxes into VBox; one on top of another
         setPadding(new Insets(15));
-        getChildren().addAll(labelAndCpuVBox, boundVBox);
+        getChildren().addAll(labelAndCpuVBox, _boundingChart);
         VBox.setVgrow(labelAndCpuVBox, Priority.SOMETIMES);
         //VBox.setVgrow(boundVBox, Priority.SOMETIMES); TODO:
     }
@@ -192,32 +176,19 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         _updateIteration++; // Increment iteration of update
 
         // If on first iteration then update all of these parameters
-        if (_updateIteration == 1) {
+        /*if (_updateIteration == 1) {
             _initialUpperBound = statistics.getMaxScheduleBound();
             _initialLowerBound = 0;
-            _boundingAxis.setUpperBound(_initialUpperBound);
-            _initialBoundRange = _initialUpperBound - _initialLowerBound;
-
-            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
-
-            _bestLower = _initialLowerBound;
-            _bestUpper = _initialUpperBound;
         }
 
         if (_initialUpperBound == Integer.MAX_VALUE) {
             _initialUpperBound = statistics.getMaxScheduleBound();
-            _boundingAxis.setUpperBound(_initialUpperBound);
-            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
-            _initialBoundRange = _initialUpperBound - _initialLowerBound;
-            _bestUpper = _initialUpperBound;
-        }
-
-        updateBoundingChart(statistics); // Update bounding chart
+        }*/
 
         updateTimeLabel(); // Update Time label
 
         updateLabels(statistics); // Update misc. statistics labels
-
+        _boundingChart.update(statistics.getMinScheduleBound(), statistics.getMaxScheduleBound());
     }
 
 
@@ -225,18 +196,9 @@ public class AlgorithmStatisticsVisualiser extends VBox {
      * To be called when Visualizer is intended to stop
      */
     public void stop() {
-
         _finishedLabel.setVisible(true);
         _timeLabel.getStyleClass().add(TIME_LABEL_FINISH_CLASS_CSS);
         _timer.cancel();
-
-        // Render finishing rectangle marker in middle column :)
-        Rectangle finishIndicator = new Rectangle();
-        finishIndicator.setStroke(FINISHING_TICK_MARK_FILL);
-        finishIndicator.setStrokeWidth(5);
-        finishIndicator.setHeight(SCHEDULE_TIME_BOUNDING_HEIGHT);
-        _boundGrid.add(finishIndicator, 1, 0);
-
     }
 
 
@@ -278,45 +240,6 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         _memoryMaxValue.setText(String.format("%sM", format.format(runtime.maxMemory() / (1024 * 1024))));
 
     }
-
-
-    /**
-     * Update the bounding chart to appropriate state given the current min and max boundary times. This chart re-renders both rectangles if one changes.
-     * @param statistics : Update statistics
-     */
-    private void updateBoundingChart(Statistics statistics) {
-
-        // If neither bound changes, no point in continuing to render
-        if (statistics.getMinScheduleBound() == _bestLower && statistics.getMaxScheduleBound() == _bestUpper)
-            return;
-
-        // If current statistics are better than locally stored bests, overwrite.
-        _bestLower = statistics.getMinScheduleBound() != Integer.MAX_VALUE && statistics.getMinScheduleBound() > _bestLower ? statistics.getMinScheduleBound() : _bestLower;
-        _bestUpper = statistics.getMaxScheduleBound() < _bestUpper ? statistics.getMaxScheduleBound() : _bestUpper;
-
-        // calculate left and right rectangle widths with regards to bound progression and visualisation width
-        int leftRectangleWidth = (int)(((_bestLower - _initialLowerBound) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
-        int rightRectangleWidth = (int)(((_initialUpperBound - _bestUpper) / _initialBoundRange) * SCHEDULE_TIME_BOUNDING_WIDTH);
-
-        // Create rectangles with width and color features
-        Rectangle leftRectangle = new Rectangle(leftRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
-        Rectangle rightRectangle = new Rectangle(rightRectangleWidth, SCHEDULE_TIME_BOUNDING_HEIGHT);
-        leftRectangle.setFill(Color.web(Config.UI_SECONDAY_COLOR));
-        rightRectangle.setFill(Color.web(Config.UI_SECONDAY_COLOR));
-
-
-        // Clear previous column information of chart and update with current columns
-        _boundGrid.getColumnConstraints().clear();
-        _boundGrid.getColumnConstraints().addAll(
-                new ColumnConstraints(leftRectangleWidth),
-                new ColumnConstraints(SCHEDULE_TIME_BOUNDING_WIDTH - leftRectangleWidth - rightRectangleWidth),
-                new ColumnConstraints(rightRectangleWidth));
-
-        // Add newly made rectangles into columns
-        _boundGrid.add(leftRectangle, 0, 0);
-        _boundGrid.add(rightRectangle, 2, 0);
-    }
-
 
     /**
      * Calculate the current CPU usage of the OS and plot it onto chart
@@ -394,33 +317,6 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         cpuChart.setMinWidth(200);
 
         return cpuChart;
-    }
-
-
-    /**
-     * Create a grid pane with constant height and no columns
-     * @return GridPane : grid pan for bounding vis.
-     */
-    private GridPane createBoundingVisualization() {
-
-        GridPane grid = new GridPane();
-
-        // Only need to create row with constant height as no real bounding information is yet available
-        RowConstraints rc = new RowConstraints(SCHEDULE_TIME_BOUNDING_HEIGHT);
-        grid.getRowConstraints().addAll(rc);
-
-        return grid;
-    }
-
-
-    /**
-     * Creates an axis intended for bounding visualization
-     * @return NumberAxis : number axis for bounding vis.
-     */
-    private NumberAxis createBoundingVisualizationAxis() {
-
-        // Set upper and lower bounds to that of initial schedule estimates, set tick marks to be 1/20th of the way across
-        return new NumberAxis("Schedule Time Units", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
     }
 
 }

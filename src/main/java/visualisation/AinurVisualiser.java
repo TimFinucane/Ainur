@@ -76,7 +76,7 @@ public class AinurVisualiser extends VBox {
         int coresUsed = (algorithm instanceof TieredAlgorithm) ? ((TieredAlgorithm) algorithm).numThreads() : 1;
         // TODO: When getCurrentBest is safe (i.e. using non optimal starting algorithm) remove the math min
         int upperBound = Math.min(algorithm.getCurrentBest().getEndTime(), 1000);
-        _asv = new AlgorithmStatisticsVisualiser(coresUsed);
+        _asv = new AlgorithmStatisticsVisualiser(coresUsed, algorithm.lowerBound(), upperBound);
 
         // Initialise stats object
         _stats = new Statistics();
