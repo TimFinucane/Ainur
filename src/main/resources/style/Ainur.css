@@ -25,13 +25,24 @@
 /* Visualisations */
 
 .vis {
-    -fx-padding: 10;
     -fx-background-color: -fx-white-colour;
 }
 
 .ainur-vis {
     -fx-background-color: -fx-light-black-colour;
     -fx-padding: 0 2 2 2;
+}
+
+.graph-vis {
+    -fx-padding: 10 10 0 10;
+}
+
+.stats-vis {
+    -fx-padding: 10 10 0 0;
+}
+
+.schedule-vis {
+    -fx-padding: 10 10 10 10;
 }
 
 .stats-vis * {
