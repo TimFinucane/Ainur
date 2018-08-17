@@ -39,6 +39,7 @@ public class ScheduleVisualiser extends VBox {
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setPrefHeight(100);
 
         // Ensure that when we resize, it redraws the schedule
         widthProperty().addListener(e -> draw());
