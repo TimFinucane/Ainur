@@ -48,6 +48,8 @@ public abstract class IntegrationTest {
         File outputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Output")));
         List<String> outputFiles = new ArrayList<>();
         for (String fileString : outputFolder.list()) {
+            //TODO take out this IF statement - these are the hardest graphs!! (Note we only need to run on ones up to 20).
+            // This removes all fork node graphs and any graphs with either 21 or 30 nodes so "quick" tests can run.
             if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30")) {
                 outputFiles.add(fileString);
             }
@@ -133,7 +135,7 @@ public abstract class IntegrationTest {
      * @param is
      * @return
      */
-    protected int scheduleLength(InputStream is) {
+    private int scheduleLength(InputStream is) {
 
         Scanner s = new Scanner(is).useDelimiter("\\A");
         String inputTextAsString = s.hasNext() ? s.next() : "";
@@ -159,7 +161,7 @@ public abstract class IntegrationTest {
      * Returns the number of processors in a particular schedule.
      * @return
      */
-    protected int scheduleProcessors(InputStream is) {
+    private int scheduleProcessors(InputStream is) {
 
         Scanner s = new Scanner(is).useDelimiter("\\A");
         String inputTextAsString = s.hasNext() ? s.next() : "";

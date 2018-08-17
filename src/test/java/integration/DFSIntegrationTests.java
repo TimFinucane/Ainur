@@ -13,6 +13,7 @@ import io.GraphReader;
 import io.dot.DotGraphReader;
 import javafx.util.Pair;
 import org.junit.Assert;
+import org.junit.platform.commons.JUnitException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,27 +33,32 @@ public class DFSIntegrationTests extends IntegrationTest {
 
     @Override
     protected void runAgainstOptimal(String graph, int processors, int optimalScheduleLength) {
-
-        // Single threaded DFS implementation
-        Algorithm dfsAlgorithm = new DFSAlgorithm(
-                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                new CriticalPath()
-        );
-
-
-        GraphReader reader = null;
         try {
-            reader = new DotGraphReader(new FileInputStream(graph));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
+            // Single threaded DFS implementation
+            Algorithm dfsAlgorithm = new DFSAlgorithm(
+                    Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                    new CriticalPath()
+            );
+
+
+            GraphReader reader = null;
+            try {
+                reader = new DotGraphReader(new FileInputStream(graph));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Graph inputGraph = reader.read();
+
+            dfsAlgorithm.run(inputGraph, processors);
+            Schedule schedule = dfsAlgorithm.getCurrentBest();
+
+            Assert.assertEquals(optimalScheduleLength, schedule.getEndTime());
+            Assert.assertTrue(Validator.isValid(inputGraph, schedule));
+
+        } catch (JUnitException ju) {
+            ju.printStackTrace();
         }
-        Graph inputGraph = reader.read();
-
-        dfsAlgorithm.run(inputGraph, processors);
-        Schedule schedule = dfsAlgorithm.getCurrentBest();
-
-        Assert.assertEquals(optimalScheduleLength, schedule.getEndTime());
-        Assert.assertTrue(Validator.isValid(inputGraph, schedule));
     }
 
 
