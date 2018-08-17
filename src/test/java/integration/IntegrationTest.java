@@ -1,6 +1,8 @@
 package integration;
 
 import common.graph.Graph;
+import common.schedule.Schedule;
+import common.schedule.SimpleSchedule;
 import io.dot.DotGraphReader;
 import javafx.util.Pair;
 import org.junit.jupiter.api.Assumptions;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 @Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public abstract class IntegrationTest {
@@ -130,6 +133,10 @@ public abstract class IntegrationTest {
 
         Scanner s = new Scanner(is).useDelimiter("\\A");
         String asString = s.hasNext() ? s.next() : "";
+
+        Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
+
+        Schedule schedule = new SimpleSchedule(0);
 
         return 0;
     }
