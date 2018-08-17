@@ -114,14 +114,28 @@ public abstract class IntegrationTest {
     }
 
     /**
-     * Returns an integer value of the schedule length given an input stream of text in dot format. Attributes must be
+     * Returns an integer value of the schedule length given a file in .dot format. Attributes must be
      * specified in the form of [Processor=<>,Start=<>,Weight=<>]
+     * @param file
      * @return
      */
-    protected int scheduleLength(String string) {
+    protected int scheduleLength(File file) throws FileNotFoundException {
+        return scheduleLength(new FileInputStream(file));
+    }
+
+    /**
+     * Returns an integer value of the schedule length given an input stream of text in dot format. Attributes must be
+     * specified in the form of [Processor=<>,Start=<>,Weight=<>]
+     * @param is
+     * @return
+     */
+    protected int scheduleLength(InputStream is) {
+
+        Scanner s = new Scanner(is).useDelimiter("\\A");
+        String inputTextAsString = s.hasNext() ? s.next() : "";
 
         Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
-        Matcher m = taskPattern.matcher(string);
+        Matcher m = taskPattern.matcher(inputTextAsString);
 
         int maxTaskEndTime = 0;
         // loop through all nodes looking for latest start time
@@ -140,10 +154,13 @@ public abstract class IntegrationTest {
      * Returns the number of processors in a particular schedule.
      * @return
      */
-    protected int scheduleProcessors(String string) {
+    protected int scheduleProcessors(InputStream is) {
+
+        Scanner s = new Scanner(is).useDelimiter("\\A");
+        String inputTextAsString = s.hasNext() ? s.next() : "";
 
         Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
-        Matcher m = taskPattern.matcher(string);
+        Matcher m = taskPattern.matcher(inputTextAsString);
 
         int maxProcessors = 0;
         while (m.find()) {
