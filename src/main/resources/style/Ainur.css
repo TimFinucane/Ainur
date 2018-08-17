@@ -47,6 +47,10 @@
     -fx-padding: 20 25 10 25;
 }
 
+.canvas-padding {
+    -fx-padding: 0 20 20 5;
+}
+
 .stats-vis * {
     -fx-background-color: -fx-primary-colour !important;
     -fx-text-fill: -fx-white-colour !important;
