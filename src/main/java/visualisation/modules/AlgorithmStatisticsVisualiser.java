@@ -68,7 +68,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
     private final GridPane _boundGrid;
     private final NumberAxis _boundingAxis;
 
-    private final XYChart.Series _cpuChartData;
+    private final XYChart.Series<Number, Number> _cpuChartData;
 
     // Label Values that need to be periodically updated through life of visualizer
     private final Timer _timer; // Timer
@@ -144,7 +144,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         // Create a cpu usage chart
         // Cpu chart
         LineChart<Number, Number> _cpuChart = createCpuChart();
-        _cpuChartData = new XYChart.Series();
+        _cpuChartData = new XYChart.Series<>();
         _cpuChart.getData().add(_cpuChartData);
         _updateIteration = 0;
 
@@ -332,7 +332,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
             cpuUsage = ((int)(value * 100)); } catch (Exception e) { /* Nothing should happen here imo */}
 
             // Add current cpu usage to chart data structure, chart will automatically update. Divide by 1000 for seconds
-            _cpuChartData.getData().add(new XYChart.Data(_millisecondsRunning / 1000, cpuUsage));
+            _cpuChartData.getData().add(new XYChart.Data<>(_millisecondsRunning / 1000, cpuUsage));
             if (_cpuChartData.getData().size() > 50) { // If data size is greater than 100 points begin to remove
                 _cpuChartData.getData().remove(0, 1);
             }
