@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 @Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public abstract class IntegrationTest {
@@ -110,24 +111,29 @@ public abstract class IntegrationTest {
     }
 
     /**
+     * Returns an integer value of the schedule length given a file in .dot format. Attributes must be
+     * specified in the form of [Processor=<>,Start=<>,Weight=<>]
+     * @param file
+     * @return
+     */
+    protected int scheduleLength(File file) throws FileNotFoundException {
+        return scheduleLength(new FileInputStream(file));
+    }
+
+    /**
      * Returns an integer value of the schedule length given an input stream of text in dot format. Attributes must be
      * specified in the form of [Processor=<>,Start=<>,Weight=<>]
      * @param is
      * @return
      */
     protected int scheduleLength(InputStream is) {
+
+        Scanner s = new Scanner(is).useDelimiter("\\A");
+        String asString = s.hasNext() ? s.next() : "";
+
         return 0;
     }
 
-    /**
-     * Returns an integer value of the schedule length given a file in .dot format. Attributes must be
-     * specified in the form of [Processor=<>,Start=<>,Weight=<>]
-     * @param file
-     * @return
-     */
-    protected int scheduleLength(File file) {
-        return 0;
-    }
 
     private String generateName(String graph, Pair<Integer, Integer> processorOptimalTime) {
         return graph.substring(graph.lastIndexOf(File.separatorChar) + 1, graph.lastIndexOf('.')) // Just the file name part
