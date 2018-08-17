@@ -23,6 +23,13 @@ import java.util.function.Consumer;
 
 /** The Main Class for Ainur **/
 public class Ainur extends Application {
+
+    /* Macros */
+
+    private static final String STYLE_SHEET = "/style/Ainur.css";
+
+    /* Static Fields */
+
     private static Cli cli;
     private static Graph graph;
     private static Algorithm algorithm;
@@ -30,6 +37,7 @@ public class Ainur extends Application {
     private static Thread schedulingThread;
 
     /** MAIN **/
+
     public static void main(String[] args) {
       cli = new Cli(args);
       cli.parse();
@@ -55,6 +63,8 @@ public class Ainur extends Application {
           System.exit(1);
       }
     }
+
+    /* Functions */
 
     private static void onAlgorithmComplete(Schedule schedule) {
         if (cli.getVisualise())
@@ -152,6 +162,7 @@ public class Ainur extends Application {
         av = new AinurVisualiser(algorithm, graph, cli.getProcessors());
         Scene scene = new Scene(av);
         primaryStage.setScene(scene);
+        scene.getStylesheets().add(getClass().getResource(STYLE_SHEET).toExternalForm());
         primaryStage.show();
 
         schedulingThread.start();
