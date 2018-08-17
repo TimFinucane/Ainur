@@ -129,13 +129,10 @@ public abstract class IntegrationTest {
      * @param is
      * @return
      */
-    protected int scheduleLength(InputStream is) {
-
-        Scanner s = new Scanner(is).useDelimiter("\\A");
-        String inputTextAsString = s.hasNext() ? s.next() : "";
+    protected int scheduleLength(String string) {
 
         Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
-        Matcher m = taskPattern.matcher(inputTextAsString);
+        Matcher m = taskPattern.matcher(string);
 
         int maxTaskEndTime = 0;
         // loop through all nodes looking for latest start time
@@ -147,6 +144,27 @@ public abstract class IntegrationTest {
         }
 
         return maxTaskEndTime;
+    }
+
+
+    /**
+     * Returns the number of processors in a particular schedule.
+     * @return
+     */
+    protected int scheduleProcessors(String string) {
+
+        Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
+        Matcher m = taskPattern.matcher(string);
+
+        int maxProcessors = 0;
+        while (m.find()) {
+            int processorNo = Integer.parseInt(m.group(2));
+            // As far as i can see processor count starts at 0, so add 1.
+            maxProcessors = processorNo + 1 > maxProcessors ? processorNo + 1 : maxProcessors;
+
+        }
+
+        return maxProcessors;
     }
 
 
