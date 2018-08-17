@@ -11,6 +11,7 @@ import org.junit.jupiter.api.TestFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,6 +107,26 @@ public abstract class IntegrationTest {
             Assumptions.assumeTrue(false, "File not found: " + graphName);
             return null;
         }
+    }
+
+    /**
+     * Returns an integer value of the schedule length given an input stream of text in dot format. Attributes must be
+     * specified in the form of [Processor=<>,Start=<>,Weight=<>]
+     * @param is
+     * @return
+     */
+    protected int scheduleLength(InputStream is) {
+        return 0;
+    }
+
+    /**
+     * Returns an integer value of the schedule length given a file in .dot format. Attributes must be
+     * specified in the form of [Processor=<>,Start=<>,Weight=<>]
+     * @param file
+     * @return
+     */
+    protected int scheduleLength(File file) {
+        return 0;
     }
 
     private String generateName(String graph, Pair<Integer, Integer> processorOptimalTime) {
