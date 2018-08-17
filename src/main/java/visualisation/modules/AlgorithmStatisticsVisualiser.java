@@ -17,6 +17,7 @@ import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -203,8 +204,16 @@ public class AlgorithmStatisticsVisualiser extends VBox {
             _bestUpper = _initialUpperBound;
         }
 
+        if (_initialUpperBound == Integer.MAX_VALUE) {
+            _initialUpperBound = statistics.getMaxScheduleBound();
+            _boundingAxis.setUpperBound(_initialUpperBound);
+            _boundingAxis.setTickUnit((_initialUpperBound - _initialLowerBound) / 20);
+            _initialBoundRange = _initialUpperBound - _initialLowerBound;
+            _bestUpper = _initialUpperBound;
+        }
+
         updateBoundingChart(statistics); // Update bounding chart
-        
+
         updateTimeLabel(); // Update Time label
 
         updateLabels(statistics); // Update misc. statistics labels
@@ -250,8 +259,10 @@ public class AlgorithmStatisticsVisualiser extends VBox {
      */
     private void updateLabels(Statistics statistics) {
 
-        _branchesCoveredValue.setText(String.format("%s", new BigDecimal(statistics.getSearchSpaceLookedAt()).toString()));
-        _branchesCulledValue.setText(String.format("%s", new BigDecimal(statistics.getSearchSpaceCulled()).toString()));
+        NumberFormat numberFormat = new DecimalFormat("0.0E0");
+
+        _branchesCoveredValue.setText(String.format("%s", numberFormat.format(new BigDecimal(statistics.getSearchSpaceLookedAt()))));
+        _branchesCulledValue.setText(String.format("%s", numberFormat.format(new BigDecimal(statistics.getSearchSpaceCulled()))));
 
         // Big integer division requires that you convert into decimals so as to not lose precision (as integer division does).
         BigDecimal searchSpaceCulledAsBigDec = new BigDecimal(statistics.getSearchSpaceCulled());
