@@ -9,7 +9,8 @@ public class Config {
     public static final int CORES_DEFAULT = 1;
     public static final int PROCESSORS_DEFAULT = 1;
 
-    // UI stuff
+    // UI Colours
+    /**** IF YOU CHANGE A COLOUR HERE ALSO CHANGE IT IN THE CSS FILE!!! (Ainur.css) *****/
     public static final String UI_PRIMARY_COLOUR = "#b8a2ff";
     public static final String UI_SECONDAY_COLOR = "#ffdba2";
     public static final String UI_LIGHT_BLACK_COLOUR = "#484848";

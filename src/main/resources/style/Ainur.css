@@ -2,68 +2,73 @@
     src: url("RobotoMono-Medium.ttf");
 }
 
-.root {
-    -fx-background-color: #fafafa;
-    -fx-font: 12 "Roboto Mono Medium";
-    -fx-text-fill: #fafafa;
+/* Colours */
+
+* {
+    /***** IF YOU CHANGE A COLOUR HERE ALSO CHANGE IT IN THE Config CLASS (common.Config) *****/
+    -fx-primary-colour: #b8a2ff;
+    -fx-seconday-colour: #ffdba2;
+    -fx-light-black-colour: #484848;
+    -fx-lighter-black-colour: #6d6d6d;
+    -fx-green-colour: #a2ffcd;
+    -fx-white-colour: #fafafa;
 }
+
+/* Root node */
+
+.root {
+    -fx-background-color: -fx-white-colour;
+    -fx-font: 12 "Roboto Mono Medium";
+    -fx-text-fill: -fx-white-colour;
+}
+
+/* Visualisations */
 
 .vis {
     -fx-padding: 10;
-    -fx-background-color: #fafafa;
+    -fx-background-color: -fx-white-colour;
 }
 
 .ainur-vis {
-    -fx-background-color: #484848;
+    -fx-background-color: -fx-light-black-colour;
     -fx-padding: 0 2 2 2;
 }
 
 .stats-vis * {
-    -fx-background-color: #b8a2ff !important;
-    -fx-text-fill: #fafafa !important;
+    -fx-background-color: -fx-primary-colour !important;
+    -fx-text-fill: -fx-white-colour !important;
 }
 
 .schedule-vis * {
-    -fx-background-color: #ffdba2;
-    -fx-text-fill: #fafafa;
-}
-
-.tool-bar {
-    -fx-background-color: #484848;
-    -fx-padding: 0;
-}
-
-.close-button {
-    -fx-background-color: #484848;
-    -fx-text-fill: #fafafa;
-    -fx-font-size: 14;
-    -fx-background-radius: 0;
-    -fx-fill-width: 20px;
-    -fx-alignment: center-right;
-}
-
-.close-button:hover {
-    -fx-background-color: #6d6d6d;
-    -fx-font: bold 14.5 "Roboto Mono Medium";
+    -fx-background-color: -fx-seconday-colour;
+    -fx-text-fill: -fx-white-colour;
 }
 
 .stats-content {
-    -fx-stroke: #ffdba2;
-}
-
-.text-color {
-    -fx-text-fill: #fafafa;
+    -fx-stroke: -fx-seconday-colour;
 }
 
 .time-label {
     -fx-font-size: 20;
 }
 
-.title-main {
-    -fx-font-size: 15;
+/* Tool bar */
+
+.tool-bar {
+    -fx-background-color: -fx-light-black-colour;
+    -fx-padding: 0;
 }
 
-.title-sub {
-    -fx-font-size: 12;
+.close-button {
+    -fx-background-color: -fx-light-black-colour;
+    -fx-text-fill: -fx-white-colour;
+    -fx-font-size: 14;
+    -fx-background-radius: 0;
+    -fx-fill-width: 20px;
+}
+
+.close-button:hover {
+    -fx-background-color: -fx-lighter-black-colour;
+    -fx-font: bold 14.5 "Roboto Mono Medium";
 }
 
