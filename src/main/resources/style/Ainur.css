@@ -45,6 +45,10 @@
     -fx-padding: 10 10 10 10;
 }
 
+.inner-schedule {
+    -fx-padding: 20 25 10 25;
+}
+
 .stats-vis * {
     -fx-background-color: -fx-primary-colour !important;
     -fx-text-fill: -fx-white-colour !important;

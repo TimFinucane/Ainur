@@ -3,7 +3,6 @@ package visualisation.modules;
 import common.Config;
 import common.schedule.Schedule;
 import common.schedule.Task;
-import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,6 +16,8 @@ import javafx.scene.text.TextAlignment;
  * Class to deal with the visual rendering of a schedule.
  */
 public class ScheduleVisualiser extends VBox {
+    private static final String INNER_SCHEDULE_CLASS_CSS = "inner-schedule";
+
     private static final Color FILL_COLOUR = Color.web(Config.UI_PRIMARY_COLOUR);
     private static final Color TEXT_COLOUR = Color.BLACK;
 
@@ -46,7 +47,7 @@ public class ScheduleVisualiser extends VBox {
         getChildren().add(_axis);
 
         // And have a nice bit of pad
-        setPadding(new Insets(10));
+        this.getStyleClass().add(INNER_SCHEDULE_CLASS_CSS);
 
         setPrefHeight(10 + 25 * numProcessors);
     }
