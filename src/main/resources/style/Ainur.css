@@ -89,6 +89,5 @@
 
 .close-button:hover {
     -fx-background-color: -fx-lighter-black-colour;
-    -fx-font: bold 14.5 "Roboto Mono Medium";
 }
 
