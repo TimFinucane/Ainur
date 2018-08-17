@@ -1,8 +1,10 @@
 package integration;
 
 import common.graph.Graph;
+import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
+import common.schedule.Task;
 import io.dot.DotGraphReader;
 import javafx.util.Pair;
 import org.junit.jupiter.api.Assumptions;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
@@ -132,9 +135,25 @@ public abstract class IntegrationTest {
     protected int scheduleLength(InputStream is) {
 
         Scanner s = new Scanner(is).useDelimiter("\\A");
-        String asString = s.hasNext() ? s.next() : "";
+        String inputTextAsString = s.hasNext() ? s.next() : "";
 
         Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
+        Matcher m = taskPattern.matcher(inputTextAsString);
+
+        List<Task> tasks = new ArrayList<>();
+        int id = 0;
+        int processorNo = 0;
+
+        while (m.find()) {
+            tasks.add(new Task(
+                    Integer.parseInt(m.group(2)), // Processor no.
+                    Integer.parseInt(m.group(3)), // Start time
+                    new Node(Integer.parseInt(m.group(4)), m.group(1), id))); // Node w/ weight and label
+            id++;
+            // In examples processors seem to start at 0, so for processors labelled up to n there are n+1 processors.
+            if (processorNo < Integer.parseInt(m.group(2)) + 1)
+                processorNo = Integer.parseInt(m.group(2)) + 1;
+        }
 
         Schedule schedule = new SimpleSchedule(0);
 
