@@ -27,6 +27,7 @@ public class Ainur extends Application {
     private static Graph graph;
     private static Algorithm algorithm;
     private static AinurVisualiser av;
+    private static Thread schedulingThread;
 
     /** MAIN **/
     public static void main(String[] args) {
@@ -38,12 +39,11 @@ public class Ainur extends Application {
           algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
           // TODO update upperbound when non optimal implemented
 
-          Thread schedulingThread =
+          schedulingThread =
                   new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
 
           if (cli.getVisualise()) {
               // Launch as javafx application.
-              schedulingThread.start();
               launch(args);
           } else {
               schedulingThread.run();
@@ -149,11 +149,12 @@ public class Ainur extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Start the program
-        av = new AinurVisualiser(algorithm, graph, 0, 100, cli.getProcessors());
+        av = new AinurVisualiser(algorithm, graph, cli.getProcessors());
         Scene scene = new Scene(av);
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        schedulingThread.start();
         av.run();
     }
 }

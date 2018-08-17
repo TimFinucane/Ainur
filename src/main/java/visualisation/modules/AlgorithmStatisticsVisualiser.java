@@ -10,11 +10,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import scala.util.parsing.combinator.testing.Str;
 
-import javax.management.*;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.NumberFormat;
 import java.util.Date;
@@ -262,7 +265,8 @@ public class AlgorithmStatisticsVisualiser extends Region {
         // Big integer division requires that you convert into decimals so as to not lose precision (as integer division does).
         BigDecimal searchSpaceCulledAsBigDec = new BigDecimal(statistics.getSearchSpaceCulled());
         BigDecimal searchSpaceLookedAtAsBigDec = new BigDecimal(statistics.getSearchSpaceLookedAt());
-        _cullingRateValue.setText(String.format("%.1f%%", 100 * searchSpaceCulledAsBigDec.divide(searchSpaceCulledAsBigDec.add(searchSpaceLookedAtAsBigDec), MathContext.DECIMAL32).floatValue()));
+        if (!searchSpaceCulledAsBigDec.equals(BigDecimal.ZERO) && !searchSpaceLookedAtAsBigDec.equals(BigDecimal.ZERO)) // We only want to divide if we know for sure the algorithm has some metrics for us
+            _cullingRateValue.setText(String.format("%.1f%%", 100 * searchSpaceCulledAsBigDec.divide(searchSpaceCulledAsBigDec.add(searchSpaceLookedAtAsBigDec), MathContext.DECIMAL32).floatValue()));
 
         NumberFormat format = NumberFormat.getInstance();
         Runtime runtime = Runtime.getRuntime(); // For the commas in 100,000
