@@ -1,6 +1,10 @@
 package integration;
 
+import javafx.util.Pair;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +18,10 @@ public class DFSIntegrationTests extends IntegrationTest {
         graphs = Arrays.asList(folder.list());
 
         // get optimal schedules from data/SampleData/Output
+        for (String graphString : graphs) {
 
+            Pair<Integer, Integer> processorWithOptimal = new Pair<>(0, 0);
+        }
     }
 
     @Override

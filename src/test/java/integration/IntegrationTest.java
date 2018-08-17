@@ -114,19 +114,8 @@ public abstract class IntegrationTest {
     }
 
     /**
-     * Returns an integer value of the schedule length given a file in .dot format. Attributes must be
-     * specified in the form of [Processor=<>,Start=<>,Weight=<>]
-     * @param file
-     * @return
-     */
-    protected int scheduleLength(File file) throws FileNotFoundException {
-        return scheduleLength(new FileInputStream(file));
-    }
-
-    /**
      * Returns an integer value of the schedule length given an input stream of text in dot format. Attributes must be
      * specified in the form of [Processor=<>,Start=<>,Weight=<>]
-     * @param is
      * @return
      */
     protected int scheduleLength(String string) {
