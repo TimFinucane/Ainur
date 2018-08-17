@@ -35,9 +35,6 @@ public class AlgorithmStatisticsVisualiser extends Region {
     private static final double LABEL_GRID_COLUMN_WIDTH = 150;
     private static final double LABEL_GRID_ROW_HEIGHT = 20;
 
-    private static final Font DEFAULT_FONT = new Font("Consolas", 12);
-    private static final Font DEFAULT_TIME_FONT = new Font("Consolas", 20);
-
     // Should stay constant once assigned, correspond to initial upper / lower bounds on schedule time once algorithm starts
     private double _initialLowerBound;
     private double _initialUpperBound;
@@ -94,42 +91,28 @@ public class AlgorithmStatisticsVisualiser extends Region {
         _boundingAxis = createBoundingVisualizationAxis();
 
         _timeLabel = new Label("0");
-        _timeLabel.setFont(DEFAULT_TIME_FONT);
+        _timeLabel.getStyleClass().add("time-label");
 
         _processorsUsedLabel = new Label("Cores running:");
-        _processorsUsedLabel.setFont(DEFAULT_FONT);
         _processorsUsedValue = new Label(String.format("%d", coresUsed));
-        _processorsUsedValue.setFont(DEFAULT_FONT);
 
         _branchesCoveredLabel = new Label("Branches explored:");
-        _branchesCoveredLabel.setFont(DEFAULT_FONT);
         _branchesCoveredValue = new Label(String.format("%d", 0));
-        _branchesCoveredValue.setFont(DEFAULT_FONT);
 
         _branchesCulledLabel = new Label("Branches culled:");
-        _branchesCulledLabel.setFont(DEFAULT_FONT);
         _branchesCulledValue = new Label(String.format("%d", 0));
-        _branchesCulledValue.setFont(DEFAULT_FONT);
 
         _cullingRateLabel = new Label("Culling rate:");
-        _cullingRateLabel.setFont(DEFAULT_FONT);
         _cullingRateValue = new Label(String.format("%.1f%%", 0.0));
-        _cullingRateValue.setFont(DEFAULT_FONT);
 
         _memoryFreeLabel = new Label("Memory free:");
-        _memoryFreeLabel.setFont(DEFAULT_FONT);
         _memoryFreeValue = new Label(String.format(""));
-        _memoryFreeValue.setFont(DEFAULT_FONT);
 
         _memoryAllocatedLabel = new Label("Memory Allocated:");
-        _memoryAllocatedLabel.setFont(DEFAULT_FONT);
         _memoryAllocatedValue = new Label("");
-        _memoryAllocatedValue.setFont(DEFAULT_FONT);
 
         _memoryMaxLabel = new Label("JVM Memory Limit:");
-        _memoryMaxLabel.setFont(DEFAULT_FONT);
         _memoryMaxValue = new Label("");
-        _memoryMaxValue.setFont(DEFAULT_FONT);
 
         // Add label elements to label grid so are aligned
         _labelGrid = createLabelGrid();

@@ -1,5 +1,6 @@
 package visualisation.modules;
 
+import common.Config;
 import common.schedule.Schedule;
 import common.schedule.Task;
 import javafx.geometry.Insets;
@@ -16,8 +17,7 @@ import javafx.scene.text.TextAlignment;
  * Class to deal with the visual rendering of a schedule.
  */
 public class ScheduleVisualiser extends VBox {
-    private static final Color FILL_COLOUR = Color.LAVENDER;
-    private static final Color BORDER_COLOUR = Color.BLACK;
+    private static final Color FILL_COLOUR = Color.web(Config.UI_PRIMARY_COLOUR);
     private static final Color TEXT_COLOUR = Color.BLACK;
 
     private Schedule    _schedule;
@@ -73,7 +73,6 @@ public class ScheduleVisualiser extends VBox {
 
         // Colours of the tasks
         gc.setFill(FILL_COLOUR);
-        gc.setStroke(BORDER_COLOUR);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
 
@@ -94,7 +93,6 @@ public class ScheduleVisualiser extends VBox {
                 int width = (int)(unitWidth * task.getNode().getComputationCost());
 
                 gc.setFill(FILL_COLOUR);
-                gc.strokeRect(left, top, width, taskHeight);
                 gc.fillRect(left, top, width, taskHeight);
 
                 int centre = left + width / 2;
@@ -114,6 +112,7 @@ public class ScheduleVisualiser extends VBox {
             if(i == _axis.getTickMarks().size() - 1)
                 x -= 1;
 
+            gc.setStroke(Color.web(Config.UI_WHITE_COLOUR));
             gc.strokeLine(x, 0, x, canvasHeight);
         }
     }

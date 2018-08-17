@@ -1,5 +1,11 @@
+@font-face {
+    src: url("RobotoMono-Medium.ttf");
+}
+
 .root {
     -fx-background-color: #fafafa;
+    -fx-font: 12 "Roboto Mono Medium";
+    -fx-text-fill: #fafafa;
 }
 
 .vis {
@@ -27,5 +33,21 @@
 
 .stats-content {
     -fx-stroke: #ffdba2;
+}
+
+.text-color {
+    -fx-text-fill: #fafafa;
+}
+
+.time-label {
+    -fx-font-size: 20;
+}
+
+.title-main {
+    -fx-font-size: 15;
+}
+
+.title-sub {
+    -fx-font-size: 12;
 }
 
