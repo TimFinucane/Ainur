@@ -1,21 +1,18 @@
 import common.Validator;
-import common.categories.GandalfIntegrationTestsCategory;
 import common.graph.Graph;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Aside from the banging name, this class aims to test the CLI functionality by passing in arguments to the CLI from
@@ -25,7 +22,7 @@ import static org.junit.Assert.fail;
  *
  * This file needs to be in the default package so it can access the Ainur main class.
  */
-@Category(GandalfIntegrationTestsCategory.class)
+@Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public class CliIT {
 
     private static final String CUSTOM_OUTPUT_NAME_NO_SUFFIX = "my_special_file";
@@ -36,7 +33,7 @@ public class CliIT {
     private static final String NODES_7_FILENAME = Paths.get("data", "graphs", "Nodes_7_OutTree.dot").toString();
     private static final String NODES_7_OUTPUT_FILENAME = Paths.get("data", "graphs", "Nodes_7_OutTree-output.dot").toString();
 
-    @After
+    @AfterEach
     public void clear() {
         new File(NODES_7_OUTPUT_FILENAME).delete();
         new File(CUSTOM_OUTPUT_NAME_SUFFIX).delete();

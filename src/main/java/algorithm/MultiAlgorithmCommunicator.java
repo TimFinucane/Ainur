@@ -11,10 +11,12 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class MultiAlgorithmCommunicator {
     protected final AtomicReference<Schedule>   _globalBest;
+    private boolean initialisedGreedy = false;
 
     public MultiAlgorithmCommunicator(Schedule initialGuess) {
         _globalBest = new AtomicReference<>(initialGuess);
     }
+
     public MultiAlgorithmCommunicator() {
         // Create a schedule with max end time to simulate an infinitely large schedule.
         this(new SimpleSchedule(0){
@@ -37,5 +39,22 @@ public class MultiAlgorithmCommunicator {
      */
     void explorePartialSolution(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         throw new UnsupportedOperationException("Can't explore a partial solution with an undefined MultiAlgorithmCommunicator");
+    }
+
+    /**
+     * Initialises a value for a greedy estimate of the current best schedule. Should only run once.
+     * @param graph
+     * @param processors
+     */
+    public void setGreedyInitialBest(Graph graph, int processors){
+        if (!initialisedGreedy) {
+            GreedyAlgorithm greedyAlgorithm = new GreedyAlgorithm();
+
+            greedyAlgorithm.run(graph, processors);
+
+            update(greedyAlgorithm.getCurrentBest());
+
+            initialisedGreedy = true;
+        }
     }
 }

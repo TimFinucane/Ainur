@@ -1,0 +1,34 @@
+digraph "Random_Nodes_21_Density_0.52_CCR_0.98_WeightType_Random" {
+	1	 [Processor=0,Start=0,Weight=6];
+	6	 [Processor=0,Start=34,Weight=10];
+	1 -> 6	 [Weight=12];
+	7	 [Processor=0,Start=28,Weight=6];
+	1 -> 7	 [Weight=20];
+	17	 [Processor=0,Start=44,Weight=3];
+	1 -> 17	 [Weight=10];
+	2	 [Processor=1,Start=0,Weight=3];
+	16	 [Processor=1,Start=48,Weight=2];
+	2 -> 16	 [Weight=12];
+	3	 [Processor=1,Start=3,Weight=8];
+	5	 [Processor=0,Start=26,Weight=2];
+	3 -> 5	 [Weight=14];
+	12	 [Processor=0,Start=47,Weight=3];
+	3 -> 12	 [Weight=12];
+	4	 [Processor=0,Start=6,Weight=8];
+	10	 [Processor=1,Start=40,Weight=8];
+	7 -> 10	 [Weight=6];
+	8	 [Processor=1,Start=11,Weight=7];
+	8 -> 16	 [Weight=6];
+	9	 [Processor=0,Start=14,Weight=3];
+	20	 [Processor=1,Start=50,Weight=10];
+	10 -> 20	 [Weight=14];
+	21	 [Processor=0,Start=58,Weight=8];
+	10 -> 21	 [Weight=6];
+	11	 [Processor=0,Start=17,Weight=9];
+	13	 [Processor=0,Start=50,Weight=8];
+	14	 [Processor=1,Start=18,Weight=6];
+	15	 [Processor=1,Start=60,Weight=6];
+	17 -> 21	 [Weight=16];
+	18	 [Processor=1,Start=24,Weight=10];
+	19	 [Processor=1,Start=34,Weight=5];
+}

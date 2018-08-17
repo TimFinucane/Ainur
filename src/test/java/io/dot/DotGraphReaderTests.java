@@ -1,19 +1,19 @@
 package io.dot;
 
-import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import io.GraphReader;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-@Category(HobbitonUnitTestsCategory.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+
 public class DotGraphReaderTests {
 
     /**
@@ -32,8 +32,8 @@ public class DotGraphReaderTests {
 
         //Assert
         Node entryNode = graph.getEntryPoints().get(0);
-        Assert.assertEquals(entryNode.getLabel(), "0");
-        Assert.assertEquals(entryNode.getComputationCost(), 1);
+        assertEquals(entryNode.getLabel(), "0");
+        assertEquals(entryNode.getComputationCost(), 1);
     }
 
     /**
@@ -57,13 +57,13 @@ public class DotGraphReaderTests {
         Edge firstNodeFirstEdge = graph.getOutgoingEdges(firstNode).get(0);
         Node secondNode = firstNodeFirstEdge.getDestinationNode();
 
-        Assert.assertEquals("0", firstNode.getLabel());
-        Assert.assertEquals(1, firstNode.getComputationCost());
-        Assert.assertEquals("1", secondNode.getLabel());
-        Assert.assertEquals(2, secondNode.getComputationCost());
-        Assert.assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
-        Assert.assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
-        Assert.assertEquals(3, firstNodeFirstEdge.getCost());
+        assertEquals("0", firstNode.getLabel());
+        assertEquals(1, firstNode.getComputationCost());
+        assertEquals("1", secondNode.getLabel());
+        assertEquals(2, secondNode.getComputationCost());
+        assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
+        assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
+        assertEquals(3, firstNodeFirstEdge.getCost());
 
     }
 
@@ -84,8 +84,8 @@ public class DotGraphReaderTests {
 
         //Assert
         Node entryNode = graph.getEntryPoints().get(0);
-        Assert.assertEquals(entryNode.getLabel(), "0");
-        Assert.assertEquals(entryNode.getComputationCost(), 1);
+        assertEquals(entryNode.getLabel(), "0");
+        assertEquals(entryNode.getComputationCost(), 1);
 
     }
 
@@ -113,12 +113,12 @@ public class DotGraphReaderTests {
         Edge firstNodeSecondEdge = graph.getOutgoingEdges(firstNode).get(1);
         Node secondNode = firstNodeFirstEdge.getDestinationNode();
         Node thirdNode = firstNodeSecondEdge.getDestinationNode();
-        Assert.assertEquals(4, firstNodeFirstEdge.getCost());
-        Assert.assertEquals(5, firstNodeSecondEdge.getCost());
-        Assert.assertEquals("1", secondNode.getLabel());
-        Assert.assertEquals(2, secondNode.getComputationCost());
-        Assert.assertEquals("2", thirdNode.getLabel());
-        Assert.assertEquals(3, thirdNode.getComputationCost());
+        assertEquals(4, firstNodeFirstEdge.getCost());
+        assertEquals(5, firstNodeSecondEdge.getCost());
+        assertEquals("1", secondNode.getLabel());
+        assertEquals(2, secondNode.getComputationCost());
+        assertEquals("2", thirdNode.getLabel());
+        assertEquals(3, thirdNode.getComputationCost());
 
     }
 
@@ -146,15 +146,15 @@ public class DotGraphReaderTests {
         Node secondNode = firstNodeFirstEdge.getDestinationNode();
         Edge secondNodeFirstEdge = graph.getOutgoingEdges(secondNode).get(0);
         Node thirdNode = secondNodeFirstEdge.getDestinationNode();
-        Assert.assertEquals("0", firstNode.getLabel());
-        Assert.assertEquals("1", secondNode.getLabel());
-        Assert.assertEquals("2", thirdNode.getLabel());
-        Assert.assertEquals(4, firstNodeFirstEdge.getCost());
-        Assert.assertEquals(5, secondNodeFirstEdge.getCost());
-        Assert.assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
-        Assert.assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
-        Assert.assertEquals(secondNode, secondNodeFirstEdge.getOriginNode());
-        Assert.assertEquals(thirdNode, secondNodeFirstEdge.getDestinationNode());
+        assertEquals("0", firstNode.getLabel());
+        assertEquals("1", secondNode.getLabel());
+        assertEquals("2", thirdNode.getLabel());
+        assertEquals(4, firstNodeFirstEdge.getCost());
+        assertEquals(5, secondNodeFirstEdge.getCost());
+        assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
+        assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
+        assertEquals(secondNode, secondNodeFirstEdge.getOriginNode());
+        assertEquals(thirdNode, secondNodeFirstEdge.getDestinationNode());
 
     }
 
@@ -180,11 +180,11 @@ public class DotGraphReaderTests {
         Node secondNode = graph.getEntryPoints().get(1);
         Edge secondNodeFirstEdge = graph.getOutgoingEdges(secondNode).get(0);
         Node thirdNode = secondNodeFirstEdge.getDestinationNode();
-        Assert.assertEquals("0", firstNode.getLabel());
-        Assert.assertEquals("1", secondNode.getLabel());
-        Assert.assertEquals("2", thirdNode.getLabel());
-        Assert.assertEquals(secondNode, secondNodeFirstEdge.getOriginNode());
-        Assert.assertEquals(thirdNode, secondNodeFirstEdge.getDestinationNode());
+        assertEquals("0", firstNode.getLabel());
+        assertEquals("1", secondNode.getLabel());
+        assertEquals("2", thirdNode.getLabel());
+        assertEquals(secondNode, secondNodeFirstEdge.getOriginNode());
+        assertEquals(thirdNode, secondNodeFirstEdge.getDestinationNode());
 
     }
 
@@ -206,7 +206,7 @@ public class DotGraphReaderTests {
         GraphReader reader = new DotGraphReader(stream);
         try {
             Graph graph = reader.read();
-            Assert.fail();
+            fail();
         } catch (IllegalArgumentException e) { }
 
     }
@@ -232,13 +232,13 @@ public class DotGraphReaderTests {
         Edge firstNodeFirstEdge = graph.getOutgoingEdges(firstNode).get(0);
         Node secondNode = firstNodeFirstEdge.getDestinationNode();
 
-        Assert.assertEquals("a", firstNode.getLabel());
-        Assert.assertEquals(1, firstNode.getComputationCost());
-        Assert.assertEquals("b", secondNode.getLabel());
-        Assert.assertEquals(2, secondNode.getComputationCost());
-        Assert.assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
-        Assert.assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
-        Assert.assertEquals(3, firstNodeFirstEdge.getCost());
+        assertEquals("a", firstNode.getLabel());
+        assertEquals(1, firstNode.getComputationCost());
+        assertEquals("b", secondNode.getLabel());
+        assertEquals(2, secondNode.getComputationCost());
+        assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
+        assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
+        assertEquals(3, firstNodeFirstEdge.getCost());
 
     }
 
@@ -263,14 +263,13 @@ public class DotGraphReaderTests {
         Edge firstNodeFirstEdge = graph.getOutgoingEdges(firstNode).get(0);
         Node secondNode = firstNodeFirstEdge.getDestinationNode();
 
-        Assert.assertEquals("cheersHowsYaMum", firstNode.getLabel());
-        Assert.assertEquals(1, firstNode.getComputationCost());
-        Assert.assertEquals("bethOhShesGood", secondNode.getLabel());
-        Assert.assertEquals(2, secondNode.getComputationCost());
-        Assert.assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
-        Assert.assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
-        Assert.assertEquals(3, firstNodeFirstEdge.getCost());
-
+        assertEquals("cheersHowsYaMum", firstNode.getLabel());
+        assertEquals(1, firstNode.getComputationCost());
+        assertEquals("bethOhShesGood", secondNode.getLabel());
+        assertEquals(2, secondNode.getComputationCost());
+        assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
+        assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
+        assertEquals(3, firstNodeFirstEdge.getCost());
     }
 
     /**
@@ -294,14 +293,13 @@ public class DotGraphReaderTests {
         Edge firstNodeFirstEdge = graph.getOutgoingEdges(firstNode).get(0);
         Node secondNode = firstNodeFirstEdge.getDestinationNode();
 
-        Assert.assertEquals("0", firstNode.getLabel());
-        Assert.assertEquals(1, firstNode.getComputationCost());
-        Assert.assertEquals("1", secondNode.getLabel());
-        Assert.assertEquals(2, secondNode.getComputationCost());
-        Assert.assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
-        Assert.assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
-        Assert.assertEquals(3, firstNodeFirstEdge.getCost());
-
+        assertEquals("0", firstNode.getLabel());
+        assertEquals(1, firstNode.getComputationCost());
+        assertEquals("1", secondNode.getLabel());
+        assertEquals(2, secondNode.getComputationCost());
+        assertEquals(firstNode, firstNodeFirstEdge.getOriginNode());
+        assertEquals(secondNode, firstNodeFirstEdge.getDestinationNode());
+        assertEquals(3, firstNodeFirstEdge.getCost());
     }
 
 }

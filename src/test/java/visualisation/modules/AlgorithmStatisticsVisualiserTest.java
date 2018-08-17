@@ -4,14 +4,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
 import java.math.BigInteger;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Ignore
+@Disabled
 public class AlgorithmStatisticsVisualiserTest extends Application {
 
     private int minTime;
@@ -26,7 +26,7 @@ public class AlgorithmStatisticsVisualiserTest extends Application {
         minTime = 0;
         maxTime = 1000;
 
-        AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser(0, 100, 4);
+        AlgorithmStatisticsVisualiser sv = new AlgorithmStatisticsVisualiser(4);
         sv.update(generateStatistics());
         Scene scene = new Scene(sv);
         stage.setScene(scene);

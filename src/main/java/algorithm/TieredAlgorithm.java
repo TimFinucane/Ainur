@@ -232,4 +232,5 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         for(Thread thread : _threads)
             thread.interrupt();
     }
+
 }
