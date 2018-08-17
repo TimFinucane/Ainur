@@ -4,6 +4,8 @@ import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
 
+import java.math.BigInteger;
+
 /**
  *  An abstract class which templates the algorithm to be implemented.
  */
@@ -29,14 +31,14 @@ public interface Algorithm {
      *
      * @return The number of culled branches that occurred
      */
-    int branchesCulled();
+    BigInteger branchesCulled();
 
     /**
      * Gets the number of branches that were explored by the algorithm.
      *
      * @return The number of branches explored
      */
-    int branchesExplored();
+    BigInteger branchesExplored();
 
     /**
      * Gets the current node being explored.

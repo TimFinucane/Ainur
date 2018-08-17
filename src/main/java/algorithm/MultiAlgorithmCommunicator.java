@@ -26,7 +26,7 @@ public class MultiAlgorithmCommunicator {
         return _globalBest.get();
     }
 
-    public void update(Schedule better) {
+    public synchronized void update(Schedule better) {
         _globalBest.updateAndGet((Schedule old) -> better.getEndTime() < old.getEndTime() ? better : old);
     }
     /**

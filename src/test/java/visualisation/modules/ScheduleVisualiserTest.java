@@ -1,4 +1,4 @@
-package visualisation;
+package visualisation.modules;
 
 import common.graph.Node;
 import common.schedule.Schedule;
@@ -6,6 +6,7 @@ import common.schedule.SimpleSchedule;
 import common.schedule.Task;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.junit.Ignore;
 
@@ -13,17 +14,19 @@ import org.junit.Ignore;
  * Class used to check rendering of ScheduleVisualiser components.
  */
 @Ignore
-public class ScheduleVisualiserTest extends Application{
+public class ScheduleVisualiserTest extends Application {
 
     /**
      * Displays a visualisation of a dummy schedule
      */
     public void start(Stage stage) {
         ScheduleVisualiser sv = new ScheduleVisualiser();
-        sv.update(generateSchedule());
-        Scene scene = new Scene(sv);
+        Scene scene = new Scene(sv, 1080, 720);
         stage.setScene(scene);
         stage.show();
+        sv.update(generateSchedule());
+
+        System.out.println("Width " + sv.getWidth() + ", Height " + sv.getHeight());
     }
 
     /**
