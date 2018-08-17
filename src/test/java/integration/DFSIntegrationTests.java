@@ -6,11 +6,13 @@ import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
+import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import javafx.util.Pair;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,6 +79,8 @@ public class DFSIntegrationTests extends IntegrationTest {
         dfsAlgorithm.run(inputGraph, processors);
         Schedule schedule = dfsAlgorithm.getCurrentBest();
 
+        Assert.assertEquals(optimalScheduleLength, schedule.getEndTime());
+        Assert.assertTrue(Validator.isValid(inputGraph, schedule));
     }
 
 
