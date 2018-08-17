@@ -73,6 +73,7 @@ public class ScheduleVisualiser extends VBox {
 
         // Colours of the tasks
         gc.setFill(FILL_COLOUR);
+        gc.setStroke(Color.web(Config.UI_SECONDAY_COLOR));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
 
@@ -93,6 +94,7 @@ public class ScheduleVisualiser extends VBox {
                 int width = (int)(unitWidth * task.getNode().getComputationCost());
 
                 gc.setFill(FILL_COLOUR);
+                gc.strokeRect(left, top, width, taskHeight);
                 gc.fillRect(left, top, width, taskHeight);
 
                 int centre = left + width / 2;
