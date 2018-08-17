@@ -61,6 +61,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      */
     @Override
     public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
+        _communicator.setGreedyInitialBest(graph, schedule.getNumProcessors());
         _graph = graph;
         recurse(schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
             nextNodes, Integer.MAX_VALUE);

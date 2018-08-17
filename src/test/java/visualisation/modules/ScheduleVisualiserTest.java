@@ -7,12 +7,12 @@ import common.schedule.Task;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * Class used to check rendering of ScheduleVisualiser components.
  */
-@Ignore
+@Disabled
 public class ScheduleVisualiserTest extends Application {
 
     /**

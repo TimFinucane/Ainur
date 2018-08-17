@@ -2,16 +2,14 @@ package algorithm.heuristics;
 
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.StartTimePruner;
-import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Node;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Category(HobbitonUnitTestsCategory.class)
+
 public class StartTimePrunerTests {
 
     /**
@@ -27,7 +25,7 @@ public class StartTimePrunerTests {
         Task task = new Task(0, 1, new Node(1, "Stub", 0));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, task));
+        assertFalse(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -46,7 +44,7 @@ public class StartTimePrunerTests {
         Task task =  new Task(0, 5, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, task));
+        assertFalse(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -64,7 +62,7 @@ public class StartTimePrunerTests {
         Task task =  new Task(0, 5, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, task));
+        assertFalse(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -82,7 +80,7 @@ public class StartTimePrunerTests {
         Task task =  new Task(0, 4, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertTrue(pruner.prune(null, schedule, task));
+        assertTrue(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -103,7 +101,7 @@ public class StartTimePrunerTests {
         Task task = new Task(0, 4, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertTrue(pruner.prune(null, schedule, task));
+        assertTrue(pruner.prune(null, schedule, task));
     }
 
     /**
@@ -121,7 +119,7 @@ public class StartTimePrunerTests {
         Task task =  new Task(0, 5, new Node(1, "stub", 0));
 
         //Act / Assert
-        Assert.assertFalse(pruner.prune(null, schedule, task));
+        assertFalse(pruner.prune(null, schedule, task));
 
     }
 

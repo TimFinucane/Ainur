@@ -1,0 +1,34 @@
+digraph "core_16p_gb_Random_Nodes_21_Density_0.52_CCR_0.98_WeightType_Random_schedule.gxl" {
+	1	 [Weight=6];
+	6	 [Weight=10];
+	1 -> 6	 [Weight=12];
+	7	 [Weight=6];
+	1 -> 7	 [Weight=20];
+	17	 [Weight=3];
+	1 -> 17	 [Weight=10];
+	2	 [Weight=3];
+	16	 [Weight=2];
+	2 -> 16	 [Weight=12];
+	3	 [Weight=8];
+	5	 [Weight=2];
+	3 -> 5	 [Weight=14];
+	12	 [Weight=3];
+	3 -> 12	 [Weight=12];
+	4	 [Weight=8];
+	10	 [Weight=8];
+	7 -> 10	 [Weight=6];
+	8	 [Weight=7];
+	8 -> 16	 [Weight=6];
+	9	 [Weight=3];
+	20	 [Weight=10];
+	10 -> 20	 [Weight=14];
+	21	 [Weight=8];
+	10 -> 21	 [Weight=6];
+	11	 [Weight=9];
+	13	 [Weight=8];
+	14	 [Weight=6];
+	15	 [Weight=6];
+	17 -> 21	 [Weight=16];
+	18	 [Weight=10];
+	19	 [Weight=5];
+}

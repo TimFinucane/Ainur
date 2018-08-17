@@ -1,0 +1,34 @@
+digraph "core_8p_gb_Random_Nodes_21_Density_0.52_CCR_0.98_WeightType_Random_schedule.gxl" {
+	1	 [Processor=6,Start=0,Weight=6];
+	6	 [Processor=1,Start=24,Weight=10];
+	1 -> 6	 [Weight=12];
+	7	 [Processor=6,Start=6,Weight=6];
+	1 -> 7	 [Weight=20];
+	17	 [Processor=2,Start=18,Weight=3];
+	1 -> 17	 [Weight=10];
+	2	 [Processor=5,Start=12,Weight=3];
+	16	 [Processor=5,Start=19,Weight=2];
+	2 -> 16	 [Weight=12];
+	3	 [Processor=4,Start=0,Weight=8];
+	5	 [Processor=4,Start=9,Weight=2];
+	3 -> 5	 [Weight=14];
+	12	 [Processor=4,Start=31,Weight=3];
+	3 -> 12	 [Weight=12];
+	4	 [Processor=8,Start=23,Weight=8];
+	10	 [Processor=6,Start=12,Weight=8];
+	7 -> 10	 [Weight=6];
+	8	 [Processor=2,Start=5,Weight=7];
+	8 -> 16	 [Weight=6];
+	9	 [Processor=7,Start=0,Weight=3];
+	20	 [Processor=6,Start=21,Weight=10];
+	10 -> 20	 [Weight=14];
+	21	 [Processor=2,Start=26,Weight=8];
+	10 -> 21	 [Weight=6];
+	11	 [Processor=3,Start=12,Weight=9];
+	13	 [Processor=4,Start=11,Weight=8];
+	14	 [Processor=8,Start=15,Weight=6];
+	15	 [Processor=7,Start=3,Weight=6];
+	17 -> 21	 [Weight=16];
+	18	 [Processor=1,Start=0,Weight=10];
+	19	 [Processor=8,Start=0,Weight=5];
+}

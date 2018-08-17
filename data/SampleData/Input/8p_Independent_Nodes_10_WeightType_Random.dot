@@ -1,0 +1,12 @@
+digraph Independent_Nodes_10_WeightType_Random {
+	1	 [Weight=6];
+	2	 [Weight=6];
+	3	 [Weight=4];
+	4	 [Weight=5];
+	5	 [Weight=10];
+	6	 [Weight=3];
+	7	 [Weight=4];
+	8	 [Weight=8];
+	9	 [Weight=6];
+	10	 [Weight=9];
+}

@@ -1,21 +1,20 @@
 package common;
 
-import common.categories.HobbitonUnitTestsCategory;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-@Category(HobbitonUnitTestsCategory.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 public class GraphTests {
     Graph _graph;
 
-    @Before
+    @BeforeEach
     public void    initializeGraph()
     {
         _graph = new Graph.Builder()
@@ -35,17 +34,17 @@ public class GraphTests {
     public void    testAccessors()
     {
         // A is the only entry node
-        Assert.assertEquals(1, _graph.getEntryPoints().size());
+        assertEquals(1, _graph.getEntryPoints().size());
 
         Node entryNode = _graph.getEntryPoints().get(0);
 
         List<Edge> outgoing = _graph.getOutgoingEdges(entryNode);
 
-        Assert.assertEquals(2, outgoing.size());
-        Assert.assertEquals(entryNode, outgoing.get(0).getOriginNode());
-        Assert.assertEquals(3, _graph.size());
+        assertEquals(2, outgoing.size());
+        assertEquals(entryNode, outgoing.get(0).getOriginNode());
+        assertEquals(3, _graph.size());
 
         // Check that we can find nodes by label, even though we shouldn't ever have to except for testing
-        Assert.assertEquals(entryNode, _graph.findByLabel("a"));
+        assertEquals(entryNode, _graph.findByLabel("a"));
     }
 }

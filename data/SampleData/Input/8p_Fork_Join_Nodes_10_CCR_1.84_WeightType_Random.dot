@@ -1,0 +1,28 @@
+digraph "core_8p_gb_Fork_Join_Nodes_10_CCR_1.84_WeightType_Random_schedule.gxl" {
+	1	 [Weight=8];
+	2	 [Weight=9];
+	1 -> 2	 [Weight=8];
+	3	 [Weight=2];
+	1 -> 3	 [Weight=9];
+	4	 [Weight=5];
+	1 -> 4	 [Weight=7];
+	5	 [Weight=4];
+	1 -> 5	 [Weight=6];
+	6	 [Weight=3];
+	1 -> 6	 [Weight=2];
+	7	 [Weight=6];
+	1 -> 7	 [Weight=5];
+	8	 [Weight=8];
+	1 -> 8	 [Weight=6];
+	9	 [Weight=3];
+	1 -> 9	 [Weight=8];
+	10	 [Weight=7];
+	2 -> 10	 [Weight=3];
+	3 -> 10	 [Weight=9];
+	4 -> 10	 [Weight=6];
+	5 -> 10	 [Weight=7];
+	6 -> 10	 [Weight=5];
+	7 -> 10	 [Weight=6];
+	8 -> 10	 [Weight=5];
+	9 -> 10	 [Weight=9];
+}

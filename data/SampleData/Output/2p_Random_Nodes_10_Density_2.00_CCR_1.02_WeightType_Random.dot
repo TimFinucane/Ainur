@@ -1,0 +1,32 @@
+digraph "Random_Nodes_10_Density_2.00_CCR_1.02_WeightType_Random" {
+	1	 [Processor=0,Start=0,Weight=12];
+	3	 [Processor=0,Start=14,Weight=21];
+	1 -> 3	 [Weight=4];
+	4	 [Processor=1,Start=18,Weight=8];
+	1 -> 4	 [Weight=6];
+	6	 [Processor=1,Start=26,Weight=17];
+	1 -> 6	 [Weight=5];
+	8	 [Processor=0,Start=49,Weight=8];
+	1 -> 8	 [Weight=10];
+	9	 [Processor=0,Start=57,Weight=8];
+	1 -> 9	 [Weight=9];
+	2	 [Processor=1,Start=0,Weight=10];
+	2 -> 3	 [Weight=4];
+	5	 [Processor=0,Start=35,Weight=14];
+	2 -> 5	 [Weight=9];
+	10	 [Processor=0,Start=65,Weight=14];
+	2 -> 10	 [Weight=9];
+	3 -> 5	 [Weight=7];
+	7	 [Processor=1,Start=57,Weight=12];
+	3 -> 7	 [Weight=5];
+	3 -> 8	 [Weight=8];
+	3 -> 10	 [Weight=2];
+	4 -> 8	 [Weight=7];
+	4 -> 9	 [Weight=3];
+	5 -> 7	 [Weight=8];
+	5 -> 8	 [Weight=6];
+	5 -> 9	 [Weight=10];
+	5 -> 10	 [Weight=2];
+	8 -> 9	 [Weight=6];
+	9 -> 10	 [Weight=6];
+}
