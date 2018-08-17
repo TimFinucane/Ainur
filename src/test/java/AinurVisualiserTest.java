@@ -7,7 +7,7 @@ public class AinurVisualiserTest {
 
     @Test
     public void testVisualiser() {
-        Ainur.main(new String[]{"data/graphs/Nodes_11_OutTree.dot", "1000", "-v"});
+        Ainur.main(new String[]{"data/graphs/Nodes_11_OutTree.dot", "4", "-v"});
     }
 
 }

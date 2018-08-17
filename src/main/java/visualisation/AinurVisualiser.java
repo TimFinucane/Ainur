@@ -146,6 +146,7 @@ public class AinurVisualiser extends VBox {
         // Put the graph and stats visualiser side by side
         HBox graphStatHBox = new HBox();
         graphStatHBox.getChildren().addAll(_gv, _asv);
+        HBox.setHgrow(_asv, Priority.SOMETIMES);
 
         // Put the schedule visualiser underneath
         //VBox outerVBox = new VBox();

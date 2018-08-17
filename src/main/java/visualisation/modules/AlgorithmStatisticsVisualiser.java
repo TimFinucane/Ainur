@@ -165,6 +165,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         HBox labelAndCpuVBox = new HBox();
         labelAndCpuVBox.setPadding(new Insets(15));
         labelAndCpuVBox.getChildren().addAll(_labelGrid, _cpuChart);
+        HBox.setHgrow(_cpuChart, Priority.SOMETIMES);
 
         // Create vertical box with the bounding visualization and it's axis in vertical alignment
         VBox boundVBox = new VBox();
@@ -174,6 +175,8 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         // Add previously created boxes into VBox; one on top of another
         setPadding(new Insets(15));
         getChildren().addAll(labelAndCpuVBox, boundVBox);
+        VBox.setVgrow(labelAndCpuVBox, Priority.SOMETIMES);
+        VBox.setVgrow(boundVBox, Priority.SOMETIMES);
     }
 
 
@@ -371,8 +374,10 @@ public class AlgorithmStatisticsVisualiser extends VBox {
         LineChart<Number, Number>  cpuChart = new LineChart<>(xAxis, yAxis);
         cpuChart.setCreateSymbols(false);
         cpuChart.setLegendVisible(false);
-        cpuChart.setMaxHeight(300);
         cpuChart.setTitle("CPU Usage");
+
+        cpuChart.setMinHeight(200);
+        cpuChart.setMinWidth(200);
 
         return cpuChart;
     }
@@ -400,7 +405,7 @@ public class AlgorithmStatisticsVisualiser extends VBox {
      */
     private NumberAxis createBoundingVisualizationAxis() {
 
-        // Set uper and lower bounds to that of initial schedule estimates, set tick marks to be 1/20th of the way across
+        // Set upper and lower bounds to that of initial schedule estimates, set tick marks to be 1/20th of the way across
         return new NumberAxis("Schedule Time Units", _initialLowerBound, _initialUpperBound, (_initialUpperBound - _initialLowerBound) / 20);
     }
 
