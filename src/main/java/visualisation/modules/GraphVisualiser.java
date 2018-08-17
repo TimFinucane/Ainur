@@ -11,8 +11,7 @@ import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -29,10 +28,15 @@ public class GraphVisualiser extends Region {
     public static final int WINDOW_HEIGHT = 500;
     public static final int WINDOW_WIDTH = 750;
 
+    // Colours
+    public static final String NODE_HIGHLIGHT_COLOUR = "purple";
+    public static final String NODE_FINISH_COLOUR = "green";
+
     // Used for styling the graph and its nodes
     public static final String STYLE_SHEET =
             "node {" +
-            "   fill-color: grey;" +
+            "   fill-color: grey, " + NODE_HIGHLIGHT_COLOUR + ";" +
+            "   fill-mode: dyn-plain;" +
             "   text-color: black;" +
             "   text-background-mode: rounded-box;" +
             "   text-alignment: above;" +
@@ -40,22 +44,31 @@ public class GraphVisualiser extends Region {
             "   size: 15px;" +
             "   stroke-mode: plain;" +
             "   stroke-color: black;" +
+            "   shadow-color: " + NODE_HIGHLIGHT_COLOUR + ", white;" +
+            "   shadow-mode: gradient-radial;" +
+            "   shadow-offset: 0;" +
             "}" +
-            "node.marked {" +
-            "   fill-color:red;"  +
-            "   size: 20px;" +
-            "   text-color: red;" +
-            "   text-style: bold;" +
+            "node.finished {" +
+            "   shadow-color: " + NODE_FINISH_COLOUR + ", white;" +
+            "   shadow-width: 8;" +
+            "   shadow-mode: gradient-radial;" +
+            "   shadow-offset: 0;" +
+            "   fill-color: " + NODE_FINISH_COLOUR + ";" +
             "}" +
             "edge {" +
             "   arrow-shape: arrow;" +
             "   arrow-size: 15px, 5px;" +
             "   size: 1.5px;" +
             "}";
-    public static final String UI_CLASS = "ui.class";
-    public static final String UI_LABEL = "ui.label";
-    public static final String UI_STYLE_SHEET = "ui.stylesheet";
-    public static final String MARKED_CLASS = "marked";
+    private static final String UI_LABEL = "ui.label";
+    private static final String UI_STYLE_SHEET = "ui.stylesheet";
+    private static final String UI_QUALITY = "ui.quality";
+    private static final String UI_ANTIALIAS = "ui.antialias";
+    private static final String UI_STYLE = "ui.style";
+    private static final String UI_COLOR = "ui.color";
+    private static final String UI_CLASS = "ui.class";
+    private static final String UI_FINISHED_ATTRIBUTE = "finished";
+
 
     /* Fields */
 
@@ -66,8 +79,12 @@ public class GraphVisualiser extends Region {
     // Graph stream object used for display
     private org.graphstream.graph.Graph _gsGraph;
 
-    // Keeps track of the current highlighted node
-    private List<Node> _currentNodes;
+    // Keeps track of how many times a node has been visited
+    private Map<Node, Long> _nodeFrequencies;
+
+    // Interpolation arrays
+    private double[] _oldProportions;
+    private double[] _newProportions;
 
     /* Constructors */
 
@@ -82,7 +99,9 @@ public class GraphVisualiser extends Region {
         // Use the fully compliant css renderer for graphstream
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
-        _currentNodes = new ArrayList<>();
+        _nodeFrequencies = new HashMap<>();
+        _oldProportions = new double[graph.size()];
+        _newProportions = new double[graph.size()];
 
         // Create the graphstream graph
         _gsGraph = createGSGraph(graph);
@@ -118,53 +137,69 @@ public class GraphVisualiser extends Region {
     /* Public Methods */
 
     /**
-     * Updates the current node that is highlighted.
-     * This node will be red. It will also be bigger.
-     * All other nodes will be black.
-     * This method is intended to be called with a solo algorithm.
-     *
-     * @param node The node which is to be selected
+     * Updates the display to show the current node frequencies.
      */
-    public void update(Node node) {
-        if (node != null) {
-            List<Node> nodeList = new ArrayList<>();
-            nodeList.add(node);
-            this.update(nodeList);
+    public void update(double interpolation) {
+        for (int i = 0; i < _newProportions.length; i++) {
+            double interpVal = _newProportions[i] *  interpolation + _oldProportions[i] * (1 - interpolation);
+            _gsGraph.getNode(i).setAttribute(UI_STYLE, String.format("shadow-width: %f;", interpVal * 2));
+            _gsGraph.getNode(i).setAttribute(UI_COLOR, interpVal / 2);
         }
     }
 
     /**
-     * Updates the current nodes that are highlighted.
-     * These nodes will be red and bigger than unhighlighted nodes.
-     * All other nodes will be black.
-     * This method is intended to be called when multiple algorithms are running concurrently.
-     *
-     * @param nodes The list of nodes to highlight.
+     * Resets the node frequencies.
+     * Updates interpolation values.
      */
-    public void update(List<Node> nodes) {
-        if (nodes.size() < 1 || nodes == null)
-            return;
+    public void flush() {
+        _oldProportions = _newProportions;
 
-        for (Node node: _currentNodes) {
-            if (node != null)
-                _gsGraph.getNode(node.getLabel()).removeAttribute(UI_CLASS);
+        // Get the sum of frequencies (lol)
+        long total = _nodeFrequencies.values().stream().mapToLong(Long::valueOf).sum();
+        if (total == 0)
+            total = 1; // cheeky one Tim ;)
+
+        double average = total / (double) _nodeFrequencies.size();
+        for (Map.Entry<Node, Long> pair : _nodeFrequencies.entrySet()) {
+            _newProportions[pair.getKey().getId()] = pair.getValue() / average;
+        }
+        _nodeFrequencies.replaceAll((node, Long) -> 0L);
         }
 
-        for (Node node:  nodes) {
-            if (node != null)
-                _gsGraph.getNode(node.getLabel()).addAttribute(UI_CLASS, MARKED_CLASS);
-        }
-
-        _currentNodes = nodes;
+    /**
+     * Increment a nodes frequency.
+     *
+     * @param node The node whose frequency to increment.
+     */
+    public void nodeVisited(Node node) {
+        if (node != null)
+            _nodeFrequencies.put(node, _nodeFrequencies.get(node) + 1);
     }
 
+    /**
+     * Method called when algorithm has finished running.
+     * Highlights all nodes as green and finishes.
+     */
+    public void stop() {
+        for (Node node : _nodeFrequencies.keySet()) {
+            _gsGraph.getNode(node.getId()).addAttribute(UI_CLASS, UI_FINISHED_ATTRIBUTE);
+        }
+
+    }
+
+    /**
+     * Sets the render quality of the graph.
+     *
+     * @param highQuality True sets the quality to high
+     *                    False sets the quality to low
+     */
     public void setHighRenderQuality(boolean highQuality) {
         if (highQuality) {
-            _gsGraph.addAttribute("ui.quality");
-            _gsGraph.addAttribute("ui.antialias");
+            _gsGraph.addAttribute(UI_QUALITY);
+            _gsGraph.addAttribute(UI_ANTIALIAS);
         } else {
-            _gsGraph.removeAttribute("ui.quality");
-            _gsGraph.removeAttribute("ui.antialias");
+            _gsGraph.removeAttribute(UI_QUALITY);
+            _gsGraph.removeAttribute(UI_ANTIALIAS);
         }
     }
 
@@ -194,6 +229,9 @@ public class GraphVisualiser extends Region {
             gsGraph.addNode(label);
             // Add the label to be displayed alongside the node
             gsGraph.getNode(label).addAttribute(UI_LABEL, label);
+
+            // Initialise the node frequencies
+            _nodeFrequencies.put(node, 0L);
         }
 
         // Cycle through the edges and add them to the graphstream graph
@@ -227,10 +265,6 @@ public class GraphVisualiser extends Region {
 
             // Handle setting up viewer
             viewer.enableAutoLayout();
-
-            // Remove the ability to move nodes on the graph with mouse
-            MouseMotionListener mouseMotionListener = view.getMouseMotionListeners()[0];
-            view.removeMouseMotionListener(mouseMotionListener);
 
             // Assign the view to the swingNode component
             _swingNode.setContent(view);

@@ -24,7 +24,7 @@ public class ScheduleVisualiser extends VBox {
     private Canvas      _scheduleView;
     private NumberAxis  _axis;
 
-    public ScheduleVisualiser() {
+    public ScheduleVisualiser(int numProcessors) {
         _scheduleView = new Canvas();
         Pane canvasHolder = new Pane(_scheduleView);
         // Bind schedule view to its holder so that it resizes when possible
@@ -47,6 +47,8 @@ public class ScheduleVisualiser extends VBox {
 
         // And have a nice bit of pad
         setPadding(new Insets(10));
+
+        setPrefHeight(10 + 25 * numProcessors);
     }
 
     /**
