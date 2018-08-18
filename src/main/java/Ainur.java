@@ -6,6 +6,7 @@ import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import cli.Cli;
+import common.Config;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import io.GraphReader;
@@ -148,6 +149,7 @@ public class Ainur extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.setTitle(Config.APP_NAME);
         window.visualise(primaryStage);
     }
 }
