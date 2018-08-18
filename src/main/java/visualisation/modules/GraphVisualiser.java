@@ -26,7 +26,7 @@ public class GraphVisualiser extends Region {
     /* MACROS */
 
     // Window dimensions
-    public static final int WINDOW_HEIGHT = 450;
+    public static final int WINDOW_HEIGHT = 500;
     public static final int WINDOW_WIDTH = 600;
 
     // Colours
