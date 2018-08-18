@@ -1,7 +1,4 @@
-import algorithm.Algorithm;
-import algorithm.DFSAlgorithm;
-import algorithm.GreedyAlgorithm;
-import algorithm.TieredAlgorithm;
+import algorithm.*;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.BetterStartPruner;
@@ -21,6 +18,7 @@ import javafx.stage.Stage;
 import visualisation.VisualiserWindow;
 
 import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /** The Main Class for Ainur **/
@@ -107,12 +105,35 @@ public class Ainur extends Application {
                 greedy.getCurrentBest()
             );
         } else { // Multithreaded, Tiered DFS algorithm
-            algorithm = new TieredAlgorithm(cores, (tier, communicator) ->
-                new DFSAlgorithm(communicator,
-                    Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
-                    new CriticalPath(),
-                    tier == 0 ? 8 : Integer.MAX_VALUE // Depth is 8 for first tier, infinite for second tier
-                ),
+            AtomicInteger aStars = new AtomicInteger(0);
+            return new TieredAlgorithm(cores,
+                (tier, communicator) -> {
+                    if(tier == 0) {
+                        return new DFSAlgorithm(
+                            communicator,
+                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
+                            new CriticalPath(),
+                            3
+                        );
+                    }
+
+                    if(aStars.get() < cores) {
+                        System.out.println("Create AStar");
+                        aStars.incrementAndGet();
+                        return new AStarAlgorithm(
+                            communicator,
+                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
+                            new CriticalPath()
+                        );
+                    } else {
+                        return new DFSAlgorithm(
+                            communicator,
+                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
+                            new CriticalPath(),
+                            Integer.MAX_VALUE
+                        );
+                    }
+                },
                 greedy.getCurrentBest()
             );
         }
