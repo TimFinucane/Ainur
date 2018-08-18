@@ -105,15 +105,33 @@ public class BoundingChart extends VBox {
         gc.fillRect(upperStart, 0, upperWidth, height);
 
         // Text of the stuff TODO: Font family/name
-        gc.setFont(new Font(gc.getFont().getName(), Math.min(height / 2, Math.min(lowerEnd / 2, upperWidth / 2))));
+        gc.setFont(new Font(gc.getFont().getName(), height / 2));
         gc.setFill(Color.web(Config.UI_LIGHT_BLACK_COLOUR));
         gc.setTextBaseline(VPos.CENTER);
 
-        gc.setTextAlign(TextAlignment.RIGHT);
-        gc.fillText(String.valueOf(_curLowerBound), lowerEnd * 0.8, height / 2.0);
+        // Place each of lower and upper bound text to the left or right of the bound based on which has enough space
+        if(lowerEnd > height) {
+            double gap = (lowerEnd) * 0.1;
 
-        gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText(String.valueOf(_curUpperBound), upperStart + upperWidth * 0.2, height / 2.0);
+            gc.setTextAlign(TextAlignment.RIGHT);
+            gc.fillText(String.valueOf(_curLowerBound), lowerEnd - gap, height / 2.0);
+        } else if((upperStart - lowerEnd) / 1.5 > height) {
+            double gap = (upperStart - lowerEnd) * 0.1;
+
+            gc.setTextAlign(TextAlignment.LEFT);
+            gc.fillText(String.valueOf(_curLowerBound), lowerEnd + gap, height / 2.0);
+        }
+        if(upperWidth > height) {
+            double gap = (upperWidth) * 0.1;
+
+            gc.setTextAlign(TextAlignment.LEFT);
+            gc.fillText(String.valueOf(_curUpperBound), upperStart + gap, height / 2.0);
+        } else if((upperStart - lowerEnd) / 1.5 > height) {
+            double gap = (upperStart - lowerEnd) * 0.1;
+
+            gc.setTextAlign(TextAlignment.RIGHT);
+            gc.fillText(String.valueOf(_curUpperBound), upperStart - gap, height / 2.0);
+        }
 
         // If lower bound and upper bound are same, render a nice fat (4px) line
         if(lowerEnd == upperStart) {
