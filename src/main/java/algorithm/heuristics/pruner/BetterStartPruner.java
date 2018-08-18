@@ -1,6 +1,6 @@
 package algorithm.heuristics.pruner;
 
-import algorithm.Helpers;
+import algorithm.AlgorithmUtils;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.schedule.Schedule;
@@ -12,7 +12,7 @@ import common.schedule.Task;
  */
 public class BetterStartPruner implements Arborist {
     public boolean prune(Graph graph, Schedule schedule, Task toBeAdded) {
-        int earliests[] = Helpers.calculateEarliestTimes(graph, schedule, toBeAdded.getNode());
+        int earliests[] = AlgorithmUtils.calculateEarliestTimes(graph, schedule, toBeAdded.getNode());
 
         int minimum = earliests[0];
         for(int i = 1; i < earliests.length; ++i)
