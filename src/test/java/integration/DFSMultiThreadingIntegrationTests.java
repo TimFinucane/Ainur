@@ -2,6 +2,7 @@ package integration;
 
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
+import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
@@ -18,12 +19,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 /**
- * Runs thorough test suite for DFS on giant data set.
+ * Runs thorough test suite for DFS multi threading on giant data set using 4 threads.
  */
-public class DFSIntegrationTests extends IntegrationTest {
+public class DFSMultiThreadingIntegrationTests extends IntegrationTest {
 
-
-    public DFSIntegrationTests() {
+    public DFSMultiThreadingIntegrationTests(){
         super();
     }
 
@@ -32,11 +32,15 @@ public class DFSIntegrationTests extends IntegrationTest {
         try {
 
             // Single threaded DFS implementation
-            Algorithm dfsAlgorithm = new DFSAlgorithm(
-                    Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                    new CriticalPath()
+            // Execute algorithm w/ all heuristics
+            Algorithm dfsAlgorithm = new TieredAlgorithm(4,
+                    (tier, communicator) -> new DFSAlgorithm(
+                            communicator,
+                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                            new CriticalPath(),
+                            tier == 0 ? 8 : Integer.MAX_VALUE
+                    )
             );
-
 
             GraphReader reader = null;
             try {
@@ -56,6 +60,5 @@ public class DFSIntegrationTests extends IntegrationTest {
             ju.printStackTrace();
         }
     }
-
 
 }
