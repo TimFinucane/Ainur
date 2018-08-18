@@ -14,22 +14,22 @@ import io.dot.DotGraphReader;
 import io.dot.DotScheduleWriter;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import visualisation.AinurVisualiser;
 
 import java.io.*;
 import java.util.function.Consumer;
 
 /** The Main Class for Ainur **/
 public class Ainur extends Application {
+
+    /* Static Fields */
     private static Cli cli;
     private static Graph graph;
     private static Algorithm algorithm;
-    private static AinurVisualiser av;
-    private static Thread schedulingThread;
+    private static VisualiserWindow window;
 
     /** MAIN **/
+
     public static void main(String[] args) {
       cli = new Cli(args);
       cli.parse();
@@ -39,15 +39,17 @@ public class Ainur extends Application {
           algorithm = chooseAlgorithm(cli.getCores()); // choose an algorithm
           // TODO update upperbound when non optimal implemented
 
-          schedulingThread =
-                  new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
+          Thread schedulingTask = new Thread(() -> runAlgorithm(graph, algorithm, cli.getProcessors(), Ainur::onAlgorithmComplete));
 
           if (cli.getVisualise()) {
-              // Launch as javafx application.
-              launch(args);
+              // Start the scheduling task in another thread, and begin javafx launch on the main thread
+              window = new VisualiserWindow(algorithm, graph, cli.getProcessors());
+              schedulingTask.start();
+
+              Application.launch(args);
           } else {
-              schedulingThread.run();
-              System.exit(0);
+              // Run the scheduling task in this thread
+              schedulingTask.run();
           }
       } catch (IOException io) {
           System.out.println("Invalid filename entered, try run it again with a valid filename."
@@ -56,9 +58,11 @@ public class Ainur extends Application {
       }
     }
 
+    /* Functions */
+
     private static void onAlgorithmComplete(Schedule schedule) {
         if (cli.getVisualise())
-            Platform.runLater(() -> av.stop());
+            Platform.runLater(() -> window.stop());
         try {
             writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
         } catch (IOException e) {
@@ -142,19 +146,8 @@ public class Ainur extends Application {
 
     }
 
-    /**
-     * Starts the javafx visualisation.
-     * Takes over control from main.
-     */
     @Override
     public void start(Stage primaryStage) {
-        // Start the program
-        av = new AinurVisualiser(algorithm, graph, cli.getProcessors());
-        Scene scene = new Scene(av);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        schedulingThread.start();
-        av.run();
+        window.visualise(primaryStage);
     }
 }
