@@ -15,6 +15,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import visualisation.modules.*;
+import visualisation.modules.statistics.BoundingChart;
+import visualisation.modules.statistics.CPUChart;
+import visualisation.modules.statistics.StatisticsVisualiser;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -204,6 +207,7 @@ public class AinurVisualiser extends VBox {
         _graph.stop();
         _finishedLabel.setVisible(true);
         _timeLabel.getStyleClass().add(TIME_LABEL_FINISH_CLASS_CSS);
+        _cpuChart.stop();
 
         _fastPoller.stop();
         _mediumPoller.stop();

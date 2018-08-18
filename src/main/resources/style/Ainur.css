@@ -68,6 +68,10 @@
     -fx-stroke: -fx-red-colour;
 }
 
+.cpu-chart-finished {
+    -fx-stroke: -fx-green-colour;
+}
+
 .time-label {
     -fx-font-size: 20;
 }
