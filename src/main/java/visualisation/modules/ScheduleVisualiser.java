@@ -94,7 +94,7 @@ public class ScheduleVisualiser extends VBox {
 
         // Colours of the tasks
         gc.setFill(FILL_COLOUR);
-        gc.setStroke(Color.web(Config.UI_SECONDAY_COLOR));
+        gc.setStroke(Color.web(Config.UI_SECONDARY_COLOR));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
 
