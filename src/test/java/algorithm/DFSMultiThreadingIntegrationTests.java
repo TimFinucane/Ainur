@@ -2,10 +2,7 @@ package algorithm;
 
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.NaiveBound;
-import algorithm.heuristics.pruner.Arborist;
-import algorithm.heuristics.pruner.IsNotAPruner;
-import algorithm.heuristics.pruner.ProcessorOrderPruner;
-import algorithm.heuristics.pruner.StartTimePruner;
+import algorithm.heuristics.pruner.*;
 import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
@@ -31,13 +28,17 @@ public class DFSMultiThreadingIntegrationTests {
         Graph graph = IntegrationTest.readGraph(graphName);
 
         // Execute algorithm w/ all heuristics
+        GreedyAlgorithm greedyAlgorithm = new GreedyAlgorithm();
+        greedyAlgorithm.run(graph, processors);
+
         Algorithm algorithm = new TieredAlgorithm(4,
             (tier, communicator) -> new DFSAlgorithm(
                 communicator,
-                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
+                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
                 new CriticalPath(),
                 tier == 0 ? 8 : Integer.MAX_VALUE
-            )
+            ),
+            greedyAlgorithm.getCurrentBest()
         );
 
         algorithm.run(graph, processors);
