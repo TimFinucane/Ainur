@@ -1,6 +1,7 @@
 package algorithm;
 
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.BetterStartPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -105,20 +107,21 @@ class AStarMultiThreadingIntegrationTests {
         GreedyAlgorithm greedyAlgorithm = new GreedyAlgorithm();
         greedyAlgorithm.run(graph, processors);
 
+        AtomicInteger aStars = new AtomicInteger(threads);
+        Arborist arborist = Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner());
+        LowerBound lowerBound = LowerBound.combine(new CriticalPath());//, new FillTimeBound());
+
         return new TieredAlgorithm(threads,
             (tier, communicator) -> {
-                if (tier == 0) {
-                    return new AStarAlgorithm(
-                            communicator,
-                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
-                            new CriticalPath());
-                } else {
-                    return new DFSAlgorithm(
-                            communicator,
-                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
-                            new CriticalPath(),
-                            Integer.MAX_VALUE);
+                if(tier == 0)
+                    return new DFSAlgorithm(communicator, arborist, lowerBound, 4);
+
+                if(aStars.get() < threads) {
+                    aStars.incrementAndGet();
+                    return new AStarAlgorithm(communicator, arborist, lowerBound);
                 }
+                else
+                    return new DFSAlgorithm(communicator, arborist, lowerBound, Integer.MAX_VALUE);
             },
             greedyAlgorithm.getCurrentBest()
         );
