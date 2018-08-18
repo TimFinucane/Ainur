@@ -97,7 +97,7 @@ public class BoundingChart extends VBox {
         double upperStart = Math.round((_curUpperBound - _initialLowerBound) * pixelsPerUnit);
         double upperWidth = _boundingBoxView.getWidth() - upperStart;
 
-        gc.setFill(Color.web(Config.UI_SECONDAY_COLOR));
+        gc.setFill(Color.web(Config.UI_SECONDARY_COLOR));
         gc.setStroke(Color.web(Config.UI_LIGHT_BLACK_COLOUR));
 
         // Draw rectangles
