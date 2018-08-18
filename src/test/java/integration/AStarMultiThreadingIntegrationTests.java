@@ -76,8 +76,6 @@ public class AStarMultiThreadingIntegrationTests extends IntegrationTest {
         Graph inputGraph = reader.read();
 
         dfsAlgorithm.run(inputGraph, processors);
-        System.out.println("graph name: " + inputGraph.getName());
-        System.out.println("processors: " + processors);
         Schedule schedule = dfsAlgorithm.getCurrentBest();
 
         Assert.assertEquals(optimalScheduleLength, schedule.getEndTime());
