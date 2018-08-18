@@ -1,6 +1,5 @@
 package algorithm.heuristics.pruner;
 
-import algorithm.heuristics.pruner.Arborist;
 import common.graph.Graph;
 import common.schedule.Schedule;
 import common.schedule.Task;
@@ -24,6 +23,9 @@ public class StartTimePruner implements Arborist {
     public boolean prune(Graph graph, Schedule schedule, Task toBeAdded) {
         // If the current added task starts BEFORE the current latest finishing task starts in the schedule
         Task latest = schedule.getLatest();
-        return latest != null ? toBeAdded.getStartTime() < latest.getStartTime() : false;
+        return latest != null && (toBeAdded.getStartTime() < latest.getStartTime()
+            || (toBeAdded.getStartTime() == latest.getStartTime() // If the two start at the same time, choose the one with lowest id
+            && toBeAdded.getNode().getId() < latest.getNode().getId()
+            && latest.getNode().getComputationCost() == 0)); // If computation cost is 0, don't cull as one could depend on the other
     }
 }
