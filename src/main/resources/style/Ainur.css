@@ -6,12 +6,15 @@
 
 * {
     /***** IF YOU CHANGE A COLOUR HERE ALSO CHANGE IT IN THE Config CLASS (common.Config) *****/
-    -fx-primary-colour: #b8a2ff;
-    -fx-seconday-colour: #ffdba2;
-    -fx-light-black-colour: #484848;
+    -fx-primary-colour: #304154;
+    -fx-seconday-colour: #dcf3fb;
+    -fx-light-black-colour: #1b2734;
     -fx-lighter-black-colour: #6d6d6d;
-    -fx-green-colour: #a2ffcd;
+    -fx-green-colour: #00ff91;
     -fx-white-colour: #fafafa;
+    -fx-red-colour: #FF2400;
+    -fx-dark-black-colour: #484848;
+    -fx-text-colour: -fx-white-colour;
 }
 
 /* Root node */
@@ -19,13 +22,13 @@
 .root {
     -fx-background-color: -fx-white-colour;
     -fx-font: 12 "Roboto Mono Medium";
-    -fx-text-fill: -fx-white-colour;
+    -fx-text-fill: -fx-text-colour;
 }
 
 /* Visualisations */
 
 .vis {
-    -fx-background-color: -fx-white-colour;
+    -fx-background-color: -fx-dark-black-colour;
 }
 
 .ainur-vis {
@@ -53,16 +56,16 @@
 
 .stats-vis * {
     -fx-background-color: -fx-primary-colour !important;
-    -fx-text-fill: -fx-white-colour !important;
+    -fx-text-fill: -fx-text-colour !important;
 }
 
 .schedule-vis * {
     -fx-background-color: -fx-seconday-colour;
-    -fx-text-fill: -fx-white-colour;
+    -fx-text-fill: -fx-text-colour;
 }
 
 .stats-content {
-    -fx-stroke: -fx-seconday-colour;
+    -fx-stroke: -fx-red-colour;
 }
 
 .time-label {
@@ -84,7 +87,7 @@
 }
 
 .scroll-bar:horizontal, .scroll-bar:vertical{
-    -fx-background-color: -fx-white-colour;
+    -fx-background-color: -fx-light-black-colour;
 }
 
 .increment-button, .decrement-button {
@@ -94,7 +97,7 @@
 
 .scroll-bar .decrement-arrow,
 .scroll-bar .increment-arrow {
-    -fx-background-color: -fx-white-colour;
+    -fx-background-color: -fx-light-black-colour;
 }
 
 .scroll-bar:horizontal .track,
@@ -106,7 +109,7 @@
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: -fx-white-colour;
+    -fx-background-color: -fx-light-black-colour;
     -fx-background-radius: 5em;
 }
 

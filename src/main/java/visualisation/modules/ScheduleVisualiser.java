@@ -23,7 +23,7 @@ public class ScheduleVisualiser extends VBox {
     private static final String CANVAS_PADDING_CLASS = "canvas-padding";
 
     private static final Color FILL_COLOUR = Color.web(Config.UI_PRIMARY_COLOUR);
-    private static final Color TEXT_COLOUR = Color.BLACK;
+    private static final Color TEXT_COLOUR = Color.web(Config.UI_TEXT_COLOUR);
 
     private Schedule    _schedule;
     private Canvas      _scheduleView;
@@ -132,7 +132,7 @@ public class ScheduleVisualiser extends VBox {
             if(i == _axis.getTickMarks().size() - 1)
                 x -= 1;
 
-            gc.setStroke(Color.web(Config.UI_WHITE_COLOUR));
+            gc.setStroke(Color.web(Config.UI_LIGHT_BLACK_COLOUR));
             gc.strokeLine(x, 0, x, canvasHeight);
         }
     }

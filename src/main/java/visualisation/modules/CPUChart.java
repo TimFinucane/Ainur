@@ -1,10 +1,12 @@
 package visualisation.modules;
 
+import common.Config;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -17,6 +19,7 @@ import java.lang.management.ManagementFactory;
  */
 public class CPUChart extends HBox {
     private static final String STATS_CONTENT_CLASS_CSS = "stats-content";
+    private static final Color TEXT_FILL = Color.web(Config.UI_TEXT_COLOUR);
 
     private final double _updateFrequency;
     private double _time = 0;
@@ -36,6 +39,9 @@ public class CPUChart extends HBox {
         xAxis.setLabel("Time (s)");
         xAxis.forceZeroInRangeProperty().setValue(false); // Allow x axis to scroll
         yAxis.setLabel("CPU Usage (%)");
+
+        xAxis.setTickLabelFill(TEXT_FILL);
+        yAxis.setTickLabelFill(TEXT_FILL);
 
         // Create LineChart
         LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);

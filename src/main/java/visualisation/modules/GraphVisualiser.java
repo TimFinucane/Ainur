@@ -30,7 +30,7 @@ public class GraphVisualiser extends Region {
     public static final int WINDOW_WIDTH = 600;
 
     // Colours
-    public static final String NODE_HIGHLIGHT_COLOUR = Config.UI_PRIMARY_COLOUR;
+    public static final String NODE_HIGHLIGHT_COLOUR = Config.UI_RED_COLOUR;
     public static final String NODE_FINISH_COLOUR = Config.UI_GREEN_COLOUR;
     public static final String NODE_HIGHLIGHT_COLOUR_2 = Config.UI_LIGHT_BLACK_COLOUR;
 
@@ -39,7 +39,7 @@ public class GraphVisualiser extends Region {
             "node {" +
             "   fill-color:" + Config.UI_SECONDAY_COLOR +", " + NODE_HIGHLIGHT_COLOUR + ";" +
             "   fill-mode: dyn-plain;" +
-            "   text-color: " + Config.UI_WHITE_COLOUR +";" +
+            "   text-color: " + Config.UI_TEXT_COLOUR +";" +
             "   text-alignment: above;" +
             "   text-size: 15px;" +
             "   size: 15px;" +

@@ -15,6 +15,7 @@ import javafx.scene.text.TextAlignment;
 
 public class BoundingChart extends VBox {
     private static final Color FINISHING_TICK_MARK_FILL = Color.web(Config.UI_LIGHT_BLACK_COLOUR);
+    private static final Color TEXT_FILL = Color.web(Config.UI_TEXT_COLOUR);
 
     private final int _initialLowerBound;
     private final int _initialUpperBound;
@@ -59,6 +60,7 @@ public class BoundingChart extends VBox {
         _axis = new NumberAxis(_initialLowerBound, _initialUpperBound, tickUnit);
         _axis.setTickLength(10.0);
         _axis.setTickLabelFont(new Font(_axis.getTickLabelFont().getName(), 16.0));
+        _axis.setTickLabelFill(TEXT_FILL);
 
         getChildren().add(canvasHolder);
         getChildren().add(_axis);

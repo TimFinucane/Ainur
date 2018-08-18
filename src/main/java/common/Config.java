@@ -11,9 +11,11 @@ public class Config {
 
     // UI Colours
     /**** IF YOU CHANGE A COLOUR HERE ALSO CHANGE IT IN THE CSS FILE!!! (Ainur.css) *****/
-    public static final String UI_PRIMARY_COLOUR = "#b8a2ff";
-    public static final String UI_SECONDAY_COLOR = "#ffdba2";
-    public static final String UI_LIGHT_BLACK_COLOUR = "#484848";
-    public static final String UI_GREEN_COLOUR = "#a2ffcd";
+    public static final String UI_PRIMARY_COLOUR = "#304154";
+    public static final String UI_SECONDAY_COLOR = "#dcf3fb";
+    public static final String UI_LIGHT_BLACK_COLOUR = "#1b2734";
+    public static final String UI_GREEN_COLOUR = "#00ff91";
     public static final String UI_WHITE_COLOUR = "#fafafa";
+    public static final String UI_RED_COLOUR = "#FF2400";
+    public static final String UI_TEXT_COLOUR = UI_WHITE_COLOUR;
 }
