@@ -122,6 +122,8 @@ public class ScheduleVisualiser extends VBox {
             }
         }
         // Modify number axis
+        double tickUnit = Math.pow(10, Math.round( Math.log10(_schedule.getEndTime() / 10.0) ));
+        _axis.setTickUnit(tickUnit);
         _axis.setUpperBound(_schedule.getEndTime());
         _axis.layout();
 
