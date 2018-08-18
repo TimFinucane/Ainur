@@ -86,16 +86,17 @@ public class ScheduleVisualiser extends VBox {
         if(_schedule == null)
             return;
 
-        gc.clearRect(0, 0, getWidth(), getHeight());
+        double canvasWidth = gc.getCanvas().getWidth();
+        double canvasHeight = gc.getCanvas().getHeight();
+
+        // Clear canvas before drawing in it
+        gc.clearRect(0, 0, canvasWidth, canvasHeight);
 
         // Colours of the tasks
         gc.setFill(FILL_COLOUR);
         gc.setStroke(Color.web(Config.UI_SECONDAY_COLOR));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
-
-        double canvasWidth = gc.getCanvas().getWidth();
-        double canvasHeight = gc.getCanvas().getHeight();
 
         // The width of a single unit time in the schedule. End time is padded by 10% so schedule doesn't go to end
         double unitWidth = canvasWidth / _schedule.getEndTime();
