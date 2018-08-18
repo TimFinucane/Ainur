@@ -1,12 +1,9 @@
 package algorithm.heuristics.lowerbound;
 
-import algorithm.Helpers;
-import algorithm.heuristics.lowerbound.LowerBound;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
 import common.schedule.Schedule;
-import common.schedule.Task;
 
 import java.util.*;
 
@@ -28,6 +25,8 @@ public class CriticalPath implements LowerBound {
 
         // Map to store Nodes and the critical path to reach that node.
         Map<Node, Integer> nodePathWeights = new HashMap<>();
+        // Ensures that schedule end time is returned if it is less than the critical path
+        nodePathWeights.put(null, schedule.getEndTime());
 
         List<Node> nodesToVisit = new ArrayList<>(nextNodesToVisit);
 

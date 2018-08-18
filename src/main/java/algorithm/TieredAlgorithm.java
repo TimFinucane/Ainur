@@ -176,15 +176,15 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     }
 
     /**
-     * @see MultiAlgorithmCommunicator#explorePartialSolution(Schedule, HashSet)
+     * @see MultiAlgorithmCommunicator#explorePartialSolution(Graph, Schedule, HashSet)
      */
     @Override
-    public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
+    public void explorePartialSolution(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         // We will try to add the above to the schedule. If theres not enough room (too many schedules to explore),
         // as it is obvious exploration is getting out of hand we will instead run it here, in this thread, RIGHT NOW!!!
         // TODO: Tiers are only ever 0 or 1. Change?
         if(!_schedulesToExplore.offer(new Pair<>(schedule, nextNodes)))
-            runAlgorithmOn(calculateTier(schedule), _graph, schedule, nextNodes);
+            runAlgorithmOn(calculateTier(schedule), graph, schedule, nextNodes);
     }
 
     /**
@@ -256,6 +256,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         try {
             // If running is 0, nothing is in the middle of running an algorithm, and we can exit.
             if(_schedulesToExplore.isEmpty() && _running.get() == 0) {
+                _running.decrementAndGet(); // To -1, to signify finished.
                 for (Thread thread : _threads)
                     thread.interrupt(); // Yes, it is safe to call this on yourself, it'll get picked up later
             }
