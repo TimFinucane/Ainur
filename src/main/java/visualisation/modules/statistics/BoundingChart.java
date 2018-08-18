@@ -63,7 +63,7 @@ public class BoundingChart extends VBox {
         _axis.setTickLabelFont(new Font(_axis.getTickLabelFont().getName(), 16.0));
         _axis.setTickLabelFill(TEXT_FILL);
 
-        Label title = new Label("Lowerbound / Upperbound:x");
+        Label title = new Label("Lowerbound / Upperbound:");
         title.setPadding(new Insets(0, 0, 5, 0));
 
         getChildren().add(title);
