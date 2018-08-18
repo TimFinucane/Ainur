@@ -22,44 +22,62 @@ import java.util.regex.Pattern;
 
 @Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public abstract class IntegrationTest {
+
+    private static final String FORK_JOIN = "Fork_Join";
+    private static final String FORK_NODE = "Fork_Node";
+    private static final String TWENTY_ONE = "21";
+    private static final String THIRTY = "30";
+    private static final String[] exclusionList = { TWENTY_ONE, THIRTY };
+
     // These are protected to allow subclasses to add or modify them
     protected List<String>                        graphs;
     // Shows the number of processors and the end time of the schedule.
-    protected List<List<Pair<Integer, Integer>>>  optimalSchedules;
+    protected List<Pair<Integer, Integer>>  optimalSchedules;
 
     /**
      * Integration tests that run on lots of graph inputs
      */
     public IntegrationTest() {
-        graphs = Arrays.asList(
-            Paths.get("data", "graphs", "Nodes_7_OutTree.dot").toString(),
-            Paths.get("data", "graphs", "Nodes_8_Random.dot").toString(),
-            Paths.get("data", "graphs", "Nodes_9_SeriesParallel.dot").toString(),
-            Paths.get("data", "graphs", "Nodes_10_Random.dot").toString(),
-            Paths.get("data", "graphs", "Nodes_11_OutTree.dot").toString(),
-                Paths.get("data", "graphs", "InTree-Unbalanced-MaxBf-3_Nodes_10_CCR_10.00_WeightType_Random.dot").toString(),
-                Paths.get("data", "graphs", "Join_Nodes_10_CCR_10.07_WeightType_Random.dot").toString(),
-                Paths.get("data", "graphs", "Random_Nodes_21_Density_5.14_CCR_0.10_WeightType_Random.dot").toString(),
-                Paths.get("data", "graphs", "Fork_Nodes_10_CCR_10.00_WeightType_Random.dot").toString(),
-                Paths.get("data", "graphs", "Fork_Join_Nodes_10_CCR_10.01_WeightType_Random.dot").toString(),
-//                Paths.get("data", "graphs", "Join_Nodes_21_CCR_0.97_WeightType_Random.dot").toString(),
-                Paths.get("data", "graphs", "Fork_Nodes_10_CCR_0.10_WeightType_Random.dot").toString()
+        graphs = new ArrayList<>();
+        optimalSchedules = new ArrayList<>();
 
-        );
-        optimalSchedules = Arrays.asList(
-            Arrays.asList(new Pair<>(2,  28), new Pair<>(4,  22)), // 7 nodes
-            Arrays.asList(new Pair<>(2, 581), new Pair<>(4, 581)), // 8 nodes
-            Arrays.asList(new Pair<>(2,  55), new Pair<>(4,  55)), // 9 nodes
-            Arrays.asList(new Pair<>(2,  50), new Pair<>(4,  50)), // 10 nodes
-            Arrays.asList(new Pair<>(2, 350), new Pair<>(4, 227)),  // 11 nodes
-            Arrays.asList(new Pair<>(2, 56), new Pair<>(4, 56)),  // 11 nodes
-            Arrays.asList(new Pair<>(2, 54), new Pair<>(4, 52)),  // 11 nodes
-            Arrays.asList(new Pair<>(2, 3946), new Pair<>(4, 3837)),  // 11 nodes
-            Arrays.asList(new Pair<>(4, 47), new Pair<>(8, 47)), // 11 nodes
-            Arrays.asList(new Pair<>(4, 69), new Pair<>(8, 69)),  // 11 nodes
-//            Arrays.asList(new Pair<>(2, 67), new Pair<>(4, 39)),  // 11 nodes
-            Arrays.asList(new Pair<>(4, 204), new Pair<>(8, 167))  // 11 nodes
-        );
+
+        // Get all files in data/SampleData/Input, override graphs for this to be the value
+        File inputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
+
+        // Loop through all files in input file folder
+        for (int i = 0; i < inputFolder.list().length; i++) {
+            String fileString = inputFolder.list()[i];
+
+            // Decide whether to continue
+            boolean cont = true;
+            for (String exclusion : exclusionList) {
+                if (fileString.contains(exclusion)) {
+                    cont = false;
+                    break;
+                }
+            }
+
+            if (cont) {
+                // Add graph name to list of testing graphs
+                graphs.add(String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + fileString);
+
+                try {
+                    // get 2 FIS's, one for each answer finding method
+                    InputStream is1 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + fileString);
+                    InputStream is2 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + fileString);
+
+                    // Create new pair in optimalSchedules of the correct no. of processors and scheduleLength
+                    // derived from output directory.
+                    Pair<Integer, Integer> pair = new Pair<>(scheduleProcessors(is1), scheduleLength(is2));
+                    optimalSchedules.add(pair);
+
+                } catch (FileNotFoundException e) {
+                    System.out.println("Couldn't find: " + String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + fileString);
+                }
+            }
+
+        }
     }
 
     /**
@@ -74,24 +92,25 @@ public abstract class IntegrationTest {
 
     }
 
-
     @TestFactory
     public List<DynamicTest> testOnGraphs() {
         ArrayList<DynamicTest> optimalTests = new ArrayList<>();
-
-        for(int graphIdx = 0; graphIdx < graphs.size(); ++graphIdx) {
+        for (int graphIdx = 0; graphIdx < graphs.size(); ++graphIdx) {
             String graphName = graphs.get(graphIdx);
-            for(Pair<Integer, Integer> processorOptimalTime : optimalSchedules.get(graphIdx)) {
-                optimalTests.add(DynamicTest.dynamicTest(
+            Pair<Integer, Integer> processorOptimalTime = optimalSchedules.get(graphIdx);
+
+            optimalTests.add(DynamicTest.dynamicTest(
                     generateName(graphName, processorOptimalTime),
                     () -> runAgainstOptimal(
-                        graphName,
-                        processorOptimalTime.getKey(),
-                        processorOptimalTime.getValue()
+                            graphName,
+                            processorOptimalTime.getKey(),
+                            processorOptimalTime.getValue()
                     )
-                ));
-            }
+            ));
+
         }
+
+
         return optimalTests;
     }
 
@@ -118,7 +137,7 @@ public abstract class IntegrationTest {
      * @param is
      * @return
      */
-    protected int scheduleLength(InputStream is) {
+    private int scheduleLength(InputStream is) {
 
         Scanner s = new Scanner(is).useDelimiter("\\A");
         String inputTextAsString = s.hasNext() ? s.next() : "";
@@ -144,7 +163,7 @@ public abstract class IntegrationTest {
      * Returns the number of processors in a particular schedule.
      * @return
      */
-    protected int scheduleProcessors(InputStream is) {
+    private int scheduleProcessors(InputStream is) {
 
         Scanner s = new Scanner(is).useDelimiter("\\A");
         String inputTextAsString = s.hasNext() ? s.next() : "";

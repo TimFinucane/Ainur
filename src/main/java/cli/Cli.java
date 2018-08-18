@@ -142,7 +142,7 @@ public class Cli {
             System.out.println("You instructed Ainur to output the schedule to the file: " + _outputFile);
         } else {
             String outputFileName = outputPathComponents[outputPathComponents.length - 1];
-            String[] splitOutputFileName = outputFileName.split(Pattern.quote("."));
+            String[] splitOutputFileName = outputFileName.split(Pattern.quote(".dot"));
 
             _outputFile = outputPath.toString() + splitOutputFileName[0] + "-output.dot";// Place output file in same location as data
 
