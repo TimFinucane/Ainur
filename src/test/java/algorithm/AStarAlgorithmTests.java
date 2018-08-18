@@ -7,7 +7,9 @@ import common.schedule.Schedule;
 import common.schedule.Task;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Tag;
 
+@Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public class AStarAlgorithmTests {
 
     @Test
