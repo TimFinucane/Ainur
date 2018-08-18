@@ -70,10 +70,8 @@ public class CriticalPath implements LowerBound {
                     potentialPathWeight = Math.max(potentialPathWeight, nodePathWeights.get(parent));
                 else if (schedule.contains(parent))
                     potentialPathWeight = Math.max(potentialPathWeight, schedule.findTask(parent).getEndTime());
-                else { // If neither, we can't visit this node yet. Put it back in the list.
-                    nodesToVisit.add(currentNode);
+                else // If neither, we can't visit this node yet
                     continue outerNodeLoop; // Skip all below code, move to next node.
-                }
             }
 
             // The real path weight will be the maximum potential path weight + the weight of the node. This is the
