@@ -20,9 +20,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private Arborist _arborist;
     private LowerBound _lowerBound;
 
-    // amount of memory allocated for the algorithm
-    private static final double PERCENTAGE_MEMORY_TO_USE = 70;
-
     private BigInteger _numCulled = BigInteger.ZERO;
     private BigInteger _numExplored = BigInteger.ZERO;
     private Node _currentNode;
@@ -158,13 +155,8 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private boolean outOfMemory(){
         Runtime runtime = Runtime.getRuntime();
 
-        // determines the amount of memory that has been used out of the maximum amount that could be allocated to it
-        double memoryUsed = runtime.maxMemory() - runtime.freeMemory();
-        // calculates the percentage of memory that has been used
-        double percentUsed = (memoryUsed/runtime.maxMemory())*100;
-
         //if algorithm has used more than a set percentage it should pass its implementation to another thread.
-        return (percentUsed > PERCENTAGE_MEMORY_TO_USE);
+        return runtime.freeMemory() < (1024 * 1024 * 128);//(percentUsed > PERCENTAGE_MEMORY_TO_USE);
     }
 
     /**
