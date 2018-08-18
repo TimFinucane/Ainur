@@ -1,20 +1,22 @@
 package integration;
 
 import common.graph.Graph;
-import common.graph.Node;
-import common.schedule.Schedule;
-import common.schedule.SimpleSchedule;
-import common.schedule.Task;
 import io.dot.DotGraphReader;
 import javafx.util.Pair;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,14 +124,14 @@ public abstract class IntegrationTest {
         String inputTextAsString = s.hasNext() ? s.next() : "";
         s.close();
 
-        Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
+        Pattern taskPattern = Pattern.compile("Weight=(\\d+),\\s*Start=(\\d+),\\s*Processor=(\\d+)");
         Matcher m = taskPattern.matcher(inputTextAsString);
 
         int maxTaskEndTime = 0;
         // loop through all nodes looking for latest start time
         while (m.find()) {
             // Start time + Weight
-            int taskEndTime = Integer.parseInt(m.group(3)) + Integer.parseInt(m.group(4));
+            int taskEndTime = Integer.parseInt(m.group(1)) + Integer.parseInt(m.group(2));
             maxTaskEndTime = taskEndTime > maxTaskEndTime ? taskEndTime : maxTaskEndTime;
 
         }
@@ -148,12 +150,12 @@ public abstract class IntegrationTest {
         String inputTextAsString = s.hasNext() ? s.next() : "";
         s.close();
 
-        Pattern taskPattern = Pattern.compile("(?<=;|^|\\{)\\s*(\\w+)\\s*\\[\\s*Processor=(\\d+),\\s*Start=(\\d+),\\s*Weight=(\\d+)\\s*\\]");
+        Pattern taskPattern = Pattern.compile("Weight=(\\d+),\\s*Start=(\\d+),\\s*Processor=(\\d+)");
         Matcher m = taskPattern.matcher(inputTextAsString);
 
         int maxProcessors = 0;
         while (m.find()) {
-            int processorNo = Integer.parseInt(m.group(2));
+            int processorNo = Integer.parseInt(m.group(1));
             // As far as i can see processor count starts at 0, so add 1.
             maxProcessors = processorNo + 1 > maxProcessors ? processorNo + 1 : maxProcessors;
 
