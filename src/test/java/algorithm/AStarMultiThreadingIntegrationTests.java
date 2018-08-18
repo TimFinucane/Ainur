@@ -1,6 +1,7 @@
 package algorithm;
 
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.FillTimeBound;
 import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.BetterStartPruner;
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -107,19 +107,15 @@ class AStarMultiThreadingIntegrationTests {
         GreedyAlgorithm greedyAlgorithm = new GreedyAlgorithm();
         greedyAlgorithm.run(graph, processors);
 
-        AtomicInteger aStars = new AtomicInteger(threads);
         Arborist arborist = Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner());
-        LowerBound lowerBound = LowerBound.combine(new CriticalPath());//, new FillTimeBound());
+        LowerBound lowerBound = LowerBound.combine(new CriticalPath(), new FillTimeBound());
 
         return new TieredAlgorithm(threads,
             (tier, communicator) -> {
-                if(tier == 0)
+                if(tier == 0) // Expand to a few states for the purposes of running A stars in parallel
                     return new DFSAlgorithm(communicator, arborist, lowerBound, 4);
-
-                if(aStars.get() < threads) {
-                    aStars.incrementAndGet();
+                else if(tier < (graph.size() / 2 + 1)) // Run A stars in parallel on the system
                     return new AStarAlgorithm(communicator, arborist, lowerBound);
-                }
                 else
                     return new DFSAlgorithm(communicator, arborist, lowerBound, Integer.MAX_VALUE);
             },

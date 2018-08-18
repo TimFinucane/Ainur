@@ -1,6 +1,8 @@
 package algorithm;
 
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.FillTimeBound;
+import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.lowerbound.NaiveBound;
 import algorithm.heuristics.pruner.*;
 import common.Validator;
@@ -35,7 +37,7 @@ public class DFSMultiThreadingIntegrationTests {
             (tier, communicator) -> new DFSAlgorithm(
                 communicator,
                 Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
-                new CriticalPath(),
+                LowerBound.combine(new CriticalPath(), new FillTimeBound()),
                 tier == 0 ? 8 : Integer.MAX_VALUE
             ),
             greedyAlgorithm.getCurrentBest()

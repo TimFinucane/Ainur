@@ -1,5 +1,7 @@
 import algorithm.*;
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.FillTimeBound;
+import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.BetterStartPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
@@ -18,7 +20,6 @@ import javafx.stage.Stage;
 import visualisation.VisualiserWindow;
 
 import java.io.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /** The Main Class for Ainur **/
@@ -104,38 +105,20 @@ public class Ainur extends Application {
                 new CriticalPath(),
                 greedy.getCurrentBest()
             );
-        } else { // Multithreaded, Tiered DFS algorithm
-            AtomicInteger aStars = new AtomicInteger(0);
+        } else { // Multithreaded, Tiered AStar/DFS algorithm
+            Arborist arborist = Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner());
+            LowerBound lowerBound = LowerBound.combine(new CriticalPath(), new FillTimeBound());
+
             return new TieredAlgorithm(cores,
                 (tier, communicator) -> {
-                    if(tier == 0) {
-                        return new DFSAlgorithm(
-                            communicator,
-                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
-                            new CriticalPath(),
-                            3
-                        );
-                    }
-
-                    if(aStars.get() < cores) {
-                        System.out.println("Create AStar");
-                        aStars.incrementAndGet();
-                        return new AStarAlgorithm(
-                            communicator,
-                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
-                            new CriticalPath()
-                        );
-                    } else {
-                        return new DFSAlgorithm(
-                            communicator,
-                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
-                            new CriticalPath(),
-                            Integer.MAX_VALUE
-                        );
-                    }
+                    if(tier == 0) // Expand to a few states for the purposes of running A stars in parallel
+                        return new DFSAlgorithm(communicator, arborist, lowerBound, Math.min(4, graph.size()));
+                    else if(tier < (graph.size() / 2 + 1)) // Run A stars in parallel on the system
+                        return new AStarAlgorithm(communicator, arborist, lowerBound);
+                    else
+                        return new DFSAlgorithm(communicator, arborist, lowerBound, Integer.MAX_VALUE);
                 },
-                greedy.getCurrentBest()
-            );
+                greedy.getCurrentBest());
         }
 
         return algorithm;
