@@ -146,7 +146,7 @@ public class GraphVisualiser extends Region {
     public void update(double interpolation) {
         for (int i = 0; i < _newProportions.length; i++) {
             double interpVal = _newProportions[i] *  interpolation + _oldProportions[i] * (1 - interpolation);
-            _gsGraph.getNode(i).setAttribute(UI_STYLE, String.format("shadow-width: %f;", interpVal * 2));
+            _gsGraph.getNode(i).setAttribute(UI_STYLE, String.format("shadow-width: %f;", interpVal * 2.5));
             _gsGraph.getNode(i).setAttribute(UI_STYLE, "stroke-mode: none;");
             _gsGraph.getNode(i).setAttribute(UI_COLOR, interpVal / 2);
         }
