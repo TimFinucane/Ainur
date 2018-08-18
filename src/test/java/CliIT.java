@@ -1,15 +1,17 @@
 import common.Validator;
 import common.graph.Graph;
+import integration.GraphSet;
+import integration.IntegrationTest;
+import integration.ScheduleReading;
 import io.GraphReader;
 import io.dot.DotGraphReader;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,12 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * This file needs to be in the default package so it can access the Ainur main class.
  */
 @Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
+@Tag("last-alliance") // The last alliance against buggy code
 public class CliIT {
-
     private static final String CUSTOM_OUTPUT_NAME_NO_SUFFIX = "my_special_file";
     private static final String CUSTOM_OUTPUT_NAME_SUFFIX = "my_special_file.dot";
-
-    private static final String DATA_PATH_NAME = Paths.get("data", "graphs").toString() + File.separator;
 
     private static final String NODES_7_FILENAME = Paths.get("data", "graphs", "Nodes_7_OutTree.dot").toString();
     private static final String NODES_7_OUTPUT_FILENAME = Paths.get("data", "graphs", "Nodes_7_OutTree-output.dot").toString();
@@ -38,7 +38,6 @@ public class CliIT {
         new File(NODES_7_OUTPUT_FILENAME).delete();
         new File(CUSTOM_OUTPUT_NAME_SUFFIX).delete();
         new File("Nodes_7_OutTree.dot").delete();
-
     }
 
     /**
@@ -47,7 +46,6 @@ public class CliIT {
      */
     @Test
     public void test7Node() {
-
         // Parse Nodes_7_OutTree.dot through program
         Ainur.main(new String[]{ NODES_7_FILENAME, "4" });
 
@@ -78,7 +76,6 @@ public class CliIT {
         new File(NODES_7_OUTPUT_FILENAME).delete();
     }
 
-
     /**
      * This tests that the Nodes_7_OutTree-output.dot file is correctly handled by the CLI and is passed through the
      * program to make an output schedule, with extra parameters -o <filename>. This output schedule is then read
@@ -86,7 +83,6 @@ public class CliIT {
      */
     @Test
     public void test7NodeWithOutputArgumentSuffix() {
-
         // Parse Nodes_7_OutTree.dot through program
         Ainur.main(new String[]{ NODES_7_FILENAME, "4", "-o", CUSTOM_OUTPUT_NAME_SUFFIX });
 
@@ -116,9 +112,6 @@ public class CliIT {
         assertTrue(Validator.isValid(inputGraph, outputText)); // Ensure is valid
         new File(CUSTOM_OUTPUT_NAME_SUFFIX).delete();
     }
-
-
-
 
     /**
      * This tests that the Nodes_7_OutTree-output.dot file is correctly handled by the CLI and is passed through the
@@ -158,4 +151,24 @@ public class CliIT {
         new File(CUSTOM_OUTPUT_NAME_SUFFIX).delete();
     }
 
+    protected void run(String graph, int processors, int optimalScheduleLength) {
+        // Pre-prepare output file
+        File file = new File("./temp.dot");
+        try {
+            Ainur.main(new String[]{graph, String.valueOf(processors), "-o",  "temp.dot"});
+
+            assertEquals(optimalScheduleLength, ScheduleReading.lengthFromFile(new FileInputStream(file)));
+        } catch(FileNotFoundException e) {
+            System.out.println("Output schedule file wasnt found!");
+            e.printStackTrace();
+            fail();
+        } finally {
+            file.delete();
+        }
+    }
+
+    @TestFactory
+    List<DynamicTest> cliTests() {
+        return new IntegrationTest(GraphSet.ALL_REASONABLE(), this::run).getList();
+    }
 }
