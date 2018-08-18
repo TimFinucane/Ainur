@@ -136,7 +136,7 @@ public class AinurVisualiser extends VBox {
         HBox.setHgrow(_schedule, Priority.ALWAYS);
 
         this.getChildren().addAll(upper, scheduleWrapper);
-        VBox.setVgrow(scheduleWrapper, Priority.ALWAYS);
+        VBox.setVgrow(scheduleWrapper, Priority.SOMETIMES);
     }
 
     /* Public Methods */
@@ -185,11 +185,11 @@ public class AinurVisualiser extends VBox {
      * hh:mm:ss:ms
      */
     private void updateTimeLabel(Duration duration) {
-        _timeLabel.setText(String.format("%d:%02d:%02d.%02d",
+        _timeLabel.setText(String.format("%d:%02d:%02d.%03d",
             (int)duration.toHours(),
-            (int)duration.toMinutes(),
-            (int)duration.toSeconds(),
-            (int)duration.toMillis()
+            (int)duration.toMinutes() % 60,
+            (int)duration.toSeconds() % 60,
+            (int)duration.toMillis() % 1000
             )
         );
     }

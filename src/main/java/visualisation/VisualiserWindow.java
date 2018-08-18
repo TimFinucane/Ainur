@@ -1,6 +1,7 @@
 package visualisation;
 
 import algorithm.Algorithm;
+import common.Config;
 import common.graph.Graph;
 import javafx.application.Platform;
 import javafx.scene.Cursor;
@@ -14,10 +15,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class VisualiserWindow {
-    /* Macros */
-    private static final String STYLE_SHEET = "/style/Ainur.css";
-    private static final String APP_ICON = "/img/icon.png";
-
     // Window state
     private double _x;
     private double _y;
@@ -71,8 +68,8 @@ public class VisualiserWindow {
 
         _av.getStyleClass().add("ainur-vis");
 
-        _scene.getStylesheets().add(getClass().getResource(STYLE_SHEET).toExternalForm());
-        _stage.getIcons().add(new Image(getClass().getResourceAsStream(APP_ICON)));
+        _stage.getIcons().add(new Image(getClass().getResourceAsStream(Config.APP_ICON)));
+        Config.setTheme(_stage);
         primaryStage.show();
 
         _av.run();
