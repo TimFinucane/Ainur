@@ -1,5 +1,6 @@
 package algorithm.heuristics.lowerbound;
 
+import algorithm.AlgorithmUtils;
 import common.graph.Edge;
 import common.graph.Graph;
 import common.graph.Node;
@@ -28,7 +29,22 @@ public class CriticalPath implements LowerBound {
         // Ensures that schedule end time is returned if it is less than the critical path
         nodePathWeights.put(null, schedule.getEndTime());
 
-        List<Node> nodesToVisit = new ArrayList<>(nextNodesToVisit);
+        List<Node> nodesToVisit = new ArrayList<>();
+
+        // All parents are in the schedule, so we can get start time through normal means
+        for(Node currentNode : nextNodesToVisit) {
+            int earliests[] = AlgorithmUtils.calculateEarliestTimes(graph, schedule, currentNode);
+
+            int startTime = earliests[0];
+            for(int proc = 1; proc < earliests.length; ++proc)
+                startTime = Math.min(startTime, earliests[proc]);
+
+            nodePathWeights.put(currentNode, startTime + currentNode.getComputationCost());
+
+            // Add children of the current node, now that we have visited it.
+            for(Edge edge : graph.getOutgoingEdges(currentNode))
+                nodesToVisit.add(edge.getDestinationNode());
+        }
 
         // Only iterate through when there are still nodes that have not been analysed.
         outerNodeLoop:
@@ -37,22 +53,24 @@ public class CriticalPath implements LowerBound {
             Node currentNode = nodesToVisit.get(0);
             nodesToVisit.remove(0);
 
-            List<Integer> potentialPathWeights = new ArrayList<>();
+            // Already been searched, mate.
+            if(nodePathWeights.containsKey(currentNode))
+                continue;
+
+            // The path weight will be the maximum length path to get here, plus this nodes cost.
+            // Start by getting max path weight
+            int potentialPathWeight = 0;
 
             // Finds the (estimated) earliest this node can exist in our schedule, based on where parent nodes exist.
             for (Edge incomingEdge : graph.getIncomingEdges(currentNode)) {
                 Node parent = incomingEdge.getOriginNode();
 
                 // If the parent is in nodepathweights, use that calculation, if its in schedule we can just get its end time.
-                if (nodePathWeights.containsKey(parent)){
-                    potentialPathWeights.add(nodePathWeights.get(parent));
-                }
-                else if (schedule.contains(parent)) {
-                    potentialPathWeights.add(schedule.findTask(parent).getEndTime());
-                }
-                // If it's in neither, this node can't be visited yet. We will put it back in the list and move to
-                // the next node
-                else {
+                if (nodePathWeights.containsKey(parent))
+                    potentialPathWeight = Math.max(potentialPathWeight, nodePathWeights.get(parent));
+                else if (schedule.contains(parent))
+                    potentialPathWeight = Math.max(potentialPathWeight, schedule.findTask(parent).getEndTime());
+                else { // If neither, we can't visit this node yet. Put it back in the list.
                     nodesToVisit.add(currentNode);
                     continue outerNodeLoop; // Skip all below code, move to next node.
                 }
@@ -60,11 +78,8 @@ public class CriticalPath implements LowerBound {
 
             // The real path weight will be the maximum potential path weight + the weight of the node. This is the
             // earliest the current node could end at when placed in the schedule
-            int pathWeight = currentNode.getComputationCost();
-            if (!potentialPathWeights.isEmpty())
-                pathWeight += Collections.max(potentialPathWeights);
-
-            nodePathWeights.put(currentNode, pathWeight);
+            potentialPathWeight += currentNode.getComputationCost();
+            nodePathWeights.put(currentNode, potentialPathWeight);
 
             // Add children of the current node, now that we have visited it.
             for(Edge edge : graph.getOutgoingEdges(currentNode))
