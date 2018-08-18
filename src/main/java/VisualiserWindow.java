@@ -1,5 +1,4 @@
 import algorithm.Algorithm;
-import com.sun.javafx.tk.Toolkit;
 import common.graph.Graph;
 import javafx.application.Platform;
 import javafx.scene.Cursor;
