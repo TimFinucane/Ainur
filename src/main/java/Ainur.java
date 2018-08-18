@@ -16,6 +16,7 @@ import io.dot.DotScheduleWriter;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import visualisation.VisualiserWindow;
 
 import java.io.*;
 import java.util.function.Consumer;

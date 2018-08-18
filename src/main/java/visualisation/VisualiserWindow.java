@@ -1,3 +1,5 @@
+package visualisation;
+
 import algorithm.Algorithm;
 import common.Config;
 import common.graph.Graph;
@@ -11,7 +13,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import visualisation.AinurVisualiser;
 
 public class VisualiserWindow {
     // Window state

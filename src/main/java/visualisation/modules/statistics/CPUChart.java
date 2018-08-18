@@ -1,4 +1,4 @@
-package visualisation.modules;
+package visualisation.modules.statistics;
 
 import common.Config;
 import javafx.scene.chart.LineChart;
@@ -19,6 +19,8 @@ import java.lang.management.ManagementFactory;
  */
 public class CPUChart extends HBox {
     private static final String STATS_CONTENT_CLASS_CSS = "stats-content";
+    private static final String CPU_CHART_FINISHED_CLASS_CSS = "cpu-chart-finished";
+
     private static final Color TEXT_FILL = Color.web(Config.UI_TEXT_COLOUR);
 
     private final double _updateFrequency;
@@ -92,5 +94,13 @@ public class CPUChart extends HBox {
             _chartData.getData().remove(0, 1);
         }
         _time += _updateFrequency;
+    }
+
+    /**
+     * Method to be called when cpu usage stops getting updated
+     * Simply applies the cpu-chart-finished css class.
+     */
+    public void stop() {
+        _chartData.getNode().getStyleClass().add(CPU_CHART_FINISHED_CLASS_CSS);
     }
 }

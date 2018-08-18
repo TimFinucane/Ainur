@@ -1,4 +1,4 @@
-package visualisation.modules;
+package visualisation.modules.statistics;
 
 import common.Config;
 import javafx.geometry.Insets;

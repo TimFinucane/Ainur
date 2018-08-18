@@ -4,6 +4,8 @@ import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
 import algorithm.TieredAlgorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.FillTimeBound;
+import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
@@ -37,7 +39,7 @@ public class DFSMultiThreadingIntegrationTests extends IntegrationTest {
                     (tier, communicator) -> new DFSAlgorithm(
                             communicator,
                             Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                            new CriticalPath(),
+                            LowerBound.combine(new CriticalPath()),
                             tier == 0 ? 8 : Integer.MAX_VALUE
                     )
             );
