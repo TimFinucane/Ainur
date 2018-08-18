@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * This file needs to be in the default package so it can access the Ainur main class.
  */
 @Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
+@Tag("last-alliance") // The last alliance against buggy code
 public class CliIT extends IntegrationTest {
 
     private static final String CUSTOM_OUTPUT_NAME_NO_SUFFIX = "my_special_file";
