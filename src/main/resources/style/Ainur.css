@@ -54,7 +54,7 @@
 }
 
 .cpu-chart-finished {
-    -fx-stroke: -fx-green-colour;
+    -fx-stroke: -fx-green-colour !important;
 }
 
 .time-label {

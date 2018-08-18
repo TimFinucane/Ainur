@@ -6,8 +6,12 @@
     -fx-lighter-black-colour: #6d6d6d;
     -fx-green-colour: #a2ffcd;
     -fx-white-colour: #fafafa;
-    -fx-node-highlight-colour: -fx-secondary-colour;
+    -fx-node-highlight-colour: -fx-primary-colour;
     -fx-dark-black-colour: #484848;
     -fx-text-colour: -fx-white-colour;
     -fx-root-colour: -fx-white-colour;
+}
+
+.stats-content {
+    -fx-stroke: -fx-secondary-colour !important;
 }

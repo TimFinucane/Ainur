@@ -25,7 +25,7 @@ public class PurpleOrangeTheme implements Theme {
 
     @Override
     public String getNodeHighlight() {
-        return this.getSecondary();
+        return this.getPrimary();
     }
 
     @Override
