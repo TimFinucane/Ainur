@@ -114,7 +114,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             _memoryCounter = 0;
         }
         if (_outOfMemory) {
-            _communicator.explorePartialSolution(graph, curSchedule, nextNodes);
+            _communicator.explorePartialSolution(graph, new SimpleSchedule(curSchedule), nextNodes);
             return false;
         }
 
@@ -150,7 +150,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                     _numExplored = _numExplored.add(BigInteger.ONE);
 
                     if(newLowerBound == _curLowerBound) { // Continue to expand if the lower bound is still good
-                        if( expand(graph, schedulesToVisit, curSchedule, nextNodes) )
+                        if( expand(graph, schedulesToVisit, curSchedule, childNextNodes) )
                             return true;
                     } else {
                         schedulesToVisit.add(newLowerBound, new SimpleSchedule(curSchedule), childNextNodes);
@@ -172,7 +172,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         Runtime runtime = Runtime.getRuntime();
 
         //if algorithm has used more than a set percentage it should pass its implementation to another thread.
-        return runtime.freeMemory() < (1024 * 1024 * 256);
+        return runtime.freeMemory() < (1024 * 1024 * 512);
     }
 
     /**
