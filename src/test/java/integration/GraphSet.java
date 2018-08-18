@@ -65,13 +65,17 @@ public class GraphSet {
      * Graphs with 4 or 16 processors, and not fork joins of 21 or 30 nodes
      */
     public static GraphSet MEDIUM_EXTRA() {
-        return readFromExtras(Arrays.asList("8p", "16p"), Arrays.asList("Fork_Join_Nodes_21", "Fork_Join_Nodes_30"));
+        return readFromExtras(
+            Arrays.asList("8p", "16p"),
+            Arrays.asList("Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"));
     }
     /**
      * All fork joins of 21 or 30 nodes
      */
     public static GraphSet HARD_EXTRAS() {
-        return readFromExtras(Arrays.asList("Fork_Join_Nodes_21", "Fork_Join_Nodes_30"), null);
+        return readFromExtras(
+            Arrays.asList("Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"),
+            null);
     }
     /**
      * All the above tests except for hard

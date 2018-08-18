@@ -16,14 +16,21 @@ public class ScheduleReading {
         String inputTextAsString = s.hasNext() ? s.next() : "";
         s.close();
 
-        Pattern taskPattern = Pattern.compile("Processor=(\\d+),Start=(\\d+),Weight=(\\d+)");
+        // Choose the pattern matching the file
+        Pattern taskPattern = Pattern.compile("Start=(?<start>\\d+),\\s*Weight=(?<weight>\\d+)");
+        Pattern otherPattern = Pattern.compile("Weight=(?<weight>\\d+),\\s*Start=(?<start>\\d+)");
         Matcher m = taskPattern.matcher(inputTextAsString);
+        if (m.find()) {
+            m.reset();
+        } else {
+            m = otherPattern.matcher(inputTextAsString);
+        }
 
         int maxTaskEndTime = 0;
         // loop through all nodes looking for latest start time
         while (m.find()) {
             // Start time + Weight
-            int taskEndTime = Integer.parseInt(m.group(2)) + Integer.parseInt(m.group(3));
+            int taskEndTime = Integer.parseInt(m.group("start")) + Integer.parseInt(m.group("weight"));
             maxTaskEndTime = taskEndTime > maxTaskEndTime ? taskEndTime : maxTaskEndTime;
 
         }
