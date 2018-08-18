@@ -47,7 +47,6 @@ public class Ainur extends Application {
               launch(args);
           } else {
               schedulingThread.run();
-              System.exit(0);
           }
       } catch (IOException io) {
           System.out.println("Invalid filename entered, try run it again with a valid filename."
