@@ -25,52 +25,75 @@ public abstract class IntegrationTest {
      * Integration tests that run on lots of graph inputs
      */
     public IntegrationTest() {
+        graphs = new ArrayList<>();
+        optimalSchedules = new ArrayList<>();
 
-        List<String> tempGraphs = new ArrayList<>();
+
         // Get all files in data/SampleData/Input, override graphs for this to be the value
         File inputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
-        for (String fileString : inputFolder.list()) {
-            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30"))
-                tempGraphs.add(fileString);
-        }
 
-        graphs = tempGraphs;
+        for (int i = 0; i < inputFolder.list().length; i++) {
+            String fileString = inputFolder.list()[i];
 
-        for (int i = 0; i < graphs.size(); i++)
-            graphs.set(i, String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + graphs.get(i));
-
-        // Make a list of lists with one pair in each corresponding to the number of processors and
-        // optimal solution for that graph.
-        File outputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Output")));
-        List<String> outputFiles = new ArrayList<>();
-        for (String fileString : outputFolder.list()) {
-            //TODO take out this IF statement - these are the hardest graphs!! (Note we only need to run on ones up to 20).
-            // This removes all fork node graphs and any graphs with either 21 or 30 nodes so "quick" tests can run.
             if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30")) {
-                outputFiles.add(fileString);
-            }
-        }
-        List<Pair<Integer, Integer>> optimalSchedulesReplacement = new ArrayList<>();
+                graphs.add(String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + fileString);
 
-        for (String outputFileNameString : outputFiles) {
+                try {
+                    InputStream is1 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + fileString);
+                    InputStream is2 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + fileString);
 
-            InputStream is1 = null;
-            InputStream is2 = null;
-            try {
-                is1 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
-                is2 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                    Pair<Integer, Integer> pair = new Pair<>(scheduleProcessors(is1), scheduleLength(is2));
+                    optimalSchedules.add(pair);
+
+                } catch (FileNotFoundException e) {
+                    System.out.println("Couldn't find: " + String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + fileString);
+                }
             }
 
-            int graphProcessorNo = scheduleProcessors(is1);
-            int graphOptimalSolution = scheduleLength(is2);
-
-            Pair<Integer, Integer> pair = new Pair<>(graphProcessorNo, graphOptimalSolution);
-            optimalSchedulesReplacement.add(pair);
         }
 
-        optimalSchedules = optimalSchedulesReplacement;
+//        for (String fileString : inputFolder.list()) {
+//            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30"))
+//                tempGraphs.add(fileString);
+//        }
+//
+//        graphs = tempGraphs;
+//
+//        for (int i = 0; i < graphs.size(); i++)
+//            graphs.set(i, String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + graphs.get(i));
+//
+//        // Make a list of lists with one pair in each corresponding to the number of processors and
+//        // optimal solution for that graph.
+//        File outputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Output")));
+//        List<String> outputFiles = new ArrayList<>();
+//        for (String fileString : outputFolder.list()) {
+//            //TODO take out this IF statement - these are the hardest graphs!! (Note we only need to run on ones up to 20).
+//            // This removes all fork node graphs and any graphs with either 21 or 30 nodes so "quick" tests can run.
+//            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30")) {
+//                outputFiles.add(fileString);
+//            }
+//        }
+//        List<Pair<Integer, Integer>> optimalSchedulesReplacement = new ArrayList<>();
+//
+//        for (String outputFileNameString : outputFiles) {
+//
+//            InputStream is1 = null;
+//            InputStream is2 = null;
+//            try {
+//                is1 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
+//                is2 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
+//            } catch (FileNotFoundException e) {
+//                System.out.println("Couldn't find: " + String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
+//            }
+//
+//            int graphProcessorNo = scheduleProcessors(is1);
+//            int graphOptimalSolution = scheduleLength(is2);
+//
+//            Pair<Integer, Integer> pair = new Pair<>(graphProcessorNo, graphOptimalSolution);
+//            optimalSchedulesReplacement.add(pair);
+//        }
+//
+//        optimalSchedules = optimalSchedulesReplacement;
     }
 
     /**
@@ -89,19 +112,21 @@ public abstract class IntegrationTest {
     public List<DynamicTest> testOnGraphs() {
         ArrayList<DynamicTest> optimalTests = new ArrayList<>();
         for (int graphIdx = 0; graphIdx < graphs.size(); ++graphIdx) {
-                    String graphName = graphs.get(graphIdx);
+            String graphName = graphs.get(graphIdx);
+            Pair<Integer, Integer> processorOptimalTime = optimalSchedules.get(graphIdx);
 
-                    Pair<Integer, Integer> processorOptimalTime = optimalSchedules.get(graphIdx);
+            optimalTests.add(DynamicTest.dynamicTest(
+                    generateName(graphName, processorOptimalTime),
+                    () -> runAgainstOptimal(
+                            graphName,
+                            processorOptimalTime.getKey(),
+                            processorOptimalTime.getValue()
+                    )
+            ));
 
-                        optimalTests.add(DynamicTest.dynamicTest(
-                                generateName(graphName, processorOptimalTime),
-                                () -> runAgainstOptimal(
-                                        graphName,
-                                        processorOptimalTime.getKey(),
-                                        processorOptimalTime.getValue()
-                                )
-                        ));
-                    }
+        }
+
+
         return optimalTests;
     }
 
