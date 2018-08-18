@@ -1,13 +1,16 @@
 package visualisation.modules;
 
+import common.Config;
 import common.schedule.Schedule;
 import common.schedule.Task;
-import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.layout.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -16,9 +19,11 @@ import javafx.scene.text.TextAlignment;
  * Class to deal with the visual rendering of a schedule.
  */
 public class ScheduleVisualiser extends VBox {
-    private static final Color FILL_COLOUR = Color.LAVENDER;
-    private static final Color BORDER_COLOUR = Color.BLACK;
-    private static final Color TEXT_COLOUR = Color.BLACK;
+    private static final String INNER_SCHEDULE_CLASS_CSS = "inner-schedule";
+    private static final String CANVAS_PADDING_CLASS = "canvas-padding";
+
+    private static final Color FILL_COLOUR = Color.web(Config.UI_PRIMARY_COLOUR);
+    private static final Color TEXT_COLOUR = Color.web(Config.UI_TEXT_COLOUR);
 
     private Schedule    _schedule;
     private Canvas      _scheduleView;
@@ -35,20 +40,32 @@ public class ScheduleVisualiser extends VBox {
         widthProperty().addListener(e -> draw());
         heightProperty().addListener(e -> draw());
 
-        // Add the canvas holder, and make sure it takes available height
-        getChildren().add(canvasHolder);
-        setVgrow(canvasHolder, Priority.ALWAYS);
-
         // And the number axis
         _axis = new NumberAxis(0, 100, 10);
         _axis.setTickLength(10.0);
         _axis.setTickLabelFont(new Font(_axis.getTickLabelFont().getName(), 16.0));
-        getChildren().add(_axis);
 
+        VBox scheduleWrapper = new VBox();
+        scheduleWrapper.getChildren().addAll(canvasHolder, _axis);
+        scheduleWrapper.getStyleClass().addAll(CANVAS_PADDING_CLASS);
+
+        ScrollPane scrollPane = new ScrollPane(scheduleWrapper);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        // Add the canvas holder, and make sure it takes available height
+        getChildren().add(scrollPane);
+        setVgrow(scrollPane, Priority.ALWAYS);
         // And have a nice bit of pad
-        setPadding(new Insets(10));
+        this.getStyleClass().add(INNER_SCHEDULE_CLASS_CSS);
 
-        setPrefHeight(10 + 25 * numProcessors);
+        canvasHolder.setMinHeight(25 * numProcessors);
+        canvasHolder.setPrefHeight(50 * numProcessors);
+        _axis.setMinHeight(25);
+
+        scrollPane.setMinHeight(100);
+        scrollPane.setPrefHeight(150);
     }
 
     /**
@@ -69,16 +86,17 @@ public class ScheduleVisualiser extends VBox {
         if(_schedule == null)
             return;
 
-        gc.clearRect(0, 0, getWidth(), getHeight());
+        double canvasWidth = gc.getCanvas().getWidth();
+        double canvasHeight = gc.getCanvas().getHeight();
+
+        // Clear canvas before drawing in it
+        gc.clearRect(0, 0, canvasWidth, canvasHeight);
 
         // Colours of the tasks
         gc.setFill(FILL_COLOUR);
-        gc.setStroke(BORDER_COLOUR);
+        gc.setStroke(Color.web(Config.UI_SECONDAY_COLOR));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
-
-        double canvasWidth = gc.getCanvas().getWidth();
-        double canvasHeight = gc.getCanvas().getHeight();
 
         // The width of a single unit time in the schedule. End time is padded by 10% so schedule doesn't go to end
         double unitWidth = canvasWidth / _schedule.getEndTime();
@@ -114,6 +132,7 @@ public class ScheduleVisualiser extends VBox {
             if(i == _axis.getTickMarks().size() - 1)
                 x -= 1;
 
+            gc.setStroke(Color.web(Config.UI_LIGHT_BLACK_COLOUR));
             gc.strokeLine(x, 0, x, canvasHeight);
         }
     }
