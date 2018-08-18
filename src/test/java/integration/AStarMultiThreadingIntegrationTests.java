@@ -14,8 +14,8 @@ import common.schedule.Schedule;
 import io.GraphReader;
 import io.dot.DotGraphReader;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,7 +90,7 @@ public class AStarMultiThreadingIntegrationTests extends IntegrationTest {
      * nicely with our current method of running automated tests.
      */
 
-    @Before
+    @BeforeEach
     public void setup() {
         // Set up algorithm classes
         _algorithmhAllHeuristics4Threads = generateTieredAlgorithm(4);
