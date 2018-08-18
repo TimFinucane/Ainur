@@ -11,271 +11,94 @@ import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
-import io.GraphReader;
-import io.dot.DotGraphReader;
+import integration.GraphSet;
+import integration.IntegrationTest;
+import javafx.util.Pair;
 import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
 
 /**
  * Runs thorough test suite for A* on giant data set. Runs multithreading with 4 threads.
  *
  * Also runs through all data provided to us on Canvas with varying numbers of threads allocated.
  */
-public class AStarMultiThreadingIntegrationTests extends IntegrationTest {
-
-    private Algorithm _algorithmhAllHeuristics4Threads;
-    private Algorithm _algorithmhAllHeuristics2Threads;
-    private Algorithm _algorithmhAllHeuristics40Threads;
-
-    private static final String SEP = File.separator;
-    private static final String NODES_7_FILENAME = String.format("data%sgraphs%sNodes_7_OutTree.dot", SEP, SEP);
-    private static final String NODES_11_FILENAME = String.format("data%sgraphs%sNodes_11_OutTree.dot", SEP, SEP);
-    private static final String NODES_10_FILENAME = String.format("data%sgraphs%sNodes_10_Random.dot", SEP, SEP);
-
-    public AStarMultiThreadingIntegrationTests() {
-        super();
-    }
-
-    @Override
-    protected void runAgainstOptimal(String graph, int processors, int optimalScheduleLength) {
-
-        // Single threaded DFS implementation
-        Algorithm dfsAlgorithm = new TieredAlgorithm(4,
-                (tier, communicator) -> {
-                    if (tier == 0) {
-                        return new AStarAlgorithm(
-                                communicator,
-                                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                                new CriticalPath());
-                    } else {
-                        return new DFSAlgorithm(
-                                communicator,
-                                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                                new CriticalPath(),
-                                Integer.MAX_VALUE);
-                    }
-                });
-
-
-        GraphReader reader = null;
-        try {
-            reader = new DotGraphReader(new FileInputStream(graph));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Graph inputGraph = reader.read();
-
-        dfsAlgorithm.run(inputGraph, processors);
-        Schedule schedule = dfsAlgorithm.getCurrentBest();
-
-        Assert.assertEquals(optimalScheduleLength, schedule.getEndTime());
-        Assert.assertTrue(Validator.isValid(inputGraph, schedule));
-    }
+@Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
+class AStarMultiThreadingIntegrationTests {
 
     /**
-     * The following tests run on the ALL the original data sets supplied by O Sinnen.
-     * Keeping them in because it is imperative our code runs properly on these graphs and they will not integrate
-     * nicely with our current method of running automated tests.
+     * Runs A Star with all optimal
      */
+    private void testOptimal(String graphName, int processors, int optimalScheduleLength) {
+        // 4 threads A star
+        Algorithm aStarAlgorithm = generateTieredAlgorithm(4);
 
-    @BeforeEach
-    public void setup() {
-        // Set up algorithm classes
-        _algorithmhAllHeuristics4Threads = generateTieredAlgorithm(4);
+        Graph graph = IntegrationTest.readGraph(graphName);
 
-        _algorithmhAllHeuristics2Threads = generateTieredAlgorithm(2);
+        aStarAlgorithm.run(graph, processors);
+        Schedule schedule = aStarAlgorithm.getCurrentBest();
 
-        _algorithmhAllHeuristics40Threads = generateTieredAlgorithm(40);
-
+        Assert.assertEquals(optimalScheduleLength, schedule.getEndTime());
+        Assert.assertTrue(Validator.isValid(graph, schedule));
     }
 
-    @Test
-    public void testAStarAlgorithm7Node4ProcessorAllHeuristics4Threads(){
-        Graph graph = getGraph(NODES_7_FILENAME);
+    private void test40Threads(String graphName, int processors, int optimalScheduleLength) {
+        Graph graph = IntegrationTest.readGraph(graphName);
 
-        // Execute algorithm w/ no heuristics
-        _algorithmhAllHeuristics4Threads.run(graph, 4);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // Create and execute
+        Algorithm algorithm = generateTieredAlgorithm(40);
+        algorithm.run(graph, processors);
 
         //Manually start algorithm on graph
-        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
+        Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
+        assertEquals(optimalScheduleLength, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
-    @Test
-    public void testAStarAlgorithm7Node4ProcessorAllHeuristics2Threads(){
-        Graph graph = getGraph(NODES_7_FILENAME);
+    private void test2Threads(String graphName, int processors, int optimalScheduleLength) {
+        Graph graph = IntegrationTest.readGraph(graphName);
 
-        // Execute algorithm w/ no heuristics
-        _algorithmhAllHeuristics2Threads.run(graph, 4);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // Create and execute
+        Algorithm algorithm = generateTieredAlgorithm(2);
+        algorithm.run(graph, processors);
 
         //Manually start algorithm on graph
-        Schedule resultManual = _algorithmhAllHeuristics2Threads.getCurrentBest();
+        Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
+        assertEquals(optimalScheduleLength, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
-    @Test
-    public void testAStarAlgorithm7Node4ProcessorAllHeuristics40Threads(){
-        Graph graph = getGraph(NODES_7_FILENAME);
+    private void test1Thread(String graphName, int processors, int optimalScheduleLength) {
+        Graph graph = IntegrationTest.readGraph(graphName);
 
-        // Execute algorithm w/ no heuristics
-        _algorithmhAllHeuristics40Threads.run(graph, 4);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // Create and execute
+        Algorithm algorithm = generateTieredAlgorithm(1);
+        algorithm.run(graph, processors);
 
         //Manually start algorithm on graph
-        Schedule resultManual = _algorithmhAllHeuristics40Threads.getCurrentBest();
+        Schedule resultManual = algorithm.getCurrentBest();
 
-        assertEquals(22, resultManual.getEndTime()); // Check answer is optimal
+        assertEquals(optimalScheduleLength, resultManual.getEndTime()); // Check answer is optimal
         assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
     }
 
-    @Test
-    public void testAStarAlgorithm11Node4ProcessorAllHeuristics4Threads() {
-
-        Graph graph = getGraph(NODES_11_FILENAME);
-
-        // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics4Threads.run(graph, 4);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
-
-        assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
+    @TestFactory
+    List<DynamicContainer> generateTests() {
+        return IntegrationTest.join(
+            new Pair<>("40 threads", new IntegrationTest(GraphSet.OLIVER(), this::test40Threads)),
+            new Pair<>("2 threads", new IntegrationTest(GraphSet.OLIVER(), this::test2Threads)),
+            new Pair<>("1 thread", new IntegrationTest(GraphSet.OLIVER(), this::test1Thread)),
+            new Pair<>("comprehensive", new IntegrationTest(GraphSet.ALL_REASONABLE(), this::testOptimal))
+        );
     }
-
-    @Test
-    public void testAStarAlgorithm11Node4ProcessorAllHeuristics2Threads() {
-
-        Graph graph = getGraph(NODES_11_FILENAME);
-
-        // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics2Threads.run(graph, 4);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Schedule resultManual = _algorithmhAllHeuristics2Threads.getCurrentBest();
-
-        assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
-    }
-
-    @Test
-    public void testAStarAlgorithm11Node4ProcessorAllHeuristics40Threads() {
-
-        Graph graph = getGraph(NODES_11_FILENAME);
-
-        // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics40Threads.run(graph, 4);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Schedule resultManual = _algorithmhAllHeuristics40Threads.getCurrentBest();
-
-        assertEquals(227, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check result is valid
-    }
-
-    @Test
-    public void testAStarAlgorithm10Node2ProcessorAllHeuristics4Threads(){
-        Graph graph = getGraph(NODES_10_FILENAME);
-
-        // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics4Threads.run(graph, 2);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Schedule resultManual = _algorithmhAllHeuristics4Threads.getCurrentBest();
-
-        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
-    }
-
-    @Test
-    public void testAStarAlgorithm10Node2ProcessorAllHeuristics2Threads(){
-        Graph graph = getGraph(NODES_10_FILENAME);
-
-        // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics2Threads.run(graph, 2);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Schedule resultManual = _algorithmhAllHeuristics2Threads.getCurrentBest();
-
-        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
-    }
-
-    @Test
-    public void testAStarAlgorithm10Node2ProcessorAllHeuristics40Threads(){
-        Graph graph = getGraph(NODES_10_FILENAME);
-
-        // Execute algorithm w/ all heuristics
-        _algorithmhAllHeuristics40Threads.run(graph, 2);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Schedule resultManual = _algorithmhAllHeuristics40Threads.getCurrentBest();
-
-        assertEquals(50, resultManual.getEndTime()); // Check answer is optimal
-        assertTrue(Validator.isValid(graph, resultManual)); // Check answer is valid
-    }
-
 
     /**
      * Generates a tiered AStar algorithm with the specified number of threads.
@@ -299,22 +122,4 @@ public class AStarMultiThreadingIntegrationTests extends IntegrationTest {
                 });
 
     }
-
-    private Graph getGraph(String filePath) {
-        // Set up File
-        File graphFile = new File(filePath);
-        InputStream graphStream = null;
-
-        try {
-            graphStream = new FileInputStream(graphFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("File not found: " + filePath);
-        }
-
-        //Try making graph from file and check that it is correct
-        GraphReader reader = new DotGraphReader(graphStream);
-        return reader.read();
-    }
-
 }
