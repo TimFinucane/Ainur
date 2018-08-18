@@ -10,7 +10,8 @@ import visualisation.themes.colour_schemes.GreyBlueTheme;
  */
 public class Config {
     // Theme
-    private static Theme _theme = new GreyBlueTheme(); // Default as grey blue colour theme
+    // Change the theme implementation to change the entire theme of the GUI :)
+    private static Theme _theme = new GreyBlueTheme();
 
     public static final String MAIN_STYLE_SHEET = "/style/Ainur.css";
     public static final String APP_ICON = "/img/icon.png";
