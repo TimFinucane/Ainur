@@ -92,4 +92,27 @@ public class AlgorithmUtils {
 
         return earliests;
     }
+
+    /**
+     * Gets the earliest time a given node could be placed on the given processor
+     */
+    public static int calculateEarliestTime(Graph graph, Schedule schedule, Node node, int processor) {
+        // Calculate earliest it can be placed
+        int earliest =  0;
+        for(Edge edge : graph.getIncomingEdges(node)) {
+            Node dependencyNode = edge.getOriginNode();
+            Task item = schedule.findTask(dependencyNode);
+
+            // If it's on the same processor, just has to be after task end. If not, then it also needs
+            // to be past the communication cost
+            if (item.getProcessor() == processor)
+                earliest = Math.max(earliest, item.getEndTime());
+            else
+                earliest = Math.max(earliest, item.getEndTime() + edge.getCost());
+        }
+        if(schedule.size(processor) > 0)
+            earliest = Math.max(earliest, schedule.getLatest(processor).getEndTime());
+
+        return earliest;
+    }
 }
