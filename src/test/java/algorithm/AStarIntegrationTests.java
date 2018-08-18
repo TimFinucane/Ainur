@@ -1,7 +1,5 @@
 package algorithm;
 
-import algorithm.AStarAlgorithm;
-import algorithm.Algorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
 import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
