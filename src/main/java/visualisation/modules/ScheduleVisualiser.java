@@ -53,7 +53,6 @@ public class ScheduleVisualiser extends VBox {
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setPrefHeight(150);
 
         // Add the canvas holder, and make sure it takes available height
         getChildren().add(scrollPane);
@@ -64,7 +63,9 @@ public class ScheduleVisualiser extends VBox {
         canvasHolder.setMinHeight(25 * numProcessors);
         canvasHolder.setPrefHeight(50 * numProcessors);
         _axis.setMinHeight(25);
+
         scrollPane.setMinHeight(100);
+        scrollPane.setPrefHeight(100);
     }
 
     /**
