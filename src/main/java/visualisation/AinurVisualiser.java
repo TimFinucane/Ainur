@@ -207,6 +207,7 @@ public class AinurVisualiser extends VBox {
         _graph.stop();
         _finishedLabel.setVisible(true);
         _timeLabel.getStyleClass().add(TIME_LABEL_FINISH_CLASS_CSS);
+        _cpuChart.stop();
 
         _fastPoller.stop();
         _mediumPoller.stop();
