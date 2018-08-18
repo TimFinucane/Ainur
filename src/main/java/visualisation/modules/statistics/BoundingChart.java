@@ -6,6 +6,7 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -62,6 +63,10 @@ public class BoundingChart extends VBox {
         _axis.setTickLabelFont(new Font(_axis.getTickLabelFont().getName(), 16.0));
         _axis.setTickLabelFill(TEXT_FILL);
 
+        Label title = new Label("Lowerbound / Upperbound:x");
+        title.setPadding(new Insets(0, 0, 5, 0));
+
+        getChildren().add(title);
         getChildren().add(canvasHolder);
         getChildren().add(_axis);
         setPadding(new Insets(0, 15, 0, 15));
@@ -69,7 +74,7 @@ public class BoundingChart extends VBox {
 
         _axis.setMinHeight(25);
 
-        setPrefHeight(100);
+        setPrefHeight(150);
     }
 
     /**
@@ -112,25 +117,14 @@ public class BoundingChart extends VBox {
         // Place each of lower and upper bound text to the left or right of the bound based on which has enough space
         if(lowerEnd > height) {
             double gap = (lowerEnd) * 0.1;
-
             gc.setTextAlign(TextAlignment.RIGHT);
             gc.fillText(String.valueOf(_curLowerBound), lowerEnd - gap, height / 2.0);
-        } else if((upperStart - lowerEnd) / 1.5 > height) {
-            double gap = (upperStart - lowerEnd) * 0.1;
-
-            gc.setTextAlign(TextAlignment.LEFT);
-            gc.fillText(String.valueOf(_curLowerBound), lowerEnd + gap, height / 2.0);
         }
         if(upperWidth > height) {
             double gap = (upperWidth) * 0.1;
 
             gc.setTextAlign(TextAlignment.LEFT);
             gc.fillText(String.valueOf(_curUpperBound), upperStart + gap, height / 2.0);
-        } else if((upperStart - lowerEnd) / 1.5 > height) {
-            double gap = (upperStart - lowerEnd) * 0.1;
-
-            gc.setTextAlign(TextAlignment.RIGHT);
-            gc.fillText(String.valueOf(_curUpperBound), upperStart - gap, height / 2.0);
         }
 
         // If lower bound and upper bound are same, render a nice fat (4px) line
