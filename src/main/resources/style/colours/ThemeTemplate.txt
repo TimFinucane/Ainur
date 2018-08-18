@@ -1,0 +1,15 @@
+/* Copy this file, rename it, and set the values to whatever you want */
+/* Note: in the current implementation you must also create a Theme java class corresponding to your custome style */
+* {
+    /***** IF YOU CHANGE A COLOUR HERE ALSO CHANGE IT IN THE CORRESPONDING THEME CLASS *****/
+    -fx-primary-colour: ;
+    -fx-secondary-colour: ;
+    -fx-light-black-colour: ;
+    -fx-lighter-black-colour: ;
+    -fx-green-colour: ;
+    -fx-white-colour: ;
+    -fx-node-highlight-colour: ;
+    -fx-dark-black-colour: ;
+    -fx-text-colour: ;
+    -fx-root-colour: ;
+}
