@@ -172,7 +172,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
         Runtime runtime = Runtime.getRuntime();
 
         //if algorithm has used more than a set percentage it should pass its implementation to another thread.
-        return runtime.freeMemory() < (1024 * 1024 * 256);
+        return runtime.freeMemory() < (1024 * 1024 * 512);
     }
 
     /**
