@@ -1,10 +1,6 @@
 package algorithm;
 
-import algorithm.heuristics.lowerbound.CriticalPath;
-import algorithm.heuristics.lowerbound.LowerBound;
-import algorithm.heuristics.pruner.Arborist;
-import algorithm.heuristics.pruner.ProcessorOrderPruner;
-import algorithm.heuristics.pruner.StartTimePruner;
+import algorithm.heuristics.DefaultHeuristics;
 import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
@@ -30,8 +26,8 @@ class AStarIntegrationTests {
     private void testOptimalAStar(String graphName, int processors, int optimalScheduleLength) {
         // Single threaded DFS implementation
         Algorithm aStarAlgorithm = new AStarAlgorithm(
-                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                LowerBound.combine(new CriticalPath())
+            DefaultHeuristics.arborist(),
+            DefaultHeuristics.lowerBound()
         );
 
         Graph graph = IntegrationTest.readGraph(graphName);

@@ -1,9 +1,8 @@
 package algorithm;
 
-import algorithm.heuristics.lowerbound.CriticalPath;
-import algorithm.heuristics.lowerbound.FillTimeBound;
+import algorithm.heuristics.DefaultHeuristics;
 import algorithm.heuristics.lowerbound.LowerBound;
-import algorithm.heuristics.pruner.*;
+import algorithm.heuristics.pruner.Arborist;
 import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
@@ -104,8 +103,8 @@ class AStarMultiThreadingIntegrationTests {
         GreedyAlgorithm greedyAlgorithm = new GreedyAlgorithm();
         greedyAlgorithm.run(graph, processors);
 
-        Arborist arborist = Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner(), new BetterSwapPruner());
-        LowerBound lowerBound = LowerBound.combine(new CriticalPath(), new FillTimeBound());
+        Arborist arborist = DefaultHeuristics.arborist();
+        LowerBound lowerBound = DefaultHeuristics.lowerBound();
 
         return new TieredAlgorithm(threads,
             (tier, communicator) -> {

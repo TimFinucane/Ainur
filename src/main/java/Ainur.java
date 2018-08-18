@@ -1,6 +1,6 @@
 import algorithm.*;
+import algorithm.heuristics.DefaultHeuristics;
 import algorithm.heuristics.lowerbound.CriticalPath;
-import algorithm.heuristics.lowerbound.FillTimeBound;
 import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.BetterStartPruner;
@@ -106,8 +106,8 @@ public class Ainur extends Application {
                 greedy.getCurrentBest()
             );
         } else { // Multithreaded, Tiered AStar/DFS algorithm
-            Arborist arborist = Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner());
-            LowerBound lowerBound = LowerBound.combine(new CriticalPath(), new FillTimeBound());
+            Arborist arborist = DefaultHeuristics.arborist();
+            LowerBound lowerBound = DefaultHeuristics.lowerBound();
 
             return new TieredAlgorithm(cores,
                 (tier, communicator) -> {
