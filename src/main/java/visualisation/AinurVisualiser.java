@@ -7,6 +7,7 @@ import common.graph.Node;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -101,6 +102,7 @@ public class AinurVisualiser extends VBox {
         HBox.setHgrow(_cpuChart, Priority.SOMETIMES);
 
         VBox statsBox = new VBox(_finishedLabel, statsUpper, _bounds);
+        statsBox.setPadding(new Insets(20));
         statsBox.setAlignment(Pos.CENTER);
         VBox.setVgrow(statsUpper, Priority.SOMETIMES);
         VBox.setVgrow(_bounds, Priority.SOMETIMES);

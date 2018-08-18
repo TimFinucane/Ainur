@@ -1,6 +1,7 @@
 package visualisation.modules;
 
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -14,10 +15,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class StatisticsVisualiser extends GridPane {
-
-    private static final String TIME_LABEL_CLASS_CSS = "time-label";
-    private static final String FINISHED_LABEL_CLASS = "finished-label";
-
     // Label Values that need to be periodically updated through life of visualizer
     private Label _branchesCoveredValue; // Metrics labels
     private Label _branchesCulledValue;
@@ -27,6 +24,7 @@ public class StatisticsVisualiser extends GridPane {
     private Label _memoryMaxValue;
 
     public StatisticsVisualiser(int coresUsed) {
+        this.setPadding(new Insets(20));
         getColumnConstraints().addAll(
             new ColumnConstraints(135, 200, -1, Priority.SOMETIMES, HPos.LEFT, true),
             new ColumnConstraints(75, 100, -1, Priority.SOMETIMES, HPos.RIGHT, true)
