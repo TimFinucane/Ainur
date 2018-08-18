@@ -1,4 +1,4 @@
-package integration;
+package algorithm;
 
 import algorithm.AStarAlgorithm;
 import algorithm.Algorithm;

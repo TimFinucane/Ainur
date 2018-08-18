@@ -1,4 +1,4 @@
-package integration;
+package algorithm;
 
 import algorithm.Algorithm;
 import algorithm.DFSAlgorithm;
@@ -11,6 +11,8 @@ import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
+import integration.GraphSet;
+import integration.IntegrationTest;
 import javafx.util.Pair;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.Tag;
