@@ -21,7 +21,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private LowerBound _lowerBound;
 
     // amount of memory allocated for the algorithm
-    private static final double PERCENTAGE_MEMORY_TO_USE = 70;
+    private static final double PERCENTAGE_MEMORY_TO_USE = 90;
 
     private BigInteger _numCulled = BigInteger.ZERO;
     private BigInteger _numExplored = BigInteger.ZERO;
@@ -99,6 +99,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                 _communicator.update(curSchedule);
                 return;
             }
+
 
             // get the nodes that can be added to this schedule
             HashSet<Node> nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);

@@ -34,7 +34,7 @@ public interface LowerBound {
             public int estimate(Graph graph, Schedule schedule, HashSet<Node> nodesToVisit) {
                 int min = bounds[0].estimate(graph, schedule, nodesToVisit);
                 for(int i = 1; i < bounds.length; ++i)
-                    min = Math.min(min, bounds[i].estimate(graph, schedule, nodesToVisit));
+                    min = Math.max(min, bounds[i].estimate(graph, schedule, nodesToVisit));
 
                 return min;
             }
