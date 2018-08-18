@@ -54,27 +54,39 @@ public class GraphSet {
             Arrays.asList(NODES_7_LENGTHS, NODES_8_LENGTHS, NODES_9_LENGTHS, NODES_10_LENGTHS, NODES_11_LENGTHS)
         );
     }
+    /**
+     * Olivers graphs up to a given node size
+     */
+    public static GraphSet OLIVER(int nodeBound) {
+        return new GraphSet(
+            Arrays.asList(NODES_7_FILENAME, NODES_8_FILENAME, NODES_9_FILENAME, NODES_10_FILENAME, NODES_11_FILENAME).subList(0, nodeBound - 6),
+            Arrays.asList(NODES_7_LENGTHS, NODES_8_LENGTHS, NODES_9_LENGTHS, NODES_10_LENGTHS, NODES_11_LENGTHS).subList(0, nodeBound - 6)
+        );
+    }
 
     /**
      * Graphs with 2 or 4 processors, less than 21 nodes
      */
     public static GraphSet SMALL_EXTRA() {
-        return readFromExtras(Arrays.asList("2p", "4p"), Arrays.asList("Nodes_21", "Nodes_30"));
+        return new GraphSet(
+            readFromExtras(Arrays.asList("Nodes_10"), Arrays.asList("16p")),
+            readFromExtras(Arrays.asList("16p"), Arrays.asList("Nodes_21", "Nodes_30")) // So 16 comes after 2, 4, and 8
+        );
     }
     /**
      * Graphs with 4 or 16 processors, and not fork joins of 21 or 30 nodes
      */
     public static GraphSet MEDIUM_EXTRA() {
         return readFromExtras(
-            Arrays.asList("8p"),
-            Arrays.asList("Independent_Nodes", "Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"));
+                Arrays.asList("2p"),
+                Arrays.asList("Nodes_10", "Nodes_30", "Fork", "Independent", "Join", "MaxBf", "Random_Nodes"));
     }
     /**
      * All fork joins of 21 or 30 nodes
      */
     public static GraphSet HARD_EXTRAS() {
         return readFromExtras(
-            Arrays.asList("16p", "Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"),
+            Arrays.asList("Nodes_21", "Nodes_30"),
             null);
     }
     /**

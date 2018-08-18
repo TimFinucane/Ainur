@@ -70,7 +70,7 @@ public class DFSMultiThreadingIntegrationTests {
     List<DynamicContainer> generateTests() {
         return IntegrationTest.join(
             new Pair<>("optimal", new IntegrationTest(GraphSet.ALL_REASONABLE(), this::testOptimal)),
-            new Pair<>("unoptimal", new IntegrationTest(GraphSet.OLIVER(), this::testUnoptimal))
+            new Pair<>("unoptimal", new IntegrationTest(GraphSet.OLIVER(10), this::testUnoptimal))
         );
     }
 }
