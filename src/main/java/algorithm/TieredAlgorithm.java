@@ -179,12 +179,12 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
      * @see MultiAlgorithmCommunicator#explorePartialSolution(Schedule, HashSet)
      */
     @Override
-    public void explorePartialSolution(Schedule schedule, HashSet<Node> nextNodes) {
+    public void explorePartialSolution(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
         // We will try to add the above to the schedule. If theres not enough room (too many schedules to explore),
         // as it is obvious exploration is getting out of hand we will instead run it here, in this thread, RIGHT NOW!!!
         // TODO: Tiers are only ever 0 or 1. Change?
         if(!_schedulesToExplore.offer(new Pair<>(schedule, nextNodes)))
-            runAlgorithmOn(calculateTier(schedule), _graph, schedule, nextNodes);
+            runAlgorithmOn(calculateTier(schedule), graph, schedule, nextNodes);
     }
 
     /**
