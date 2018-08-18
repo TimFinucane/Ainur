@@ -1,4 +1,4 @@
-package visualisation.modules;
+package visualisation.modules.statistics;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
