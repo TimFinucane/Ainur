@@ -26,6 +26,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private BigInteger _numCulled = BigInteger.ZERO;
     private BigInteger _numExplored = BigInteger.ZERO;
     private Node _currentNode;
+    private int _curLowerBound;
 
     /**
      * Constructor for DFSAlgorithm class.
@@ -88,9 +89,9 @@ public class AStarAlgorithm extends BoundableAlgorithm {
             // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
             Pair<Integer, SimpleSchedule> currentPair = schedulesToVisit.poll();
             SimpleSchedule curSchedule = currentPair.getValue();
-            int curLowerBound = currentPair.getKey();
+            int _curLowerBound = currentPair.getKey();
 
-            if (_communicator.getCurrentBest().getEndTime() <= curLowerBound) {
+            if (_communicator.getCurrentBest().getEndTime() <= _curLowerBound) {
                 return;
             }
             // if current schedule contains all nodes, it is optimal.
@@ -214,6 +215,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
 
     @Override
     public int lowerBound() {
-        return 0; // TODO: please do this.
+        return _curLowerBound;
+
     }
 }
