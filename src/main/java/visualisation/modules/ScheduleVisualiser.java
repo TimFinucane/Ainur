@@ -45,8 +45,8 @@ public class ScheduleVisualiser extends VBox {
         _axis.setTickLength(10.0);
         _axis.setTickLabelFont(new Font(_axis.getTickLabelFont().getName(), 16.0));
 
-        VBox scheduleWrapper = new VBox();
-        scheduleWrapper.getChildren().addAll(canvasHolder, _axis);
+        VBox scheduleWrapper = new VBox(canvasHolder, _axis);
+        VBox.setVgrow(canvasHolder, Priority.SOMETIMES);
         scheduleWrapper.getStyleClass().addAll(CANVAS_PADDING_CLASS);
 
         ScrollPane scrollPane = new ScrollPane(scheduleWrapper);
@@ -94,7 +94,7 @@ public class ScheduleVisualiser extends VBox {
 
         // Colours of the tasks
         gc.setFill(FILL_COLOUR);
-        gc.setStroke(Color.web(Config.UI_SECONDAY_COLOR));
+        gc.setStroke(Color.web(Config.UI_SECONDARY_COLOR));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
 

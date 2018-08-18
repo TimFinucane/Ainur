@@ -10,7 +10,6 @@ import javafx.scene.layout.RowConstraints;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -80,12 +79,12 @@ public class StatisticsVisualiser extends GridPane {
         _branchesCulledValue.setText(numberFormat.format(spaceCulled));
 
         // Big integer division requires that you convert into decimals so as to not lose precision (as integer division does).
-        BigDecimal searchSpaceCulledAsBigDec = new BigDecimal(spaceLookedAt);
+        BigDecimal searchSpaceCulledAsBigDec = new BigDecimal(spaceCulled);
         BigDecimal searchSpaceLookedAtAsBigDec = new BigDecimal(spaceLookedAt);
 
         if (!searchSpaceLookedAtAsBigDec.equals(BigDecimal.ZERO)) { // We only want to divide if we know for sure the algorithm has some metrics for us
-            double proportionCulled = searchSpaceCulledAsBigDec.divide(searchSpaceCulledAsBigDec.add(searchSpaceLookedAtAsBigDec), MathContext.DECIMAL32).floatValue();
-            _cullingRateValue.setText(NumberFormat.getPercentInstance().format(100.0 * proportionCulled));
+            BigDecimal proportionCulled = searchSpaceCulledAsBigDec.divide(searchSpaceCulledAsBigDec.add(searchSpaceLookedAtAsBigDec), 5, BigDecimal.ROUND_HALF_UP);
+            _cullingRateValue.setText(NumberFormat.getPercentInstance().format(proportionCulled.floatValue() * 100));
         }
 
         NumberFormat format = NumberFormat.getIntegerInstance();
