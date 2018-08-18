@@ -66,7 +66,7 @@ public class GraphSet {
      */
     public static GraphSet MEDIUM_EXTRA() {
         return readFromExtras(
-            Arrays.asList("8p", "16p"),
+            Arrays.asList("8p"),
             Arrays.asList("Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"));
     }
     /**
@@ -74,7 +74,7 @@ public class GraphSet {
      */
     public static GraphSet HARD_EXTRAS() {
         return readFromExtras(
-            Arrays.asList("Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"),
+            Arrays.asList("16p", "Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"),
             null);
     }
     /**
