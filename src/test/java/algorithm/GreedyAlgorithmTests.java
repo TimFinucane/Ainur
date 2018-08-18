@@ -12,7 +12,7 @@ import static junit.framework.TestCase.assertTrue;
  * Calss is a test suite that tests GreedyAlgorithm. Runs it with pre-made graphs and test graph files. Each test
  * verifys that the schedule is a valid schedule, not that it is optimal. Does not
  */
-public class GreedyAlgorithmTests extends IntegrationTest {
+public class GreedyAlgorithmTests {
     @Test
     public void testBasic3NodeGraph() {
         Graph g = new Graph.Builder()
@@ -33,9 +33,8 @@ public class GreedyAlgorithmTests extends IntegrationTest {
         assertTrue(Validator.isValid(g, algorithm.getCurrentBest())); // Check answer is valid
     }
 
-    @Override
     protected void runAgainstOptimal(String graphName, int processors, int optimalScheduleLength) {
-        Graph graph = readGraph(graphName);
+        Graph graph = IntegrationTest.readGraph(graphName);
 
         // Execute algorithm w/ no heuristics
         Algorithm greedyAlgorithm = new GreedyAlgorithm();
