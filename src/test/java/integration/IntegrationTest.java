@@ -16,6 +16,14 @@ import java.util.regex.Pattern;
 
 @Tag("gandalf") // Gandalf tests may be slow, but they finish precisely when they mean to
 public abstract class IntegrationTest {
+
+    private static final String FORK_JOIN = "Fork_Join";
+    private static final String FORK_NODE = "Fork_Node";
+    private static final String[] exclusionList = {
+            FORK_NODE,
+            "21",
+            "30" };
+
     // These are protected to allow subclasses to add or modify them
     protected List<String>                        graphs;
     // Shows the number of processors and the end time of the schedule.
@@ -36,7 +44,16 @@ public abstract class IntegrationTest {
         for (int i = 0; i < inputFolder.list().length; i++) {
             String fileString = inputFolder.list()[i];
 
-            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30")) {
+            // Decide whether to continue
+            boolean cont = true;
+            for (String exclusion : exclusionList) {
+                if (fileString.contains(exclusion)) {
+                    cont = false;
+                    break;
+                }
+            }
+
+            if (cont) {
                 // Add graph name to list of testing graphs
                 graphs.add(String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + fileString);
 
