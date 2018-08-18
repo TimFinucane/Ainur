@@ -1,4 +1,4 @@
-digraph Independent_Nodes_10_WeightType_Random {
+digraph "Independent_Nodes_10_WeightType_Random" {
 	1	 [Weight=6];
 	2	 [Weight=6];
 	3	 [Weight=4];
