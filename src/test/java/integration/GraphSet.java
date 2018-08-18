@@ -67,7 +67,7 @@ public class GraphSet {
     public static GraphSet MEDIUM_EXTRA() {
         return readFromExtras(
             Arrays.asList("8p"),
-            Arrays.asList("Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"));
+            Arrays.asList("Independent_Nodes", "Fork_Join_Nodes_21", "Fork_Join_Nodes_30", "Fork_Nodes_21", "Fork_Nodes_30"));
     }
     /**
      * All fork joins of 21 or 30 nodes
