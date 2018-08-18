@@ -32,16 +32,21 @@ public abstract class IntegrationTest {
         // Get all files in data/SampleData/Input, override graphs for this to be the value
         File inputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Input")));
 
+        // Loop through all files in input file folder
         for (int i = 0; i < inputFolder.list().length; i++) {
             String fileString = inputFolder.list()[i];
 
             if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30")) {
+                // Add graph name to list of testing graphs
                 graphs.add(String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + fileString);
 
                 try {
+                    // get 2 FIS's, one for each answer finding method
                     InputStream is1 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + fileString);
                     InputStream is2 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + fileString);
 
+                    // Create new pair in optimalSchedules of the correct no. of processors and scheduleLength
+                    // derived from output directory.
                     Pair<Integer, Integer> pair = new Pair<>(scheduleProcessors(is1), scheduleLength(is2));
                     optimalSchedules.add(pair);
 
@@ -51,49 +56,6 @@ public abstract class IntegrationTest {
             }
 
         }
-
-//        for (String fileString : inputFolder.list()) {
-//            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30"))
-//                tempGraphs.add(fileString);
-//        }
-//
-//        graphs = tempGraphs;
-//
-//        for (int i = 0; i < graphs.size(); i++)
-//            graphs.set(i, String.valueOf(Paths.get("data", "SampleData", "Input")) + File.separator + graphs.get(i));
-//
-//        // Make a list of lists with one pair in each corresponding to the number of processors and
-//        // optimal solution for that graph.
-//        File outputFolder = new File(String.valueOf(Paths.get("data", "SampleData", "Output")));
-//        List<String> outputFiles = new ArrayList<>();
-//        for (String fileString : outputFolder.list()) {
-//            //TODO take out this IF statement - these are the hardest graphs!! (Note we only need to run on ones up to 20).
-//            // This removes all fork node graphs and any graphs with either 21 or 30 nodes so "quick" tests can run.
-//            if (!fileString.contains("Fork_Node") && !fileString.contains("21") && !fileString.contains("30")) {
-//                outputFiles.add(fileString);
-//            }
-//        }
-//        List<Pair<Integer, Integer>> optimalSchedulesReplacement = new ArrayList<>();
-//
-//        for (String outputFileNameString : outputFiles) {
-//
-//            InputStream is1 = null;
-//            InputStream is2 = null;
-//            try {
-//                is1 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
-//                is2 = new FileInputStream(String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
-//            } catch (FileNotFoundException e) {
-//                System.out.println("Couldn't find: " + String.valueOf(Paths.get("data", "SampleData", "Output")) + File.separator + outputFileNameString);
-//            }
-//
-//            int graphProcessorNo = scheduleProcessors(is1);
-//            int graphOptimalSolution = scheduleLength(is2);
-//
-//            Pair<Integer, Integer> pair = new Pair<>(graphProcessorNo, graphOptimalSolution);
-//            optimalSchedulesReplacement.add(pair);
-//        }
-//
-//        optimalSchedules = optimalSchedulesReplacement;
     }
 
     /**
