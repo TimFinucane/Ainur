@@ -176,7 +176,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     }
 
     /**
-     * @see MultiAlgorithmCommunicator#explorePartialSolution(Schedule, HashSet)
+     * @see MultiAlgorithmCommunicator#explorePartialSolution(Graph, Schedule, HashSet)
      */
     @Override
     public void explorePartialSolution(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
@@ -256,6 +256,7 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
         try {
             // If running is 0, nothing is in the middle of running an algorithm, and we can exit.
             if(_schedulesToExplore.isEmpty() && _running.get() == 0) {
+                _running.decrementAndGet(); // To -1, to signify finished.
                 for (Thread thread : _threads)
                     thread.interrupt(); // Yes, it is safe to call this on yourself, it'll get picked up later
             }
