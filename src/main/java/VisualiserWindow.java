@@ -1,10 +1,12 @@
 import algorithm.Algorithm;
+import com.sun.javafx.tk.Toolkit;
 import common.graph.Graph;
 import javafx.application.Platform;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -14,6 +16,7 @@ import visualisation.AinurVisualiser;
 public class VisualiserWindow {
     /* Macros */
     private static final String STYLE_SHEET = "/style/Ainur.css";
+    private static final String APP_ICON = "/img/icon.png";
 
     // Window state
     private double _x;
@@ -69,6 +72,7 @@ public class VisualiserWindow {
         _av.getStyleClass().add("ainur-vis");
 
         _scene.getStylesheets().add(getClass().getResource(STYLE_SHEET).toExternalForm());
+        _stage.getIcons().add(new Image(getClass().getResourceAsStream(APP_ICON)));
         primaryStage.show();
 
         _av.run();
