@@ -15,6 +15,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import visualisation.modules.*;
+import visualisation.modules.statistics.BoundingChart;
+import visualisation.modules.statistics.CPUChart;
+import visualisation.modules.statistics.StatisticsVisualiser;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
