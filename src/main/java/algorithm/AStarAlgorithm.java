@@ -4,13 +4,13 @@ import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
 import common.graph.Graph;
 import common.graph.Node;
+import common.schedule.PackedScheduleQueue;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import javafx.util.Pair;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.HashSet;
 
 /**
  * Algorithm implementation that will utilise the A* technique to generate an optimal schedule.
@@ -73,25 +73,19 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     }
 
     private void run(Graph graph, SimpleSchedule rootSchedule, HashSet<Node> startingNextNodes) {
-
-        PriorityQueue<Pair<Integer, Pair<SimpleSchedule, HashSet<Node>>>> schedulesToVisit = new PriorityQueue<>(Comparator.comparing(Pair::getKey));
+        PackedScheduleQueue schedulesToVisit = new PackedScheduleQueue();
 
         //initial best estimate is just the first explored partial schedule.
-        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, new HashSet<>(startingNextNodes));
-        schedulesToVisit.add(new Pair<>(firstLowerBound, new Pair<>(rootSchedule,  new HashSet<>(startingNextNodes))));
+        schedulesToVisit.add(_lowerBound.estimate(graph, rootSchedule, startingNextNodes), rootSchedule,  startingNextNodes);
 
         int memoryCounter = 0;
-
         boolean outOfMemory = false;
 
         while (!schedulesToVisit.isEmpty()) {
-
-            // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
-            Pair<Integer, Pair<SimpleSchedule, HashSet<Node>>> currentPair = schedulesToVisit.poll();
-            SimpleSchedule curSchedule = currentPair.getValue().getKey();
-            HashSet<Node> nextNodes = currentPair.getValue().getValue();
-
-            _curLowerBound = currentPair.getKey();
+            _curLowerBound = schedulesToVisit.getLowerBound();
+            SimpleSchedule curSchedule = schedulesToVisit.getSchedule();
+            HashSet<Node> nextNodes = schedulesToVisit.getVisitableNodes();
+            schedulesToVisit.remove();
 
             if (_communicator.getCurrentBest().getEndTime() <= _curLowerBound) {
                 return;
@@ -120,8 +114,7 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                 _currentNode = node;
 
                 // find all the nodes that can now be visited after adding current node to schedule
-                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule, nextNodes, node);
-
+                HashSet<Node> childNextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule, nextNodes, node);
                 // find the earliest possible time the current node could be placed on each processor
                 int[] earliestStarts = AlgorithmUtils.calculateEarliestTimes(graph, curSchedule, node);
 
@@ -141,17 +134,19 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                     curSchedule.addTask(taskToPlace);
 
                     // find the lower bound associated to the newly generated schedule.
-                    int newLowerBound = _lowerBound.estimate(graph, curSchedule, nextNodesToAdd);
+                    int newLowerBound = _lowerBound.estimate(graph, curSchedule, childNextNodes);
                     if(newLowerBound >= getCurrentBest().getEndTime()) {
                         _numCulled = _numCulled.add(BigInteger.ONE);
                     } else {
                         _numExplored = _numExplored.add(BigInteger.ONE);
-                        schedulesToVisit.add(new Pair<>(newLowerBound, new Pair<>(new SimpleSchedule(curSchedule), nextNodesToAdd)));
+                        schedulesToVisit.add(newLowerBound, new SimpleSchedule(curSchedule), childNextNodes);
                     }
 
                     curSchedule.removeTask(taskToPlace);
                 }
             }
+
+            schedulesToVisit.cull(getCurrentBest().getEndTime());
         }
     }
 
