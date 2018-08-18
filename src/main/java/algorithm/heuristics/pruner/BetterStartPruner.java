@@ -12,16 +12,20 @@ import common.schedule.Task;
  */
 public class BetterStartPruner implements Arborist {
     public boolean prune(Graph graph, Schedule schedule, Task toBeAdded) {
-        int earliests[] = AlgorithmUtils.calculateEarliestTimes(graph, schedule, toBeAdded.getNode());
+        int[] earliests = AlgorithmUtils.calculateEarliestTimes(graph, schedule, toBeAdded.getNode());
 
         int minimum = earliests[0];
         for(int i = 1; i < earliests.length; ++i)
             minimum = Math.min(minimum, earliests[i]);
 
-        int maximumEdgeCost = 0;
-        for(Edge edge : graph.getOutgoingEdges(toBeAdded.getNode()))
-            maximumEdgeCost = Math.max(maximumEdgeCost, edge.getCost());
+        if(minimum == toBeAdded.getStartTime()) { // Best place is on this processor
+            return false;
+        } else {
+            int maximumEdgeCost = 0;
+            for (Edge edge : graph.getOutgoingEdges(toBeAdded.getNode()))
+                maximumEdgeCost = Math.max(maximumEdgeCost, edge.getCost());
 
-        return toBeAdded.getEndTime() > (minimum + toBeAdded.getNode().getComputationCost() + maximumEdgeCost);
+            return toBeAdded.getEndTime() > (minimum + toBeAdded.getNode().getComputationCost() + maximumEdgeCost);
+        }
     }
 }
