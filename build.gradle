@@ -50,3 +50,11 @@ task integrationTest(type: Test) {
         includeTags 'gandalf'
     }
 }
+
+task cliTest(type: Test) {
+    group = 'verification'
+
+    useJUnitPlatform {
+        includeTags 'last-alliance'
+    }
+}
