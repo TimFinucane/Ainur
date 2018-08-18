@@ -136,7 +136,7 @@ public class AinurVisualiser extends VBox {
         HBox.setHgrow(_schedule, Priority.ALWAYS);
 
         this.getChildren().addAll(upper, scheduleWrapper);
-        VBox.setVgrow(scheduleWrapper, Priority.ALWAYS);
+        VBox.setVgrow(scheduleWrapper, Priority.SOMETIMES);
     }
 
     /* Public Methods */
