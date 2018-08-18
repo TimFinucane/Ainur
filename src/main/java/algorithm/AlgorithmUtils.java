@@ -69,7 +69,6 @@ public class AlgorithmUtils {
 
     /**
      * Calculates the earliest times it can add the given node to each processor in the set
-     * TODO: Optimize?
      */
     public static int[] calculateEarliestTimes(Graph graph, Schedule schedule, Node node) {
         // Calculate earliest it can be placed
@@ -78,17 +77,17 @@ public class AlgorithmUtils {
             Node dependencyNode = edge.getOriginNode();
             Task item = schedule.findTask(dependencyNode);
 
-            if(item == null)
-                throw new RuntimeException("Chide Tim for not checking a node's parents are in the schedule");
-
             // If it's on the same processor, just has to be after task end. If not, then it also needs
             // to be past the communication cost
-            for(int processor = 0; processor < schedule.getNumProcessors(); ++processor)
-                earliests[processor] = Math.max(earliests[processor],
-                    (item.getProcessor() == processor) ? item.getEndTime() :  item.getEndTime() + edge.getCost());
+            for(int processor = 0; processor < schedule.getNumProcessors(); ++processor) {
+                if (item.getProcessor() == processor)
+                    earliests[processor] = Math.max(earliests[processor], item.getEndTime());
+                else
+                    earliests[processor] = Math.max(earliests[processor], item.getEndTime() + edge.getCost());
+            }
         }
         for(int processor = 0; processor < schedule.getNumProcessors(); ++processor)
-            if( schedule.size(processor) > 0 )
+            if(schedule.size(processor) > 0)
                 earliests[processor] = Math.max(earliests[processor], schedule.getLatest(processor).getEndTime());
 
         return earliests;
