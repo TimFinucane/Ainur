@@ -29,6 +29,9 @@ import static junit.framework.TestCase.fail;
  * running a test multiple times we are thoroughly testing it being run in threads.
  *
  * All graphs are run on both two and four threads, to ensure expected behavior is the same for both.
+ *
+ * NOTE: Kept in because why not. Not as thorough as the full suite but easier to modify in some ways ie with number
+ * of threads.
  */
 @Category(IntegrationTest.class)
 public class AStarAlgorithmMultiThreadedIT {

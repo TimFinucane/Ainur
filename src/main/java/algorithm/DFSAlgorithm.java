@@ -190,7 +190,7 @@ public class DFSAlgorithm extends BoundableAlgorithm {
                 minIndex = processor;
 
         // Check if better than current, if so then update.
-        int endTime = Math.min(schedule.getEndTime(), earliestStarts[minIndex] + last.getComputationCost());
+        int endTime = Math.max(schedule.getEndTime(), earliestStarts[minIndex] + last.getComputationCost());
         if(endTime < _communicator.getCurrentBest().getEndTime()) {
             SimpleSchedule newSchedule = new SimpleSchedule(schedule);
             newSchedule.addTask(new Task(minIndex, earliestStarts[minIndex], last));

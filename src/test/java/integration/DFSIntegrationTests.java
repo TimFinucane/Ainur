@@ -17,6 +17,9 @@ import org.junit.platform.commons.JUnitException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/**
+ * Runs thorough test suite for DFS on giant data set.
+ */
 public class DFSIntegrationTests extends IntegrationTest {
 
 

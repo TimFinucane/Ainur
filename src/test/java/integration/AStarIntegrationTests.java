@@ -3,6 +3,8 @@ package integration;
 import algorithm.AStarAlgorithm;
 import algorithm.Algorithm;
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.FillTimeBound;
+import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
@@ -16,6 +18,9 @@ import org.junit.Assert;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/**
+ * Runs thorough test suite for A* on giant data set.
+ */
 public class AStarIntegrationTests extends IntegrationTest {
 
 
@@ -29,7 +34,7 @@ public class AStarIntegrationTests extends IntegrationTest {
         // Single threaded DFS implementation
         Algorithm dfsAlgorithm = new AStarAlgorithm(
                 Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                new CriticalPath()
+                LowerBound.combine(new CriticalPath())
         );
 
 

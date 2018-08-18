@@ -18,6 +18,9 @@ import org.junit.platform.commons.JUnitException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/**
+ * Runs thorough test suite for DFS multi threading on giant data set using 4 threads.
+ */
 public class DFSMultiThreadingIntegrationTests extends IntegrationTest {
 
     public DFSMultiThreadingIntegrationTests(){
@@ -38,7 +41,6 @@ public class DFSMultiThreadingIntegrationTests extends IntegrationTest {
                             tier == 0 ? 8 : Integer.MAX_VALUE
                     )
             );
-
 
             GraphReader reader = null;
             try {

@@ -18,6 +18,9 @@ import org.junit.Assert;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/**
+ * Runs thorough test suite for A* on giant data set. Runs multithreading with 4 threads.
+ */
 public class AStarMultiThreadingIntegrationTests extends IntegrationTest {
 
 

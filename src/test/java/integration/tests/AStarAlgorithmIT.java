@@ -31,6 +31,9 @@ import static junit.framework.TestCase.*;
  * This class's purpose is to provide a suite for testing AStarAlgorithm's functionality with regards to reading in a graph
  * object and outputting a schedule that is both optimal and valid. Graphs are sourced from data/graphs/, reading in of
  * of these also occurs before every test.
+ *
+ * NOTE: Kept in because why not. Not as thorough as the full suite but easier to modify in some ways ie with number
+ * of threads.
  */
 @Category(IntegrationTest.class)
 public class AStarAlgorithmIT {
