@@ -1,0 +1,13 @@
+* {
+    /***** IF YOU CHANGE A COLOUR HERE ALSO CHANGE IT IN THE CORRESPONDING THEME CLASS *****/
+    -fx-primary-colour: #304154;
+    -fx-secondary-colour: #dcf3fb;
+    -fx-light-black-colour: #1b2734;
+    -fx-lighter-black-colour: #6d6d6d;
+    -fx-green-colour: #00ff91;
+    -fx-white-colour: #fafafa;
+    -fx-node-highlight-colour: #FF2400;
+    -fx-dark-black-colour: #484848;
+    -fx-text-colour: -fx-white-colour;
+    -fx-root-colour: -fx-dark-black-colour;
+}
