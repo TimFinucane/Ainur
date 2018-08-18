@@ -19,10 +19,9 @@ public abstract class IntegrationTest {
 
     private static final String FORK_JOIN = "Fork_Join";
     private static final String FORK_NODE = "Fork_Node";
-    private static final String[] exclusionList = {
-            FORK_NODE,
-            "21",
-            "30" };
+    private static final String TWENTY_ONE = "21";
+    private static final String THIRTY = "30";
+    private static final String[] exclusionList = { TWENTY_ONE, THIRTY };
 
     // These are protected to allow subclasses to add or modify them
     protected List<String>                        graphs;
