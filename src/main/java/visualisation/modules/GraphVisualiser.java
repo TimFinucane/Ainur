@@ -26,8 +26,8 @@ public class GraphVisualiser extends Region {
     /* MACROS */
 
     // Window dimensions
-    public static final int WINDOW_HEIGHT = 650;
-    public static final int WINDOW_WIDTH = 750;
+    public static final int WINDOW_HEIGHT = 500;
+    public static final int WINDOW_WIDTH = 600;
 
     // Colours
     public static final String NODE_HIGHLIGHT_COLOUR = Config.UI_PRIMARY_COLOUR;

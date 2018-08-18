@@ -22,6 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AinurVisualiser extends VBox {
 
     /* MACROS */
+    // Dimensions
+    private final static int STATS_HEIGHT = GraphVisualiser.WINDOW_HEIGHT + 10;
+    private final static int STATS_WIDTH = 600;
 
     // css classes
     private final static String GRAPH_CLASS_CSS = "graph-vis";
@@ -113,6 +116,12 @@ public class AinurVisualiser extends VBox {
 
         HBox graphWrapper = new HBox(_graph);
         graphWrapper.getStyleClass().addAll(GRAPH_CLASS_CSS, VIS_CLASS_CSS);
+
+        statsWrapper.setPrefHeight(STATS_HEIGHT);
+        statsWrapper.setMaxHeight(STATS_HEIGHT);
+        statsWrapper.setMinHeight(STATS_HEIGHT);
+
+        statsWrapper.setPrefWidth(STATS_WIDTH);
 
         // Put the graph and stats visualiser side by side
         HBox upper = new HBox(graphWrapper, statsWrapper);
