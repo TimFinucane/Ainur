@@ -65,7 +65,7 @@ public class ScheduleVisualiser extends VBox {
         _axis.setMinHeight(25);
 
         scrollPane.setMinHeight(100);
-        scrollPane.setPrefHeight(100);
+        scrollPane.setPrefHeight(150);
     }
 
     /**
