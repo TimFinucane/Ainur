@@ -70,14 +70,12 @@ public class PackedScheduleQueue {
      * Culls the items with a lower bound greater than the given bound
      */
     public void cull(int limit) {
-        if(limit <= _lowerBounds.get(0)) {
-            int index = findPos(limit);
+        if(_lowerBounds.size() > 0 && limit <= _lowerBounds.get(0)) {
+            int index = findPos(limit + 1);
 
             _lowerBounds.subList(0, index).clear();
             _schedules.subList(0, index).clear();
             _visitableNodes.subList(0, index).clear();
-
-            System.out.println("Culled " + index);
         }
     }
 
