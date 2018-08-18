@@ -102,9 +102,6 @@ public class BoundingChart extends VBox {
         gc.fillRect(0, 0, lowerEnd, height);
         gc.fillRect(upperStart, 0, upperWidth, height);
 
-        // Ring the entire thing in black. Maybe this should be done by a border?
-        gc.strokeRect(0, 0, _boundingBoxView.getWidth() - 1, _boundingBoxView.getHeight());
-
         // Text of the stuff TODO: Font family/name
         gc.setFont(new Font(gc.getFont().getName(), Math.min(height / 2, Math.min(lowerEnd / 2, upperWidth / 2))));
         gc.setFill(Color.web(Config.UI_LIGHT_BLACK_COLOUR));
