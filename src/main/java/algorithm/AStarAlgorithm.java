@@ -152,7 +152,6 @@ public class AStarAlgorithm extends BoundableAlgorithm {
                 }
             }
         }
-        System.out.println("Ran out of explorations");
     }
 
     /**
