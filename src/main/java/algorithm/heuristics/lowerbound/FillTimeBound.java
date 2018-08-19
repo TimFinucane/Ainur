@@ -26,6 +26,6 @@ public class FillTimeBound implements LowerBound {
         for(int processor = 0; processor < schedule.getNumProcessors(); ++processor)
             space -= (latestTime - schedule.getEndTime(processor));
 
-        return Math.min((int)Math.ceil(space / (double)schedule.getNumProcessors()), latestTime);
+        return Math.max((int)Math.ceil(space / (double)schedule.getNumProcessors()) + latestTime, latestTime);
     }
 }
