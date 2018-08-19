@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>190</x>
+      <y>70</y>
+      <w>320</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>common.Scheduler
+{Concrete}
+--
+final List&lt;Processor&gt; processors
+--
+Scheduler(int numProcessors)
+getProcessors(): List&lt;Processor&gt;
+/helper methods/
+findTask(Node): Pair&lt;Processor, Task&gt;
+getTotalTime(): int
+--
+Responsibilities
+-- Owns processors
+-- No. of processors unable to change</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>650</x>
+      <y>80</y>
+      <w>320</w>
+      <h>330</h>
+    </coordinates>
+    <panel_attributes>common.Processor
+/extends ArrayList&lt;Task&gt;/
+{Concrete}
+--
+--
+/overridden methods/
+add(Task task) // inserts sorted
+add(int pos, Task task) FAILS
+addAll() FAILS
+set() FAILS
+sort() FAILS
+
+/helper methods/
+getLast(): Task
+findTask(Node): Task
+--
+Responsibilities
+-- Keeps tasks in order
+-- Ensures no two tasks overlap?
+	Will be overhead</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>320</x>
+      <y>370</y>
+      <w>210</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>common.Task
+--
+....
+....
+getEnd() or getEndTime(): int</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

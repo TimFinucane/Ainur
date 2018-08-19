@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>4</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>540</x>
+      <y>100</y>
+      <w>132</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+/Algorithm/
+--
++ run(graph : Graph, processors : int) : void
++ getCurrentBest() : Schedule
++ branchesCulled() : int
++ branchesExplored() : int
++ currentNode() : Node
+--
+Any implementation should be able to start running
+and return a set of live searching information.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>384</x>
+      <y>228</y>
+      <w>204</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Abstract&gt;&gt;
+/BoundableAlgorithm/
+--
+_# communicator : MultiAlgorithmCommunicator_
+--
+/+ run(graph : Graph, schedule Schedule, nextNodes : HashSet&lt;Node&gt;) : void/
++ run(graph : Graph, processors : int) : void
++ getCurrentBest() : Schedule
+--
+Algorithms which do actual searching should extend this abstract class. They
+must be boundable, i.e. they should know when to stop given a set depth. All
+extensions will inherit a MultiAlgorithmCommunicator, which acts as a mediator
+between all running algorithms accross threads.
+
+When the algorithm stops, it will let its MultiAlgorithCommunicator know and 
+hand off it's partially searched schedule.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>640</x>
+      <y>200</y>
+      <w>228</w>
+      <h>228</h>
+    </coordinates>
+    <panel_attributes>TieredAlgorithm
+--
+- schedulesToExplore : LinkedBlockingQueue&lt;Pair&lt;Schedule, Hashset&lt;Node\&gt;&gt;
+- algorithmsRunning : List&lt;BoundableAlgorithm&gt;
+- generator : AlgorithmFactory
+
+- threads : Thread
+- graph : Graph
+
+- totalCulled : int
+- totalExplored : int
+--
++ explorePartialSolution(graph Graph, schedule : Schedule, nextNodes : HashSet&lt;Node&gt;) : void
+
++ run(graph : Graph, processors : int) : void
++ getCurrentBest() : Schedule
++ branchesCulled() : int
++ branchesExplored() : int
++ currentNode() : Node
++ currentNodes() : List&lt;Node&gt;
+
+- runThread() : void
+- runAlgorithm(tier : int, schedule Schedule, nextNodes : HashSet&lt;Node&gt;) : void
+--
+This class is to be used as a BoundableAlgorithm communicator and an algorithm
+that can be run itself. To run this algorithm means the class will begin generating
+BoundableAlgorithms and assign them to sections of the search space.
+
+Because the class acts as a MultiAlgorithmCommunicator, it will create its 
+BoundableAlgorithms with a reference to itself, allowing it's (in a sense) child
+algorithms to call its methods, namely update and explorePartialSchedule. This
+gives BoundableAlgorithm flexibility to offload work back onto its "parent" 
+TieredAlgorithm which will then create further BoundableAlgorithms of a certain 
+type depending on factors like memory usage, tier, etc.
+
+This class also has the ability to create BoundableAlgorithms to work on different 
+threads.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>680</x>
+      <y>472</y>
+      <w>216</w>
+      <h>68</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+/AlgorithmFactory/
+--
++ create(tier : int, communicator : MultiAlgorithmCommunicator) : BoundableAlgorithm
+--
+This interface currently has no iimplementation in Ainur, and is used with lambdas.
+When an instance of TieredAlgorithm is made, the interface is instantiated in the form
+(tier, communicator) -&gt; if tier &gt; ... then Algorithm1(x,y,...) else Algorithm 2(x, y, ...)
+
+create(...) will return a BoundableAlgorithm that is appropriate given the tier, which
+will contain A MultiAlgorithmCommunicator givn to the method.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>716</x>
+      <y>424</y>
+      <w>28</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=1
+m2=1
+&lt; uses</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>700</x>
+      <y>56</y>
+      <w>244</w>
+      <h>92</h>
+    </coordinates>
+    <panel_attributes>MultiAlgorithmCommunicator
+--
+_# globalBest : AtomicReference&lt;Schedule&gt;_
+--
++ getCurrentBest() : Schedule
++ update(schedule : Schedule) : void
++ explorePartialSolution(graph Graph, schedule : Schedule, nextNodes : HashSet&lt;Node&gt;) : void
+--
+This class acts as a pieline for various instances of BoundableAlgorithm to
+communicate with a central controller. Instances of BoundableAlgorithm should
+give instances of this class updates on schedules that they have explored, and
+MultiAlgorithmCommunicator will take these results and store accordingly.
+
+If a BoundableAlgorithm instance so wishes, it can call explorePartialSolution(...)
+and pass off a set of nodes with a current schedule to the communicator which will
+give exploration responsibiulity to another entity.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>736</x>
+      <y>144</y>
+      <w>12</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>584</x>
+      <y>268</y>
+      <w>64</w>
+      <h>16</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=1
+m2=0..*</panel_attributes>
+    <additional_attributes>140.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>552</x>
+      <y>320</y>
+      <w>136</w>
+      <h>184</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+&lt; creates</panel_attributes>
+    <additional_attributes>320.0;440.0;10.0;440.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>472</x>
+      <y>72</y>
+      <w>236</w>
+      <h>164</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=1
+m2=1
+uses &gt;</panel_attributes>
+    <additional_attributes>10.0;390.0;10.0;10.0;570.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>512</x>
+      <y>168</y>
+      <w>100</w>
+      <h>68</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>230.0;10.0;230.0;50.0;10.0;50.0;10.0;150.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>600</x>
+      <y>168</y>
+      <w>96</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0;220.0;50.0;220.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>888</x>
+      <y>144</y>
+      <w>36</w>
+      <h>336</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt; requires</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;820.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>392</x>
+      <y>320</y>
+      <w>100</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=..
+m2=DFSAlgorithm, AStartAlgorithm, etc
+various subclasses...</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;160.0</additional_attributes>
+  </element>
+</diagram>
