@@ -85,9 +85,10 @@ public class GraphSet {
      * All fork joins of 21 or 30 nodes
      */
     public static GraphSet HARD_EXTRAS() {
-        return readFromExtras(
-            Arrays.asList("Nodes_21", "Nodes_30"),
-            null);
+        return new GraphSet(
+            readFromExtras(Arrays.asList("Nodes_21", "Nodes_30"), Arrays.asList("16p")),
+            readFromExtras(Arrays.asList("16p"), Arrays.asList("Nodes_10")) // So 16 comes after 2, 4, and 8
+        );
     }
     /**
      * All the above tests except for hard
