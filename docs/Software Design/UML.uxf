@@ -1,219 +1,275 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="14.2">
-  <zoom_level>6</zoom_level>
+  <zoom_level>8</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>138</x>
-      <y>54</y>
-      <w>150</w>
-      <h>114</h>
+      <x>416</x>
+      <y>72</y>
+      <w>224</w>
+      <h>224</h>
     </coordinates>
-    <panel_attributes>*common::Schedule*
+    <panel_attributes>&lt;&lt;Abstract&gt;&gt;
+/Schedule/
 --
--processors : List&lt;Processor&gt;
+# numProcessors : int
 --
-+getProcessors() : List&lt;Processor&gt;
---
-Responsibilities
--- Contains a list of processors which
-in turn contain ordered tasks.
--- A task referencing a node may only 
-exist once in the schedule
--- An occurance of this class outside
-the algorithm class must be complete.</panel_attributes>
+/+ addTask(task : Task) : void/
+/+ removeTask(task : task) : void/
+/+ findTask(node : Node) : Task/
+/+ getLatest(processor : int) : Task/
+/+ getTasks(processor : int) : List&lt;Task&gt;/
+/+ size(processor : int) : int/
++ contains(node Node) : boolean
++ getEndTime(processor : int) : int
++ getEndTime() : int
++ size() : int
++ getNumProcessors() : int
+--</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>330</x>
-      <y>54</y>
-      <w>150</w>
-      <h>114</h>
+      <x>424</x>
+      <y>616</y>
+      <w>200</w>
+      <h>200</h>
     </coordinates>
-    <panel_attributes>*common::Processor*
+    <panel_attributes>Task
 --
--tasks : List&lt;Task&gt;
+_- processor : int_
+_- startTime : int_
+_- node : Node_
 --
-+getTasks() : List&lt;Task&gt;
-+addTask(task : Task) : void
-+removeTask(task : Task) : void
-+removeTask(taskIndex : int) : void
-
-+containsTask(task : Task) : bool
++ getProcessor() : int
++ getStartTime() : int
++ getNode() : Node
++ getEndTime() : int
 --
-Responsibilities
--- Holds a list of Tasks in sequence.</panel_attributes>
+A task is defines by its the processor
+number it has been assigned, its start
+time on that processor and a reference
+to its original node from the input task 
+graph, which contains information on 
+its computation cost, label and id.</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>522</x>
-      <y>54</y>
-      <w>150</w>
-      <h>120</h>
+      <x>720</x>
+      <y>640</y>
+      <w>208</w>
+      <h>136</h>
     </coordinates>
-    <panel_attributes>*common::Task*
+    <panel_attributes>Node
 --
--startTime : int {final}
--node : Node {final}
+_- computationCost : int_
+_- label : String_
+_- id : int_
 --
-+getStartTime() : int
-+getNode() : Node
++ getComputationCost() : int
++ getLable() : String
++ getId() : int
 --
-Responsibilities
--- A task will be given a start time 
-on construction as well as a Node
-object to represent graphical data.
--- A task referencing a node may only 
-exist once in the schedule</panel_attributes>
+A Node it made up of its cost, label and
+id</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>522</x>
-      <y>216</y>
-      <w>150</w>
-      <h>114</h>
+      <x>1008</x>
+      <y>640</y>
+      <w>200</w>
+      <h>144</h>
     </coordinates>
-    <panel_attributes>*common::Node*
+    <panel_attributes>Edge
 --
--incomingEdges : List&lt;Edge&gt;
--outgoingEdges : List&lt;Edge&gt;
+_- dest : Node_
+_- origin : Node_
+_- cost : int_
 --
-+getIncomingEdges() : List&lt;Edge&gt;
-+getOutgoingEdges() : List&lt;Edge&gt;
-
-+isTerminal() : bool
++ getDestinationNode() : Node
++ getOriginNode() : Node
++ getCost() : int
 --
-Responsibilities
--- Contains ingoing and outgoing edges
-of node of a tree.</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>330</x>
-      <y>216</y>
-      <w>150</w>
-      <h>114</h>
-    </coordinates>
-    <panel_attributes>*common::Edge*
---
--to : Node {final}
--from : Node {final}
--cost : int {final}
---
-+getNodeTo() : Node
-+getNodeFrom() : Node
-+getCost() : int
---
-Responsibilities
--- Composed of source node,
+Composed of source node,
 destination node and edge cost.</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>UMLNote</id>
-    <coordinates>
-      <x>186</x>
-      <y>282</y>
-      <w>84</w>
-      <h>42</h>
-    </coordinates>
-    <panel_attributes>How we avoid the 
-circular dependency:
-bg=blue</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
     <id>Relation</id>
     <coordinates>
-      <x>474</x>
-      <y>264</y>
-      <w>60</w>
-      <h>18</h>
+      <x>616</x>
+      <y>704</y>
+      <w>120</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>588</x>
-      <y>168</y>
-      <w>18</w>
-      <h>60</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>474</x>
-      <y>108</y>
-      <w>60</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;80.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>282</x>
-      <y>108</y>
-      <w>60</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;80.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=0..*
+m2=1
+contains &gt;</panel_attributes>
+    <additional_attributes>10.0;20.0;130.0;20.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>426</x>
-      <y>414</y>
-      <w>150</w>
-      <h>90</h>
+      <x>840</x>
+      <y>264</y>
+      <w>248</w>
+      <h>256</h>
     </coordinates>
-    <panel_attributes>*common::Graph*
+    <panel_attributes>Graph
 --
--nodes : List&lt;Node&gt;
--edges : List&lt;Edge&gt;
+_- name : String_
+_- nodes : List&lt;Node&gt;_
+_- edges : List&lt;Edge&gt;_
+_- incomingEdges : List&lt;List&lt;Edge\&gt;&gt;_
+_- outGoingEdges : List&lt;List&lt;Node\&gt;&gt;_
+_- entryPoints : List&lt;Node&gt;_
 --
-+getEntryPoints() : List&lt;Node&gt;
++ getName : String
++ getNodes() : List&lt;Node&gt;
++ getOutgoingEdges(Node : node) : List&lt;Edge&gt;
++ getIncomingEdges(Node : node) : List&lt;Edge&gt;
++ getAllEdges() : List&lt;Edge&gt;
++ size() : int
++ getEntryPoints() : List&lt;Node&gt;
++ findByLabel(label : String) : Node
 --
-Responsibilities
--- Holds reference to all nodes and
+Holds reference to all nodes and
 edges in a graph.</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>450</x>
-      <y>324</y>
-      <w>18</w>
-      <h>102</h>
+      <x>1048</x>
+      <y>512</y>
+      <w>80</w>
+      <h>144</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=1
+m2=0..*
+contains &gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;160.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>546</x>
-      <y>324</y>
-      <w>18</w>
-      <h>102</h>
+      <x>864</x>
+      <y>512</y>
+      <w>80</w>
+      <h>144</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=1
+m2=0..*
+contains &gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;160.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>920</x>
+      <y>696</y>
+      <w>104</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=0..*
+m2=2
+&lt; connects</panel_attributes>
+    <additional_attributes>110.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>416</x>
+      <y>336</y>
+      <w>224</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>SimpleSchedule
+--
+- tasks : List&lt;Task&gt;
+- processors : List&lt;Task&gt;[]
+--
++ addTask(task : Task) : void
++ removeTask(task : task) : void
++ findTask(node : Node) : Task
++ getLatest(processor : int) : Task
++ getTasks(processor : int) : List&lt;Task&gt;
++ size(processor : int) : int
+--
+The SimpleSchedule holds both a list of
+tasks and and an array of lists of Tasks.
+The former represents separate processors
+in each array index, which hold a list of 
+Tasks themselves.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>512</x>
+      <y>528</y>
+      <w>80</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=1
+m2=0..*
+contains &gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>520</x>
+      <y>288</y>
+      <w>24</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>656</x>
+      <y>424</y>
+      <w>176</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>Nodes start out their life within a
+graph object which is then passed
+to a scheduling algorithm. As the
+graph is inspected by the 
+algorithm, it's nodes are passed to
+multiple different tasks held in 
+multiple different partially 
+complete schedules that the 
+algorithm builds.
+
+Nodes can therefore exist in a 
+graph, edge and task within a
+schedule.
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>752</x>
+      <y>592</y>
+      <w>40</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes>10.0;10.0;30.0;60.0</additional_attributes>
   </element>
 </diagram>

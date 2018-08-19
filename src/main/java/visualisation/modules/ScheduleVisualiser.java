@@ -7,6 +7,7 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -28,8 +29,12 @@ public class ScheduleVisualiser extends VBox {
     private Schedule    _schedule;
     private Canvas      _scheduleView;
     private NumberAxis  _axis;
+    private Label _title;
 
     public ScheduleVisualiser(int numProcessors) {
+        _title = new Label("Current Best Schedule:");
+        _title.getStyleClass().add("schedule-label");
+
         _scheduleView = new Canvas();
         Pane canvasHolder = new Pane(_scheduleView);
         // Bind schedule view to its holder so that it resizes when possible
@@ -55,7 +60,7 @@ public class ScheduleVisualiser extends VBox {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         // Add the canvas holder, and make sure it takes available height
-        getChildren().add(scrollPane);
+        getChildren().addAll(_title, scrollPane);
         setVgrow(scrollPane, Priority.ALWAYS);
         // And have a nice bit of pad
         this.getStyleClass().add(INNER_SCHEDULE_CLASS_CSS);
@@ -74,6 +79,13 @@ public class ScheduleVisualiser extends VBox {
     public void update(Schedule schedule) {
         _schedule = schedule;
         draw();
+    }
+
+    /**
+     * Called when algorithm stops. Updates the titles.
+     */
+    public void stop() {
+        _title.setText("Best Schedule:");
     }
 
     /**
@@ -122,6 +134,8 @@ public class ScheduleVisualiser extends VBox {
             }
         }
         // Modify number axis
+        double tickUnit = Math.pow(10, Math.round( Math.log10(_schedule.getEndTime() / 10.0) ));
+        _axis.setTickUnit(tickUnit);
         _axis.setUpperBound(_schedule.getEndTime());
         _axis.layout();
 
