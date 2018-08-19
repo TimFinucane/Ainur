@@ -39,11 +39,10 @@ public class AinurVisualiser extends VBox {
     private static final String TIME_LABEL_FINISH_CLASS_CSS = "time-label-finished";
 
     // Delays
+    private final static int INTERPOL_MOD = 5;
     private final static Duration FAST_POLLING_DELAY = Duration.millis(16);
     private final static Duration SLOW_POLLING_DELAY = Duration.millis(2000);
-    private final static Duration MEDIUM_POLLING_DELAY = Duration.millis(333);
-
-    private final static int INTERPOL_MOD = 3;
+    private final static Duration MEDIUM_POLLING_DELAY = Duration.millis(1000 / (double) INTERPOL_MOD);
 
     private final long _startTime;
 
@@ -208,6 +207,7 @@ public class AinurVisualiser extends VBox {
         _finishedLabel.setVisible(true);
         _timeLabel.getStyleClass().add(TIME_LABEL_FINISH_CLASS_CSS);
         _cpuChart.stop();
+        _schedule.stop();
 
         _fastPoller.stop();
         _mediumPoller.stop();
