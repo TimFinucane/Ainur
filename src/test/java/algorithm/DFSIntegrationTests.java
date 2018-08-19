@@ -1,11 +1,8 @@
 package algorithm;
 
-import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.DefaultHeuristics;
 import algorithm.heuristics.lowerbound.NaiveBound;
-import algorithm.heuristics.pruner.Arborist;
 import algorithm.heuristics.pruner.IsNotAPruner;
-import algorithm.heuristics.pruner.ProcessorOrderPruner;
-import algorithm.heuristics.pruner.StartTimePruner;
 import common.Validator;
 import common.graph.Graph;
 import common.schedule.Schedule;
@@ -31,8 +28,8 @@ public class DFSIntegrationTests {
 
         // Execute algorithm w/ all heuristics
         Algorithm algorithmWithAllHeuristics = new DFSAlgorithm(
-            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-            new CriticalPath()
+            DefaultHeuristics.arborist(),
+            DefaultHeuristics.lowerBound()
         );
 
         algorithmWithAllHeuristics.run(graph, processors);
@@ -45,11 +42,8 @@ public class DFSIntegrationTests {
     void testUnoptimal(String graphName, int processors, int optimalScheduleLength) {
         Graph graph = IntegrationTest.readGraph(graphName);
 
-        // Execute algorithm w/ all heuristics
-        Algorithm algorithmWithAllHeuristics = new DFSAlgorithm(
-            new IsNotAPruner(),
-            new NaiveBound()
-        );
+        // Execute algorithm without all heuristics
+        Algorithm algorithmWithAllHeuristics = new DFSAlgorithm(new IsNotAPruner(), new NaiveBound());
 
         algorithmWithAllHeuristics.run(graph, processors);
         Schedule resultManual = algorithmWithAllHeuristics.getCurrentBest();

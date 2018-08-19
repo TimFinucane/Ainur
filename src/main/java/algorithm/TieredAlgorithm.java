@@ -241,11 +241,10 @@ public class TieredAlgorithm extends MultiAlgorithmCommunicator implements Algor
     }
 
     /**
-     * Gets the tier the given schedule should run on.
-     * TODO: Currently only ever gives 0 if empty or 1 otherwise. More tiers?
+     * Gets the tier the given schedule should run on. (Hint: Its the size of the schedule)
      */
     private int calculateTier(Schedule schedule) {
-        return schedule.size() == 0 ? 0 : 1;
+        return schedule.size();
     }
 
     /**

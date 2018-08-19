@@ -1,0 +1,171 @@
+PACKAGE STRUCTURE:
+	src
+		visualise
+			Statistics
+		io
+			GraphReader
+			ScheduleWriter
+		algorithm
+			Algorithm
+			DFSAlgorithm
+		common
+			Graph 
+			Edge
+			Node			
+			Schedule
+			Processor
+			Task
+
+	test
+		(mimics structure of src)
+
+Schedule ->
+	CONTRACT - Tasks in a processor are listen in order [Probably not enforcable through data]
+	CONTRACT - A task referencing a node may only exist once in the schedule
+	CONTRACT? - Schedules outside algorithm must be complete??
+
+	private List<Processor> processors
+	List<Processor> getProcessors
+
+Processor()
+	private List<Task>
+	List<Task> getTasks()
+	addTask(Task)
+	removeTask(Task)
+	removeTask(index)
+	boolean containsTask(Task)
+
+Task(int startTime, Node node)
+	private final int startTime
+	private final Node node (representing graphical data)
+	public int getStartTime()
+	public Node getNode()
+	
+GraphReader ->
+	GraphReader( InputStream? )
+	Graph read()
+	
+ScheduleWriter ->
+	GraphWriter( OutputStream )
+	void write( Schedule )
+
+Algorithm (abstract) ->
+	Algorithm( int processors, boolean multithreaded, Arborist arborist, LowerBound lowerboundn )
+	abstract void start( Graph g )
+
+	protected prune (same method as Arborist class)
+		call their parent method
+
+	protected estimate (same method as LowerBound class)
+	
+	boolean isComplete() // Or we can use a callback system, should discuss
+
+	Schedule getCurrentBest()
+	// And many, many more...
+
+DFSAlgorithm (concrete) extends Algorithm
+	// to be implemented
+
+
+
+Interface Arborist {
+	//Needs good commenting for name.
+	boolean prune (Graph, Schedule) 
+}
+
+// Subclasses of Arborist for implementations of pruning
+class ..... implements Arborist {
+	// implementation of prune method is left up to individual
+	boolean prune (Graph, Schedule)
+}
+class IsNotAPruner {
+	// should always return false as is the default method.
+	bool prune (Graph, Schedule)
+}
+
+
+
+Interface LowerBound {
+	int estimate(Graph, Schedule, List<Node> nodesToVisit)
+	int estimate(Graph, Schedule)
+		//calls parent with empty list as arg
+}
+
+class CriticalPath implements LowerBound {
+	// implementation left up to the individual, should calculate criticial path.
+	int estimate(Graph, Schedule, List<Node> nodesToVisit)
+	int estimate(Graph, Schedule)
+		//calls parent with empty list as arg for nodes to visit
+}
+
+
+
+Node
+	List<Node> parents
+	List<Node> children
+
+	List<Edge> getIncomingEdges()
+	List<Edge> getOutgoingEdges()
+	boolean isTerminal()
+
+
+Edge(Node to, Node from, int weight)
+	private final Node to
+	private final Node from
+	private final int cost
+	public getters
+
+
+Graph(List<Node>, List<Edge>(will be coming from reader))
+	List<Node> getEntryPoints()
+
+
+	
+
+
+
+
+
+
+
+	If we want to switch between algorithms based on certain input traits: Use a factory
+
+
+
+Visualization --------------------------------------
+
+ScheduleVisualizer inherit from region/group(JavaFX shit)
+	update(schedule s)
+
+GraphVisualizer inherit from region/group(JavaFX shit)
+	update(Graph g)
+
+StatsVisualizer inherit from region/group(JavaFX shit)
+	update(STATS SHIT)...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
