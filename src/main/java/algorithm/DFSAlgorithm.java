@@ -47,6 +47,13 @@ public class DFSAlgorithm extends BoundableAlgorithm {
         _depth = Integer.MAX_VALUE;
     }
 
+    public DFSAlgorithm(Arborist arborist, LowerBound lowerBound, Schedule initialGuess) {
+        super(new MultiAlgorithmCommunicator(initialGuess));
+        _arborist = arborist;
+        _lowerBound = lowerBound;
+        _depth = Integer.MAX_VALUE;
+    }
+
     /**
      * Starts running the DFS.
      * Solution works by exploring avery possible schedule configuration and returning the best one it has found.
@@ -60,7 +67,6 @@ public class DFSAlgorithm extends BoundableAlgorithm {
      */
     @Override
     public void run(Graph graph, Schedule schedule, HashSet<Node> nextNodes) {
-        _communicator.setGreedyInitialBest(graph, schedule.getNumProcessors());
         _graph = graph;
         recurse(schedule instanceof SimpleSchedule ? (SimpleSchedule)schedule : new SimpleSchedule(schedule),
             nextNodes, Integer.MAX_VALUE);

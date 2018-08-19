@@ -1,8 +1,9 @@
-import algorithm.Algorithm;
-import algorithm.DFSAlgorithm;
-import algorithm.TieredAlgorithm;
+import algorithm.*;
+import algorithm.heuristics.DefaultHeuristics;
 import algorithm.heuristics.lowerbound.CriticalPath;
+import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
+import algorithm.heuristics.pruner.BetterStartPruner;
 import algorithm.heuristics.pruner.ProcessorOrderPruner;
 import algorithm.heuristics.pruner.StartTimePruner;
 import cli.Cli;
@@ -94,20 +95,30 @@ public class Ainur extends Application {
      *      Tiered algorithm otherwise
      */
     private static Algorithm chooseAlgorithm(int cores) {
+        GreedyAlgorithm greedy = new GreedyAlgorithm();
+        greedy.run(graph, cli.getProcessors());
+
         Algorithm algorithm;
         if(cores == 1) { // Single-threaded DFS algorithm
             algorithm = new DFSAlgorithm(
-                    Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                    new CriticalPath()
+                Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner(), new BetterStartPruner()),
+                new CriticalPath(),
+                greedy.getCurrentBest()
             );
-        } else { // Multithreaded, Tiered DFS algorithm
-            algorithm = new TieredAlgorithm(cores, (tier, communicator) ->
-                    new DFSAlgorithm(communicator,
-                            Arborist.combine(new StartTimePruner(), new ProcessorOrderPruner()),
-                            new CriticalPath(),
-                            tier == 0 ? 8 : Integer.MAX_VALUE // Depth is 8 for first tier, infinite for second tier
-                    )
-            );
+        } else { // Multithreaded, Tiered AStar/DFS algorithm
+            Arborist arborist = DefaultHeuristics.arborist();
+            LowerBound lowerBound = DefaultHeuristics.lowerBound();
+
+            return new TieredAlgorithm(cores,
+                (tier, communicator) -> {
+                    if(tier == 0) // Expand to a few states for the purposes of running A stars in parallel
+                        return new DFSAlgorithm(communicator, arborist, lowerBound, Math.min(4, graph.size()));
+                    else if(tier < (graph.size() / 2 + 1)) // Run A stars in parallel on the system
+                        return new AStarAlgorithm(communicator, arborist, lowerBound);
+                    else
+                        return new DFSAlgorithm(communicator, arborist, lowerBound, Integer.MAX_VALUE);
+                },
+                greedy.getCurrentBest());
         }
 
         return algorithm;

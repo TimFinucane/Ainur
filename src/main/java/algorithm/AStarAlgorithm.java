@@ -4,13 +4,13 @@ import algorithm.heuristics.lowerbound.LowerBound;
 import algorithm.heuristics.pruner.Arborist;
 import common.graph.Graph;
 import common.graph.Node;
+import common.schedule.PackedScheduleQueue;
 import common.schedule.Schedule;
 import common.schedule.SimpleSchedule;
 import common.schedule.Task;
-import javafx.util.Pair;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.HashSet;
 
 /**
  * Algorithm implementation that will utilise the A* technique to generate an optimal schedule.
@@ -20,13 +20,12 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private Arborist _arborist;
     private LowerBound _lowerBound;
 
-    // amount of memory allocated for the algorithm
-    private static final double PERCENTAGE_MEMORY_TO_USE = 90;
-
     private BigInteger _numCulled = BigInteger.ZERO;
     private BigInteger _numExplored = BigInteger.ZERO;
     private Node _currentNode;
     private int _curLowerBound;
+    private int _memoryCounter = 0;
+    private boolean _outOfMemory = false;
 
     /**
      * Constructor for DFSAlgorithm class.
@@ -73,87 +72,95 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     }
 
     private void run(Graph graph, SimpleSchedule rootSchedule, HashSet<Node> startingNextNodes) {
-
-        PriorityQueue<Pair<Integer, SimpleSchedule>> schedulesToVisit = new PriorityQueue<>(new ScheduleComparator());
+        PackedScheduleQueue schedulesToVisit = new PackedScheduleQueue();
 
         //initial best estimate is just the first explored partial schedule.
-        int firstLowerBound = _lowerBound.estimate(graph, rootSchedule, new HashSet<>(startingNextNodes));
-        schedulesToVisit.add(new Pair<>(firstLowerBound, rootSchedule));
-
-        int memoryCounter = 0;
-
-        boolean outOfMemory = false;
+        schedulesToVisit.add(_lowerBound.estimate(graph, rootSchedule, startingNextNodes), rootSchedule,  startingNextNodes);
 
         while (!schedulesToVisit.isEmpty()) {
-
-            // Retrieves and removes the schedule at with the best lower bound estimate, will be at front of queue.
-            Pair<Integer, SimpleSchedule> currentPair = schedulesToVisit.poll();
-            SimpleSchedule curSchedule = currentPair.getValue();
-            int _curLowerBound = currentPair.getKey();
-
-            if (_communicator.getCurrentBest().getEndTime() <= _curLowerBound) {
-                return;
-            }
-            // if current schedule contains all nodes, it is optimal.
-            if (curSchedule.size() == graph.size()) {
-                _communicator.update(curSchedule);
-                return;
-            }
-
-
-            // get the nodes that can be added to this schedule
-            HashSet<Node> nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
-
-            //only poll for memory usage every 5 iterations.
-            memoryCounter++;
-            if (memoryCounter == 10){
-                outOfMemory = outOfMemory();
-                memoryCounter = 0;
-            }
-            if (outOfMemory) {
-                _communicator.explorePartialSolution(graph, curSchedule, nextNodes);
-                continue;
-            }
+            _curLowerBound = schedulesToVisit.getLowerBound();
+            SimpleSchedule curSchedule = schedulesToVisit.getSchedule();
+            HashSet<Node> nextNodes = schedulesToVisit.getVisitableNodes();
+            schedulesToVisit.remove();
 
             // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
-            for (Node node : nextNodes) {
-                _currentNode = node;
+            expand(graph, schedulesToVisit, curSchedule, nextNodes);
 
-                // find all the nodes that can now be visited after adding current node to schedule
-                HashSet<Node> nextNodesToAdd = AlgorithmUtils.calculateNextNodes(graph, curSchedule, nextNodes, node);
+            schedulesToVisit.cull(getCurrentBest().getEndTime());
+        }
+    }
 
-                // find the earliest possible time the current node could be placed on each processor
-                int[] earliestStarts = AlgorithmUtils.calculateEarliestTimes(graph, curSchedule, node);
+    /**
+     * Expands a state space node and adds all potential children to the schedulesToVisit queue.
+     * Has the added benefit of continuing to expand nodes if their lower bound is just as good.
+     * @return Whether or not a solution was found (and can exit early)
+     */
+    private boolean expand(Graph graph, PackedScheduleQueue schedulesToVisit, SimpleSchedule curSchedule, HashSet<Node> nextNodes) {
+        if (_communicator.getCurrentBest().getEndTime() <= _curLowerBound) {
+            return false;
+        }
+        // if current schedule contains all nodes, it is optimal.
+        if (curSchedule.size() == graph.size()) {
+            _communicator.update(curSchedule);
+            return true;
+        }
+        // get the nodes that can be added to this schedule
+        //HashSet<Node> nextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule);
 
-                // place the node on each possible processor to generate all possible schedules
-                for (int proc = 0; proc < rootSchedule.getNumProcessors(); proc++){
+        //only poll for memory usage every 5 iterations.
+        _memoryCounter++;
+        if (_memoryCounter == 10){
+            _outOfMemory = outOfMemory();
+            _memoryCounter = 0;
+        }
+        if (_outOfMemory) {
+            _communicator.explorePartialSolution(graph, new SimpleSchedule(curSchedule), nextNodes);
+            return false;
+        }
 
-                    // generate a new task that is placed on the earliest possible time for current processor
-                    Task taskToPlace = new Task(proc, earliestStarts[proc], node);
+        // generate all new possible schedules by adding nodes with all parents visited to all possible processors.
+        for (Node node : nextNodes) {
+            _currentNode = node;
 
-                    // if pruner suggests culling this branch, do not explore this schedule
-                    if (_arborist.prune(graph, curSchedule, taskToPlace)) {
-                        _numCulled = _numCulled.add(BigInteger.ONE);
-                    } else { // explore this schedule
+            // find all the nodes that can now be visited after adding current node to schedule
+            HashSet<Node> childNextNodes = AlgorithmUtils.calculateNextNodes(graph, curSchedule, nextNodes, node);
+            // find the earliest possible time the current node could be placed on each processor
+            int[] earliestStarts = AlgorithmUtils.calculateEarliestTimes(graph, curSchedule, node);
 
-                        // generates a schedule with new task added.
-                        curSchedule.addTask(taskToPlace);
+            // place the node on each possible processor to generate all possible schedules
+            for (int proc = 0; proc < curSchedule.getNumProcessors(); proc++){
 
-                        // find the lower bound associated to the newly generated schedule.
-                        int newLowerBound;
-                        if (nextNodesToAdd.isEmpty()) { // if all nodes are in the schedule, "lower bound" becomes end time
-                            newLowerBound = curSchedule.getEndTime();
-                        } else {
-                            newLowerBound = _lowerBound.estimate(graph, curSchedule, nextNodesToAdd);
-                        }
+                // generate a new task that is placed on the earliest possible time for current processor
+                Task taskToPlace = new Task(proc, earliestStarts[proc], node);
 
-                        _numExplored = _numExplored.add(BigInteger.ONE);
-                        schedulesToVisit.add(new Pair<>(newLowerBound, new SimpleSchedule(curSchedule)));
-                        curSchedule.removeTask(taskToPlace);
+                // if pruner suggests culling this branch, do not explore this schedule
+                if (_arborist.prune(graph, curSchedule, taskToPlace)) {
+                    _numCulled = _numCulled.add(BigInteger.ONE);
+                    continue;
+                }
+                // We have to concede adding a task now
+                // generates a schedule with new task added.
+                curSchedule.addTask(taskToPlace);
+
+                // find the lower bound associated to the newly generated schedule.
+                int newLowerBound = _lowerBound.estimate(graph, curSchedule, childNextNodes);
+                if(newLowerBound >= getCurrentBest().getEndTime()) {
+                    _numCulled = _numCulled.add(BigInteger.ONE);
+                } else {
+                    _numExplored = _numExplored.add(BigInteger.ONE);
+
+                    if(newLowerBound == _curLowerBound) { // Continue to expand if the lower bound is still good
+                        if( expand(graph, schedulesToVisit, curSchedule, childNextNodes) )
+                            return true;
+                    } else {
+                        schedulesToVisit.add(newLowerBound, new SimpleSchedule(curSchedule), childNextNodes);
                     }
                 }
+
+                curSchedule.removeTask(taskToPlace);
             }
         }
+        return false;
     }
 
     /**
@@ -164,30 +171,8 @@ public class AStarAlgorithm extends BoundableAlgorithm {
     private boolean outOfMemory(){
         Runtime runtime = Runtime.getRuntime();
 
-        // determines the amount of memory that has been used out of the maximum amount that could be allocated to it
-        double memoryUsed = runtime.maxMemory() - runtime.freeMemory();
-        // calculates the percentage of memory that has been used
-        double percentUsed = (memoryUsed/runtime.maxMemory())*100;
-
         //if algorithm has used more than a set percentage it should pass its implementation to another thread.
-        return (percentUsed > PERCENTAGE_MEMORY_TO_USE);
-    }
-
-
-    /**
-     * Used to make sure pairs of schedules and their corresponding lower bound estimate are sorted by their lower
-     * bound estimates.
-     */
-    private class ScheduleComparator implements Comparator<Pair<Integer, SimpleSchedule>> {
-
-        /**
-         * Defines the ordering of pairs, those with a smaller integer lower bound come first.
-         */
-        @Override
-        public int compare(Pair<Integer, SimpleSchedule> pair1, Pair<Integer, SimpleSchedule> pair2) {
-            // if pair1 has a smaller path weight integer than pair2 it gets ordered first
-            return pair1.getKey().compareTo(pair2.getKey());
-        }
+        return runtime.freeMemory() < (1024 * 1024 * 512);
     }
 
     /**
