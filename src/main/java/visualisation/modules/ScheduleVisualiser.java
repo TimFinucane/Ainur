@@ -7,6 +7,7 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -30,6 +31,9 @@ public class ScheduleVisualiser extends VBox {
     private NumberAxis  _axis;
 
     public ScheduleVisualiser(int numProcessors) {
+        Label title = new Label("Current Best Schedule:");
+        title.getStyleClass().add("schedule-label");
+
         _scheduleView = new Canvas();
         Pane canvasHolder = new Pane(_scheduleView);
         // Bind schedule view to its holder so that it resizes when possible
@@ -55,7 +59,7 @@ public class ScheduleVisualiser extends VBox {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
         // Add the canvas holder, and make sure it takes available height
-        getChildren().add(scrollPane);
+        getChildren().addAll(title, scrollPane);
         setVgrow(scrollPane, Priority.ALWAYS);
         // And have a nice bit of pad
         this.getStyleClass().add(INNER_SCHEDULE_CLASS_CSS);

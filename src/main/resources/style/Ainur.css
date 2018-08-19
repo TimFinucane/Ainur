@@ -32,7 +32,7 @@
 }
 
 .inner-schedule {
-    -fx-padding: 20 25 10 25;
+    -fx-padding: 15 25 10 25;
 }
 
 .canvas-padding {
@@ -47,6 +47,11 @@
 .schedule-vis * {
     -fx-background-color: -fx-secondary-colour;
     -fx-text-fill: -fx-text-colour;
+}
+
+.schedule-label {
+    -fx-text-fill: -fx-primary-colour !important;
+    -fx-padding: 0 0 10 5;
 }
 
 .stats-content {
