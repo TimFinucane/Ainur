@@ -49,7 +49,7 @@ For more detailed usage documents, see [Ainur wiki section 2.0](https://github.c
 ## Documentation
 [Ainur Wiki](https://github.com/TimFinucane/Ainur/wiki) gives detailed information for developers and users who would like to interact with the Ainur application.
 [Data](https://github.com/TimFinucane/Ainur/tree/master/data) contains all sample data graphs in .dot format provided by Oliver Sinnen and other sources.
-[Docs](https://github.com/TimFinucane/Ainur/tree/master/docs) folder contains all design notes, UML diagrams, images and meeting minutes that were made throughout the duration of the project
+[Docs](https://github.com/TimFinucane/Ainur/tree/master/docs) folder contains all design notes, UML diagrams, images and meeting minutes that were made throughout the duration of the project. Also contains a list of references on different papers and designs that helped make Ainur.
 
 Conversations to do with issues and features are located on the [Ainur issues page](https://github.com/TimFinucane/Ainur/issues)
 
