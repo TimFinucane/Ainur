@@ -81,8 +81,7 @@ public class AinurVisualiser extends VBox {
         _startTime = System.currentTimeMillis();
 
         int coresUsed = (algorithm instanceof TieredAlgorithm) ? ((TieredAlgorithm) algorithm).numThreads() : 1;
-        // TODO: When getCurrentBest is safe (i.e. using non optimal starting algorithm) remove the math min
-        int upperBound = Math.min(algorithm.getCurrentBest().getEndTime(), 1000);
+        int upperBound = algorithm.getCurrentBest().getEndTime();
 
         // Initialise visualisers
         _graph = new GraphVisualiser(graph);
