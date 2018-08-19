@@ -66,11 +66,14 @@ The following people contributed to the program, there upis are also given for u
 | Emilie Pearce | epea390 | https://github.com/emipeanz
 
 ## Licence
-This project is licenced under [The GNU General Public License v3.0](https://github.com/TimFinucane/Ainur/blob/master/LICENSE.md)
+This project is licenced under [The GNU General Public License v3.0](https://github.com/TimFinucane/Ainur/blob/master/LICENSE.md). This licence only applies to code we have written, not the data.
 
 ## Acknowledgements
 - Oliver Sinnen for use of his previous papers and research on the topic
 - Gandalf from Lord of the Rings for his inspiration in our projects name and group title
+
+## References 
+- Graphs for the test suite were obtained from http://homepages.engineering.auckland.ac.nz/~parallel/OptimalTaskScheduling/OptimalSchedules.html
 
 ## Copyright notices
 We do not own any rights and are not associated with Lord of the Rings in any way, shape or form. The use of titles and names are a parody and are used meerly for our own entertainment. Logos and images were made as a take-off of Lord of the Rings and are not associated with official merchandise or media.
