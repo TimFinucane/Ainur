@@ -67,7 +67,8 @@ public class Ainur extends Application {
             Platform.runLater(() -> window.stop());
         try {
             writeSchedule(graph, schedule, cli.getInputFile(), cli.getOutputFile());
-            System.exit(0);
+            if (!cli.getVisualise())
+                System.exit(0);
         } catch (IOException e) {
             System.out.println("Failed to write the outputted schedule to a file!");
             System.exit(1);
