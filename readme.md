@@ -9,7 +9,7 @@
 |-----------------|
 | [![Build Status](https://tim-finucane.com/jenkins/job/ainur/job/Ainur/job/master/badge/icon)](https://tim-finucane.com/jenkins/job/ainur/job/Ainur/job/master/) |
 
-**Ainur** is a solution for parallel task scheduling problem, inspired by the tale of the Lord of the Rings.
+**Ainur** is a solution for the multiprocessor scheduling problem, inspired by the tale of the Lord of the Rings.
 
 ## Getting started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See sections 2.0 in the Ainur wiki for more detailed information on how to run it.
@@ -19,7 +19,8 @@ These instructions will get you a copy of the project up and running on your loc
 - Oracle JDK needs to be installed.
 
 ### Building
-Clone repository and from top parent folder and build from command line. Ainur uses Gradle to build and project comes with the Gradle wrapper, so gradle is not essential to install before hand. The two commands below will build the project
+Clone repository and navigate to the top parent folder.
+ Ainur uses Gradle to build and project comes with the Gradle wrapper, so gradle is not essential to install before hand. Using a terminal, use one of the two commands below to build it.
 
 ```
 gradle build
@@ -38,7 +39,7 @@ gradle test
 ```
 
 ## Usage
-To run Ainur from command line, all that is needed if the Ainur jar file and a graph file of the graph the application is to be run with in .dot format. (see (dot file specifications)[https://www.graphviz.org/doc/info/lang.html] for more information)
+You can run Ainur from command line/terminal. All that is needed is the Ainur jar file and a graph file of the graph the you want to run, in .dot format. (see (dot file specifications)[https://www.graphviz.org/doc/info/lang.html] for more information)
 
 From a terminal, use the below code snippet to run the application.
 ```
