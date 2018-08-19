@@ -66,7 +66,7 @@ The following people contributed to the program, there upis are also given for u
 | Emilie Pearce | epea390 | https://github.com/emipeanz
 
 ## Licence
-This project is licenced under ________________
+This project is licenced under [The GNU General Public License v3.0](https://github.com/TimFinucane/Ainur/blob/master/LICENSE)
 
 ## Acknowledgements
 - Oliver Sinnen for use of his previous papers and research on the topic
