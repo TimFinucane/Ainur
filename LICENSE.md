@@ -10,6 +10,10 @@
   The GNU General Public License is a free, copyleft license for
 software and other kinds of works.
 
+This licence applies to work created and committed to this project by its 
+  collaborators and not to any resources or code retrieved or created 
+  outside this project
+
   The licenses for most software and other practical works are designed
 to take away your freedom to share and change the works.  By contrast,
 the GNU General Public License is intended to guarantee your freedom to
